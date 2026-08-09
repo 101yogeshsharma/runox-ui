@@ -1,0 +1,74 @@
+@layer components {
+  .rnx-dropdown {
+    display: inline-block;
+  }
+
+  .rnx-dropdown-badge {
+    border-radius: 0.125rem;
+    font-weight: 400;
+  }
+
+  .rnx-dropdown-badge-remove-btn {
+    cursor: pointer;
+    border-radius: 9999px;
+    outline: none;
+  }
+
+  .rnx-dropdown-badge-remove-btn:focus {
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px var(--ring);
+  }
+
+  .rnx-dropdown-badge-remove-btn:hover {
+    background-color: color-mix(in srgb, var(--secondary) 20%, transparent);
+  }
+
+  .rnx-dropdown-badge-remove-icon {
+    color: color-mix(in srgb, var(--primary-foreground) 70%, transparent);
+  }
+
+  .rnx-dropdown-badge-remove-icon:hover {
+    color: var(--primary-foreground);
+  }
+
+  .rnx-dropdown-content {
+    border: 1px solid var(--border);
+    background-color: var(--card);
+    border-radius: 16px;
+    z-index: 50;
+    overflow: hidden;
+  }
+
+  .rnx-dropdown-trigger {
+    border: 1px solid var(--border);
+    background-color: var(--card);
+    color: var(--foreground);
+  }
+
+  .rnx-dropdown-trigger:hover {
+    background-color: color-mix(in srgb, var(--foreground) 4%, transparent);
+  }
+
+  .rnx-dropdown-trigger-empty {
+    color: color-mix(in srgb, var(--foreground) 50%, transparent);
+  }
+
+  .rnx-dropdown-icon {
+    opacity: 0.5;
+  }
+
+  .rnx-dropdown-item-icon-selected {
+    opacity: 1;
+  }
+
+  .rnx-dropdown-item-icon-unselected {
+    opacity: 0;
+  }
+
+  [cmdk-item][data-selected="true"],
+  [cmdk-item]:hover {
+    background-color: color-mix(in srgb, var(--foreground) 10%, transparent);
+    color: var(--foreground);
+  }
+}

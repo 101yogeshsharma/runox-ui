@@ -1,0 +1,47 @@
+@layer components {
+  .rnx-sortable-list {
+  }
+
+  .rnx-sortable-item {
+    transition-property: opacity;
+    transition-duration: 200ms;
+  }
+
+  .rnx-sortable-item--dragging {
+    opacity: 0.4;
+    z-index: 50;
+  }
+
+  .rnx-sortable-item--indicator-top {
+    border-top-width: 2px;
+    border-top-color: var(--primary);
+  }
+
+  .rnx-sortable-item--indicator-bottom {
+    border-bottom-width: 2px;
+    border-bottom-color: var(--primary);
+  }
+
+  .rnx-sortable-item--indicator-left {
+    border-left-width: 2px;
+    border-left-color: var(--primary);
+  }
+
+  .rnx-sortable-item--indicator-right {
+    border-right-width: 2px;
+    border-right-color: var(--primary);
+  }
+
+  .rnx-sortable-drag-handle {
+    color: var(--muted-foreground);
+    cursor: grab;
+  }
+
+  .rnx-sortable-drag-handle:hover {
+    color: var(--foreground);
+  }
+
+  .rnx-sortable-drag-handle:active {
+    cursor: grabbing;
+  }
+}

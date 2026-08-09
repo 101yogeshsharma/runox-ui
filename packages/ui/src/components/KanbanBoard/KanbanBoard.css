@@ -1,0 +1,93 @@
+@layer components {
+  .rnx-kanban-scroll-button {
+    background-color: var(--background);
+    border: 1px solid var(--border);
+    border-radius: 9999px;
+    box-shadow: var(--shadow-md);
+    transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .rnx-kanban-scroll-button--hidden {
+    pointer-events: none;
+    opacity: 0;
+  }
+  .rnx-kanban-scroll-button--visible {
+    opacity: 0;
+  }
+  .rnx-kanban-scroll-button--visible:hover {
+    background-color: var(--muted);
+  }
+  .rnx-kanban-scroll-button--visible:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--primary);
+  }
+  .group:hover .rnx-kanban-scroll-button--visible {
+    opacity: 1;
+  }
+
+  .rnx-kanban-scroll-icon {
+    color: var(--foreground);
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .rnx-kanban-column {
+    background-color: color-mix(in srgb, var(--muted) 30%, transparent);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-sm);
+    transition:
+      background-color 150ms,
+      border-color 150ms,
+      box-shadow 150ms;
+  }
+  .rnx-kanban-column--drag-over {
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px color-mix(in srgb, var(--primary) 50%, transparent);
+  }
+
+  .rnx-kanban-column-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .rnx-kanban-column-count {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    color: var(--muted-foreground);
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .rnx-kanban-card {
+    border-radius: 0.5rem;
+  }
+  .rnx-kanban-card:focus {
+    outline: none;
+  }
+  .rnx-kanban-card:focus-visible {
+    box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 50%, transparent);
+  }
+
+  .rnx-kanban-card--draggable {
+    cursor: grab;
+    opacity: 1;
+    transition: box-shadow 150ms;
+  }
+  .rnx-kanban-card--draggable:hover {
+    box-shadow: var(--shadow-sm);
+  }
+
+  .rnx-kanban-card--dragging {
+    opacity: 0.3;
+  }
+
+  .rnx-kanban-card--drag-over-before {
+    border-top: 2px solid var(--primary);
+  }
+  .rnx-kanban-card--drag-over-after {
+    border-bottom: 2px solid var(--primary);
+  }
+}

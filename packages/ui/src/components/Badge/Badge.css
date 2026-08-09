@@ -1,0 +1,241 @@
+@layer components {
+  .rnx-badge {
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid transparent;
+    font-weight: 600;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .rnx-badge:focus {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px var(--ring);
+  }
+
+  .rnx-badge__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 0.25rem;
+  }
+
+  .rnx-badge__icon svg {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
+
+  /* === Shapes === */
+  .rnx-badge--shape-circle {
+    border-radius: 9999px;
+  }
+  .rnx-badge--shape-rounded {
+  }
+  .rnx-badge--shape-square {
+    border-radius: 0;
+  }
+
+  /* === Sizes === */
+  .rnx-badge--size-sm {
+    padding: 0.125rem 0.5rem;
+    font-size: 0.625rem; /* 10px */
+  }
+  .rnx-badge--size-md {
+    padding: 0.125rem 0.625rem;
+    font-size: 0.75rem; /* 12px */
+  }
+  .rnx-badge--size-lg {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem; /* 14px */
+  }
+  .rnx-badge--size-lg .rnx-badge__icon svg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  /* === Variants (Solid, Subtle, Outline) === */
+
+  /* Primary */
+  .rnx-badge--solid-primary {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+  }
+  .rnx-badge--solid-primary:hover {
+    background-color: color-mix(in srgb, var(--primary) 80%, transparent);
+  }
+  .rnx-badge--subtle-primary {
+    background-color: color-mix(in srgb, var(--primary) 15%, transparent);
+    color: var(--primary);
+  }
+  .rnx-badge--subtle-primary:hover {
+    background-color: color-mix(in srgb, var(--primary) 25%, transparent);
+  }
+  .rnx-badge--outline-primary {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  /* Custom (Secondary) */
+  .rnx-badge--solid-custom {
+    background-color: var(--secondary);
+    color: var(--secondary-foreground);
+  }
+  .rnx-badge--solid-custom:hover {
+    background-color: color-mix(in srgb, var(--secondary) 80%, transparent);
+  }
+  .rnx-badge--subtle-custom {
+    background-color: color-mix(in srgb, var(--secondary) 30%, transparent);
+    color: var(--foreground);
+  }
+  .rnx-badge--subtle-custom:hover {
+    background-color: color-mix(in srgb, var(--secondary) 40%, transparent);
+  }
+  .rnx-badge--outline-custom {
+    border-color: var(--border);
+    color: var(--foreground);
+  }
+
+  /* Danger */
+  .rnx-badge--solid-danger {
+    background-color: var(--destructive);
+    color: var(--destructive-foreground);
+  }
+  .rnx-badge--solid-danger:hover {
+    background-color: color-mix(in srgb, var(--destructive) 80%, transparent);
+  }
+  .rnx-badge--subtle-danger {
+    background-color: color-mix(in srgb, var(--destructive) 15%, transparent);
+    color: var(--destructive);
+  }
+  .rnx-badge--subtle-danger:hover {
+    background-color: color-mix(in srgb, var(--destructive) 25%, transparent);
+  }
+  .rnx-badge--outline-danger {
+    border-color: var(--destructive);
+    color: var(--destructive);
+  }
+
+  /* Web / Info (Blue) */
+  .rnx-badge--solid-web,
+  .rnx-badge--solid-info {
+    background-color: var(--info);
+    color: var(--info-foreground);
+  }
+  .rnx-badge--solid-web:hover,
+  .rnx-badge--solid-info:hover {
+    background-color: color-mix(in srgb, var(--info) 80%, transparent);
+  }
+  .rnx-badge--subtle-web,
+  .rnx-badge--subtle-info {
+    background-color: color-mix(in srgb, var(--info) 15%, transparent);
+    color: var(--info);
+  }
+  .rnx-badge--subtle-web:hover,
+  .rnx-badge--subtle-info:hover {
+    background-color: color-mix(in srgb, var(--info) 25%, transparent);
+  }
+  .rnx-badge--outline-web,
+  .rnx-badge--outline-info {
+    border-color: var(--info);
+    color: var(--info);
+  }
+  :root[class~="dark"] .rnx-badge--subtle-web,
+  :root[class~="dark"] .rnx-badge--subtle-info {
+    color: var(--info);
+  }
+  :root[class~="dark"] .rnx-badge--outline-web,
+  :root[class~="dark"] .rnx-badge--outline-info {
+    border-color: var(--info);
+    color: var(--info);
+  }
+
+  /* AI (Fuchsia) */
+  .rnx-badge--solid-ai {
+    background-color: var(--ai);
+    color: var(--info-foreground);
+  }
+  .rnx-badge--solid-ai:hover {
+    background-color: color-mix(in srgb, var(--ai) 80%, transparent);
+  }
+  .rnx-badge--subtle-ai {
+    background-color: color-mix(in srgb, var(--ai) 15%, transparent);
+    color: var(--ai);
+  }
+  .rnx-badge--subtle-ai:hover {
+    background-color: color-mix(in srgb, var(--ai) 25%, transparent);
+  }
+  .rnx-badge--outline-ai {
+    border-color: var(--ai);
+    color: var(--ai);
+  }
+  :root[class~="dark"] .rnx-badge--subtle-ai {
+    color: var(--ai);
+  }
+  :root[class~="dark"] .rnx-badge--outline-ai {
+    border-color: var(--ai);
+    color: var(--ai);
+  }
+
+  /* Backend / Success (Emerald/Green) */
+  .rnx-badge--solid-backend,
+  .rnx-badge--solid-success {
+    background-color: var(--success);
+    color: var(--info-foreground);
+  }
+  .rnx-badge--solid-backend:hover,
+  .rnx-badge--solid-success:hover {
+    background-color: color-mix(in srgb, var(--success) 80%, transparent);
+  }
+  .rnx-badge--subtle-backend,
+  .rnx-badge--subtle-success {
+    background-color: color-mix(in srgb, var(--success) 15%, transparent);
+    color: var(--success);
+  }
+  .rnx-badge--subtle-backend:hover,
+  .rnx-badge--subtle-success:hover {
+    background-color: color-mix(in srgb, var(--success) 25%, transparent);
+  }
+  .rnx-badge--outline-backend,
+  .rnx-badge--outline-success {
+    border-color: var(--success);
+    color: var(--success);
+  }
+  :root[class~="dark"] .rnx-badge--subtle-backend,
+  :root[class~="dark"] .rnx-badge--subtle-success {
+    color: var(--success);
+  }
+  :root[class~="dark"] .rnx-badge--outline-backend,
+  :root[class~="dark"] .rnx-badge--outline-success {
+    border-color: var(--success);
+    color: var(--success);
+  }
+
+  /* Warning (Amber) */
+  .rnx-badge--solid-warning {
+    background-color: var(--warning);
+    color: var(--warning-foreground);
+  }
+  .rnx-badge--solid-warning:hover {
+    background-color: color-mix(in srgb, var(--warning) 80%, transparent);
+  }
+  .rnx-badge--subtle-warning {
+    background-color: color-mix(in srgb, var(--warning) 15%, transparent);
+    color: var(--warning);
+  }
+  .rnx-badge--subtle-warning:hover {
+    background-color: color-mix(in srgb, var(--warning) 25%, transparent);
+  }
+  .rnx-badge--outline-warning {
+    border-color: var(--warning);
+    color: var(--warning);
+  }
+  :root[class~="dark"] .rnx-badge--subtle-warning {
+    color: var(--warning);
+  }
+  :root[class~="dark"] .rnx-badge--outline-warning {
+    border-color: var(--warning);
+    color: var(--warning);
+  }
+}

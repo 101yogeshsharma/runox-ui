@@ -1,0 +1,8 @@
+@layer components {
+  .rnx-pagination__select-trigger {
+    width: 70px;
+  }
+  .rnx-pagination__select-content {
+    min-width: 70px;
+  }
+}

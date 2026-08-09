@@ -1,0 +1,53 @@
+@layer components {
+  .rnx-file-uploader-dropzone {
+    border-width: 2px;
+    border-style: dashed;
+    border-color: var(--border);
+    transition-property:
+      color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
+
+  .rnx-file-uploader-dropzone:hover {
+    border-color: var(--primary);
+    background-color: var(--muted);
+  }
+
+  .rnx-file-uploader-dropzone--active {
+    border-color: var(--primary);
+    background-color: var(--accent);
+  }
+
+  .rnx-file-uploader-icon {
+    color: var(--muted-foreground);
+  }
+
+  .rnx-file-uploader-text-muted {
+    color: var(--muted-foreground);
+  }
+
+  .rnx-file-uploader-item {
+    background-color: var(--card);
+    color: var(--card-foreground);
+    border-radius: 0.375rem;
+    border: 1px solid var(--border);
+  }
+
+  .rnx-file-uploader-icon-wrapper {
+    background-color: var(--muted);
+    border-radius: 0.375rem;
+  }
+
+  .rnx-file-uploader-image {
+    border-radius: 0.375rem;
+  }
+
+  .rnx-file-uploader-remove-btn {
+    color: var(--muted-foreground);
+  }
+
+  .rnx-file-uploader-remove-btn:hover {
+    color: var(--destructive);
+  }
+}

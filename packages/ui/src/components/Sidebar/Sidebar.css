@@ -1,0 +1,5 @@
+@layer components {
+  .group[data-collapsed="true"] .rnx-sidebar-item__label {
+    display: none;
+  }
+}

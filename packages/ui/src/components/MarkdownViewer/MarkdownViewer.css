@@ -1,0 +1,8 @@
+@layer components {
+  .rnx-markdown-viewer__inline-code {
+    font-size: 0.85em;
+  }
+  .rnx-markdown-viewer__code-block {
+    background-color: var(--code-block-bg);
+  }
+}

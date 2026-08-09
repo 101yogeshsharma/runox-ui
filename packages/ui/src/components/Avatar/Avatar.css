@@ -1,0 +1,60 @@
+@layer components {
+  .rnx-avatar {
+    position: relative;
+    display: flex;
+    flex-shrink: 0;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background-color: var(--background);
+  }
+
+  .rnx-avatar-image {
+    aspect-ratio: 1 / 1;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+  }
+
+  .rnx-avatar-fallback {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--muted);
+    font-weight: 500;
+    color: var(--muted-foreground);
+  }
+
+  /* Sizes */
+  .rnx-avatar--sm {
+    height: 2rem;
+    width: 2rem;
+    font-size: 0.75rem;
+  }
+  .rnx-avatar--md {
+    height: 2.5rem;
+    width: 2.5rem;
+    font-size: 0.875rem;
+  }
+  .rnx-avatar--lg {
+    height: 3.5rem;
+    width: 3.5rem;
+    font-size: 1.125rem;
+  }
+  .rnx-avatar--xl {
+    height: 5rem;
+    width: 5rem;
+    font-size: 1.5rem;
+  }
+
+  /* Shapes */
+  .rnx-avatar--circle {
+    border-radius: 9999px;
+  }
+  .rnx-avatar--square {
+    border-radius: 0;
+  }
+  .rnx-avatar--rounded {
+  }
+}

@@ -1,0 +1,342 @@
+@layer components {
+  .rnx-button {
+    position: relative;
+    overflow: clip;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-2, 0.5rem);
+    font-family: inherit;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+    outline: none;
+    white-space: nowrap;
+    text-decoration: none;
+  }
+
+  .rnx-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+  }
+
+  .rnx-button:focus-visible {
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px var(--ring);
+  }
+
+  .rnx-button:hover:not(:disabled) {
+    scale: 1.02;
+  }
+
+  .rnx-button:active {
+    scale: 0.95;
+  }
+
+  /* Base loading spinner */
+  .rnx-button--loading {
+    pointer-events: none;
+  }
+
+  .rnx-button__content {
+    display: inline-flex;
+    align-items: inherit;
+    justify-content: inherit;
+    flex: 1 1 auto;
+    width: 100%;
+    gap: inherit;
+  }
+
+  .rnx-button__content--hidden {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .rnx-button__spinner {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 1em;
+    height: 1em;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: rnx-spin 1s linear infinite;
+    z-index: 10;
+  }
+
+  @keyframes rnx-spin {
+    to {
+      transform: translate(-50%, -50%) rotate(360deg);
+    }
+  }
+
+  /* === Variants === */
+
+  /* Solid */
+  .rnx-button--solid-default {
+    background-color: var(--foreground);
+    color: var(--background);
+  }
+  .rnx-button--solid-default:hover {
+    background-color: color-mix(in srgb, var(--foreground) 90%, transparent);
+  }
+
+  .rnx-button--solid-primary {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+  .rnx-button--solid-primary:hover {
+    background-color: color-mix(in srgb, var(--primary) 90%, transparent);
+    translate: 0 -1px;
+  }
+  .rnx-button--solid-primary:active {
+    translate: 0 0;
+    scale: 0.95;
+  }
+
+  .rnx-button--solid-danger {
+    background-color: var(--destructive);
+    color: var(--destructive-foreground);
+  }
+  .rnx-button--solid-danger:hover {
+    background-color: color-mix(in srgb, var(--destructive) 90%, transparent);
+  }
+
+  /* Outline */
+  .rnx-button--outline-default {
+    background-color: transparent;
+    color: var(--foreground);
+    border-color: var(--border);
+  }
+  .rnx-button--outline-default:hover {
+    background-color: var(--secondary);
+  }
+
+  .rnx-button--outline-primary {
+    background-color: transparent;
+    color: var(--primary);
+    border-color: var(--primary);
+  }
+  .rnx-button--outline-primary:hover {
+    background-color: color-mix(in srgb, var(--primary) 10%, transparent);
+  }
+
+  .rnx-button--outline-danger {
+    background-color: transparent;
+    color: var(--destructive);
+    border-color: color-mix(in srgb, var(--destructive) 30%, transparent);
+  }
+  .rnx-button--outline-danger:hover {
+    background-color: color-mix(in srgb, var(--destructive) 10%, transparent);
+  }
+
+  /* Ghost */
+  .rnx-button--ghost-default {
+    background-color: transparent;
+    color: var(--foreground);
+    border-color: transparent;
+  }
+  .rnx-button--ghost-default:hover {
+    background-color: var(--secondary);
+  }
+
+  .rnx-button--ghost-primary {
+    background-color: transparent;
+    color: var(--primary);
+    border-color: transparent;
+  }
+  .rnx-button--ghost-primary:hover {
+    background-color: color-mix(in srgb, var(--primary) 10%, transparent);
+  }
+
+  .rnx-button--ghost-danger {
+    background-color: transparent;
+    color: var(--destructive);
+    border-color: transparent;
+  }
+  .rnx-button--ghost-danger:hover {
+    background-color: color-mix(in srgb, var(--destructive) 10%, transparent);
+  }
+
+  /* Glass */
+  .rnx-button--glass-default {
+    background-color: color-mix(in srgb, var(--foreground) 5%, transparent);
+    color: var(--foreground);
+    border-color: color-mix(in srgb, var(--foreground) 10%, transparent);
+    backdrop-filter: blur(12px);
+  }
+  .rnx-button--glass-default:hover {
+    background-color: color-mix(in srgb, var(--foreground) 10%, transparent);
+    border-color: color-mix(in srgb, var(--foreground) 20%, transparent);
+  }
+
+  .rnx-button--glass-primary {
+    background-color: color-mix(in srgb, var(--primary) 5%, transparent);
+    color: var(--primary);
+    border-color: color-mix(in srgb, var(--primary) 20%, transparent);
+    backdrop-filter: blur(12px);
+  }
+  .rnx-button--glass-primary:hover {
+    background-color: color-mix(in srgb, var(--primary) 10%, transparent);
+  }
+
+  .rnx-button--glass-danger {
+    background-color: color-mix(in srgb, var(--destructive) 5%, transparent);
+    color: var(--destructive);
+    border-color: color-mix(in srgb, var(--destructive) 20%, transparent);
+    backdrop-filter: blur(12px);
+  }
+  .rnx-button--glass-danger:hover {
+    background-color: color-mix(in srgb, var(--destructive) 10%, transparent);
+  }
+
+  /* Icon (Background variations only, size handled in size classes) */
+  .rnx-button--icon-default {
+    background-color: var(--secondary);
+    color: var(--foreground);
+  }
+  .rnx-button--icon-default:hover {
+    background-color: color-mix(in srgb, var(--secondary) 80%, transparent);
+  }
+
+  .rnx-button--icon-primary {
+    background-color: color-mix(in srgb, var(--primary) 10%, transparent);
+    color: var(--primary);
+  }
+  .rnx-button--icon-primary:hover {
+    background-color: color-mix(in srgb, var(--primary) 20%, transparent);
+  }
+
+  .rnx-button--icon-danger {
+    background-color: color-mix(in srgb, var(--destructive) 10%, transparent);
+    color: var(--destructive);
+  }
+  .rnx-button--icon-danger:hover {
+    background-color: color-mix(in srgb, var(--destructive) 20%, transparent);
+  }
+
+  /* Fab */
+  .rnx-button--variant-fab {
+    border-radius: 9999px;
+    box-shadow:
+      0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.1);
+    backdrop-filter: blur(12px);
+  }
+  .rnx-button--variant-fab:active {
+    translate: 0 0;
+  }
+  .rnx-button--variant-fab:hover {
+    translate: 0 -0.25rem;
+  }
+  .rnx-button--fab-default {
+    background-color: var(--card);
+    color: var(--foreground);
+    border-color: var(--border);
+  }
+  .rnx-button--fab-default:hover {
+    background-color: var(--secondary);
+  }
+  .rnx-button--fab-primary {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+  }
+  .rnx-button--fab-danger {
+    background-color: var(--destructive);
+    color: var(--destructive-foreground);
+  }
+
+  /* Success Color Variants */
+  .rnx-button--solid-success {
+    background-color: var(--success);
+    color: var(--success-foreground);
+  }
+  .rnx-button--solid-success:hover {
+    background-color: color-mix(in srgb, var(--success) 90%, transparent);
+  }
+
+  .rnx-button--outline-success {
+    background-color: transparent;
+    color: var(--success);
+    border-color: var(--success);
+  }
+  .rnx-button--outline-success:hover {
+    background-color: color-mix(in srgb, var(--success) 10%, transparent);
+  }
+
+  .rnx-button--ghost-success {
+    background-color: transparent;
+    color: var(--success);
+    border-color: transparent;
+  }
+  .rnx-button--ghost-success:hover {
+    background-color: color-mix(in srgb, var(--success) 10%, transparent);
+  }
+
+  .rnx-button--glass-success {
+    background-color: color-mix(in srgb, var(--success) 5%, transparent);
+    color: var(--success);
+    border-color: color-mix(in srgb, var(--success) 20%, transparent);
+    backdrop-filter: blur(12px);
+  }
+  .rnx-button--glass-success:hover {
+    background-color: color-mix(in srgb, var(--success) 10%, transparent);
+  }
+
+  .rnx-button--icon-success {
+    background-color: color-mix(in srgb, var(--success) 10%, transparent);
+    color: var(--success);
+  }
+  .rnx-button--icon-success:hover {
+    background-color: color-mix(in srgb, var(--success) 20%, transparent);
+  }
+
+  .rnx-button--fab-success {
+    background-color: var(--success);
+    color: var(--success-foreground);
+  }
+
+  /* === Sizes === */
+  .rnx-button--size-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .rnx-button--size-md {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .rnx-button--size-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+  }
+
+  .rnx-button--size-icon {
+    height: 2.5rem;
+    width: 2.5rem;
+    padding: 0.5rem;
+  }
+
+  .rnx-button--size-fab {
+    height: 3rem;
+    width: 3rem;
+    padding: 0;
+  }
+
+  .rnx-button--full-width {
+    width: 100%;
+  }
+
+  .rnx-button__icon-container {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+  }
+}

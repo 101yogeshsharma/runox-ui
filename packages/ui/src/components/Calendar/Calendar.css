@@ -1,0 +1,99 @@
+@layer components {
+  .rnx-calendar__day {
+    font-size: 0.875rem;
+    font-weight: 400;
+    transition-property:
+      color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-duration: 150ms;
+  }
+
+  .rnx-calendar__day:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px var(--ring);
+  }
+
+  .rnx-calendar__day:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  .rnx-calendar__day:hover {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  .rnx-calendar__day--outside {
+    color: var(--muted-foreground);
+    opacity: 0.5;
+  }
+
+  .rnx-calendar__day--range-middle {
+    background-color: color-mix(in srgb, var(--accent) 50%, transparent);
+    color: var(--accent-foreground);
+    border-radius: 0;
+  }
+
+  .rnx-calendar__day--range-start {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+  }
+
+  .rnx-calendar__day--range-end {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  .rnx-calendar__day--selected {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+    opacity: 1;
+  }
+
+  .rnx-calendar__day--selected:hover,
+  .rnx-calendar__day--selected:focus {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  .rnx-calendar__day--today:not(.rnx-calendar__day--selected) {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  .rnx-calendar__nav_button {
+    border: 1px solid var(--input);
+    color: var(--foreground);
+    transition-property:
+      color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-duration: 150ms;
+    background-color: transparent;
+    opacity: 0.5;
+  }
+
+  .rnx-calendar__nav_button:hover {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+    opacity: 1;
+  }
+
+  .rnx-calendar__caption_label {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .rnx-calendar__weekday {
+    color: var(--muted-foreground);
+    font-size: 0.8rem;
+    font-weight: 400;
+  }
+
+  .rnx-calendar__time_picker {
+    border-top: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
+  }
+
+  .rnx-calendar__clock_icon {
+    color: var(--muted-foreground);
+  }
+}

@@ -1,0 +1,5 @@
+@layer components {
+  .rnx-ai-input__textarea {
+    min-height: 60px;
+  }
+}

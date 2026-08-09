@@ -1,0 +1,107 @@
+@layer components {
+  /* Base Card */
+  .rnx-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0, 0, 0.2, 1);
+    border: 1px solid transparent;
+  }
+
+  .rnx-card--interactive {
+    cursor: pointer;
+  }
+
+  .rnx-card--interactive:hover {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 20px 40px -10px
+      color-mix(in srgb, var(--primary) 10%, transparent);
+  }
+
+  .rnx-card--interactive:active {
+    transform: scale(0.98) translateY(0);
+  }
+
+  /* === Variants === */
+
+  /* Glass */
+  .rnx-card--variant-glass {
+    background-color: color-mix(in srgb, var(--card) 40%, transparent);
+    backdrop-filter: blur(24px);
+    border-color: var(--border);
+  }
+  .rnx-card--variant-glass:hover {
+    border-color: var(--border);
+  }
+
+  /* Outline */
+  .rnx-card--variant-outline {
+    background-color: transparent;
+    border-color: var(--border);
+  }
+  .rnx-card--variant-outline:hover {
+    border-color: var(--border);
+  }
+
+  /* === Sizes === */
+  .rnx-card--size-sm {
+    padding: 1rem;
+  }
+  .rnx-card--size-md {
+    padding: 1.5rem;
+  }
+  .rnx-card--size-lg {
+    padding: 2rem;
+  }
+
+  /* === Shapes === */
+  .rnx-card--shape-square {
+    border-radius: 0;
+  }
+  .rnx-card--shape-circle {
+    border-radius: 50%;
+  }
+
+  /* Compound shapes based on size */
+  .rnx-card--shape-rounded.rnx-card--size-sm {
+  }
+  .rnx-card--shape-rounded.rnx-card--size-md {
+  }
+  .rnx-card--shape-rounded.rnx-card--size-lg {
+  }
+
+  /* === Subcomponents === */
+
+  .rnx-card-header {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-2, 0.5rem);
+    margin-bottom: var(--spacing-4, 1rem);
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+  }
+
+  .rnx-card-body {
+    position: relative;
+    z-index: 10;
+    flex: 1 1 0%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4, 1rem);
+  }
+
+  .rnx-card-footer {
+    position: relative;
+    z-index: 10;
+    margin-top: var(--spacing-6, 1.5rem);
+    padding-top: var(--spacing-6, 1.5rem);
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    border-bottom-left-radius: inherit;
+    border-bottom-right-radius: inherit;
+  }
+}

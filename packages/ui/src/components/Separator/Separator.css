@@ -1,0 +1,16 @@
+@layer components {
+  .rnx-separator {
+    flex-shrink: 0;
+    background-color: var(--border);
+  }
+
+  .rnx-separator--horizontal {
+    height: 1px;
+    width: 100%;
+  }
+
+  .rnx-separator--vertical {
+    height: 100%;
+    width: 1px;
+  }
+}

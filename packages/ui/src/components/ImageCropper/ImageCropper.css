@@ -1,0 +1,14 @@
+@layer components {
+  .rnx-image-cropper {
+  }
+
+  .rnx-image-cropper-canvas {
+    background-color: var(--muted);
+  }
+
+  .rnx-image-cropper-controls {
+  }
+
+  .rnx-image-cropper-actions {
+  }
+}

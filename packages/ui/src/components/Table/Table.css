@@ -1,0 +1,82 @@
+@layer components {
+  .rnx-table__header {
+    background-color: color-mix(in srgb, var(--muted) 50%, transparent);
+  }
+
+  .rnx-table__header tr {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .rnx-table__body tr:last-child {
+    border: 0;
+  }
+
+  .rnx-table__footer {
+    background-color: color-mix(in srgb, var(--muted) 50%, transparent);
+    border-top: 1px solid var(--border);
+    font-weight: 500;
+  }
+
+  .rnx-table__footer > tr:last-child {
+    border-bottom: 0;
+  }
+
+  .rnx-table__row {
+    border-bottom: 1px solid var(--border);
+    transition-property:
+      color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
+
+  .rnx-table__row:hover {
+    background-color: color-mix(in srgb, var(--muted) 50%, transparent);
+  }
+
+  .rnx-table__row[data-state="selected"] {
+    background-color: var(--muted);
+  }
+
+  .rnx-table__head {
+    color: var(--muted-foreground);
+    font-weight: 500;
+  }
+
+  .rnx-table__caption {
+    color: var(--muted-foreground);
+  }
+
+  .rnx-data-table-container {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    overflow: hidden;
+  }
+
+  .rnx-data-table__header {
+    background-color: color-mix(in srgb, var(--foreground) 2%, transparent);
+  }
+
+  .rnx-data-table__header-row {
+    border-bottom: 1px solid var(--border);
+  }
+
+  .rnx-data-table__header-row:hover {
+    background-color: transparent;
+  }
+
+  .rnx-data-table__row {
+    border-bottom: 1px solid var(--border);
+    transition-property:
+      color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
+
+  .rnx-data-table__row:hover {
+    background-color: color-mix(in srgb, var(--foreground) 2%, transparent);
+  }
+
+  .rnx-data-table__empty-cell {
+    color: color-mix(in srgb, var(--foreground) 50%, transparent);
+  }
+}

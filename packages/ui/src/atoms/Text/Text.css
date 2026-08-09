@@ -1,0 +1,12 @@
+@layer components {
+  .rnx-text {
+    font-size: var(--rnx-text-fs);
+    line-height: var(--rnx-text-lh);
+    font-family: var(--rnx-text-ff);
+    font-weight: var(--rnx-text-fw);
+    letter-spacing: var(--rnx-text-ls);
+    text-transform: var(--rnx-text-tt);
+    color: var(--rnx-text-color);
+    text-align: var(--rnx-text-align);
+  }
+}

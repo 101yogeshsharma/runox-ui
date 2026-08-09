@@ -1,0 +1,35 @@
+@layer components {
+  .rnx-treeview-node {
+    transition-property:
+      color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+    color: color-mix(in srgb, var(--foreground) 80%, transparent);
+  }
+
+  .rnx-treeview-node:hover {
+    background-color: color-mix(in srgb, var(--accent) 50%, transparent);
+    color: var(--foreground);
+  }
+
+  .rnx-treeview-node--selected,
+  .rnx-treeview-node--selected:hover {
+    background-color: var(--accent);
+    color: var(--accent-foreground);
+  }
+
+  .rnx-treeview-chevron {
+    color: var(--muted-foreground);
+    transition-property: transform;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 200ms;
+  }
+
+  .rnx-treeview-icon {
+    color: var(--muted-foreground);
+  }
+
+  .rnx-treeview-content {
+    border-color: color-mix(in srgb, var(--border) 50%, transparent);
+  }
+}

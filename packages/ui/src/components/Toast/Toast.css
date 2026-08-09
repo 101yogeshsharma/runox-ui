@@ -1,0 +1,223 @@
+@layer components {
+  .rnx-toast-viewport {
+    position: fixed;
+    z-index: var(--z-toast);
+    display: flex;
+    width: 100%;
+    max-height: 100vh;
+    flex-direction: column;
+    gap: 0.5rem; /* space-y-2 */
+    padding: 1rem; /* p-4 */
+    pointer-events: none;
+  }
+
+  @media (min-width: 768px) {
+    .rnx-toast-viewport {
+      max-width: 420px;
+    }
+  }
+
+  .rnx-toast-viewport--top-left {
+    top: 0;
+    left: 0;
+  }
+  .rnx-toast-viewport--top-right {
+    top: 0;
+    right: 0;
+  }
+  .rnx-toast-viewport--top-center {
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .rnx-toast-viewport--bottom-left {
+    bottom: 0;
+    left: 0;
+    flex-direction: column-reverse;
+  }
+  .rnx-toast-viewport--bottom-right {
+    bottom: 0;
+    right: 0;
+    flex-direction: column-reverse;
+  }
+  .rnx-toast-viewport--bottom-center {
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    flex-direction: column-reverse;
+  }
+
+  .rnx-toast {
+    pointer-events: auto;
+    position: relative;
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    box-shadow:
+      0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.1); /* shadow-lg */
+    will-change: transform, opacity;
+  }
+
+  .rnx-toast-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .rnx-toast-title {
+    font-weight: 600; /* font-semibold */
+  }
+
+  .rnx-toast-description {
+    opacity: 0.9;
+  }
+
+  .rnx-toast-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.25rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+    color: inherit;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+  }
+
+  .rnx-toast:hover .rnx-toast-close,
+  .rnx-toast-close:focus {
+    opacity: 1;
+  }
+  .rnx-toast-close:focus-visible {
+    outline: 2px solid currentColor;
+  }
+
+  /* Sizes */
+  .rnx-toast--sm {
+    padding: 0.75rem;
+    padding-right: 2rem;
+  }
+  .rnx-toast--sm .rnx-toast-title {
+    font-size: 0.75rem;
+  }
+  .rnx-toast--sm .rnx-toast-description {
+    font-size: 0.625rem;
+  }
+
+  .rnx-toast--md {
+    padding: 1rem;
+    padding-right: 2.5rem;
+  }
+  .rnx-toast--md .rnx-toast-title {
+    font-size: 0.875rem;
+  }
+  .rnx-toast--md .rnx-toast-description {
+    font-size: 0.75rem;
+  }
+
+  .rnx-toast--lg {
+    padding: 1.5rem;
+    padding-right: 3rem;
+  }
+  .rnx-toast--lg .rnx-toast-title {
+    font-size: 1rem;
+  }
+  .rnx-toast--lg .rnx-toast-description {
+    font-size: 0.875rem;
+  }
+
+  /* Colors */
+  .rnx-toast--info {
+    background-color: color-mix(in srgb, var(--info) 10%, var(--background));
+    border-color: color-mix(in srgb, var(--info) 20%, var(--border));
+    color: var(--info);
+  }
+  :root.dark .rnx-toast--info {
+    color: var(--info);
+  }
+
+  .rnx-toast--success {
+    background-color: color-mix(in srgb, var(--success) 10%, var(--background));
+    border-color: color-mix(in srgb, var(--success) 20%, var(--border));
+    color: var(--success);
+  }
+  :root.dark .rnx-toast--success {
+    color: var(--success);
+  }
+
+  .rnx-toast--warning {
+    background-color: color-mix(in srgb, var(--warning) 10%, var(--background));
+    border-color: color-mix(in srgb, var(--warning) 20%, var(--border));
+    color: var(--warning);
+  }
+  :root.dark .rnx-toast--warning {
+    color: var(--warning);
+  }
+
+  .rnx-toast--danger {
+    background-color: color-mix(
+      in srgb,
+      var(--destructive) 10%,
+      var(--background)
+    );
+    border-color: color-mix(in srgb, var(--destructive) 20%, var(--border));
+    color: var(--destructive);
+  }
+  :root.dark .rnx-toast--danger {
+    color: var(--destructive);
+  }
+
+  /* Animations */
+  .rnx-toast--opening {
+    animation: rnx-toast-slide-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .rnx-toast--closing {
+    animation: rnx-toast-slide-out 0.2s ease-in forwards;
+  }
+
+  @keyframes rnx-toast-slide-in {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .rnx-toast-viewport--top-left .rnx-toast--opening,
+  .rnx-toast-viewport--top-right .rnx-toast--opening,
+  .rnx-toast-viewport--top-center .rnx-toast--opening {
+    animation-name: rnx-toast-slide-in-top;
+  }
+
+  @keyframes rnx-toast-slide-in-top {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes rnx-toast-slide-out {
+    from {
+      transform: scale(1);
+      opacity: 1;
+    }
+    to {
+      transform: scale(0.95);
+      opacity: 0;
+    }
+  }
+}

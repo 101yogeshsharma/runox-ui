@@ -1,0 +1,128 @@
+@layer components {
+  .rnx-alert-dialog-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: var(--z-modal);
+    display: grid;
+    place-items: center;
+    overflow-y: auto;
+    background-color: rgb(0 0 0 / 0.8);
+    backdrop-filter: blur(4px);
+    padding: 1rem;
+  }
+
+  .rnx-alert-dialog-overlay[data-state="open"] {
+    animation: rnx-alert-dialog-fade-in 150ms ease-out;
+  }
+  .rnx-alert-dialog-overlay[data-state="closed"] {
+    animation: rnx-alert-dialog-fade-out 150ms ease-in forwards;
+  }
+
+  .rnx-alert-dialog-content {
+    position: relative;
+    z-index: var(--z-modal);
+    display: grid;
+    width: 100%;
+    max-width: 32rem; /* max-w-lg */
+    gap: 1rem;
+    border: 1px solid var(--border);
+    background-color: var(--background);
+    padding: 1.5rem; /* p-6 */
+    box-shadow:
+      0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.1); /* shadow-lg */
+  }
+
+  .rnx-alert-dialog-content[data-state="open"] {
+    animation: rnx-alert-dialog-zoom-in 150ms ease-out;
+  }
+  .rnx-alert-dialog-content[data-state="closed"] {
+    animation: rnx-alert-dialog-zoom-out 150ms ease-in forwards;
+  }
+
+  .rnx-alert-dialog-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem; /* space-y-2 */
+    text-align: center;
+  }
+
+  @media (min-width: 640px) {
+    .rnx-alert-dialog-header {
+      text-align: left;
+    }
+  }
+
+  .rnx-alert-dialog-footer {
+    display: flex;
+    flex-direction: column-reverse;
+  }
+
+  @media (min-width: 640px) {
+    .rnx-alert-dialog-footer {
+      flex-direction: row;
+      justify-content: flex-end;
+      gap: 0.5rem; /* sm:space-x-2 */
+    }
+  }
+
+  .rnx-alert-dialog-title {
+    font-size: 1.125rem; /* text-lg */
+    font-weight: 600; /* font-semibold */
+  }
+
+  .rnx-alert-dialog-description {
+    font-size: 0.875rem; /* text-sm */
+    color: var(--muted-foreground);
+  }
+
+  .rnx-alert-dialog-cancel {
+    margin-top: 0.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .rnx-alert-dialog-cancel {
+      margin-top: 0;
+    }
+  }
+
+  @keyframes rnx-alert-dialog-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes rnx-alert-dialog-fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes rnx-alert-dialog-zoom-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes rnx-alert-dialog-zoom-out {
+    from {
+      opacity: 1;
+      transform: scale(1);
+    }
+    to {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+  }
+}

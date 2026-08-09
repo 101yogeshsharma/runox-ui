@@ -1,0 +1,5 @@
+@layer components {
+  .rnx-syntax-highlighter__line-number {
+    width: 1%;
+  }
+}

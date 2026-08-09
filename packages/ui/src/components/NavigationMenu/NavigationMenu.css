@@ -1,0 +1,8 @@
+@layer components {
+  .rnx-nav-menu__chevron {
+    top: 1px;
+  }
+  .group[data-state="open"] .rnx-nav-menu__chevron {
+    transform: rotate(180deg);
+  }
+}

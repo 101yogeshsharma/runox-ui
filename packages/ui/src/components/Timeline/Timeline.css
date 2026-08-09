@@ -1,0 +1,85 @@
+@layer components {
+  .rnx-timeline-dot {
+    border-radius: 9999px;
+  }
+
+  .rnx-timeline-dot--default.rnx-timeline-dot--color-default {
+    background-color: var(--muted);
+    color: var(--muted-foreground);
+  }
+
+  .rnx-timeline-dot--default.rnx-timeline-dot--color-primary {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  .rnx-timeline-dot--default.rnx-timeline-dot--color-secondary {
+    background-color: var(--secondary);
+    color: var(--secondary-foreground);
+  }
+
+  .rnx-timeline-dot--default.rnx-timeline-dot--color-destructive {
+    background-color: var(--destructive);
+    color: var(--destructive-foreground);
+  }
+
+  .rnx-timeline-dot--default.rnx-timeline-dot--color-success {
+    background-color: var(--success);
+    color: var(--success-foreground);
+  }
+
+  .rnx-timeline-dot--default.rnx-timeline-dot--color-warning {
+    background-color: var(--warning);
+    color: var(--warning-foreground, white);
+  }
+
+  .rnx-timeline-dot--outline {
+    background-color: var(--background);
+    border-width: 2px;
+  }
+
+  .rnx-timeline-dot--outline.rnx-timeline-dot--color-default {
+    border-color: var(--muted);
+    color: var(--muted-foreground);
+  }
+
+  .rnx-timeline-dot--outline.rnx-timeline-dot--color-primary {
+    border-color: var(--primary);
+    color: var(--primary);
+  }
+
+  .rnx-timeline-dot--outline.rnx-timeline-dot--color-destructive {
+    border-color: var(--destructive);
+    color: var(--destructive);
+  }
+
+  .rnx-timeline-dot--outline.rnx-timeline-dot--color-success {
+    border-color: var(--success);
+    color: var(--success);
+  }
+
+  .rnx-timeline-dot--outline.rnx-timeline-dot--color-warning {
+    border-color: var(--warning);
+    color: var(--warning);
+  }
+
+  .rnx-timeline-dot--ghost {
+    background-color: transparent;
+  }
+
+  .rnx-timeline-dot--ghost.rnx-timeline-dot--color-default {
+    color: var(--muted-foreground);
+  }
+
+  .rnx-timeline-dot--ghost.rnx-timeline-dot--color-primary {
+    color: var(--primary);
+  }
+
+  .rnx-timeline-connector {
+    background-color: var(--border);
+  }
+
+  .rnx-timeline-content {
+    color: var(--foreground);
+  }
+}

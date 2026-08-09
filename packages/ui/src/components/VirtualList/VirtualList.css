@@ -1,0 +1,10 @@
+@layer components {
+  .rnx-virtual-list {
+    border: 1px solid var(--border);
+    background-color: var(--card);
+  }
+
+  .rnx-virtual-list-item {
+    /* No aesthetic properties defined for item by default, but keeping class for extension */
+  }
+}

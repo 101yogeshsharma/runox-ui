@@ -1,0 +1,70 @@
+@layer components {
+  .rnx-list {
+    color: var(--foreground);
+  }
+
+  .rnx-list-item-collapsible {
+    border: 1px solid var(--border);
+    background-color: var(--card);
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    transition-property: all;
+    transition-duration: 200ms;
+  }
+
+  .rnx-list-item-collapsible-btn {
+    transition-property: background-color;
+    transition-duration: 200ms;
+  }
+
+  .rnx-list-item-collapsible-btn:hover,
+  .rnx-list-item-collapsible-btn:focus-visible {
+    background-color: color-mix(in srgb, var(--muted) 50%, transparent);
+    outline: none;
+  }
+
+  .rnx-list-item-collapsible-title {
+    font-weight: 500;
+  }
+
+  .rnx-list-item-collapsible-icon {
+    color: var(--muted-foreground);
+    transition-property: transform;
+    transition-duration: 200ms;
+  }
+
+  .rnx-list-item-collapsible-content {
+    border-top: 1px solid var(--border);
+    background-color: color-mix(in srgb, var(--muted) 10%, transparent);
+  }
+
+  .rnx-list-item-number {
+    color: var(--muted-foreground);
+  }
+
+  .rnx-list-item-number::marker {
+    color: var(--foreground);
+    font-weight: 600;
+  }
+
+  .rnx-list-item-bullet {
+    color: var(--muted-foreground);
+  }
+
+  .rnx-list-item-bullet::marker {
+    color: var(--muted-foreground);
+  }
+
+  .rnx-list-item--dragging {
+    opacity: 0.5;
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px var(--primary);
+  }
+
+  .rnx-list-item-collapsible--dragging {
+    opacity: 0.5;
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px var(--primary);
+  }
+}
