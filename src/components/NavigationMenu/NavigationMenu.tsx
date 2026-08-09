@@ -88,7 +88,7 @@ const NavigationMenu = React.forwardRef<HTMLDivElement, NavigationMenuProps>(
     };
 
     const isMenubar = variant === "menubar";
-    const Tag = isMenubar ? "div" : "nav";
+    const _Tag = isMenubar ? "div" : "nav";
 
     return (
       <NavigationMenuContext.Provider
@@ -123,7 +123,7 @@ const NavigationMenuList = React.forwardRef<
 >(({ className, ...props }, ref) => {
   const { variant } = useContext(NavigationMenuContext);
   const isMenubar = variant === "menubar";
-  const Tag = isMenubar ? "div" : "ul";
+  const _Tag = isMenubar ? "div" : "ul";
 
   return (
     <Box
@@ -149,7 +149,7 @@ const NavigationMenuItem = React.forwardRef<
   const itemValue = value || id;
   const { variant } = useContext(NavigationMenuContext);
   const isMenubar = variant === "menubar";
-  const Tag = isMenubar ? "div" : "li";
+  const _Tag = isMenubar ? "div" : "li";
   const triggerRef = useRef<HTMLElement | null>(null);
   const setTriggerRef = (node: HTMLElement | null) => {
     triggerRef.current = node;

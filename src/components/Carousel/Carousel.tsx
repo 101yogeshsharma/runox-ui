@@ -68,7 +68,7 @@ const Carousel = React.forwardRef<
       orientation = "horizontal",
       opts,
       setApi,
-      plugins,
+      plugins: _plugins,
       className,
       children,
       effect = "slide",
@@ -139,7 +139,11 @@ const Carousel = React.forwardRef<
     const api = React.useMemo<CarouselApi>(() => {
       const listeners: Record<string, ((api: CarouselApi) => void)[]> = {};
 
-      const checkPhysicalScrollPrev = () => {
+       
+      const _listeners: Record<string, ((api: CarouselApi) => void)[]> = {};
+
+       
+      const _checkPhysicalScrollPrev = () => {
         if (!carouselRef.current) return false;
         const container = carouselRef.current;
         return orientation === "horizontal"
@@ -147,7 +151,8 @@ const Carousel = React.forwardRef<
           : container.scrollTop > 0;
       };
 
-      const checkPhysicalScrollNext = () => {
+       
+      const _checkPhysicalScrollNext = () => {
         if (!carouselRef.current) return false;
         const container = carouselRef.current;
         if (orientation === "horizontal") {
@@ -336,6 +341,7 @@ const Carousel = React.forwardRef<
         _trigger: trigger,
       };
       return apiObj;
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [orientation, opts?.loop]);
 
     const onSelect = React.useCallback((api: CarouselApi) => {

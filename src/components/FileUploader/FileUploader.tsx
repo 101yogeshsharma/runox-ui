@@ -3,7 +3,6 @@
 import React, {
   useCallback,
   useState,
-  useMemo,
   useEffect,
   useRef,
 } from "react";
@@ -11,13 +10,11 @@ import {
   UploadCloud,
   X,
   File as FileIcon,
-  Image as ImageIcon,
 } from "lucide-react";
 import { cn } from "../../utils/cn";
 import { Button } from "../Button";
 import { Text } from "../../atoms/Text";
 import { Box } from "../../atoms/Box";
-import { Flex } from "../../atoms/Flex";
 import { Image as RunoxImage } from "../Image/Image";
 import { Progress } from "../Progress/Progress";
 import { useTheme } from "../ThemeProvider/ThemeProvider";
@@ -67,6 +64,7 @@ export function FileUploader({
   // Revoke ALL remaining URLs only when the component unmounts
   useEffect(() => {
     return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       for (const url of objectUrlMap.current.values()) {
         URL.revokeObjectURL(url);
       }

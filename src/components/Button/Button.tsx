@@ -8,7 +8,6 @@ import { useTheme } from "../ThemeProvider/ThemeProvider";
 
 import type {
   PolymorphicComponentPropsWithRef,
-  PolymorphicRef,
 } from "../../utils/types";
 
 export interface ButtonBaseProps {

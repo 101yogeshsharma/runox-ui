@@ -3,6 +3,7 @@ import reactHooks from "eslint-plugin-react-hooks";
 import jsxA11y from "eslint-plugin-jsx-a11y";
 import tsPlugin from "@typescript-eslint/eslint-plugin";
 import tsParser from "@typescript-eslint/parser";
+import unusedImports from "eslint-plugin-unused-imports";
 
 export default [
   {
@@ -38,19 +39,30 @@ export default [
     plugins: {
       "react-hooks": reactHooks,
       "jsx-a11y": jsxA11y,
+      "unused-imports": unusedImports,
     },
     rules: {
       // Keep hooks rules strict, but relax unused-vars to warnings to avoid blocking CI while iterating.
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
-      "no-unused-vars": "warn",
       "no-useless-assignment": "off",
+      "no-unused-vars": "off",
+      "unused-imports/no-unused-imports": "error",
+      "unused-imports/no-unused-vars": [
+        "warn",
+        {
+          "vars": "all",
+          "varsIgnorePattern": "^_",
+          "args": "after-used",
+          "argsIgnorePattern": "^_"
+        }
+      ],
     },
   },
 
   // Enable browser globals for client-facing source (packages/ui)
   {
-    files: ["packages/ui/src/**/*.{ts,tsx,js,jsx}"],
+    files: ["src/**/*.{ts,tsx,js,jsx}"],
     languageOptions: {
       ecmaVersion: 2024,
       sourceType: "module",
@@ -77,13 +89,24 @@ export default [
     plugins: {
       "react-hooks": reactHooks,
       "jsx-a11y": jsxA11y,
-      // TypeScript rules will be enabled via parser below
+      "unused-imports": unusedImports,
     },
     rules: {
       // Hooks enforced inside component code
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
       "no-useless-assignment": "off",
+      "no-unused-vars": "off",
+      "unused-imports/no-unused-imports": "error",
+      "unused-imports/no-unused-vars": [
+        "warn",
+        {
+          "vars": "all",
+          "varsIgnorePattern": "^_",
+          "args": "after-used",
+          "argsIgnorePattern": "^_"
+        }
+      ],
     },
   },
 
@@ -106,13 +129,23 @@ export default [
     },
     plugins: {
       "@typescript-eslint": tsPlugin,
+      "unused-imports": unusedImports,
     },
     rules: {
-      // Turn off base rule that's incompatible with TS's type system
       "no-undef": "off",
       "no-useless-assignment": "off",
-      // Keep unused-vars to warn to surface issues without blocking
-      "@typescript-eslint/no-unused-vars": "warn",
+      "no-unused-vars": "off",
+      "@typescript-eslint/no-unused-vars": "off",
+      "unused-imports/no-unused-imports": "error",
+      "unused-imports/no-unused-vars": [
+        "warn",
+        {
+          "vars": "all",
+          "varsIgnorePattern": "^_",
+          "args": "after-used",
+          "argsIgnorePattern": "^_"
+        }
+      ],
     },
   },
 

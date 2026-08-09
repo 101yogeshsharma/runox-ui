@@ -1,7 +1,7 @@
 "use client";
 import { Box } from "../../atoms/Box";
 import React from "react";
-import { render, fireEvent, waitFor } from "@testing-library/react";
+import { render, fireEvent } from "@testing-library/react";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from "./Modal";
 import { vi } from "vitest";
 
