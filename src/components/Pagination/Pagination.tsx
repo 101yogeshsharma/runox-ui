@@ -3,7 +3,7 @@ import { Flex } from "../../atoms/Flex";
 import React, { forwardRef } from "react";
 import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
 import { cn } from "../../utils/cn";
-import { Button, ButtonProps } from "../Button";
+import { Button } from "../Button";
 import { Box } from "../../atoms/Box";
 import { Text } from "../../atoms/Text";
 

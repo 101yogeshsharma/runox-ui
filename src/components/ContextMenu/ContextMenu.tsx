@@ -10,7 +10,7 @@ import React, {
   useContext,
 } from "react";
 import { createPortal } from "react-dom";
-import { Check, ChevronRight, Circle } from "lucide-react";
+import { Check, Circle } from "lucide-react";
 import { cn } from "../../utils/cn";
 import { useContextMenuPosition, useClickOutside } from "../../hooks";
 
@@ -243,7 +243,7 @@ export const ContextMenuRadioItem = forwardRef<
     checked?: boolean;
     disabled?: boolean;
   }
->(({ className, children, value, checked, disabled, ...props }, ref) => {
+>(({ className, children, value: _value, checked, disabled, ...props }, ref) => {
   const context = useContext(ContextMenuContext);
   return (
     <Box
@@ -336,7 +336,7 @@ export const ContextMenuSubContent = React.forwardRef<
 ContextMenuSubContent.displayName = "ContextMenuSubContent";
 export const ContextMenuRadioGroup = ({
   children,
-  value,
+  value: _value,
   onValueChange,
   ...props
 }: {
@@ -350,7 +350,7 @@ export const ContextMenuRadioGroup = ({
         if (React.isValidElement(child)) {
           const element = child as React.ReactElement<any>;
           return React.cloneElement(element, {
-            checked: element.props.value === value,
+            checked: element.props.value === _value,
             onClick: (e: React.MouseEvent) => {
               if (onValueChange && element.props.value) {
                 onValueChange(element.props.value);

@@ -5,7 +5,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "./Tabs";
 
 describe("Tabs", () => {
   it("renders default tab content", () => {
-    const { getByText, queryByText } = render(
+    const { getByText } = render(
       <Tabs defaultValue="tab1">
         <TabsList>
           <TabsTrigger value="tab1">Tab 1</TabsTrigger>
@@ -21,7 +21,7 @@ describe("Tabs", () => {
   });
 
   it("switches tabs on click", async () => {
-    const { getByText, queryByText } = render(
+    const { getByText } = render(
       <Tabs defaultValue="tab1">
         <TabsList>
           <TabsTrigger value="tab1">Tab 1</TabsTrigger>

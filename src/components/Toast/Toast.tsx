@@ -145,6 +145,7 @@ const ToastItem: React.FC<{ toast: ToastMessage; onRemove: () => void }> = ({
       handleClose();
     }, duration);
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [toast.duration]);
 
   const handleClose = () => {

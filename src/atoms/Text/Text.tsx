@@ -25,7 +25,6 @@ export type TextAlign = "left" | "center" | "right";
 
 import type {
   PolymorphicComponentPropsWithRef,
-  PolymorphicRef,
 } from "../../utils/types";
 
 export interface TextBaseProps {

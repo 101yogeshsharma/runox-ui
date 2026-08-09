@@ -2,7 +2,7 @@ import React, { useState, useMemo } from "react";
 
 export type ColumnSortState = "asc" | "desc" | false;
 
-export interface Column<TData> {
+export interface Column<_TData> {
   id: string;
   accessorKey?: string;
   getCanSort: () => boolean;

@@ -2,7 +2,6 @@ import React, { ElementType, forwardRef } from "react";
 import { cn } from "../../utils/cn";
 import type {
   PolymorphicComponentPropsWithRef,
-  PolymorphicRef,
 } from "../../utils/types";
 
 export type BoxProps<C extends ElementType> = PolymorphicComponentPropsWithRef<

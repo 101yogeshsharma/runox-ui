@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Box } from "../../atoms/Box";
 import { cn } from "../../utils/cn";
 

@@ -356,7 +356,7 @@
   "scripts": {
     "build": "NODE_OPTIONS=--max_old_space_size=8192 tsup",
     "dev": "tsup --watch",
-    "lint": "eslint src",
+    "lint": "eslint src --max-warnings=0",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
@@ -397,6 +397,7 @@
     "eslint": "^9.0.0",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-unused-imports": "^4.4.1",
     "framer-motion": "^11.16.1",
     "husky": "^9.1.7",
     "jest-axe": "^10.0.0",

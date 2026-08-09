@@ -7,7 +7,6 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../utils/cn";
 import type {
   PolymorphicComponentPropsWithRef,
-  PolymorphicRef,
 } from "../../utils/types";
 
 const sidebarVariants = cva(

@@ -81,7 +81,7 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
       onValueChange,
       showTimePicker = false,
       showSeconds = false,
-      components,
+      components: _components,
       ...props
     },
     ref
