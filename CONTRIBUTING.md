@@ -4,7 +4,7 @@ First off, thank you for considering contributing to Runox UI. It's people like 
 
 ## Where do I go from here?
 
-If you've noticed a bug or have a feature request, make sure to check our [Issues](https://github.com/Torque-Foundry/runox-ui/issues) to see if someone else in the community has already created a ticket. If not, go ahead and make one!
+If you've noticed a bug or have a feature request, make sure to check our [Issues](https://github.com/101yogeshsharma/runox-ui/issues) to see if someone else in the community has already created a ticket. If not, go ahead and make one!
 
 ## Fork & create a branch
 
