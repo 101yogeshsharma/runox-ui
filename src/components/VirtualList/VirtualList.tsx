@@ -87,6 +87,21 @@ function useVirtualization(options: {
   };
 }
 
+const VirtualListItem = React.memo(({ virtualRow, item, itemClassName, renderItem }: any) => {
+  return (
+    <Box
+      className={cn(VIRTUAL_LIST_ITEM_CLASS, itemClassName)}
+      style={{
+        height: `${virtualRow.size}px`,
+        transform: `translateY(${virtualRow.start}px)`,
+      }}
+    >
+      {renderItem(item, virtualRow.index)}
+    </Box>
+  );
+});
+VirtualListItem.displayName = "VirtualListItem";
+
 export function VirtualList<T>({
   items,
   renderItem,
@@ -119,16 +134,13 @@ export function VirtualList<T>({
         {rowVirtualizer.getVirtualItems().map((virtualRow) => {
           const item = items[virtualRow.index];
           return (
-            <Box
+            <VirtualListItem
               key={virtualRow.index}
-              className={cn(VIRTUAL_LIST_ITEM_CLASS, itemClassName)}
-              style={{
-                height: `${virtualRow.size}px`,
-                transform: `translateY(${virtualRow.start}px)`,
-              }}
-            >
-              {renderItem(item, virtualRow.index)}
-            </Box>
+              virtualRow={virtualRow}
+              item={item}
+              itemClassName={itemClassName}
+              renderItem={renderItem}
+            />
           );
         })}
       </Box>

@@ -312,66 +312,24 @@ export function KanbanBoard<T extends { id?: UniqueIdentifier }>({
             dragOverColumnId === col.id && !dragOverItemId;
 
           return (
-            <Flex
-              direction="col"
+            <MemoizedColumn
               key={col.id}
-              onDragOver={(e) => handleDragOverColumn(e, col.id)}
-              onDragLeave={(e) => handleDragLeaveColumn(e, col.id)}
-              onDrop={(e) => handleDropColumn(e, col.id)}
-              className={cn(
-                "rnx-kanban-column w-80 shrink-0 p-4",
-                isColumnDragOver && "rnx-kanban-column--drag-over"
-              )}
-            >
-              <Flex align="center" justify="between" className="mb-4 px-2">
-                <Text as="h3" className="rnx-kanban-column-title">
-                  {col.title}
-                </Text>
-                <Box
-                  as="span"
-                  className="rnx-kanban-column-count px-2.5 py-0.5"
-                >
-                  {col.items.length}
-                </Box>
-              </Flex>
-
-              <Flex direction="col" gap="sm" className="min-h-40 flex-1">
-                {col.items.map((item) => {
-                  const itemId = getItemId(item);
-                  const isDragging = draggedItemId === itemId;
-                  const isDragOver = dragOverItemId === itemId;
-
-                  let indicatorStyles = "";
-                  if (isDragOver && !isDragging) {
-                    indicatorStyles =
-                      dropPosition === "before"
-                        ? "rnx-kanban-card--drag-over-before"
-                        : "rnx-kanban-card--drag-over-after";
-                  }
-
-                  return (
-                    <Box
-                      key={itemId}
-                      draggable
-                      onDragStart={(e) => handleDragStart(e, itemId)}
-                      onDragOver={(e) => handleDragOverItem(e, itemId, col.id)}
-                      onDragLeave={(e) => handleDragLeaveItem(e, itemId)}
-                      onDrop={(e) => handleDropItem(e, itemId)}
-                      onDragEnd={handleDragEnd}
-                      className={cn(
-                        "rnx-kanban-card touch-none",
-                        isDragging
-                          ? "rnx-kanban-card--dragging"
-                          : "rnx-kanban-card--draggable",
-                        indicatorStyles
-                      )}
-                    >
-                      {renderItem(item)}
-                    </Box>
-                  );
-                })}
-              </Flex>
-            </Flex>
+              col={col}
+              isColumnDragOver={isColumnDragOver}
+              draggedItemId={draggedItemId}
+              dragOverItemId={dragOverItemId}
+              dropPosition={dropPosition}
+              getItemId={getItemId}
+              renderItem={renderItem}
+              handleDragOverColumn={handleDragOverColumn}
+              handleDragLeaveColumn={handleDragLeaveColumn}
+              handleDropColumn={handleDropColumn}
+              handleDragStart={handleDragStart}
+              handleDragOverItem={handleDragOverItem}
+              handleDragLeaveItem={handleDragLeaveItem}
+              handleDropItem={handleDropItem}
+              handleDragEnd={handleDragEnd}
+            />
           );
         })}
 
@@ -380,3 +338,88 @@ export function KanbanBoard<T extends { id?: UniqueIdentifier }>({
     </Box>
   );
 }
+
+export const MemoizedCard = React.memo(({ item, itemId, isDragging, isDragOver, colId, dropPosition, renderItem, handleDragStart, handleDragOverItem, handleDragLeaveItem, handleDropItem, handleDragEnd }: any) => {
+  let indicatorStyles = "";
+  if (isDragOver && !isDragging) {
+    indicatorStyles =
+      dropPosition === "before"
+        ? "rnx-kanban-card--drag-over-before"
+        : "rnx-kanban-card--drag-over-after";
+  }
+
+  return (
+    <Box
+      draggable
+      onDragStart={(e) => handleDragStart(e, itemId)}
+      onDragOver={(e) => handleDragOverItem(e, itemId, colId)}
+      onDragLeave={(e) => handleDragLeaveItem(e, itemId)}
+      onDrop={(e) => handleDropItem(e, itemId)}
+      onDragEnd={handleDragEnd}
+      className={cn(
+        "rnx-kanban-card touch-none",
+        isDragging
+          ? "rnx-kanban-card--dragging"
+          : "rnx-kanban-card--draggable",
+        indicatorStyles
+      )}
+    >
+      {renderItem(item)}
+    </Box>
+  );
+});
+MemoizedCard.displayName = "MemoizedCard";
+
+export const MemoizedColumn = React.memo(({ col, isColumnDragOver, draggedItemId, dragOverItemId, dropPosition, getItemId, renderItem, handleDragOverColumn, handleDragLeaveColumn, handleDropColumn, handleDragStart, handleDragOverItem, handleDragLeaveItem, handleDropItem, handleDragEnd }: any) => {
+  return (
+    <Flex
+      direction="col"
+      onDragOver={(e) => handleDragOverColumn(e, col.id)}
+      onDragLeave={(e) => handleDragLeaveColumn(e, col.id)}
+      onDrop={(e) => handleDropColumn(e, col.id)}
+      className={cn(
+        "rnx-kanban-column w-80 shrink-0 p-4",
+        isColumnDragOver && "rnx-kanban-column--drag-over"
+      )}
+    >
+      <Flex align="center" justify="between" className="mb-4 px-2">
+        <Text as="h3" className="rnx-kanban-column-title">
+          {col.title}
+        </Text>
+        <Box
+          as="span"
+          className="rnx-kanban-column-count px-2.5 py-0.5"
+        >
+          {col.items.length}
+        </Box>
+      </Flex>
+
+      <Flex direction="col" gap="sm" className="min-h-40 flex-1">
+        {col.items.map((item: any) => {
+          const itemId = getItemId(item);
+          const isDragging = draggedItemId === itemId;
+          const isDragOver = dragOverItemId === itemId;
+
+          return (
+            <MemoizedCard
+              key={itemId}
+              item={item}
+              itemId={itemId}
+              isDragging={isDragging}
+              isDragOver={isDragOver}
+              colId={col.id}
+              dropPosition={dropPosition}
+              renderItem={renderItem}
+              handleDragStart={handleDragStart}
+              handleDragOverItem={handleDragOverItem}
+              handleDragLeaveItem={handleDragLeaveItem}
+              handleDropItem={handleDropItem}
+              handleDragEnd={handleDragEnd}
+            />
+          );
+        })}
+      </Flex>
+    </Flex>
+  );
+});
+MemoizedColumn.displayName = "MemoizedColumn";

@@ -174,6 +174,14 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
       setValue(currentDate);
     };
 
+    const handleMouseEnter = React.useCallback((date: Date) => {
+      if (mode === "range") setHoverDate(date);
+    }, [mode]);
+
+    const handleMouseLeave = React.useCallback(() => {
+      if (mode === "range") setHoverDate(null);
+    }, [mode]);
+
     const renderDays = () => {
       const days = [];
 
@@ -209,10 +217,6 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
     };
 
     const renderDayCell = (date: Date, isOutside: boolean) => {
-      if (isOutside && !showOutsideDays) {
-        return <td key={date.toISOString()} className="h-9 w-9 p-0" />;
-      }
-
       let isSelected = false;
       let isRangeStart = false;
       let isRangeEnd = false;
@@ -240,36 +244,21 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
         }
       }
 
-      const cellClass = cn(
-        "rnx-calendar__day inline-flex items-center justify-center whitespace-nowrap",
-        "h-9 w-9 p-0 relative focus-within:relative focus-within:z-20",
-        isOutside && "rnx-calendar__day--outside",
-        isRangeMiddle && "rnx-calendar__day--range-middle",
-        isRangeStart && "rnx-calendar__day--range-start",
-        isRangeEnd && "rnx-calendar__day--range-end",
-        isSelected && "rnx-calendar__day--selected",
-        !isSelected && isToday && "rnx-calendar__day--today"
-      );
-
       return (
-        <td
+        <DayCell
           key={date.toISOString()}
-          className="relative p-0"
-          onMouseEnter={() =>
-            mode === "range" ? setHoverDate(date) : undefined
-          }
-          onMouseLeave={() =>
-            mode === "range" ? setHoverDate(null) : undefined
-          }
-        >
-          <button
-            type="button"
-            className={cellClass}
-            onClick={() => handleDateClick(date)}
-          >
-            {date.getDate()}
-          </button>
-        </td>
+          date={date}
+          isOutside={isOutside}
+          showOutsideDays={showOutsideDays}
+          isSelected={isSelected}
+          isRangeStart={isRangeStart}
+          isRangeEnd={isRangeEnd}
+          isRangeMiddle={isRangeMiddle}
+          isToday={isToday}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onClick={handleDateClick}
+        />
       );
     };
 
@@ -375,6 +364,40 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
     );
   }
 );
+
+const DayCell = React.memo(({ date, isOutside, showOutsideDays, isSelected, isRangeStart, isRangeEnd, isRangeMiddle, isToday, onMouseEnter, onMouseLeave, onClick }: any) => {
+  if (isOutside && !showOutsideDays) {
+    return <td className="h-9 w-9 p-0" />;
+  }
+
+  const cellClass = cn(
+    "rnx-calendar__day inline-flex items-center justify-center whitespace-nowrap",
+    "h-9 w-9 p-0 relative focus-within:relative focus-within:z-20",
+    isOutside && "rnx-calendar__day--outside",
+    isRangeMiddle && "rnx-calendar__day--range-middle",
+    isRangeStart && "rnx-calendar__day--range-start",
+    isRangeEnd && "rnx-calendar__day--range-end",
+    isSelected && "rnx-calendar__day--selected",
+    !isSelected && isToday && "rnx-calendar__day--today"
+  );
+
+  return (
+    <td
+      className="relative p-0"
+      onMouseEnter={() => onMouseEnter(date)}
+      onMouseLeave={() => onMouseLeave(date)}
+    >
+      <button
+        type="button"
+        className={cellClass}
+        onClick={() => onClick(date)}
+      >
+        {date.getDate()}
+      </button>
+    </td>
+  );
+});
+DayCell.displayName = "DayCell";
 
 Calendar.displayName = "Calendar";
 

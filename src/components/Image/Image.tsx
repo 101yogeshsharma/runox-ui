@@ -30,9 +30,11 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
     );
 
     const [currentSrc, setCurrentSrc] = useState<string | undefined>(src);
+    const [prevSrc, setPrevSrc] = useState<string | undefined>(src);
     const [hasAttemptedFallback, setHasAttemptedFallback] = useState(false);
 
-    if (src !== currentSrc) {
+    if (src !== prevSrc) {
+      setPrevSrc(src);
       setCurrentSrc(src);
       setStatus("loading");
       setHasAttemptedFallback(false);

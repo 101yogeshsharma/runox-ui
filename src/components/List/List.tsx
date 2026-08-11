@@ -3,7 +3,6 @@
 import React, { createContext, useContext, useState } from "react";
 import { cn } from "../../utils/cn";
 import { ChevronRight } from "lucide-react";
-import { m, AnimatePresence } from "framer-motion";
 import { Box } from "../../atoms/Box";
 import { Flex } from "../../atoms/Flex";
 import { Text } from "../../atoms/Text";
@@ -165,19 +164,17 @@ export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
               )}
             />
           </button>
-          <AnimatePresence initial={false}>
-            {isExpanded && (
-              <m.div
-                id={contentId}
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                transition={{ duration: 0.2, ease: "easeInOut" }}
-              >
-                <Box className={LIST_ITEM_COLLAPSIBLE_CONTENT}>{children}</Box>
-              </m.div>
+          <div
+            id={contentId}
+            className={cn(
+              "grid transition-all duration-200 ease-in-out",
+              isExpanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
             )}
-          </AnimatePresence>
+          >
+            <div className="overflow-hidden">
+              <Box className={LIST_ITEM_COLLAPSIBLE_CONTENT}>{children}</Box>
+            </div>
+          </div>
         </Box>
       );
     }
