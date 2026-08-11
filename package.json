@@ -1,9 +1,26 @@
 {
   "name": "@runox/ui",
   "version": "0.1.0",
-  "description": "Premium Component Library and Design System for Runox",
+  "description": "Modern Component Library and Design System for Runox",
   "author": "Runox",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/101yogeshsharma/runox-ui.git"
+  },
+  "homepage": "https://github.com/101yogeshsharma/runox-ui#readme",
+  "bugs": {
+    "url": "https://github.com/101yogeshsharma/runox-ui/issues"
+  },
+  "keywords": [
+    "react",
+    "ui",
+    "components",
+    "design-system",
+    "glassmorphism",
+    "framer-motion",
+    "runox"
+  ],
   "sideEffects": [
     "**/*.css"
   ],

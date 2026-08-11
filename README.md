@@ -1,17 +1,26 @@
+<div align="center">
+  <img src="https://raw.githubusercontent.com/101yogeshsharma/runox-ui/main/assets/hero.svg" alt="Runox UI Hero Banner" />
+</div>
+
 # @runox/ui
 
-The official standalone component library and design system for Runox. It provides a set of highly polished, interactive React components with a premium, glassmorphism-heavy aesthetic.
+[![NPM Version](https://img.shields.io/npm/v/@runox/ui.svg?style=flat-square&color=blue)](https://www.npmjs.com/package/@runox/ui)
+[![NPM Downloads](https://img.shields.io/npm/dm/@runox/ui.svg?style=flat-square)](https://www.npmjs.com/package/@runox/ui)
+[![License](https://img.shields.io/npm/l/@runox/ui.svg?style=flat-square)](https://github.com/101yogeshsharma/runox-ui/blob/main/LICENSE)
+[![Bundle Size](https://img.shields.io/bundlephobia/minzip/@runox/ui.svg?style=flat-square)](https://bundlephobia.com/package/@runox/ui)
 
-## 🚀 Features
+The official standalone component library and design system for Runox. It provides a set of highly polished, interactive React components with a modern, glassmorphism-heavy aesthetic.
 
-- **Premium Design System**: Includes a comprehensive set of design tokens (Colors, Typography, Shadows, Motion) tailored for a premium dark mode aesthetic.
+## Features
+
+- **Comprehensive Design System**: Includes a comprehensive set of design tokens (Colors, Typography, Shadows, Motion) tailored for a sleek dark mode aesthetic.
 - **Glassmorphism**: Components natively support translucent layers, blurred backgrounds, and subtle glow borders.
 - **Responsive Layout Primitives**: Build complex layouts effortlessly using our token-aware `<Grid>`, `<Flex>`, and `<Stack>` components. No custom CSS required.
 - **Micro-interactions**: Uses `framer-motion` to power buttery-smooth micro-animations on interactive elements (e.g., Spring-animated Modals, Magic layout Tabs, Hover elevation Cards).
 - **Zero Config CSS**: CSS is seamlessly bundled directly into the JS bundle via `tsup`, meaning no additional CSS imports are necessary in the consuming application!
 - **Fully Typed**: 100% TypeScript with detailed prop interfaces.
 
-## 📦 Installation
+## Installation
 
 ```bash
 npm install @runox/ui
@@ -25,7 +34,7 @@ Make sure you have the following peer dependencies installed in your project:
 npm install react react-dom framer-motion
 ```
 
-## 🛠 Usage
+## Usage
 
 ### Setup
 
@@ -42,7 +51,7 @@ function App() {
   return (
     <Card variant="glass" isInteractive>
       <CardHeader>
-        <Text variant="h3">Premium Experience</Text>
+        <Text variant="h3">Modern Experience</Text>
       </CardHeader>
       <CardBody>
         <Text color="secondary">Enjoy our beautiful design system.</Text>
@@ -55,7 +64,7 @@ function App() {
 }
 ```
 
-## 📚 Components
+## Components
 
 ### Layout & Typography
 
@@ -73,11 +82,13 @@ function App() {
 
 - `Avatar`, `Badge`, `Table`
 
-## 📚 Documentation
+## Documentation
 
-The documentation and interactive examples for this component library are maintained in a separate repository. Please refer to that repository for detailed component APIs, usage examples, and design system guidelines.
+The documentation and interactive examples for this component library are maintained in the [runox-docs](https://github.com/101yogeshsharma/runox-docs) repository. 
 
-## 👨‍💻 Development
+For detailed component APIs, usage examples, and design system guidelines, please visit our official documentation site.
+
+## Development
 
 ### Commands
 
