@@ -1,5 +1,5 @@
 import React from "react";
-import { render, fireEvent, screen } from "@testing-library/react";
+import { render, fireEvent } from "@testing-library/react";
 import { Accordion } from "./Accordion";
 import { describe, it, expect } from "vitest";
 
@@ -23,7 +23,7 @@ describe("Accordion", () => {
   });
 
   it("handles single selection", () => {
-    const { getByRole, queryByText, getByText } = render(
+    const { getByRole, getByText } = render(
       <Accordion type="single">
         <Accordion.Item value="item-1">
           <Accordion.Trigger>Item 1</Accordion.Trigger>

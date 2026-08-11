@@ -5,7 +5,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "./Tabs";
 
 describe("Tabs", () => {
   it("renders with default value correctly", () => {
-    const { getByText, getByRole } = render(
+    const { getByText } = render(
       <Tabs defaultValue="tab1">
         <TabsList>
           <TabsTrigger value="tab1">Tab 1</TabsTrigger>
@@ -21,7 +21,7 @@ describe("Tabs", () => {
   });
 
   it("handles keyboard navigation (ArrowRight and ArrowLeft)", () => {
-    const { getByRole, getAllByRole } = render(
+    const { getAllByRole } = render(
       <Tabs defaultValue="tab1">
         <TabsList>
           <TabsTrigger value="tab1">Tab 1</TabsTrigger>
