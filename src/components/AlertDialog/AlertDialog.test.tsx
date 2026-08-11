@@ -1,57 +1,136 @@
-import React from "react";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
+import { render, fireEvent, act } from "@testing-library/react";
 import { AlertDialog } from "./AlertDialog";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 
-describe("AlertDialog Component", () => {
-  it("renders trigger and opens dialog on click", async () => {
-    render(
+describe("AlertDialog", () => {
+  const TestComponent = ({ onOpenChange }: { onOpenChange?: (open: boolean) => void }) => (
+    <AlertDialog onOpenChange={onOpenChange}>
+      <AlertDialog.Trigger asChild>
+        <button data-testid="trigger">Open</button>
+      </AlertDialog.Trigger>
+      <AlertDialog.Portal>
+        <AlertDialog.Overlay />
+        <AlertDialog.Content data-testid="content">
+          <AlertDialog.Header>
+            <AlertDialog.Title>Title</AlertDialog.Title>
+            <AlertDialog.Description>Description</AlertDialog.Description>
+          </AlertDialog.Header>
+          <AlertDialog.Footer>
+            <AlertDialog.Cancel asChild>
+              <button data-testid="cancel">Cancel</button>
+            </AlertDialog.Cancel>
+            <AlertDialog.Action asChild>
+              <button data-testid="action">Action</button>
+            </AlertDialog.Action>
+          </AlertDialog.Footer>
+        </AlertDialog.Content>
+      </AlertDialog.Portal>
+    </AlertDialog>
+  );
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("renders trigger and does not render content initially", () => {
+    const { queryByTestId } = render(<TestComponent />);
+    expect(queryByTestId("trigger")).toBeInTheDocument();
+    expect(queryByTestId("content")).not.toBeInTheDocument();
+  });
+
+  it("opens content on trigger click", () => {
+    const onOpenChange = vi.fn();
+    const { getByTestId } = render(<TestComponent onOpenChange={onOpenChange} />);
+    
+    fireEvent.click(getByTestId("trigger"));
+    
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    expect(getByTestId("content")).toBeInTheDocument();
+    expect(onOpenChange).toHaveBeenCalledWith(true);
+  });
+
+  it("closes on cancel click", () => {
+    const { getByTestId, queryByTestId } = render(<TestComponent />);
+    
+    fireEvent.click(getByTestId("trigger"));
+    
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    fireEvent.click(getByTestId("cancel"));
+
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    expect(queryByTestId("content")).not.toBeInTheDocument();
+  });
+
+  it("closes on action click", () => {
+    const { getByTestId, queryByTestId } = render(<TestComponent />);
+    
+    fireEvent.click(getByTestId("trigger"));
+    
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    fireEvent.click(getByTestId("action"));
+
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    expect(queryByTestId("content")).not.toBeInTheDocument();
+  });
+
+  it("closes on Escape key down", () => {
+    const { getByTestId, queryByTestId } = render(<TestComponent />);
+    
+    fireEvent.click(getByTestId("trigger"));
+    
+    act(() => {
+      vi.runAllTimers();
+    });
+    expect(getByTestId("content")).toBeInTheDocument();
+
+    fireEvent.keyDown(document, { key: "Escape", code: "Escape" });
+
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    expect(queryByTestId("content")).not.toBeInTheDocument();
+  });
+
+  it("renders non-asChild triggers and actions correctly", () => {
+    const { getByRole, queryByRole } = render(
       <AlertDialog>
-        <AlertDialog.Trigger data-testid="trigger">
-          Open Dialog
-        </AlertDialog.Trigger>
-        <AlertDialog.Portal>
-          <AlertDialog.Overlay data-testid="overlay" />
-          <AlertDialog.Content data-testid="content">
-            <AlertDialog.Header>
-              <AlertDialog.Title>Title</AlertDialog.Title>
-              <AlertDialog.Description>Description</AlertDialog.Description>
-            </AlertDialog.Header>
-            <AlertDialog.Footer>
-              <AlertDialog.Cancel data-testid="cancel">
-                Cancel
-              </AlertDialog.Cancel>
-              <AlertDialog.Action data-testid="action">
-                Action
-              </AlertDialog.Action>
-            </AlertDialog.Footer>
-          </AlertDialog.Content>
-        </AlertDialog.Portal>
+        <AlertDialog.Trigger>Open Alert</AlertDialog.Trigger>
+        <AlertDialog.Content>
+          <AlertDialog.Cancel>Close</AlertDialog.Cancel>
+          <AlertDialog.Action>Confirm</AlertDialog.Action>
+        </AlertDialog.Content>
       </AlertDialog>
     );
 
-    const trigger = screen.getByTestId("trigger");
-    expect(trigger).toBeInTheDocument();
+    fireEvent.click(getByRole("button", { name: "Open Alert" }));
+    act(() => { vi.runAllTimers(); });
 
-    // Dialog should not be open yet
-    expect(screen.queryByTestId("content")).not.toBeInTheDocument();
+    expect(getByRole("button", { name: "Close" })).toBeInTheDocument();
+    expect(getByRole("button", { name: "Confirm" })).toBeInTheDocument();
 
-    // Open dialog
-    fireEvent.click(trigger);
+    fireEvent.click(getByRole("button", { name: "Confirm" }));
+    act(() => { vi.runAllTimers(); });
 
-    await waitFor(() => {
-      expect(screen.getByTestId("content")).toBeInTheDocument();
-    });
-
-    expect(screen.getByText("Title")).toBeInTheDocument();
-    expect(screen.getByText("Description")).toBeInTheDocument();
-
-    // Close dialog
-    const cancel = screen.getByTestId("cancel");
-    fireEvent.click(cancel);
-
-    await waitFor(() => {
-      expect(screen.queryByTestId("content")).not.toBeInTheDocument();
-    });
+    expect(queryByRole("button", { name: "Close" })).not.toBeInTheDocument();
   });
 });
