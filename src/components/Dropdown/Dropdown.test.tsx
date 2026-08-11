@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
-import { render, fireEvent, waitFor, act } from "@testing-library/react";
-import { vi, describe, it, expect, beforeEach, afterEach } from "vitest";
+import { render, fireEvent, waitFor } from "@testing-library/react";
+import { vi, describe, it, expect } from "vitest";
 import { Dropdown, DropdownItem, DropdownTrigger, DropdownContent, DropdownSearch, DropdownEmpty, DropdownGroup, DropdownDivider } from "./Dropdown";
 
 describe("Dropdown", () => {
