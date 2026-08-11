@@ -15,7 +15,7 @@ const sidebarVariants = cva(
     variants: {
       collapsed: {
         true: "w-16",
-        false: "w-64",
+        false: "w-full md:w-64",
       },
     },
     defaultVariants: {

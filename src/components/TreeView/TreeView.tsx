@@ -9,7 +9,6 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import { m, AnimatePresence } from "framer-motion";
 import {
   ChevronRight,
   FileIcon,
@@ -254,24 +253,21 @@ export const TreeFolder = React.forwardRef<HTMLDivElement, TreeFolderProps>(
             {label}
           </Box>
         </Flex>
-        <AnimatePresence initial={false}>
-          {isExpanded && (
-            <m.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              transition={{ duration: 0.2, ease: "easeInOut" }}
-              className="overflow-hidden"
-            >
-              <Box
-                role="group"
-                className="rnx-treeview-content mt-1 ml-4 flex flex-col space-y-1 border-l pl-2"
-              >
-                {children}
-              </Box>
-            </m.div>
+        <div
+          className={cn(
+            "grid transition-all duration-200 ease-in-out",
+            isExpanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
           )}
-        </AnimatePresence>
+        >
+          <div className="overflow-hidden">
+            <Box
+              role="group"
+              className="rnx-treeview-content mt-1 ml-4 flex flex-col space-y-1 border-l pl-2"
+            >
+              {children}
+            </Box>
+          </div>
+        </div>
       </Flex>
     );
   }
