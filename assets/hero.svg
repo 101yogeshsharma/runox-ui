@@ -1,0 +1,205 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="100%" height="100%" style="background-color: #010104;">
+  <defs>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="rgba(0, 85, 255, 0.15)" />
+      <stop offset="100%" stop-color="rgba(0, 85, 255, 0)" />
+    </radialGradient>
+    <linearGradient id="fade" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#010104" stop-opacity="1" />
+      <stop offset="41.66666666666667%" stop-color="#010104" stop-opacity="1" />
+      <stop offset="100%" stop-color="#010104" stop-opacity="0" />
+    </linearGradient>
+  </defs>
+
+  <!-- Base dark background -->
+  <rect width="100%" height="100%" fill="#010104" />
+  
+  <!-- Perspective Grid -->
+  <g opacity="0.6">
+    <line x1="960" y1="400" x2="-3840" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-3760" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-3680" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-3600" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-3520" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-3440" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-3360" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-3280" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-3200" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-3120" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-3040" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-2960" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-2880" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-2800" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-2720" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-2640" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-2560" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-2480" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-2400" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-2320" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-2240" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-2160" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-2080" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-2000" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-1920" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-1840" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-1760" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-1680" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-1600" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-1520" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-1440" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-1360" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-1280" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-1200" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-1120" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-1040" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-960" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-880" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-800" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-720" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-640" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-560" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-480" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-400" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-320" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-240" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-160" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="-80" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="0" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="80" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="160" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="240" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="320" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="400" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="480" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="560" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="640" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="720" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="800" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="880" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="960" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="1040" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="1120" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="1200" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="1280" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="1360" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="1440" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="1520" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="1600" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="1680" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="1760" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="1840" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="1920" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="2000" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="2080" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="2160" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="2240" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="2320" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="2400" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="2480" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="2560" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="2640" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="2720" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="2800" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="2880" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="2960" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="3040" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="3120" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="3200" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="3280" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="3360" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="3440" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="3520" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="3600" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="3680" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="3760" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="3840" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="3920" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="4000" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="4080" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="4160" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="4240" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="4320" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="4400" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="4480" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="4560" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="4640" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="4720" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="4800" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="4880" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="4960" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="5040" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="5120" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="5200" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="5280" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="5360" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="5440" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="5520" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="5600" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="5680" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="960" y1="400" x2="5760" y2="1080" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="400" x2="1920" y2="400" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="400.1379449404087" x2="1920" y2="400.1379449404087" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="400.780334422347" x2="1920" y2="400.780334422347" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="402.1503488089145" x2="1920" y2="402.1503488089145" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="404.41423809307867" x2="1920" y2="404.41423809307867" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="407.71135659765076" x2="1920" y2="407.71135659765076" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="412.16420979759886" x2="1920" y2="412.16420979759886" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="417.8834323401123" x2="1920" y2="417.8834323401123" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="424.9707015151032" x2="1920" y2="424.9707015151032" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="433.52062051931614" x2="1920" y2="433.52062051931614" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="443.62202033877173" x2="1920" y2="443.62202033877173" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="455.3589046966981" x2="1920" y2="455.3589046966981" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="468.8111618852639" x2="1920" y2="468.8111618852639" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="484.0551169360175" x2="1920" y2="484.0551169360175" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="501.16397022867375" x2="1920" y2="501.16397022867375" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="520.2081528017131" x2="1920" y2="520.2081528017131" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="541.2556189785175" x2="1920" y2="541.2556189785175" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="564.3720907893206" x2="1920" y2="564.3720907893206" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="589.6212646303152" x2="1920" y2="589.6212646303152" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="617.0649878601625" x2="1920" y2="617.0649878601625" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="646.7634111248238" x2="1920" y2="646.7634111248238" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="678.7751208411539" x2="1920" y2="678.7751208411539" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="713.1572552807604" x2="1920" y2="713.1572552807604" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="749.9656069639032" x2="1920" y2="749.9656069639032" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="789.2547135231634" x2="1920" y2="789.2547135231634" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="831.0779387772141" x2="1920" y2="831.0779387772141" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="875.4875454310894" x2="1920" y2="875.4875454310894" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="922.534760566223" x2="1920" y2="922.534760566223" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="972.2698348835936" x2="1920" y2="972.2698348835936" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+<line x1="0" y1="1024.7420965038557" x2="1920" y2="1024.7420965038557" stroke="rgba(0, 85, 255, 0.2)" stroke-width="2" />
+
+  </g>
+  
+  <!-- Fade out grid at horizon -->
+  <rect width="100%" height="100%" fill="url(#fade)" />
+  
+  <!-- Horizon glow line -->
+  <rect x="0" y="400" width="1920" height="2" fill="rgba(0, 85, 255, 0.6)" />
+  
+  <!-- Center Glow for logo -->
+  <circle cx="960" cy="540" r="400" fill="url(#glow)" />
+  
+  <!-- Logo -->
+  
+<g transform="translate(560, 480) scale(1)">
+  <g fill="none" stroke-width="36" stroke-linecap="round" stroke-linejoin="round">
+    <g stroke="#0055FF">
+      <!-- R -->
+      <path d="M 40 120 L 40 40 L 130 40" />
+      <!-- N (Right portion) -->
+      <path d="M 340 80 A 40 40 0 0 1 380 40 L 410 40 A 40 40 0 0 1 450 80 L 450 120" />
+      <!-- O -->
+      <rect x="500" y="40" width="130" height="80" rx="40" />
+      <!-- X -->
+      <path d="M 680 40 L 790 120 M 790 40 L 680 120" />
+    </g>
+    <g stroke="#FFFFFF">
+      <!-- U -->
+      <path d="M 180 40 L 180 80 A 40 40 0 0 0 220 120 L 250 120 A 40 40 0 0 0 290 80 L 290 40" />
+      <!-- I (Left line of N) -->
+      <path d="M 340 120 L 340 80" />
+    </g>
+  </g>
+</g>
+
+</svg>
