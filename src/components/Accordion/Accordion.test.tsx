@@ -37,11 +37,11 @@ describe("Accordion", () => {
     );
 
     fireEvent.click(getByRole("button", { name: "Item 1" }));
-    expect(getByText("Content 1")).toBeVisible();
+    expect(getByText("Content 1").closest(".rnx-accordion-content")).toHaveAttribute("data-state", "open");
 
     fireEvent.click(getByRole("button", { name: "Item 2" }));
-    expect(getByText("Content 2")).toBeVisible();
-    expect(getByText("Content 1")).not.toBeVisible();
+    expect(getByText("Content 2").closest(".rnx-accordion-content")).toHaveAttribute("data-state", "open");
+    expect(getByText("Content 1").closest(".rnx-accordion-content")).toHaveAttribute("data-state", "closed");
   });
   
   it("handles collapsible single selection", () => {
@@ -54,10 +54,10 @@ describe("Accordion", () => {
       </Accordion>
     );
 
-    expect(getByText("Content 1")).toBeVisible();
+    expect(getByText("Content 1").closest(".rnx-accordion-content")).toHaveAttribute("data-state", "open");
 
     fireEvent.click(getByRole("button", { name: "Item 1" }));
-    expect(getByText("Content 1")).not.toBeVisible();
+    expect(getByText("Content 1").closest(".rnx-accordion-content")).toHaveAttribute("data-state", "closed");
   });
 
   it("handles multiple selection", () => {
@@ -75,15 +75,15 @@ describe("Accordion", () => {
     );
 
     fireEvent.click(getByRole("button", { name: "Item 1" }));
-    expect(getByText("Content 1")).toBeVisible();
+    expect(getByText("Content 1").closest(".rnx-accordion-content")).toHaveAttribute("data-state", "open");
 
     fireEvent.click(getByRole("button", { name: "Item 2" }));
-    expect(getByText("Content 1")).toBeVisible();
-    expect(getByText("Content 2")).toBeVisible();
+    expect(getByText("Content 1").closest(".rnx-accordion-content")).toHaveAttribute("data-state", "open");
+    expect(getByText("Content 2").closest(".rnx-accordion-content")).toHaveAttribute("data-state", "open");
 
     fireEvent.click(getByRole("button", { name: "Item 1" }));
-    expect(getByText("Content 1")).not.toBeVisible();
-    expect(getByText("Content 2")).toBeVisible();
+    expect(getByText("Content 1").closest(".rnx-accordion-content")).toHaveAttribute("data-state", "closed");
+    expect(getByText("Content 2").closest(".rnx-accordion-content")).toHaveAttribute("data-state", "open");
   });
 
   it("handles keyboard navigation (ArrowDown and ArrowUp)", () => {
