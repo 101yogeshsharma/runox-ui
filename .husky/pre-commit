@@ -1,6 +1,4 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
-npm run lint
+npx lint-staged
+npm audit --audit-level=moderate
 npm run test:coverage
 npm run build

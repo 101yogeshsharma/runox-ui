@@ -25,14 +25,14 @@ type AccordionContextItemType = {
 };
 
 const AccordionItemContext = createContext<AccordionContextItemType | null>(
-  null
+  null,
 );
 
 function useAccordionItemContext() {
   const context = useContext(AccordionItemContext);
   if (!context)
     throw new Error(
-      "Accordion components must be used within an AccordionItem"
+      "Accordion components must be used within an AccordionItem",
     );
   return context;
 }
@@ -59,7 +59,7 @@ const AccordionComponent = forwardRef<HTMLDivElement, AccordionProps>(
       collapsible = false,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [value, setValue] = useControllableState<string | string[]>({
       prop: valueProp,
@@ -102,7 +102,7 @@ const AccordionComponent = forwardRef<HTMLDivElement, AccordionProps>(
         <Box ref={ref} className={cn("rnx-accordion", className)} {...props} />
       </AccordionContext.Provider>
     );
-  }
+  },
 );
 AccordionComponent.displayName = "Accordion";
 
@@ -119,7 +119,7 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
         {...props}
       />
     </AccordionItemContext.Provider>
-  )
+  ),
 );
 AccordionItem.displayName = "AccordionItem";
 
@@ -156,13 +156,13 @@ export const AccordionTrigger = forwardRef<
             e.preventDefault();
             // Scope to the nearest accordion root to avoid jumping between multiple accordions
             const accordionRoot = (e.currentTarget as HTMLElement).closest(
-              ".rnx-accordion"
+              ".rnx-accordion",
             );
             if (!accordionRoot) return;
             const allTriggers = Array.from(
               accordionRoot.querySelectorAll<HTMLElement>(
-                ":scope > .rnx-accordion-item > .rnx-accordion-header > .rnx-accordion-trigger"
-              )
+                ":scope > .rnx-accordion-item > .rnx-accordion-header > .rnx-accordion-trigger",
+              ),
             );
             const idx = allTriggers.indexOf(e.currentTarget);
             const next =
@@ -205,9 +205,10 @@ export const AccordionContent = forwardRef<
       id={contentId}
       role="region"
       aria-labelledby={triggerId}
+      aria-hidden={!isOpen}
+      {...(!isOpen ? { inert: true } : {})}
       data-state={isOpen ? "open" : "closed"}
       className={cn("rnx-accordion-content", className)}
-      hidden={!isOpen}
       {...props}
     >
       <Box className="rnx-accordion-content-inner">
