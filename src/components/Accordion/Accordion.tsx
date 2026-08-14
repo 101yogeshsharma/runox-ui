@@ -205,9 +205,10 @@ export const AccordionContent = forwardRef<
       id={contentId}
       role="region"
       aria-labelledby={triggerId}
+      aria-hidden={!isOpen}
+      {...(!isOpen ? { inert: "true" } : {})}
       data-state={isOpen ? "open" : "closed"}
       className={cn("rnx-accordion-content", className)}
-      hidden={!isOpen}
       {...props}
     >
       <Box className="rnx-accordion-content-inner">
