@@ -6,7 +6,11 @@ import { Text } from "../../atoms/Text";
 import React from "react";
 import { Highlight, themes, Language } from "prism-react-renderer";
 import { cn } from "../../utils/cn";
+import { rnx } from "../../utils/rnx";
 
+/**
+ * Props for the MarkdownViewer component.
+ */
 export interface MarkdownViewerProps {
   children: string;
   className?: string;
@@ -26,13 +30,13 @@ function parseInline(text: string): React.ReactNode[] {
     }
     if (match[1]) {
       parts.push(
-        <strong key={match.index} className="font-semibold">
+        <strong key={match.index} className="rnx-markdown-viewer__strong">
           {match[2]}
         </strong>
       );
     } else if (match[3]) {
       parts.push(
-        <em key={match.index} className="italic">
+        <em key={match.index} className="rnx-markdown-viewer__em">
           {match[4]}
         </em>
       );
@@ -40,7 +44,7 @@ function parseInline(text: string): React.ReactNode[] {
       parts.push(
         <code
           key={match.index}
-          className="bg-muted text-foreground rnx-markdown-viewer__inline-code rounded px-1.5 py-0.5 font-mono"
+          className="rnx-markdown-viewer__inline-code"
         >
           {match[6]}
         </code>
@@ -54,7 +58,7 @@ function parseInline(text: string): React.ReactNode[] {
         <a
           key={match.index}
           href={href}
-          className="text-primary underline underline-offset-4 hover:opacity-80"
+          className="rnx-markdown-viewer__link"
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -94,7 +98,7 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
       nodes.push(
         <Box
           key={i}
-          className="border-border/20 rnx-markdown-viewer__code-block my-4 overflow-hidden rounded-xl border"
+          className="rnx-markdown-viewer__code-block"
         >
           <Highlight
             theme={themes.vsDark}
@@ -105,7 +109,7 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
               <pre
                 className={cn(
                   className,
-                  "m-0 overflow-x-auto bg-transparent! p-4 font-mono text-sm leading-relaxed"
+                  "rnx-markdown-viewer__pre"
                 )}
                 style={style}
               >
@@ -156,7 +160,7 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
         <Text
           as="h1"
           key={i}
-          className="text-foreground mt-6 mb-3 text-3xl font-bold tracking-tight"
+          className="rnx-markdown-viewer__h1"
         >
           {parseInline(h1[1])}
         </Text>
@@ -169,7 +173,7 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
         <Text
           as="h2"
           key={i}
-          className="text-foreground mt-5 mb-2 text-2xl font-semibold tracking-tight"
+          className="rnx-markdown-viewer__h2"
         >
           {parseInline(h2[1])}
         </Text>
@@ -182,7 +186,7 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
         <Text
           as="h3"
           key={i}
-          className="text-foreground mt-4 mb-2 text-xl font-semibold"
+          className="rnx-markdown-viewer__h3"
         >
           {parseInline(h3[1])}
         </Text>
@@ -195,7 +199,7 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
         <Text
           as="h4"
           key={i}
-          className="text-foreground mt-3 mb-1 text-lg font-semibold"
+          className="rnx-markdown-viewer__h4"
         >
           {parseInline(h4[1])}
         </Text>
@@ -207,7 +211,7 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
       nodes.push(
         <h5
           key={i}
-          className="text-foreground mt-2 mb-1 text-base font-semibold"
+          className="rnx-markdown-viewer__h5"
         >
           {parseInline(h5[1])}
         </h5>
@@ -217,7 +221,7 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
     }
     if (h6) {
       nodes.push(
-        <h6 key={i} className="text-foreground mt-2 mb-1 text-sm font-semibold">
+        <h6 key={i} className="rnx-markdown-viewer__h6">
           {parseInline(h6[1])}
         </h6>
       );
@@ -227,7 +231,7 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
 
     // Horizontal rule
     if (/^---+$/.test(line.trim())) {
-      nodes.push(<hr key={i} className="border-border my-4" />);
+      nodes.push(<hr key={i} className="rnx-markdown-viewer__hr" />);
       i++;
       continue;
     }
@@ -238,7 +242,7 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
       nodes.push(
         <blockquote
           key={i}
-          className="border-primary/40 text-foreground/70 my-3 border-l-4 pl-4 italic"
+          className="rnx-markdown-viewer__blockquote"
         >
           {parseInline(content)}
         </blockquote>
@@ -258,7 +262,7 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
         <Box
           as="ul"
           key={i}
-          className="text-foreground my-3 list-disc space-y-1 pl-6"
+          className="rnx-markdown-viewer__ul"
         >
           {items.map((item, idx) => (
             <Box as="li" key={idx} className="leading-relaxed">
@@ -280,7 +284,7 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
       nodes.push(
         <ol
           key={i}
-          className="text-foreground my-3 list-decimal space-y-1 pl-6"
+          className="rnx-markdown-viewer__ol"
         >
           {items.map((item, idx) => (
             <Box as="li" key={idx} className="leading-relaxed">
@@ -312,15 +316,14 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
       nodes.push(
         <Box
           key={i}
-          className="border-border my-4 overflow-x-auto rounded-lg border"
+          className="rnx-markdown-viewer__table-container"
         >
-          <table className="w-full text-sm">
-            <thead className="bg-muted/50">
+          <table className="rnx-markdown-viewer__table">
+            <thead>
               <tr>
                 {headerCells.map((cell, ci) => (
                   <th
                     key={ci}
-                    className="text-foreground border-border border-b px-4 py-2 text-left font-semibold"
                   >
                     {parseInline(cell)}
                   </th>
@@ -331,10 +334,9 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
               {rows.map((row, ri) => (
                 <tr
                   key={ri}
-                  className="border-border hover:bg-muted/30 border-b transition-colors last:border-0"
                 >
                   {row.map((cell, ci) => (
-                    <td key={ci} className="text-foreground/80 px-4 py-2">
+                    <td key={ci}>
                       {parseInline(cell)}
                     </td>
                   ))}
@@ -371,7 +373,7 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
     }
     if (paraLines.length > 0) {
       nodes.push(
-        <Text key={i} className="text-foreground/80 my-2 leading-relaxed">
+        <Text key={i} className="rnx-markdown-viewer__paragraph">
           {parseInline(paraLines.join(" "))}
         </Text>
       );
@@ -385,7 +387,7 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
 
 export function MarkdownViewer({ children, className }: MarkdownViewerProps) {
   return (
-    <Box className={cn("rnx-markdown-viewer prose-sm max-w-none", className)}>
+    <Box {...rnx({ component: 'MarkdownViewer' })} className={cn("rnx-markdown-viewer", className)}>
       {renderMarkdown(children)}
     </Box>
   );

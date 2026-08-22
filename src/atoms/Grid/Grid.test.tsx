@@ -16,7 +16,9 @@ describe("Grid", () => {
         <Box>1</Box>
       </Grid>
     );
-    expect(container.firstChild).toHaveStyle({ "--rnx-grid-cols-base": "3" });
+    expect(container.firstChild).toHaveStyle({
+      "--rnx-grid-cols-base": "repeat(3, minmax(0, 1fr))",
+    });
   });
 
   it("renders responsive columns based on breakpoint", () => {
@@ -26,7 +28,9 @@ describe("Grid", () => {
         <Box>1</Box>
       </Grid>
     );
-    expect(container.firstChild).toHaveStyle({ "--rnx-grid-cols-sm": "2" });
+    expect(container.firstChild).toHaveStyle({
+      "--rnx-grid-cols-sm": "repeat(2, minmax(0, 1fr))",
+    });
 
     vi.mocked(useBreakpoint).mockReturnValue("lg");
     rerender(
@@ -34,7 +38,9 @@ describe("Grid", () => {
         <Box>1</Box>
       </Grid>
     );
-    expect(container.firstChild).toHaveStyle({ "--rnx-grid-cols-lg": "4" });
+    expect(container.firstChild).toHaveStyle({
+      "--rnx-grid-cols-lg": "repeat(4, minmax(0, 1fr))",
+    });
   });
 
   it("renders autoFit grid", () => {

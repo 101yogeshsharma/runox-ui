@@ -7,52 +7,84 @@
     overflow: hidden;
     transition: all 0.4s cubic-bezier(0, 0, 0.2, 1);
     border: 1px solid transparent;
+    border-radius: var(--radius);
   }
 
   .rnx-card--interactive {
     cursor: pointer;
+    transition: transform 0.25s cubic-bezier(0, 0, 0.2, 1), box-shadow 0.25s cubic-bezier(0, 0, 0.2, 1), border-color 0.25s ease;
   }
 
   .rnx-card--interactive:hover {
     transform: translateY(-4px) scale(1.01);
-    box-shadow: 0 20px 40px -10px
-      color-mix(in srgb, var(--primary) 10%, transparent);
+    box-shadow: 0 16px 32px -8px color-mix(in srgb, var(--primary) 20%, transparent), var(--shadow-lg);
+    border-color: color-mix(in srgb, var(--primary) 35%, var(--border));
   }
 
   .rnx-card--interactive:active {
-    transform: scale(0.98) translateY(0);
+    transform: translateY(-1px) scale(0.99);
+    box-shadow: var(--shadow-sm);
   }
 
   /* === Variants === */
 
+  /* Elevated */
+  .rnx-card--variant-elevated {
+    background-color: var(--card);
+    border-color: var(--border);
+    box-shadow: var(--shadow-md);
+  }
+
+  /* Filled */
+  .rnx-card--variant-filled {
+    background-color: var(--muted);
+    border-color: transparent;
+  }
+
+  /* Subtle */
+  .rnx-card--variant-subtle {
+    background-color: color-mix(in srgb, var(--card) 60%, var(--background));
+    border-color: color-mix(in srgb, var(--border) 50%, transparent);
+  }
+
+  /* Bordered */
+  .rnx-card--variant-bordered {
+    background-color: var(--card);
+    border-color: var(--border);
+  }
+
+  /* Ghost */
+  .rnx-card--variant-ghost {
+    background-color: transparent;
+    border-color: transparent;
+    box-shadow: none;
+  }
+
   /* Glass */
   .rnx-card--variant-glass {
     background-color: color-mix(in srgb, var(--card) 40%, transparent);
-    backdrop-filter: blur(24px);
+    backdrop-filter: blur(var(--glass-blur, 24px));
+    -webkit-backdrop-filter: blur(var(--glass-blur, 24px));
     border-color: var(--border);
-  }
-  .rnx-card--variant-glass:hover {
-    border-color: var(--border);
+    box-shadow: var(--shadow-md);
   }
 
   /* Outline */
   .rnx-card--variant-outline {
     background-color: transparent;
     border-color: var(--border);
-  }
-  .rnx-card--variant-outline:hover {
-    border-color: var(--border);
+    box-shadow: var(--shadow-sm);
   }
 
   /* === Sizes === */
   .rnx-card--size-sm {
-    padding: 1rem;
+    padding: calc(1rem * var(--rnx-space-scale, 1));
   }
   .rnx-card--size-md {
-    padding: 1.5rem;
+    padding: calc(1.5rem * var(--rnx-space-scale, 1));
   }
   .rnx-card--size-lg {
-    padding: 2rem;
+    padding: calc(2rem * var(--rnx-space-scale, 1));
   }
 
   /* === Shapes === */
@@ -78,8 +110,8 @@
     z-index: 10;
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-2, 0.5rem);
-    margin-bottom: var(--spacing-4, 1rem);
+    gap: var(--spacing-2, calc(0.5rem * var(--rnx-space-scale, 1)));
+    margin-bottom: var(--spacing-4, calc(1rem * var(--rnx-space-scale, 1)));
     border-top-left-radius: inherit;
     border-top-right-radius: inherit;
   }
@@ -90,18 +122,43 @@
     flex: 1 1 0%;
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-4, 1rem);
+    gap: var(--spacing-4, calc(1rem * var(--rnx-space-scale, 1)));
   }
 
   .rnx-card-footer {
     position: relative;
     z-index: 10;
-    margin-top: var(--spacing-6, 1.5rem);
-    padding-top: var(--spacing-6, 1.5rem);
+    margin-top: var(--spacing-6, calc(1.5rem * var(--rnx-space-scale, 1)));
+    padding-top: var(--spacing-6, calc(1.5rem * var(--rnx-space-scale, 1)));
     border-top: 1px solid var(--border);
     display: flex;
     align-items: center;
     border-bottom-left-radius: inherit;
     border-bottom-right-radius: inherit;
   }
+
+  .rnx-card-title {
+    font-size: calc(1.125rem * var(--rnx-text-scale, 1));
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.015em;
+    color: var(--foreground);
+  }
+
+  .rnx-card-description {
+    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+    color: var(--muted-foreground);
+    line-height: 1.5;
+  }
+
+  .rnx-card-content {
+    position: relative;
+    z-index: 10;
+    flex: 1 1 0%;
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-4, calc(1rem * var(--rnx-space-scale, 1)));
+    padding-top: 0;
+  }
 }
+

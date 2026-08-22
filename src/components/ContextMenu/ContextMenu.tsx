@@ -1,5 +1,6 @@
 "use client";
 import { Box } from "../../atoms/Box";
+import { rnx } from "../../utils/rnx";
 
 import React, {
   useState,
@@ -14,6 +15,8 @@ import { Check, Circle } from "lucide-react";
 import { cn } from "../../utils/cn";
 import { useContextMenuPosition, useClickOutside } from "../../hooks";
 
+import "./ContextMenu.css";
+
 const ContextMenuContext = createContext<{
   isOpen: boolean;
   setIsOpen: (v: boolean) => void;
@@ -21,11 +24,14 @@ const ContextMenuContext = createContext<{
   setSlotEl: (el: HTMLDivElement | null) => void;
 } | null>(null);
 
+/**
+ * Props for the ContextMenu component.
+ */
 export interface ContextMenuProps {
   children: React.ReactNode;
 }
 
-export const ContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
+export const ContextMenuRoot: React.FC<ContextMenuProps> = ({ children }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [slotEl, setSlotEl] = useState<HTMLDivElement | null>(null);
   return (
@@ -36,6 +42,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ children }) => {
     </ContextMenuContext.Provider>
   );
 };
+ContextMenuRoot.displayName = "ContextMenu";
 
 export const ContextMenuTrigger = forwardRef<
   HTMLDivElement,
@@ -64,7 +71,7 @@ export const ContextMenuTrigger = forwardRef<
   };
 
   return (
-    <Box ref={mergedRef} onContextMenu={handleContextMenu} {...props}>
+    <Box ref={mergedRef} onContextMenu={handleContextMenu} {...rnx({ component: "ContextMenu", state: context?.isOpen ? "open" : "closed" })} {...props}>
       {children}
       <ContextMenuPortal mousePos={mousePos} />
     </Box>
@@ -171,7 +178,7 @@ export const ContextMenuContent = forwardRef<
     slot
   );
 });
-ContextMenuContent.displayName = "ContextMenuContent";
+ContextMenuContent.displayName = "ContextMenu.Content";
 
 export const ContextMenuItem = forwardRef<
   HTMLDivElement,
@@ -182,18 +189,19 @@ export const ContextMenuItem = forwardRef<
     <Box
       ref={ref}
       role="menuitem"
+      aria-disabled={disabled}
       onClick={(e) => {
         if (disabled) return;
         if (props.onClick) props.onClick(e);
         context?.setIsOpen(false);
       }}
-      className={cn("rnx-dropdown-item", inset && "pl-8", className)}
+      className={cn("rnx-context-menu-item", inset && "rnx-context-menu-item--inset", className)}
       data-disabled={disabled}
       {...props}
     />
   );
 });
-ContextMenuItem.displayName = "ContextMenuItem";
+ContextMenuItem.displayName = "ContextMenu.Item";
 
 export const ContextMenuCheckboxItem = forwardRef<
   HTMLDivElement,
@@ -213,19 +221,20 @@ export const ContextMenuCheckboxItem = forwardRef<
         ref={ref}
         role="menuitemcheckbox"
         aria-checked={checked}
+        aria-disabled={disabled}
         onClick={(e) => {
           if (disabled) return;
           if (props.onClick) props.onClick(e);
           if (onCheckedChange) onCheckedChange(!checked);
           context?.setIsOpen(false);
         }}
-        className={cn("rnx-dropdown-item pl-8", className)}
+        className={cn("rnx-context-menu-item rnx-context-menu-item--inset", className)}
         data-disabled={disabled}
         {...props}
       >
         <Box
           as="span"
-          className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center"
+          className="rnx-context-menu-indicator"
         >
           {checked && <Check className="h-4 w-4" />}
         </Box>
@@ -234,7 +243,7 @@ export const ContextMenuCheckboxItem = forwardRef<
     );
   }
 );
-ContextMenuCheckboxItem.displayName = "ContextMenuCheckboxItem";
+ContextMenuCheckboxItem.displayName = "ContextMenu.CheckboxItem";
 
 export const ContextMenuRadioItem = forwardRef<
   HTMLDivElement,
@@ -250,18 +259,19 @@ export const ContextMenuRadioItem = forwardRef<
       ref={ref}
       role="menuitemradio"
       aria-checked={checked}
+      aria-disabled={disabled}
       onClick={(e) => {
         if (disabled) return;
         if (props.onClick) props.onClick(e);
         context?.setIsOpen(false);
       }}
-      className={cn("rnx-dropdown-item pl-8", className)}
+      className={cn("rnx-context-menu-item rnx-context-menu-item--inset", className)}
       data-disabled={disabled}
       {...props}
     >
       <Box
         as="span"
-        className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center"
+        className="rnx-context-menu-indicator"
       >
         {checked && <Circle className="h-2 w-2 fill-current" />}
       </Box>
@@ -269,7 +279,7 @@ export const ContextMenuRadioItem = forwardRef<
     </Box>
   );
 });
-ContextMenuRadioItem.displayName = "ContextMenuRadioItem";
+ContextMenuRadioItem.displayName = "ContextMenu.RadioItem";
 
 export const ContextMenuLabel = forwardRef<
   HTMLDivElement,
@@ -277,11 +287,11 @@ export const ContextMenuLabel = forwardRef<
 >(({ className, inset, ...props }, ref) => (
   <Box
     ref={ref}
-    className={cn("rnx-dropdown-label", inset && "pl-8", className)}
+    className={cn("rnx-context-menu-label", inset && "rnx-context-menu-item--inset", className)}
     {...props}
   />
 ));
-ContextMenuLabel.displayName = "ContextMenuLabel";
+ContextMenuLabel.displayName = "ContextMenu.Label";
 
 export const ContextMenuSeparator = forwardRef<
   HTMLDivElement,
@@ -290,11 +300,11 @@ export const ContextMenuSeparator = forwardRef<
   <Box
     ref={ref}
     role="separator"
-    className={cn("rnx-dropdown-divider", className)}
+    className={cn("rnx-context-menu-divider", className)}
     {...props}
   />
 ));
-ContextMenuSeparator.displayName = "ContextMenuSeparator";
+ContextMenuSeparator.displayName = "ContextMenu.Separator";
 
 export const ContextMenuShortcut = ({
   className,
@@ -303,13 +313,13 @@ export const ContextMenuShortcut = ({
   <Box
     as="span"
     className={cn(
-      "text-muted-foreground ml-auto text-xs tracking-widest",
+      "rnx-context-menu-shortcut",
       className
     )}
     {...props}
   />
 );
-ContextMenuShortcut.displayName = "ContextMenuShortcut";
+ContextMenuShortcut.displayName = "ContextMenu.Shortcut";
 
 // Dummy components to preserve export API without adding complexity for nested sub-menus right now
 export const ContextMenuGroup = ({
@@ -317,10 +327,15 @@ export const ContextMenuGroup = ({
 }: {
   children: React.ReactNode;
 }) => <>{children}</>;
+ContextMenuGroup.displayName = "ContextMenu.Group";
+
 export const ContextMenuSub = ({ children }: { children: React.ReactNode }) => (
   <>{children}</>
 );
+ContextMenuSub.displayName = "ContextMenu.Sub";
+
 export const ContextMenuSubTrigger = ContextMenuItem;
+
 export const ContextMenuSubContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -333,7 +348,8 @@ export const ContextMenuSubContent = React.forwardRef<
     {children}
   </Box>
 ));
-ContextMenuSubContent.displayName = "ContextMenuSubContent";
+ContextMenuSubContent.displayName = "ContextMenu.SubContent";
+
 export const ContextMenuRadioGroup = ({
   children,
   value: _value,
@@ -364,3 +380,20 @@ export const ContextMenuRadioGroup = ({
     </Box>
   );
 };
+ContextMenuRadioGroup.displayName = "ContextMenu.RadioGroup";
+
+export const ContextMenu = Object.assign(ContextMenuRoot, {
+  Trigger: ContextMenuTrigger,
+  Content: ContextMenuContent,
+  Item: ContextMenuItem,
+  CheckboxItem: ContextMenuCheckboxItem,
+  RadioItem: ContextMenuRadioItem,
+  Label: ContextMenuLabel,
+  Separator: ContextMenuSeparator,
+  Shortcut: ContextMenuShortcut,
+  Group: ContextMenuGroup,
+  Sub: ContextMenuSub,
+  SubTrigger: ContextMenuSubTrigger,
+  SubContent: ContextMenuSubContent,
+  RadioGroup: ContextMenuRadioGroup,
+});

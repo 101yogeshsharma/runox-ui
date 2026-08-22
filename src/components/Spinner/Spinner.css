@@ -1,0 +1,63 @@
+@layer components {
+  .rnx-spinner {
+    display: inline-block;
+    animation: rnx-spin 1s linear infinite;
+    color: var(--muted-foreground);
+    flex-shrink: 0;
+  }
+
+  .rnx-spinner--size-sm {
+    height: calc(1rem * var(--rnx-space-scale, 1));
+    width: calc(1rem * var(--rnx-space-scale, 1));
+  }
+  .rnx-spinner--size-md {
+    height: calc(1.5rem * var(--rnx-space-scale, 1));
+    width: calc(1.5rem * var(--rnx-space-scale, 1));
+  }
+  .rnx-spinner--size-lg {
+    height: calc(2rem * var(--rnx-space-scale, 1));
+    width: calc(2rem * var(--rnx-space-scale, 1));
+  }
+  .rnx-spinner--size-xl {
+    height: calc(3rem * var(--rnx-space-scale, 1));
+    width: calc(3rem * var(--rnx-space-scale, 1));
+  }
+
+  .rnx-spinner--color-current {
+    color: currentColor;
+  }
+  .rnx-spinner--color-primary {
+    color: var(--primary);
+  }
+  .rnx-spinner--color-secondary {
+    color: var(--secondary);
+  }
+  .rnx-spinner--color-muted {
+    color: var(--muted-foreground);
+  }
+  .rnx-spinner--color-destructive,
+  .rnx-spinner--color-danger {
+    color: var(--destructive);
+  }
+  .rnx-spinner--color-inverse {
+    color: var(--primary-foreground);
+  }
+  .rnx-spinner--color-success {
+    color: var(--success);
+  }
+  .rnx-spinner--color-warning {
+    color: var(--warning);
+  }
+  .rnx-spinner--color-info {
+    color: var(--info);
+  }
+}
+
+@keyframes rnx-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

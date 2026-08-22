@@ -14,9 +14,18 @@ import { mergeProps } from "../../utils/mergeProps";
 import "./OtpInput.css";
 
 import { cva, type VariantProps } from "class-variance-authority";
+import { withLoading } from "../../utils/withLoading";
+import { rnx } from "../../utils/rnx";
+
 
 export const otpInputVariants = cva("rnx-otp-input", {
   variants: {
+    variant: {
+      boxed: "rnx-otp-input--variant-boxed",
+      underline: "rnx-otp-input--variant-underline",
+      pill: "rnx-otp-input--variant-pill",
+      glass: "rnx-otp-input--variant-glass",
+    },
     size: {
       sm: "rnx-otp-input--size-sm",
       md: "rnx-otp-input--size-md",
@@ -24,32 +33,41 @@ export const otpInputVariants = cva("rnx-otp-input", {
     },
   },
   defaultVariants: {
+    variant: "boxed",
     size: "md",
   },
 });
 
+import { RnxColor } from "../../types";
+
+/**
+ * Props for the OtpInput component.
+ */
 export interface OtpInputProps
   extends
-    Omit<React.HTMLAttributes<HTMLDivElement>, "onChange">,
+    Omit<React.HTMLAttributes<HTMLDivElement>, "onChange" | "color">,
     VariantProps<typeof otpInputVariants> {
   length?: number;
   value?: string;
   onChange?: (value: string) => void;
+  color?: RnxColor;
   error?: string;
   disabled?: boolean;
   isPassword?: boolean;
   inputClassName?: string;
 }
 
-export const OtpInput = forwardRef<HTMLDivElement, OtpInputProps>(
+const OtpInputBase = forwardRef<HTMLDivElement, OtpInputProps>(
   (
     {
       length = 6,
       value,
       onChange,
+      color = "primary",
       error,
       disabled = false,
       isPassword = false,
+      variant = "boxed",
       size,
       inputClassName,
       className,
@@ -170,6 +188,7 @@ export const OtpInput = forwardRef<HTMLDivElement, OtpInputProps>(
 
     return (
       <Box
+        {...rnx({ component: 'OtpInput', state: disabled ? 'disabled' : 'active' })}
         ref={containerRef}
         {...mergeProps(
           {
@@ -180,31 +199,33 @@ export const OtpInput = forwardRef<HTMLDivElement, OtpInputProps>(
       >
         <Box className="rnx-otp-input-group">
           {displayArr.map((digit, index) => (
-            <Input
+            <input
               key={index}
               ref={(el) => {
-                inputsRef.current[index] = el as HTMLInputElement | null;
+                inputsRef.current[index] = el;
               }}
               type={isPassword ? "password" : "text"}
               inputMode="numeric"
-              autoComplete="one-time-code"
+              pattern="[0-9]*"
               maxLength={1}
               value={digit}
-              disabled={disabled}
               onChange={(e) => handleChange(e, index)}
               onKeyDown={(e) => handleKeyDown(e, index)}
               onPaste={(e) => handlePaste(e, index)}
+              disabled={disabled}
               className={cn(
-                otpInputVariants({ size }),
+                otpInputVariants({ variant, size }),
+                color && `rnx-otp-input--color-${color}`,
                 error && "rnx-otp-input--error",
                 inputClassName
               )}
-              aria-label={`Digit ${index + 1}`}
+              aria-label={`Digit ${index + 1} of ${length}`}
+              autoComplete="one-time-code"
             />
           ))}
         </Box>
         {error && (
-          <Box as="span" className="text-destructive text-xs font-medium">
+          <Box as="span" className="rnx-otp-input-error-msg">
             {error}
           </Box>
         )}
@@ -213,4 +234,5 @@ export const OtpInput = forwardRef<HTMLDivElement, OtpInputProps>(
   }
 );
 
-OtpInput.displayName = "OtpInput";
+OtpInputBase.displayName = "OtpInput";
+export const OtpInput = withLoading(OtpInputBase);

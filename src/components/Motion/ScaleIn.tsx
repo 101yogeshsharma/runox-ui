@@ -1,27 +1,36 @@
 "use client";
 import React from "react";
-import { m, HTMLMotionProps } from "framer-motion";
+import { cn } from "../../utils/cn";
 
-export interface ScaleInProps extends HTMLMotionProps<"div"> {
+/**
+ * Props for the ScaleIn component.
+ */
+export interface ScaleInProps extends React.HTMLAttributes<HTMLDivElement> {
   duration?: number;
   delay?: number;
+  as?: React.ElementType;
 }
 
 export const ScaleIn: React.FC<ScaleInProps> = ({
   children,
   duration = 0.3,
   delay = 0,
+  className,
+  as: Tag = "div",
+  style,
   ...props
 }) => {
   return (
-    <m.div
-      initial={{ opacity: 0, scale: 0.98 }}
-      animate={{ opacity: 1, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.98 }}
-      transition={{ duration, delay, ease: [0.16, 1, 0.3, 1] }}
+    <Tag
+      className={cn("rnx-motion-scale-in", className)}
+      style={{
+        animationDuration: `${duration}s`,
+        animationDelay: `${delay}s`,
+        ...style,
+      }}
       {...props}
     >
       {children}
-    </m.div>
+    </Tag>
   );
 };

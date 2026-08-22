@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { cn } from "../../utils/cn";
 import { Text } from "../../atoms/Text";
 import { Flex } from "../../atoms/Flex";
@@ -8,6 +8,7 @@ import { Box } from "../../atoms/Box";
 import { Button } from "../Button";
 // Uses: Button
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { rnx } from "../../utils/rnx";
 import "./KanbanBoard.css";
 
 export type UniqueIdentifier = string | number;
@@ -32,7 +33,7 @@ export interface KanbanBoardProps<T> {
 }
 
 /**
- * @deprecated Use `Kanban` instead.
+ * @deprecated Use `Kanban` instead. Scheduled for removal in the next major version.
  */
 export function KanbanBoard<T extends { id?: UniqueIdentifier }>({
   columns,
@@ -41,6 +42,14 @@ export function KanbanBoard<T extends { id?: UniqueIdentifier }>({
   keyExtractor,
   className,
 }: KanbanBoardProps<T>) {
+  React.useEffect(() => {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn(
+        "[runox-ui] KanbanBoard is deprecated and will be removed in a future release. Please migrate to Kanban instead."
+      );
+    }
+  }, []);
+
   const getItemId = React.useCallback(
     (item: T) => {
       if (keyExtractor) return keyExtractor(item);
@@ -63,97 +72,64 @@ export function KanbanBoard<T extends { id?: UniqueIdentifier }>({
     null
   );
 
-  const handleDragStart = (
-    e: React.DragEvent<HTMLElement>,
-    itemId: UniqueIdentifier
-  ) => {
-    setDraggedItemId(itemId);
-    e.dataTransfer.effectAllowed = "move";
-    e.dataTransfer.setData("text/plain", itemId.toString());
-  };
+  const handleDragStart = useCallback(
+    (e: React.DragEvent<HTMLElement>, itemId: UniqueIdentifier) => {
+      setDraggedItemId(itemId);
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", itemId.toString());
+    },
+    []
+  );
 
-  const handleDragOverItem = (
-    e: React.DragEvent<HTMLElement>,
-    itemId: UniqueIdentifier,
-    colId: UniqueIdentifier
-  ) => {
-    e.preventDefault();
-    e.stopPropagation();
-    e.dataTransfer.dropEffect = "move";
-
-    if (draggedItemId === itemId) return;
-
-    setDragOverItemId(itemId);
-    setDragOverColumnId(colId);
-
-    const rect = e.currentTarget.getBoundingClientRect();
-    const midY = rect.top + rect.height / 2;
-    setDropPosition(e.clientY < midY ? "before" : "after");
-  };
-
-  const handleDragLeaveItem = (
-    e: React.DragEvent<HTMLElement>,
-    itemId: UniqueIdentifier
-  ) => {
-    if (dragOverItemId === itemId) {
-      setDragOverItemId(null);
-      setDropPosition(null);
-    }
-  };
-
-  const handleDragOverColumn = (
-    e: React.DragEvent<HTMLElement>,
-    colId: UniqueIdentifier
-  ) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
-
-    if (!dragOverItemId) {
+  const handleDragOverItem = useCallback(
+    (e: React.DragEvent<HTMLElement>, itemId: UniqueIdentifier, colId: UniqueIdentifier) => {
+      e.preventDefault();
+      e.stopPropagation();
+      e.dataTransfer.dropEffect = "move";
+      if (draggedItemId === itemId) return;
+      setDragOverItemId(itemId);
       setDragOverColumnId(colId);
-    }
-  };
+      const rect = e.currentTarget.getBoundingClientRect();
+      const midY = rect.top + rect.height / 2;
+      setDropPosition(e.clientY < midY ? "before" : "after");
+    },
+    [draggedItemId]
+  );
 
-  const handleDragLeaveColumn = (
-    e: React.DragEvent<HTMLElement>,
-    colId: UniqueIdentifier
-  ) => {
-    if (dragOverColumnId === colId && !dragOverItemId) {
-      setDragOverColumnId(null);
-    }
-  };
+  const handleDragLeaveItem = useCallback(
+    (e: React.DragEvent<HTMLElement>, itemId: UniqueIdentifier) => {
+      if (dragOverItemId === itemId) {
+        setDragOverItemId(null);
+        setDropPosition(null);
+      }
+    },
+    [dragOverItemId]
+  );
 
-  const handleDropItem = (
-    e: React.DragEvent<HTMLElement>,
-    targetItemId: UniqueIdentifier
-  ) => {
-    e.preventDefault();
-    e.stopPropagation();
+  const handleDragOverColumn = useCallback(
+    (e: React.DragEvent<HTMLElement>, colId: UniqueIdentifier) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+      if (!dragOverItemId) setDragOverColumnId(colId);
+    },
+    [dragOverItemId]
+  );
 
-    if (!draggedItemId || draggedItemId === targetItemId) {
-      resetDragState();
-      return;
-    }
+  const handleDragLeaveColumn = useCallback(
+    (e: React.DragEvent<HTMLElement>, colId: UniqueIdentifier) => {
+      if (dragOverColumnId === colId && !dragOverItemId) setDragOverColumnId(null);
+    },
+    [dragOverColumnId, dragOverItemId]
+  );
 
-    moveItem(draggedItemId, targetItemId, null, dropPosition);
-    resetDragState();
-  };
+  const resetDragState = useCallback(() => {
+    setDraggedItemId(null);
+    setDragOverItemId(null);
+    setDragOverColumnId(null);
+    setDropPosition(null);
+  }, []);
 
-  const handleDropColumn = (
-    e: React.DragEvent<HTMLElement>,
-    targetColId: UniqueIdentifier
-  ) => {
-    e.preventDefault();
-
-    if (!draggedItemId) {
-      resetDragState();
-      return;
-    }
-
-    moveItem(draggedItemId, null, targetColId, "after");
-    resetDragState();
-  };
-
-  const moveItem = (
+  const moveItem = useCallback((
     activeId: UniqueIdentifier,
     overId: UniqueIdentifier | null,
     overColId: UniqueIdentifier | null,
@@ -218,18 +194,33 @@ export function KanbanBoard<T extends { id?: UniqueIdentifier }>({
     }
 
     onColumnsChange(newColumns);
-  };
+  }, [columns, onColumnsChange, getItemId]);
 
-  const handleDragEnd = () => {
-    resetDragState();
-  };
+  const handleDropItem = useCallback(
+    (e: React.DragEvent<HTMLElement>, targetItemId: UniqueIdentifier) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (!draggedItemId || draggedItemId === targetItemId) {
+        resetDragState();
+        return;
+      }
+      moveItem(draggedItemId, targetItemId, null, dropPosition);
+      resetDragState();
+    },
+    [draggedItemId, dropPosition, moveItem, resetDragState]
+  );
 
-  const resetDragState = () => {
-    setDraggedItemId(null);
-    setDragOverItemId(null);
-    setDragOverColumnId(null);
-    setDropPosition(null);
-  };
+  const handleDropColumn = useCallback(
+    (e: React.DragEvent<HTMLElement>, targetColId: UniqueIdentifier) => {
+      e.preventDefault();
+      if (!draggedItemId) { resetDragState(); return; }
+      moveItem(draggedItemId, null, targetColId, "after");
+      resetDragState();
+    },
+    [draggedItemId, moveItem, resetDragState]
+  );
+
+  const handleDragEnd = useCallback(() => { resetDragState(); }, [resetDragState]);
 
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -262,7 +253,7 @@ export function KanbanBoard<T extends { id?: UniqueIdentifier }>({
   };
 
   return (
-    <Box className="group relative h-full w-full">
+    <Box {...rnx({ component: 'KanbanBoard' })} className="group relative h-full w-full">
       {/* Scroll Left Button */}
       <Button
         onClick={() => scroll("left")}
@@ -339,7 +330,35 @@ export function KanbanBoard<T extends { id?: UniqueIdentifier }>({
   );
 }
 
-export const MemoizedCard = React.memo(({ item, itemId, isDragging, isDragOver, colId, dropPosition, renderItem, handleDragStart, handleDragOverItem, handleDragLeaveItem, handleDropItem, handleDragEnd }: any) => {
+interface MemoizedCardProps<T> {
+  item: T;
+  itemId: UniqueIdentifier;
+  isDragging: boolean;
+  isDragOver: boolean;
+  colId: UniqueIdentifier;
+  dropPosition: "before" | "after" | null;
+  renderItem: (item: T) => React.ReactNode;
+  handleDragStart: (e: React.DragEvent<HTMLElement>, itemId: UniqueIdentifier) => void;
+  handleDragOverItem: (e: React.DragEvent<HTMLElement>, itemId: UniqueIdentifier, colId: UniqueIdentifier) => void;
+  handleDragLeaveItem: (e: React.DragEvent<HTMLElement>, itemId: UniqueIdentifier) => void;
+  handleDropItem: (e: React.DragEvent<HTMLElement>, itemId: UniqueIdentifier) => void;
+  handleDragEnd: () => void;
+}
+
+function MemoizedCardComponent<T>({
+  item,
+  itemId,
+  isDragging,
+  isDragOver,
+  colId: _colId,
+  dropPosition,
+  renderItem,
+  handleDragStart,
+  handleDragOverItem,
+  handleDragLeaveItem,
+  handleDropItem,
+  handleDragEnd,
+}: MemoizedCardProps<T>) {
   let indicatorStyles = "";
   if (isDragOver && !isDragging) {
     indicatorStyles =
@@ -352,7 +371,7 @@ export const MemoizedCard = React.memo(({ item, itemId, isDragging, isDragOver, 
     <Box
       draggable
       onDragStart={(e) => handleDragStart(e, itemId)}
-      onDragOver={(e) => handleDragOverItem(e, itemId, colId)}
+      onDragOver={(e) => handleDragOverItem(e, itemId, _colId)}
       onDragLeave={(e) => handleDragLeaveItem(e, itemId)}
       onDrop={(e) => handleDropItem(e, itemId)}
       onDragEnd={handleDragEnd}
@@ -367,10 +386,46 @@ export const MemoizedCard = React.memo(({ item, itemId, isDragging, isDragOver, 
       {renderItem(item)}
     </Box>
   );
-});
-MemoizedCard.displayName = "MemoizedCard";
+}
 
-export const MemoizedColumn = React.memo(({ col, isColumnDragOver, draggedItemId, dragOverItemId, dropPosition, getItemId, renderItem, handleDragOverColumn, handleDragLeaveColumn, handleDropColumn, handleDragStart, handleDragOverItem, handleDragLeaveItem, handleDropItem, handleDragEnd }: any) => {
+export const MemoizedCard = React.memo(MemoizedCardComponent) as typeof MemoizedCardComponent;
+(MemoizedCard as any).displayName = "MemoizedCard";
+
+interface MemoizedColumnProps<T> {
+  col: KanbanColumnData<T>;
+  isColumnDragOver: boolean;
+  draggedItemId: UniqueIdentifier | null;
+  dragOverItemId: UniqueIdentifier | null;
+  dropPosition: "before" | "after" | null;
+  getItemId: (item: T) => UniqueIdentifier;
+  renderItem: (item: T) => React.ReactNode;
+  handleDragOverColumn: (e: React.DragEvent<HTMLElement>, colId: UniqueIdentifier) => void;
+  handleDragLeaveColumn: (e: React.DragEvent<HTMLElement>, colId: UniqueIdentifier) => void;
+  handleDropColumn: (e: React.DragEvent<HTMLElement>, colId: UniqueIdentifier) => void;
+  handleDragStart: (e: React.DragEvent<HTMLElement>, itemId: UniqueIdentifier) => void;
+  handleDragOverItem: (e: React.DragEvent<HTMLElement>, itemId: UniqueIdentifier, colId: UniqueIdentifier) => void;
+  handleDragLeaveItem: (e: React.DragEvent<HTMLElement>, itemId: UniqueIdentifier) => void;
+  handleDropItem: (e: React.DragEvent<HTMLElement>, itemId: UniqueIdentifier) => void;
+  handleDragEnd: () => void;
+}
+
+function MemoizedColumnComponent<T>({
+  col,
+  isColumnDragOver,
+  draggedItemId,
+  dragOverItemId,
+  dropPosition,
+  getItemId,
+  renderItem,
+  handleDragOverColumn,
+  handleDragLeaveColumn,
+  handleDropColumn,
+  handleDragStart,
+  handleDragOverItem,
+  handleDragLeaveItem,
+  handleDropItem,
+  handleDragEnd,
+}: MemoizedColumnProps<T>) {
   return (
     <Flex
       direction="col"
@@ -395,7 +450,7 @@ export const MemoizedColumn = React.memo(({ col, isColumnDragOver, draggedItemId
       </Flex>
 
       <Flex direction="col" gap="sm" className="min-h-40 flex-1">
-        {col.items.map((item: any) => {
+        {col.items.map((item: T) => {
           const itemId = getItemId(item);
           const isDragging = draggedItemId === itemId;
           const isDragOver = dragOverItemId === itemId;
@@ -421,5 +476,7 @@ export const MemoizedColumn = React.memo(({ col, isColumnDragOver, draggedItemId
       </Flex>
     </Flex>
   );
-});
-MemoizedColumn.displayName = "MemoizedColumn";
+}
+
+export const MemoizedColumn = React.memo(MemoizedColumnComponent) as typeof MemoizedColumnComponent;
+(MemoizedColumn as any).displayName = "MemoizedColumn";

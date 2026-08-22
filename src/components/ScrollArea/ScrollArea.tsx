@@ -3,19 +3,16 @@ import { Box } from "../../atoms/Box";
 
 import * as React from "react";
 import { cn } from "../../utils/cn";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
 import "./ScrollArea.css";
 
 const ScrollArea = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, children, ...props }, ref) => {
-  const { config } = useTheme();
   return (
     <Box
       className={cn(
-        "relative overflow-hidden",
-        `rounded-${config.radius}`,
+        "rnx-scroll-area-container relative overflow-hidden",
         className
       )}
     >
@@ -31,14 +28,36 @@ const ScrollArea = React.forwardRef<
 });
 ScrollArea.displayName = "ScrollArea";
 
-// ScrollBar is kept for backward compatibility but doesn't render anything
-// since scrollbars are now handled entirely by native CSS.
-const ScrollBar = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & {
-    orientation?: "vertical" | "horizontal";
-  }
->(() => null);
-ScrollBar.displayName = "ScrollBar";
+export interface ScrollBarProps
+  extends React.HTMLAttributes<HTMLDivElement> {
+  orientation?: "vertical" | "horizontal";
+}
 
-export { ScrollArea, ScrollBar };
+const ScrollBar = React.forwardRef<HTMLDivElement, ScrollBarProps>(
+  ({ className, orientation = "vertical", ...props }, ref) => {
+    return (
+      <Box
+        ref={ref}
+        role="scrollbar"
+        aria-orientation={orientation}
+        className={cn(
+          "rnx-scrollbar flex touch-none select-none transition-colors",
+          orientation === "vertical" &&
+            "h-full w-2.5 border-l border-l-transparent p-[1px]",
+          orientation === "horizontal" &&
+            "h-2.5 flex-col border-t border-t-transparent p-[1px]",
+          className
+        )}
+        {...props}
+      >
+        <Box className="rnx-scrollbar-thumb relative flex-1 rounded-full bg-border" />
+      </Box>
+    );
+  }
+);
+ScrollBar.displayName = "ScrollArea.Bar";
+
+export const ScrollAreaNamespace = Object.assign(ScrollArea, {
+  Bar: ScrollBar,
+});
+export { ScrollAreaNamespace as ScrollArea };

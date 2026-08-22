@@ -1,8 +1,9 @@
-@layer components {
+﻿@layer components {
   .rnx-pagination__select-trigger {
-    width: 70px;
+    width: calc(70px * var(--rnx-space-scale, 1));
   }
   .rnx-pagination__select-content {
-    min-width: 70px;
+    min-width: calc(70px * var(--rnx-space-scale, 1));
   }
 }
+

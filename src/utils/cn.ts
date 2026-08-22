@@ -1,8 +1,8 @@
 /**
  * A zero-dependency utility for conditional class names.
- * Replaces clsx and tailwind-merge.
+ * Merges classes (similar to clsx).
  */
-type ClassValue = any;
+type ClassValue = string | number | boolean | null | undefined | ClassValue[] | { [key: string]: boolean | undefined | null };
 
 export function cn(...inputs: ClassValue[]): string {
   const classes: string[] = [];

@@ -8,10 +8,13 @@ import { Box } from "../../atoms/Box";
 import { Flex } from "../../atoms/Flex";
 import { Text } from "../../atoms/Text";
 import { cn } from "../../utils/cn";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
+import { rnx } from "../../utils/rnx";
 import "./ImageCropper.css";
 // Uses: Button, Slider
 
+/**
+ * Props for the ImageCropper component.
+ */
 export interface ImageCropperProps {
   image: string;
   onCropComplete: (croppedImageUrl: string) => void;
@@ -29,7 +32,6 @@ export function ImageCropper({
   cropShape = "round",
   className,
 }: ImageCropperProps) {
-  const { config } = useTheme();
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
@@ -57,15 +59,19 @@ export function ImageCropper({
 
   return (
     <Flex
+      {...rnx({ component: 'ImageCropper' })}
       direction="col"
       gap="md"
       className={cn(
         "rnx-image-cropper w-full",
-        `rounded-${config.radius}`,
         className
       )}
     >
-      <Box className="rnx-image-cropper-canvas relative h-80 w-full overflow-hidden sm:h-96">
+      <Box
+        role="region"
+        aria-label="Image crop area"
+        className="rnx-image-cropper-canvas relative h-80 w-full overflow-hidden sm:h-96"
+      >
         <Cropper
           image={image}
           crop={crop}
@@ -86,6 +92,7 @@ export function ImageCropper({
           min={1}
           max={3}
           step={0.1}
+          aria-label="Zoom level"
           onValueChange={(val) => setZoom(val)}
           className="flex-1"
         />

@@ -4,27 +4,36 @@ import { Box } from "../../atoms/Box";
 import React, { forwardRef } from "react";
 import { cn } from "../../utils/cn";
 import { Bot, User } from "lucide-react";
+import { withLoading } from "../../utils/withLoading";
 
+
+import "./ChatBubble.css";
+
+/**
+ * Props for the ChatBubble component.
+ */
 export interface ChatBubbleProps extends React.HTMLAttributes<HTMLDivElement> {
   role?: "user" | "assistant" | "system";
+  variant?: "solid" | "glass";
   avatar?: React.ReactNode;
 }
 
-export const ChatBubble = forwardRef<HTMLDivElement, ChatBubbleProps>(
-  ({ className, role = "user", avatar, children, ...props }, ref) => {
+const ChatBubbleBase = forwardRef<HTMLDivElement, ChatBubbleProps>(
+  ({ className, role = "user", variant = "solid", avatar, children, ...props }, ref) => {
     const isUser = role === "user";
 
     return (
       <Box
         ref={ref}
         className={cn(
-          "flex w-full gap-4 py-4",
-          isUser ? "flex-row-reverse" : "flex-row",
+          "rnx-chat-bubble",
+          `rnx-chat-bubble--${role}`,
+          variant && variant !== "solid" && `rnx-chat-bubble--variant-${variant}`,
           className
         )}
         {...props}
       >
-        <Box className="bg-background flex h-8 w-8 shrink-0 items-center justify-center rounded-md border shadow select-none">
+        <Box className="rnx-chat-bubble__avatar">
           {avatar ? (
             avatar
           ) : isUser ? (
@@ -35,8 +44,8 @@ export const ChatBubble = forwardRef<HTMLDivElement, ChatBubbleProps>(
         </Box>
         <Box
           className={cn(
-            "flex max-w-4/5 flex-col gap-2 rounded-lg px-4 py-3 text-sm",
-            isUser ? "bg-primary text-primary-foreground" : "bg-muted"
+            "rnx-chat-bubble__content",
+            `rnx-chat-bubble__content--${role}`
           )}
         >
           {children}
@@ -45,4 +54,5 @@ export const ChatBubble = forwardRef<HTMLDivElement, ChatBubbleProps>(
     );
   }
 );
-ChatBubble.displayName = "ChatBubble";
+ChatBubbleBase.displayName = "ChatBubble";
+export const ChatBubble = withLoading(ChatBubbleBase);

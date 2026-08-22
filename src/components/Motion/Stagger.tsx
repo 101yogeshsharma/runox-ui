@@ -1,81 +1,78 @@
 "use client";
 import React from "react";
-import { m, HTMLMotionProps } from "framer-motion";
+import { cn } from "../../utils/cn";
 
-export interface StaggerContainerProps extends HTMLMotionProps<"div"> {
+export interface StaggerContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   staggerDelay?: number;
   delayChildren?: number;
+  as?: React.ElementType;
 }
 
 export const StaggerContainer: React.FC<StaggerContainerProps> = ({
   children,
   staggerDelay = 0.1,
   delayChildren = 0,
+  className,
+  as: Tag = "div",
+  style,
   ...props
 }) => {
+  // Clone children and inject staggered animation-delay
+  const staggeredChildren = React.Children.map(children, (child, index) => {
+    if (!React.isValidElement(child)) return child;
+    const delay = delayChildren + index * staggerDelay;
+    return React.cloneElement(child as React.ReactElement<any>, {
+      style: {
+        ...(child.props as any).style,
+        animationDelay: `${delay}s`,
+      },
+    });
+  });
+
   return (
-    <m.div
-      initial="hidden"
-      animate="visible"
-      exit="hidden"
-      variants={{
-        hidden: {},
-        visible: {
-          transition: {
-            staggerChildren: staggerDelay,
-            delayChildren: delayChildren,
-          },
-        },
-      }}
-      {...props}
-    >
-      {children}
-    </m.div>
+    <Tag className={cn(className)} style={style} {...props}>
+      {staggeredChildren}
+    </Tag>
   );
 };
 
-export interface StaggerItemProps extends HTMLMotionProps<"div"> {
+export interface StaggerItemProps extends React.HTMLAttributes<HTMLDivElement> {
   direction?: "up" | "down" | "left" | "right";
   distance?: number;
+  duration?: number;
+  as?: React.ElementType;
 }
 
 export const StaggerItem: React.FC<StaggerItemProps> = ({
   children,
   direction = "up",
   distance = 20,
+  duration = 0.4,
+  className,
+  as: Tag = "div",
+  style,
   ...props
 }) => {
-  const getInitialOffset = () => {
-    switch (direction) {
-      case "up":
-        return { y: distance, x: 0 };
-      case "down":
-        return { y: -distance, x: 0 };
-      case "left":
-        return { x: distance, y: 0 };
-      case "right":
-        return { x: -distance, y: 0 };
-      default:
-        return { y: distance, x: 0 };
-    }
-  };
-
-  const offset = getInitialOffset();
+  const directionClass = {
+    up: "rnx-motion-slide-up",
+    down: "rnx-motion-slide-down",
+    left: "rnx-motion-slide-left",
+    right: "rnx-motion-slide-right",
+  }[direction];
 
   return (
-    <m.div
-      variants={{
-        hidden: { opacity: 0, x: offset.x, y: offset.y },
-        visible: {
-          opacity: 1,
-          x: 0,
-          y: 0,
-          transition: { ease: [0.16, 1, 0.3, 1], duration: 0.4 },
-        },
-      }}
+    <Tag
+      className={cn(directionClass, className)}
+      style={
+        {
+          animationDuration: `${duration}s`,
+          "--rnx-slide-distance": `${distance}px`,
+          ...style,
+        } as React.CSSProperties
+      }
       {...props}
     >
       {children}
-    </m.div>
+    </Tag>
   );
 };

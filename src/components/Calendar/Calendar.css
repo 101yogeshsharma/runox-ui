@@ -1,6 +1,10 @@
-@layer components {
+﻿@layer components {
+  .rnx-calendar {
+    border-radius: var(--radius);
+  }
+
   .rnx-calendar__day {
-    font-size: 0.875rem;
+    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
     font-weight: 400;
     transition-property:
       color, background-color, border-color, text-decoration-color, fill, stroke;
@@ -79,13 +83,13 @@
   }
 
   .rnx-calendar__caption_label {
-    font-size: 0.875rem;
+    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
     font-weight: 500;
   }
 
   .rnx-calendar__weekday {
     color: var(--muted-foreground);
-    font-size: 0.8rem;
+    font-size: calc(0.8rem * var(--rnx-text-scale, 1));
     font-weight: 400;
   }
 
@@ -97,3 +101,4 @@
     color: var(--muted-foreground);
   }
 }
+

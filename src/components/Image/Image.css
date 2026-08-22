@@ -1,0 +1,52 @@
+﻿@layer components {
+  .rnx-image-container {
+    position: relative;
+    overflow: hidden;
+    border-radius: var(--radius);
+  }
+
+  .rnx-image-placeholder {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    filter: blur(calc(8px * var(--rnx-space-scale, 1)));
+  }
+
+  .rnx-image-fallback {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+    width: 100%;
+    background-color: var(--muted);
+  }
+
+  .rnx-image-error {
+    display: flex;
+    height: 100%;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--muted);
+    color: var(--muted-foreground);
+    text-align: center;
+    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+  }
+
+  .rnx-image {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    transition: opacity 300ms ease, transform 300ms ease;
+  }
+
+  /* Zoom hover effect */
+  .rnx-image-container--zoom {
+    cursor: pointer;
+  }
+  .rnx-image-container--zoom:hover .rnx-image {
+    transform: scale(1.05);
+  }
+}
+

@@ -8,36 +8,75 @@ import { cn } from "../../utils/cn";
 import type {
   PolymorphicComponentPropsWithRef,
 } from "../../utils/types";
+import { createPortal } from "react-dom";
+import { Menu } from "lucide-react";
+import { Button } from "../Button";
+import { rnx } from "../../utils/rnx";
 
 const sidebarVariants = cva(
-  "flex h-screen flex-col border-e bg-background transition-all duration-300 ease-in-out",
+  "rnx-sidebar",
   {
     variants: {
+      variant: {
+        solid: "",
+        glass: "rnx-sidebar--variant-glass",
+        floating: "rnx-sidebar--variant-floating",
+      },
       collapsed: {
-        true: "w-16",
-        false: "w-full md:w-64",
+        true: "rnx-sidebar--collapsed",
+        false: "rnx-sidebar--expanded",
       },
     },
     defaultVariants: {
+      variant: "solid",
       collapsed: false,
     },
   }
 );
 
+/**
+ * Props for the Sidebar component.
+ */
 export interface SidebarProps
   extends
     React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof sidebarVariants> {}
+    VariantProps<typeof sidebarVariants> {
+  mobileOpen?: boolean;
+  onMobileClose?: () => void;
+}
 
 const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
-  ({ className, collapsed, ...props }, ref) => {
-    return (
+  ({ className, variant = "solid", collapsed, mobileOpen, onMobileClose, ...props }, ref) => {
+    const sidebar = (
       <aside
+        {...rnx({ component: 'Sidebar', state: collapsed ? 'inactive' : 'active' })}
         ref={ref}
         data-collapsed={collapsed}
-        className={cn(sidebarVariants({ collapsed }), className)}
+        className={cn(
+          sidebarVariants({ variant, collapsed }),
+          mobileOpen && "rnx-sidebar--mobile-open",
+          className
+        )}
         {...props}
       />
+    );
+
+    return (
+      <>
+        {mobileOpen && typeof document !== "undefined"
+          ? createPortal(
+              <div
+                role="dialog"
+                aria-modal="true"
+                aria-label="Sidebar overlay"
+                className="rnx-sidebar-backdrop"
+                onClick={onMobileClose}
+              />,
+              document.body
+            )
+          : null}
+        {sidebar}
+      </>
     );
   }
 );
@@ -49,11 +88,11 @@ const SidebarHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <Box
     ref={ref}
-    className={cn("flex h-14 items-center border-b px-4", className)}
+    className={cn("rnx-sidebar-header", className)}
     {...props}
   />
 ));
-SidebarHeader.displayName = "SidebarHeader";
+SidebarHeader.displayName = "Sidebar.Header";
 
 const SidebarContent = React.forwardRef<
   HTMLDivElement,
@@ -61,11 +100,11 @@ const SidebarContent = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <Box
     ref={ref}
-    className={cn("flex-1 overflow-auto py-2", className)}
+    className={cn("rnx-sidebar-content", className)}
     {...props}
   />
 ));
-SidebarContent.displayName = "SidebarContent";
+SidebarContent.displayName = "Sidebar.Content";
 
 const SidebarFooter = React.forwardRef<
   HTMLDivElement,
@@ -73,19 +112,19 @@ const SidebarFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <Box
     ref={ref}
-    className={cn("flex items-center border-t p-4", className)}
+    className={cn("rnx-sidebar-footer", className)}
     {...props}
   />
 ));
-SidebarFooter.displayName = "SidebarFooter";
+SidebarFooter.displayName = "Sidebar.Footer";
 
 const sidebarItemVariants = cva(
-  "group flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-secondary hover:text-secondary-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring",
+  "rnx-sidebar-item",
   {
     variants: {
       active: {
-        true: "bg-secondary text-secondary-foreground",
-        false: "text-muted-foreground",
+        true: "rnx-sidebar-item--active",
+        false: "",
       },
     },
     defaultVariants: {
@@ -130,7 +169,7 @@ const SidebarItem: SidebarItemComponent = React.forwardRef(
         {icon && (
           <Box
             as="span"
-            className="flex h-4 w-4 shrink-0 items-center justify-center"
+            className="rnx-sidebar-item-icon"
           >
             {icon}
           </Box>
@@ -143,13 +182,24 @@ const SidebarItem: SidebarItemComponent = React.forwardRef(
   }
 ) as SidebarItemComponent;
 
-(SidebarItem as React.FC).displayName = "SidebarItem";
+(SidebarItem as React.FC).displayName = "Sidebar.Item";
+
+const SidebarMobileToggle = React.forwardRef<
+  HTMLButtonElement,
+  Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "color">
+>((props, ref) => (
+  <Button ref={ref} variant="ghost" size="icon" aria-label={props["aria-label"] || "Open sidebar"} {...props}>
+    <Menu className="h-5 w-5" />
+  </Button>
+));
+SidebarMobileToggle.displayName = "Sidebar.MobileToggle";
 
 const SidebarNamespace = Object.assign(Sidebar, {
   Header: SidebarHeader,
   Content: SidebarContent,
   Footer: SidebarFooter,
   Item: SidebarItem,
+  MobileToggle: SidebarMobileToggle,
 });
 
 export {
@@ -158,4 +208,5 @@ export {
   SidebarContent,
   SidebarFooter,
   SidebarItem,
+  SidebarMobileToggle,
 };

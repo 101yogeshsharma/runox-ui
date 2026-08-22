@@ -13,4 +13,38 @@
     height: 100%;
     width: 1px;
   }
+
+  /* Variants */
+  .rnx-separator--variant-dashed {
+    background-color: transparent;
+    border-top: 1px dashed var(--border);
+  }
+  .rnx-separator--vertical.rnx-separator--variant-dashed {
+    border-top: none;
+    border-left: 1px dashed var(--border);
+  }
+
+  .rnx-separator--variant-dotted {
+    background-color: transparent;
+    border-top: 1px dotted var(--border);
+  }
+  .rnx-separator--vertical.rnx-separator--variant-dotted {
+    border-top: none;
+    border-left: 1px dotted var(--border);
+  }
+
+  /* Colors */
+  .rnx-separator--color-primary {
+    background-color: var(--primary);
+  }
+  .rnx-separator--color-primary.rnx-separator--variant-dashed,
+  .rnx-separator--color-primary.rnx-separator--variant-dotted {
+    border-color: var(--primary);
+  }
+  .rnx-separator--color-secondary {
+    background-color: var(--secondary);
+  }
+  .rnx-separator--color-muted {
+    background-color: var(--muted);
+  }
 }

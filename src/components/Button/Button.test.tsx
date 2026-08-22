@@ -73,10 +73,10 @@ describe("Button", () => {
   });
 
   it("applies fab and icon sizing correctly", () => {
-    const { getByRole, rerender } = render(<Button variant="icon">Icon</Button>);
+    const { getByRole, rerender } = render(<Button variant="icon" aria-label="Icon">Icon</Button>);
     expect(getByRole("button")).toHaveClass("rnx-button--size-icon");
 
-    rerender(<Button variant="fab">Fab</Button>);
+    rerender(<Button variant="fab" aria-label="Fab">Fab</Button>);
     expect(getByRole("button")).toHaveClass("rnx-button--size-fab");
     expect(getByRole("button")).toHaveClass("rnx-button--variant-fab");
   });

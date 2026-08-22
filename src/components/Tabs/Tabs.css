@@ -1,0 +1,170 @@
+﻿@layer components {
+  /* Tabs */
+  .rnx-tabs {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .rnx-tabs-list {
+    position: relative;
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius);
+    background-color: var(--card);
+    padding: calc(0.25rem * var(--rnx-space-scale, 1));
+    color: var(--muted-foreground);
+    border: 1px solid var(--border);
+    overflow-x: auto;
+    -ms-overflow-style: none; /* IE/Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  .rnx-tabs-list::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+
+  /* List Variants */
+  .rnx-tabs-list--variant-pills {
+    background-color: transparent;
+    border: none;
+    gap: calc(0.5rem * var(--rnx-space-scale, 1));
+    padding: 0;
+  }
+  .rnx-tabs-list--variant-pills .rnx-tabs-trigger {
+    border-radius: 9999px;
+  }
+  .rnx-tabs-list--variant-pills .rnx-tabs-trigger[data-state="active"] {
+    color: var(--primary-foreground);
+  }
+
+  .rnx-tabs-list--variant-bordered {
+    background-color: transparent;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .rnx-tabs-list--variant-glass {
+    background-color: color-mix(in srgb, var(--card) 60%, transparent);
+    backdrop-filter: blur(calc(16px * var(--rnx-space-scale, 1)));
+    -webkit-backdrop-filter: blur(calc(16px * var(--rnx-space-scale, 1)));
+    border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+  }
+
+  .rnx-tabs-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1), width 300ms cubic-bezier(0.4, 0, 0.2, 1), opacity 200ms ease;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .rnx-tabs-indicator--default {
+    top: calc(0.25rem * var(--rnx-space-scale, 1));
+    bottom: calc(0.25rem * var(--rnx-space-scale, 1));
+    height: auto;
+    border-radius: calc(var(--radius) - 2px);
+    background-color: var(--background);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+  }
+  .rnx-tabs-indicator--underline {
+    top: auto;
+    bottom: 0;
+    height: 2px;
+    background-color: var(--primary);
+  }
+  .rnx-tabs-indicator--pills {
+    top: 0;
+    bottom: 0;
+    height: 100%;
+    border-radius: 9999px;
+    background-color: var(--primary);
+  }
+  .rnx-tabs-indicator--glass {
+    top: calc(0.25rem * var(--rnx-space-scale, 1));
+    bottom: calc(0.25rem * var(--rnx-space-scale, 1));
+    height: auto;
+    border-radius: calc(var(--radius) - 2px);
+    background-color: color-mix(in srgb, var(--background) 70%, transparent);
+    box-shadow: var(--shadow-sm);
+  }
+  .rnx-tabs-indicator--bordered {
+    top: auto;
+    bottom: -1px;
+    height: 2px;
+    background-color: var(--primary);
+  }
+
+  .rnx-tabs-trigger {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    border-radius: inherit;
+    font-weight: 500;
+    transition: color 200ms ease, background-color 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+    z-index: 10;
+    border: none;
+    background: transparent;
+    color: inherit;
+    cursor: pointer;
+    outline: none;
+  }
+  .rnx-tabs-trigger:focus-visible {
+    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
+  }
+  .rnx-tabs-trigger:disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+  .rnx-tabs-trigger[data-state="active"] {
+    color: var(--foreground);
+    font-weight: 600;
+  }
+  .rnx-tabs-trigger[data-state="inactive"]:hover {
+    color: var(--foreground);
+  }
+  .rnx-tabs-trigger--sm {
+    padding: calc(0.375rem * var(--rnx-space-scale, 1)) calc(0.75rem * var(--rnx-space-scale, 1));
+    font-size: calc(0.75rem * var(--rnx-text-scale, 1));
+  }
+  .rnx-tabs-trigger--md {
+    padding: calc(0.5rem * var(--rnx-space-scale, 1)) calc(1.25rem * var(--rnx-space-scale, 1));
+    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+  }
+  .rnx-tabs-trigger--lg {
+    padding: calc(0.75rem * var(--rnx-space-scale, 1)) calc(1.75rem * var(--rnx-space-scale, 1));
+    font-size: calc(1rem * var(--rnx-text-scale, 1));
+  }
+
+  .rnx-tabs-content {
+    margin-top: calc(1rem * var(--rnx-space-scale, 1));
+    outline: none;
+  }
+  .rnx-tabs-content:focus-visible {
+    box-shadow: 0 0 0 2px var(--ring);
+  }
+  .rnx-tabs-content[data-state="inactive"] {
+    display: none;
+  }
+  .rnx-tabs-content[data-state="active"] {
+    animation: rnx-tabs-fade-in 300ms ease-out;
+  }
+  @keyframes rnx-tabs-fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+

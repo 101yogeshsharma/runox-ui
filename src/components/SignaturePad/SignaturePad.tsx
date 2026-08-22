@@ -13,8 +13,14 @@ import { Eraser } from "lucide-react";
 import { cn } from "../../utils/cn";
 import { Button } from "../Button";
 import "./SignaturePad.css";
+import { withLoading } from "../../utils/withLoading";
+import { rnx } from "../../utils/rnx";
+
 // Uses: Button
 
+/**
+ * Props for the SignaturePad component.
+ */
 export interface SignaturePadProps extends Omit<
   React.CanvasHTMLAttributes<HTMLCanvasElement>,
   "onEnded"
@@ -34,7 +40,7 @@ export interface SignaturePadRef {
   toDataURL: (type?: string, encoderOptions?: number) => string | null;
 }
 
-export const SignaturePad = forwardRef<SignaturePadRef, SignaturePadProps>(
+const SignaturePadBase = forwardRef<SignaturePadRef, SignaturePadProps>(
   (
     {
       className,
@@ -197,16 +203,18 @@ export const SignaturePad = forwardRef<SignaturePadRef, SignaturePadProps>(
 
     return (
       <Box
+        {...rnx({ component: 'SignaturePad' })}
         ref={containerRef}
-        className={cn("rnx-signature-pad relative w-full", className)}
+        className={cn("rnx-signature-pad", className)}
       >
-        <Box className="absolute top-2 right-2 z-10 flex gap-2">
+        <Box className="rnx-signature-pad__controls">
           {showClearButton && (
             <Button
               variant="outline"
               size="icon"
-              className="rnx-signature-pad__clear-button h-8 w-8"
+              className="rnx-signature-pad__clear-button"
               onClick={handleClear}
+              aria-label="Clear signature"
               title="Clear Signature"
             >
               <Eraser className="h-4 w-4" />
@@ -215,28 +223,28 @@ export const SignaturePad = forwardRef<SignaturePadRef, SignaturePadProps>(
         </Box>
 
         <Box
-          className="rnx-signature-pad__canvas-container relative w-full"
+          className="rnx-signature-pad__canvas-container"
           style={{ height: `${height}px` }}
         >
           <canvas
             ref={canvasRef}
             width={canvasWidth}
             height={height}
+            aria-label={props["aria-label"] || "Signature drawing area"}
             onPointerDown={startDrawing}
             onPointerMove={draw}
             onPointerUp={stopDrawing}
             onPointerCancel={stopDrawing}
             className={cn(
-              "rnx-signature-pad__canvas h-full w-full touch-none",
+              "rnx-signature-pad__canvas",
               canvasClassName
             )}
-            style={{ touchAction: "none" }}
             {...props}
           />
-          <Box className="rnx-signature-pad__guide-line pointer-events-none absolute right-8 bottom-1/4 left-8 h-px" />
+          <Box className="rnx-signature-pad__guide-line" />
           <Box
             as="span"
-            className="rnx-signature-pad__guide-label pointer-events-none absolute bottom-1/4 left-8 translate-y-4 px-1 text-xs"
+            className="rnx-signature-pad__guide-label"
           >
             Sign here
           </Box>
@@ -245,4 +253,5 @@ export const SignaturePad = forwardRef<SignaturePadRef, SignaturePadProps>(
     );
   }
 );
-SignaturePad.displayName = "SignaturePad";
+SignaturePadBase.displayName = "SignaturePad";
+export const SignaturePad = withLoading(SignaturePadBase);

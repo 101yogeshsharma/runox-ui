@@ -78,3 +78,5 @@ export function DataTablePagination<TData>({
     </Flex>
   );
 }
+
+DataTablePagination.displayName = "Table.DataTablePagination";

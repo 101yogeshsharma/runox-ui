@@ -19,6 +19,7 @@ export const typography = {
     "6xl": ["3.75rem", { lineHeight: "1.1" }],
   },
   fontWeight: {
+    light: "300",
     normal: "400",
     medium: "500",
     semibold: "600",

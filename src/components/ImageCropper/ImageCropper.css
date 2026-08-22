@@ -1,9 +1,11 @@
 @layer components {
   .rnx-image-cropper {
+    border-radius: var(--radius);
   }
 
   .rnx-image-cropper-canvas {
     background-color: var(--muted);
+    border-radius: var(--radius);
   }
 
   .rnx-image-cropper-controls {

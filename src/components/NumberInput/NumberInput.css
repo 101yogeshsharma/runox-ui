@@ -1,0 +1,101 @@
+﻿@layer components {
+  .rnx-number-input-container {
+    display: grid;
+    width: 100%;
+    gap: var(--spacing-1-5, calc(0.375rem * var(--rnx-space-scale, 1)));
+  }
+
+  .rnx-number-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  .rnx-number-input {
+    border-radius: var(--radius);
+    text-align: center;
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
+  .rnx-number-input::-webkit-outer-spin-button,
+  .rnx-number-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .rnx-number-input--sm {
+    padding-left: calc(2rem * var(--rnx-space-scale, 1));
+    padding-right: calc(2rem * var(--rnx-space-scale, 1));
+  }
+  .rnx-number-input--md {
+    padding-left: calc(2.5rem * var(--rnx-space-scale, 1));
+    padding-right: calc(2.5rem * var(--rnx-space-scale, 1));
+  }
+  .rnx-number-input--lg {
+    padding-left: calc(3rem * var(--rnx-space-scale, 1));
+    padding-right: calc(3rem * var(--rnx-space-scale, 1));
+  }
+
+  .rnx-number-input--error {
+    border-color: var(--destructive);
+  }
+  .rnx-number-input--error:focus-visible {
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px var(--destructive);
+  }
+
+  .rnx-number-input-error-msg {
+    font-size: calc(0.8rem * var(--rnx-text-scale, 1));
+    font-weight: 500;
+    color: var(--destructive);
+    margin-top: calc(0.25rem * var(--rnx-space-scale, 1));
+  }
+
+  .rnx-number-input-btn-wrapper {
+    position: absolute;
+    inset-block: calc(0.25rem * var(--rnx-space-scale, 1));
+    display: flex;
+    align-items: center;
+  }
+  .rnx-number-input-btn-wrapper--start {
+    inset-inline-start: calc(0.25rem * var(--rnx-space-scale, 1));
+  }
+  .rnx-number-input-btn-wrapper--end {
+    inset-inline-end: calc(0.25rem * var(--rnx-space-scale, 1));
+  }
+
+  .rnx-number-input-btn {
+    border-radius: calc(var(--radius) - 4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .rnx-number-input-btn--sm {
+    height: calc(1.5rem * var(--rnx-space-scale, 1));
+    width: calc(1.5rem * var(--rnx-space-scale, 1));
+  }
+  .rnx-number-input-btn--md {
+    height: calc(2rem * var(--rnx-space-scale, 1));
+    width: calc(2rem * var(--rnx-space-scale, 1));
+  }
+  .rnx-number-input-btn--lg {
+    height: calc(2.5rem * var(--rnx-space-scale, 1));
+    width: calc(2.5rem * var(--rnx-space-scale, 1));
+  }
+
+  .rnx-number-input-icon--sm {
+    height: 0.75rem;
+    width: 0.75rem;
+  }
+  .rnx-number-input-icon--md {
+    height: 1rem;
+    width: 1rem;
+  }
+  .rnx-number-input-icon--lg {
+    height: 1.25rem;
+    width: 1.25rem;
+  }
+}

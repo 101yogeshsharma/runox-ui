@@ -22,12 +22,7 @@ export function GlassFilters() {
       `}</style>
 
       <svg
-        style={{
-          position: "absolute",
-          width: 0,
-          height: 0,
-          pointerEvents: "none",
-        }}
+        className="absolute w-0 h-0 pointer-events-none"
         aria-hidden="true"
       >
         <defs>
@@ -117,3 +112,5 @@ export function GlassFilters() {
     </>
   );
 }
+
+GlassFilters.displayName = "GlassFilters";

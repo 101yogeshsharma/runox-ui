@@ -1,4 +1,4 @@
-@layer components {
+﻿@layer components {
   .rnx-badge {
     display: inline-flex;
     align-items: center;
@@ -6,6 +6,18 @@
     font-weight: 600;
     transition: all 0.2s;
     white-space: nowrap;
+  }
+
+  .rnx-badge--pulse {
+    animation: rnx-badge-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  @keyframes rnx-badge-pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
   }
 
   .rnx-badge:focus {
@@ -19,12 +31,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: 0.25rem;
+    margin-right: calc(0.25rem * var(--rnx-space-scale, 1));
   }
 
   .rnx-badge__icon svg {
-    width: 0.75rem;
-    height: 0.75rem;
+    width: calc(0.75rem * var(--rnx-space-scale, 1));
+    height: calc(0.75rem * var(--rnx-space-scale, 1));
   }
 
   /* === Shapes === */
@@ -32,27 +44,42 @@
     border-radius: 9999px;
   }
   .rnx-badge--shape-rounded {
+    border-radius: calc(var(--radius) - 4px);
   }
   .rnx-badge--shape-square {
     border-radius: 0;
   }
 
+  /* === Glass & Gradient Variants === */
+  .rnx-badge--glass {
+    backdrop-filter: blur(calc(12px * var(--rnx-space-scale, 1)));
+    -webkit-backdrop-filter: blur(calc(12px * var(--rnx-space-scale, 1)));
+    background-color: color-mix(in srgb, var(--card) 60%, transparent);
+    border-color: color-mix(in srgb, var(--border) 40%, transparent);
+  }
+
+  .rnx-badge--gradient {
+    background: linear-gradient(135deg, var(--primary), var(--info));
+    color: var(--primary-foreground);
+    border-color: transparent;
+  }
+
   /* === Sizes === */
   .rnx-badge--size-sm {
-    padding: 0.125rem 0.5rem;
-    font-size: 0.625rem; /* 10px */
+    padding: calc(0.125rem * var(--rnx-space-scale, 1)) calc(0.5rem * var(--rnx-space-scale, 1));
+    font-size: calc(0.625rem * var(--rnx-text-scale, 1));
   }
   .rnx-badge--size-md {
-    padding: 0.125rem 0.625rem;
-    font-size: 0.75rem; /* 12px */
+    padding: calc(0.125rem * var(--rnx-space-scale, 1)) calc(0.625rem * var(--rnx-space-scale, 1));
+    font-size: calc(0.75rem * var(--rnx-text-scale, 1));
   }
   .rnx-badge--size-lg {
-    padding: 0.25rem 0.75rem;
-    font-size: 0.875rem; /* 14px */
+    padding: calc(0.25rem * var(--rnx-space-scale, 1)) calc(0.75rem * var(--rnx-space-scale, 1));
+    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
   }
   .rnx-badge--size-lg .rnx-badge__icon svg {
-    width: 0.875rem;
-    height: 0.875rem;
+    width: calc(0.875rem * var(--rnx-space-scale, 1));
+    height: calc(0.875rem * var(--rnx-space-scale, 1));
   }
 
   /* === Variants (Solid, Subtle, Outline) === */
@@ -154,7 +181,7 @@
   /* AI (Fuchsia) */
   .rnx-badge--solid-ai {
     background-color: var(--ai);
-    color: var(--info-foreground);
+    color: var(--ai-foreground);
   }
   .rnx-badge--solid-ai:hover {
     background-color: color-mix(in srgb, var(--ai) 80%, transparent);
@@ -182,7 +209,7 @@
   .rnx-badge--solid-backend,
   .rnx-badge--solid-success {
     background-color: var(--success);
-    color: var(--info-foreground);
+    color: var(--success-foreground);
   }
   .rnx-badge--solid-backend:hover,
   .rnx-badge--solid-success:hover {
@@ -239,3 +266,4 @@
     color: var(--warning);
   }
 }
+

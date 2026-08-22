@@ -10,6 +10,16 @@ function setRef<T>(ref: PossibleRef<T>, value: T) {
   }
 }
 
+/**
+ * Merges multiple React refs into a single callback ref, supporting both function refs and ref objects.
+ *
+ * @param refs - An array of possible React refs to merge.
+ * @returns A callback ref that updates all provided refs.
+ *
+ * @example
+ * const mergedRef = useMergeRefs(ref1, ref2);
+ * return <div ref={mergedRef} />;
+ */
 export function useMergeRefs<T>(
   ...refs: PossibleRef<T>[]
 ): React.RefCallback<T> {

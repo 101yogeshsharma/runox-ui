@@ -6,7 +6,15 @@ import { cn } from "../../utils/cn";
 import { Button } from "../Button";
 import { Box } from "../../atoms/Box";
 import { Text } from "../../atoms/Text";
+import { withLoading } from "../../utils/withLoading";
+import { rnx } from "../../utils/rnx";
 
+
+import "./Pagination.css";
+
+/**
+ * Props for the Pagination component.
+ */
 export interface PaginationProps extends Omit<
   React.ComponentPropsWithoutRef<"nav">,
   "color"
@@ -14,18 +22,20 @@ export interface PaginationProps extends Omit<
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  variant?: "default" | "pills" | "bordered" | "glass";
   size?: "sm" | "md" | "lg";
   siblingCount?: number;
   itemClassName?: string;
   activeItemClassName?: string;
 }
 
-export const Pagination = forwardRef<HTMLElement, PaginationProps>(
+const PaginationBase = forwardRef<HTMLElement, PaginationProps>(
   (
     {
       currentPage,
       totalPages,
       onPageChange,
+      variant = "default",
       size = "md",
       siblingCount = 1,
       itemClassName,
@@ -73,16 +83,20 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(
     };
 
     return (
-      <Flex
+      <Box
         as="nav"
         ref={ref}
         role="navigation"
         aria-label="pagination"
-        justify="center"
-        className={cn("mx-auto w-full", className)}
+        className={cn(
+          "rnx-pagination flex justify-center",
+          variant && variant !== "default" && `rnx-pagination--variant-${variant}`,
+          className
+        )}
+        {...rnx({ component: 'Pagination' })}
         {...props}
       >
-        <Flex as="ul" direction="row" align="center" gap="xs">
+        <Flex as="ul" direction="row" align="center" gap="xs" className="rnx-pagination-list">
           <Box as="li">
             <PaginationPrevious
               onClick={() => onPageChange(currentPage - 1)}
@@ -129,12 +143,13 @@ export const Pagination = forwardRef<HTMLElement, PaginationProps>(
             />
           </Box>
         </Flex>
-      </Flex>
+      </Box>
     );
   }
 );
 
-Pagination.displayName = "Pagination";
+PaginationBase.displayName = "Pagination";
+const PaginationWithLoading = withLoading(PaginationBase);
 
 type PaginationLinkProps = {
   isActive?: boolean;
@@ -142,18 +157,13 @@ type PaginationLinkProps = {
   isIcon?: boolean;
 } & Omit<React.ComponentPropsWithoutRef<"button">, "color" | "size">;
 
-export const PaginationLink = ({
+const PaginationLink = ({
   className,
   isActive,
   size = "md",
   isIcon = false,
   ...props
 }: PaginationLinkProps) => {
-  const iconSizes = {
-    sm: "w-8 h-8 p-0",
-    md: "w-10 h-10 p-0",
-    lg: "w-12 h-12 p-0 text-lg",
-  };
   return (
     <Button
       aria-current={isActive ? "page" : undefined}
@@ -161,15 +171,15 @@ export const PaginationLink = ({
       size={size}
       className={cn(
         className,
-        isIcon && iconSizes[(size as keyof typeof iconSizes) || "md"]
+        isIcon && `rnx-pagination-icon--${size}`
       )}
       {...props}
     />
   );
 };
-PaginationLink.displayName = "PaginationLink";
+PaginationLink.displayName = "Pagination.Link";
 
-export const PaginationPrevious = ({
+const PaginationPrevious = ({
   className,
   size = "md",
   ...props
@@ -186,9 +196,9 @@ export const PaginationPrevious = ({
     </Text>
   </PaginationLink>
 );
-PaginationPrevious.displayName = "PaginationPrevious";
+PaginationPrevious.displayName = "Pagination.Previous";
 
-export const PaginationNext = ({
+const PaginationNext = ({
   className,
   size = "md",
   ...props
@@ -205,25 +215,20 @@ export const PaginationNext = ({
     <ChevronRight className={cn("h-4 w-4", size === "lg" && "h-5 w-5")} />
   </PaginationLink>
 );
-PaginationNext.displayName = "PaginationNext";
+PaginationNext.displayName = "Pagination.Next";
 
-export const PaginationEllipsis = ({
+const PaginationEllipsis = ({
   className,
   size = "md",
   ...props
 }: React.ComponentPropsWithoutRef<"span"> & { size?: "sm" | "md" | "lg" }) => {
-  const sizeClasses = {
-    sm: "h-8 w-8",
-    md: "h-10 w-10",
-    lg: "h-12 w-12",
-  };
   return (
     <Box
       as="span"
       aria-hidden
       className={cn(
         "flex items-center justify-center",
-        sizeClasses[size],
+        `rnx-pagination-ellipsis--${size}`,
         className
       )}
       {...props}
@@ -235,4 +240,11 @@ export const PaginationEllipsis = ({
     </Box>
   );
 };
-PaginationEllipsis.displayName = "PaginationEllipsis";
+PaginationEllipsis.displayName = "Pagination.Ellipsis";
+
+export const Pagination = Object.assign(PaginationWithLoading, {
+  Link: PaginationLink,
+  Previous: PaginationPrevious,
+  Next: PaginationNext,
+  Ellipsis: PaginationEllipsis,
+});

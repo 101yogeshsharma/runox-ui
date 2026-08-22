@@ -22,35 +22,9 @@ const ListContext = createContext<ListContextValue>({
   size: "md",
 });
 
-const LIST_VARIANT_STYLES = {
-  bullet: "list-disc list-outside pl-6 space-y-2",
-  number: "list-decimal list-outside pl-6 space-y-2",
-  icon: "list-none pl-0 space-y-3",
-  none: "list-none pl-0 space-y-1",
-};
-
-const LIST_BASE_CLASS = "rnx-list";
-const LIST_ITEM_COLLAPSIBLE_BASE =
-  "list-none my-2 overflow-hidden rnx-list-item-collapsible";
-const LIST_ITEM_COLLAPSIBLE_DRAGGING = "rnx-list-item-collapsible--dragging";
-const LIST_ITEM_COLLAPSIBLE_BUTTON =
-  "flex w-full items-center justify-between px-4 py-3 text-left rnx-list-item-collapsible-btn";
-const LIST_ITEM_COLLAPSIBLE_TITLE = "rnx-list-item-collapsible-title";
-const LIST_ITEM_COLLAPSIBLE_ICON = "h-4 w-4 rnx-list-item-collapsible-icon";
-const LIST_ITEM_COLLAPSIBLE_CONTENT =
-  "px-4 py-3 rnx-list-item-collapsible-content";
-const LIST_ITEM_BASE = "flex items-start gap-3";
-const LIST_ITEM_NUMBER = "rnx-list-item-number";
-const LIST_ITEM_BULLET = "rnx-list-item-bullet";
-const LIST_ITEM_DRAGGING =
-  "shadow-md rounded-md z-[var(--z-dropdown)] rnx-list-item--dragging";
-
-const LIST_SIZE_STYLES = {
-  sm: "text-sm",
-  md: "text-base",
-  lg: "text-lg",
-};
-
+/**
+ * Props for the List component.
+ */
 export interface ListProps extends React.HTMLAttributes<
   HTMLUListElement | HTMLOListElement
 > {
@@ -81,8 +55,9 @@ const ListComponent = React.forwardRef<
         <Component
           ref={ref as React.Ref<HTMLOListElement & HTMLUListElement>}
           className={cn(
-            LIST_VARIANT_STYLES[variant],
-            LIST_BASE_CLASS,
+            "rnx-list",
+            `rnx-list--${variant}`,
+            `rnx-list--${size}`,
             className
           )}
           {...props}
@@ -135,31 +110,28 @@ export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
           as="li"
           ref={ref}
           className={cn(
-            LIST_ITEM_COLLAPSIBLE_BASE,
-            isDragging && LIST_ITEM_COLLAPSIBLE_DRAGGING,
+            "rnx-list-item-collapsible",
+            isDragging && "rnx-list-item-collapsible--dragging",
             className
           )}
           {...props}
         >
           <button
             type="button"
-            className={LIST_ITEM_COLLAPSIBLE_BUTTON}
+            className="rnx-list-item-collapsible-btn"
             aria-expanded={isExpanded}
             aria-controls={contentId}
             onClick={() => setIsExpanded(!isExpanded)}
           >
             <Text
               as="div"
-              className={cn(
-                LIST_ITEM_COLLAPSIBLE_TITLE,
-                LIST_SIZE_STYLES[context.size]
-              )}
+              className="rnx-list-item-collapsible-title"
             >
               {title}
             </Text>
             <ChevronRight
               className={cn(
-                LIST_ITEM_COLLAPSIBLE_ICON,
+                "rnx-list-item-collapsible-icon",
                 isExpanded && "rotate-90"
               )}
             />
@@ -172,7 +144,7 @@ export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
             )}
           >
             <div className="overflow-hidden">
-              <Box className={LIST_ITEM_COLLAPSIBLE_CONTENT}>{children}</Box>
+              <Box className="rnx-list-item-collapsible-content">{children}</Box>
             </div>
           </div>
         </Box>
@@ -184,18 +156,17 @@ export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
         as="li"
         ref={ref}
         className={cn(
-          LIST_SIZE_STYLES[context.size],
-          !isBulletOrNumber && LIST_ITEM_BASE,
-          context.variant === "number" && LIST_ITEM_NUMBER,
-          context.variant === "bullet" && LIST_ITEM_BULLET,
-          isDragging && LIST_ITEM_DRAGGING,
+          !isBulletOrNumber && "rnx-list-item",
+          context.variant === "number" && "rnx-list-item-number",
+          context.variant === "bullet" && "rnx-list-item-bullet",
+          isDragging && "rnx-list-item--dragging",
           className
         )}
         {...props}
       >
         {/* Render custom icon if variant is icon */}
         {!isBulletOrNumber && (icon || context.icon) && (
-          <Box as="span" className="mt-0.5 flex-shrink-0">
+          <Box as="span" className="rnx-list-item-icon-wrapper">
             {icon || context.icon}
           </Box>
         )}
@@ -206,7 +177,7 @@ export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
             {children}
           </Text>
         ) : (
-          <Box className="text-foreground flex-1">{children}</Box>
+          <Box className="flex-1">{children}</Box>
         )}
       </Box>
     );

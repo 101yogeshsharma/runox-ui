@@ -14,7 +14,6 @@ import { cn } from "../../utils/cn";
 import { Box } from "../../atoms/Box";
 import { Text } from "../../atoms/Text";
 import { Button } from "../Button";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
 // Uses: Button
 import "./Toast.css";
 
@@ -127,6 +126,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
     </ToastContext.Provider>
   );
 };
+ToastProvider.displayName = "Toast.Provider";
 
 export const useToast = () => {
   const context = useContext(ToastContext);
@@ -134,11 +134,10 @@ export const useToast = () => {
   return context;
 };
 
-const ToastItem: React.FC<{ toast: ToastMessage; onRemove: () => void }> = ({
+export const ToastItem: React.FC<{ toast: ToastMessage; onRemove: () => void }> = ({
   toast,
   onRemove,
 }) => {
-  const { config } = useTheme();
   useEffect(() => {
     const duration = toast.duration || 5000;
     const timer = setTimeout(() => {
@@ -152,18 +151,26 @@ const ToastItem: React.FC<{ toast: ToastMessage; onRemove: () => void }> = ({
     onRemove();
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Escape") {
+      e.stopPropagation();
+      handleClose();
+    }
+  };
+
   const isClosing = toast.status === "closing";
 
   return (
     <Box
       role="status"
       aria-live="polite"
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
       className={cn(
         "rnx-toast",
         `rnx-toast--${toast.variant || "info"}`,
         `rnx-toast--${toast.size || "md"}`,
-        isClosing ? "rnx-toast--closing" : "rnx-toast--opening",
-        `rounded-${config.radius}`
+        isClosing ? "rnx-toast--closing" : "rnx-toast--opening"
       )}
     >
       <Box className="rnx-toast-content">
@@ -183,10 +190,21 @@ const ToastItem: React.FC<{ toast: ToastMessage; onRemove: () => void }> = ({
         size="icon"
         className="rnx-toast-close"
         onClick={handleClose}
-        aria-label="Close toast"
+        aria-label="Dismiss notification"
       >
         <X className="h-4 w-4" />
       </Button>
     </Box>
   );
 };
+ToastProvider.displayName = "Toast.Provider";
+ToastItem.displayName = "Toast.Item";
+
+export const Toast = Object.assign(
+  {},
+  {
+    Provider: ToastProvider,
+    Item: ToastItem,
+    useToast,
+  }
+);

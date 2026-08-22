@@ -6,24 +6,38 @@ import { mergeProps } from "../../utils/mergeProps";
 
 import { cva, type VariantProps } from "class-variance-authority";
 import { Label } from "../Label/Label";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
+import { rnx } from "../../utils/rnx";
+import { withLoading } from "../../utils/withLoading";
+
+
+import "./Textarea.css";
 
 export const textareaVariants = cva(
-  "flex w-full rounded-md border border-input bg-background text-foreground ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+  "rnx-textarea",
   {
     variants: {
+      variant: {
+        outline: "rnx-textarea--variant-outline",
+        filled: "rnx-textarea--variant-filled",
+        glass: "rnx-textarea--variant-glass",
+        flushed: "rnx-textarea--variant-flushed",
+      },
       size: {
-        sm: "min-h-16 px-3 py-2 text-xs",
-        md: "min-h-20 px-3 py-2 text-sm",
-        lg: "min-h-32 px-4 py-3 text-base",
+        sm: "rnx-textarea--size-sm",
+        md: "rnx-textarea--size-md",
+        lg: "rnx-textarea--size-lg",
       },
     },
     defaultVariants: {
+      variant: "outline",
       size: "md",
     },
   }
 );
 
+/**
+ * A multi-line text input field. Use in forms for long description fields, comments, or document body inputs.
+ */
 export interface TextareaProps
   extends
     React.TextareaHTMLAttributes<HTMLTextAreaElement>,
@@ -34,12 +48,13 @@ export interface TextareaProps
   resize?: "none" | "both" | "horizontal" | "vertical";
 }
 
-export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
+const TextareaBase = forwardRef<HTMLTextAreaElement, TextareaProps>(
   (
     {
       label,
       error,
-      size,
+      variant = "outline",
+      size = "md",
       resize = "both",
       className,
       containerClassName,
@@ -50,22 +65,24 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
     },
     ref
   ) => {
-    const { config } = useTheme();
     const generatedId = useId();
     const id = customId || generatedId;
 
     return (
       <Box
         className={cn(
-          "grid w-full gap-1.5",
-          `rounded-${config.radius}`,
+          "rnx-textarea-container",
           containerClassName
         )}
+        {...rnx({
+          component: "Textarea",
+          state: disabled ? "disabled" : error ? "error" : "default",
+        })}
       >
         {label && (
           <Label
             htmlFor={id}
-            className="text-foreground text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            className="rnx-textarea-label"
           >
             {label}
           </Label>
@@ -79,8 +96,8 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
               disabled,
               style: { resize, ...style },
               className: cn(
-                textareaVariants({ size }),
-                error && "border-destructive focus-visible:ring-destructive",
+                textareaVariants({ variant, size }),
+                error && "rnx-textarea--error",
                 className
               ),
               "aria-invalid": !!error,
@@ -94,7 +111,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           <Box
             as="span"
             id={`${id}-error`}
-            className="text-destructive text-xs font-medium"
+            className="rnx-textarea-error-msg"
           >
             {error}
           </Box>
@@ -104,4 +121,5 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   }
 );
 
-Textarea.displayName = "Textarea";
+TextareaBase.displayName = "Textarea";
+export const Textarea = withLoading(TextareaBase);

@@ -3,37 +3,60 @@ import React, { useState, useRef, useEffect, forwardRef, useId } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "../../utils/cn";
 import { Box } from "../../atoms/Box";
+import { rnx } from "../../utils/rnx";
 import { useFloatingPosition } from "../../hooks";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
+import { withLoading } from "../../utils/withLoading";
+import "./Tooltip.css";
 
+/**
+ * A floating label that appears on hover or focus to provide additional context for an element.
+ */
 export interface TooltipProps {
   content: React.ReactNode;
   children: React.ReactNode;
+  variant?: "solid" | "glass" | "subtle" | "inverted";
+  size?: "sm" | "md" | "lg";
+  showArrow?: boolean;
   delay?: number;
   className?: string;
   position?: "top" | "right" | "bottom" | "left";
 }
 
-// Keeping the original exports for API compatibility, but they are no-ops since we don't need Context Providers anymore
 export const TooltipProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => <>{children}</>;
+TooltipProvider.displayName = "Tooltip.Provider";
+
 export const TooltipRoot: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => <>{children}</>;
+TooltipRoot.displayName = "Tooltip.Root";
+
 export const TooltipTrigger: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => <>{children}</>;
+TooltipTrigger.displayName = "Tooltip.Trigger";
+
 export const TooltipContent: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => <>{children}</>;
+TooltipContent.displayName = "Tooltip.Content";
 
-export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
+const TooltipBase = forwardRef<HTMLDivElement, TooltipProps>(
   (
-    { content, children, delay = 200, className, position = "top", ...props },
+    {
+      content,
+      children,
+      variant = "solid",
+      size = "md",
+      showArrow = false,
+      delay = 200,
+      className,
+      position = "top",
+      ...props
+    },
     ref
   ) => {
-    const { config } = useTheme();
     const [isOpen, setIsOpen] = useState(false);
     const [mounted, setMounted] = useState(false);
     const [shouldRender, setShouldRender] = useState(false);
@@ -160,7 +183,8 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
           role="tooltip"
           className={cn(
             "rnx-tooltip-content",
-            `rounded-${config.radius}`,
+            `rnx-tooltip-content--variant-${variant}`,
+            `rnx-tooltip-content--${size}`,
             className
           )}
           data-state={mounted ? "open" : "closed"}
@@ -171,8 +195,20 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
             left: floatingPos?.left ?? -9999,
             visibility: floatingPos ? "visible" : "hidden",
           }}
+          {...rnx({ component: "Tooltip", state: isOpen ? "open" : "closed" })}
           {...props}
         >
+          {showArrow && (
+            <span
+              className="rnx-tooltip-arrow"
+              style={{
+                top: floatingPos?.placed === "bottom" ? -3 : undefined,
+                bottom: floatingPos?.placed === "top" ? -3 : undefined,
+                left: floatingPos?.placed === "right" ? -3 : "calc(50% - 3px)",
+                right: floatingPos?.placed === "left" ? -3 : undefined,
+              }}
+            />
+          )}
           {content}
         </Box>,
         document.body
@@ -187,4 +223,12 @@ export const Tooltip = forwardRef<HTMLDivElement, TooltipProps>(
     );
   }
 );
-Tooltip.displayName = "Tooltip";
+TooltipBase.displayName = "Tooltip";
+const TooltipWithLoading = withLoading(TooltipBase);
+
+export const Tooltip = Object.assign(TooltipWithLoading, {
+  Provider: TooltipProvider,
+  Root: TooltipRoot,
+  Trigger: TooltipTrigger,
+  Content: TooltipContent,
+});

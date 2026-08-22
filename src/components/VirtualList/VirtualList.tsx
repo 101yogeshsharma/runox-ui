@@ -6,7 +6,11 @@ import { cn } from "../../utils/cn";
 import "./VirtualList.css";
 
 import { Box } from "../../atoms/Box";
+import { rnx } from "../../utils/rnx";
 
+/**
+ * Props for the VirtualList component.
+ */
 export interface VirtualListProps<T> {
   items: T[];
   renderItem: (item: T, index: number) => React.ReactNode;
@@ -87,7 +91,19 @@ function useVirtualization(options: {
   };
 }
 
-const VirtualListItem = React.memo(({ virtualRow, item, itemClassName, renderItem }: any) => {
+interface VirtualListItemProps<T> {
+  virtualRow: { index: number; start: number; size: number };
+  item: T;
+  itemClassName?: string;
+  renderItem: (item: T, index: number) => React.ReactNode;
+}
+
+function VirtualListItemComponent<T>({
+  virtualRow,
+  item,
+  itemClassName,
+  renderItem,
+}: VirtualListItemProps<T>) {
   return (
     <Box
       className={cn(VIRTUAL_LIST_ITEM_CLASS, itemClassName)}
@@ -99,8 +115,9 @@ const VirtualListItem = React.memo(({ virtualRow, item, itemClassName, renderIte
       {renderItem(item, virtualRow.index)}
     </Box>
   );
-});
-VirtualListItem.displayName = "VirtualListItem";
+}
+
+const VirtualListItem = React.memo(VirtualListItemComponent) as typeof VirtualListItemComponent;
 
 export function VirtualList<T>({
   items,
@@ -110,14 +127,18 @@ export function VirtualList<T>({
   className,
   itemClassName,
 }: VirtualListProps<T>) {
-  const rowVirtualizer = useVirtualization({
+  const estimateSize = React.useCallback(() => itemHeight, [itemHeight]);
+  const virtualOptions = React.useMemo(() => ({
     count: items.length,
-    estimateSize: () => itemHeight,
+    estimateSize,
     overscan: 5,
-  });
+  }), [items.length, estimateSize]);
+
+  const rowVirtualizer = useVirtualization(virtualOptions);
 
   return (
     <Box
+      {...rnx({ component: 'VirtualList' })}
       ref={rowVirtualizer.parentRef}
       className={cn(VIRTUAL_LIST_CONTAINER_CLASS, className)}
       style={{
@@ -147,3 +168,4 @@ export function VirtualList<T>({
     </Box>
   );
 }
+VirtualList.displayName = "VirtualList";

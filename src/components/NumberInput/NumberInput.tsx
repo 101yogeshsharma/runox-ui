@@ -14,19 +14,23 @@ import { mergeProps } from "../../utils/mergeProps";
 import { Label } from "../Label/Label";
 import { Button } from "../Button/Button";
 import { Input } from "../Input/Input";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
 // Uses: Button, Input
+import { rnx } from "../../utils/rnx";
 
 import { cva, type VariantProps } from "class-variance-authority";
+import { withLoading } from "../../utils/withLoading";
+
+
+import "./NumberInput.css";
 
 export const numberInputVariants = cva(
-  "flex w-full rounded-md border border-input bg-transparent text-center ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [appearance:textfield] spin-button-hide",
+  "rnx-number-input",
   {
     variants: {
       size: {
-        sm: "h-8 px-8 py-1 text-xs",
-        md: "h-10 px-10 py-2 text-sm",
-        lg: "h-12 px-12 py-3 text-base",
+        sm: "rnx-number-input--sm",
+        md: "rnx-number-input--md",
+        lg: "rnx-number-input--lg",
       },
     },
     defaultVariants: {
@@ -35,6 +39,9 @@ export const numberInputVariants = cva(
   }
 );
 
+/**
+ * Props for the NumberInput component.
+ */
 export interface NumberInputProps
   extends
     Omit<
@@ -42,6 +49,7 @@ export interface NumberInputProps
       "type" | "value" | "onChange" | "size"
     >,
     VariantProps<typeof numberInputVariants> {
+  variant?: "outline" | "filled" | "glass" | "flushed";
   value?: number;
   onChange?: (value: number) => void;
   min?: number;
@@ -51,7 +59,7 @@ export interface NumberInputProps
   error?: string;
 }
 
-export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
+const NumberInputBase = forwardRef<HTMLInputElement, NumberInputProps>(
   (
     {
       className,
@@ -62,13 +70,13 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
       step = 1,
       label,
       error,
-      size,
+      variant = "outline",
+      size = "md",
       disabled,
       ...props
     },
     ref
   ) => {
-    const { config } = useTheme();
     const [internalValue, setInternalValue] = useState<string>(
       String(value ?? 0)
     );
@@ -163,33 +171,22 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
       }
     };
 
-    const buttonSizeClasses = {
-      sm: "h-6 w-6",
-      md: "h-8 w-8",
-      lg: "h-10 w-10",
-    };
-
-    const iconSizeClasses = {
-      sm: "h-3 w-3",
-      md: "h-4 w-4",
-      lg: "h-5 w-5",
-    };
-
-    const currentButtonSize = buttonSizeClasses[size || "md"];
-    const currentIconSize = iconSizeClasses[size || "md"];
-
     return (
       <Box
         className={cn(
-          "grid w-full gap-1.5",
-          `rounded-${config.radius}`,
+          "rnx-number-input-container",
           className
         )}
+        {...rnx({
+          component: "NumberInput",
+          state: disabled ? "disabled" : "active",
+        })}
       >
         {label && <Label>{label}</Label>}
-        <Box className="relative flex items-center">
+        <Box className="rnx-number-input-wrapper">
           <Input
             ref={ref}
+            variant={variant}
             {...mergeProps(
               {
                 type: "number",
@@ -202,18 +199,18 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
                 size: size ?? "md",
                 className: cn(
                   numberInputVariants({ size }),
-                  error && "border-destructive focus-visible:ring-destructive"
+                  error && "rnx-number-input--error"
                 ),
               },
               props
             )}
           />
-          <Box className="absolute inset-y-1 start-1 flex items-center">
+          <Box className="rnx-number-input-btn-wrapper rnx-number-input-btn-wrapper--start">
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              className={cn("rounded-sm", currentButtonSize)}
+              className={cn("rnx-number-input-btn", `rnx-number-input-btn--${size || "md"}`)}
               disabled={disabled || currentValue <= min}
               onMouseDown={() => startContinuous(handleDecrement)}
               onMouseUp={stopContinuous}
@@ -222,15 +219,15 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
               onTouchEnd={stopContinuous}
               aria-label="Decrement"
             >
-              <Minus className={currentIconSize} />
+              <Minus className={`rnx-number-input-icon--${size || "md"}`} />
             </Button>
           </Box>
-          <Box className="absolute inset-y-1 end-1 flex items-center">
+          <Box className="rnx-number-input-btn-wrapper rnx-number-input-btn-wrapper--end">
             <Button
               type="button"
               variant="ghost"
               size="icon"
-              className={cn("rounded-sm", currentButtonSize)}
+              className={cn("rnx-number-input-btn", `rnx-number-input-btn--${size || "md"}`)}
               disabled={disabled || currentValue >= max}
               onMouseDown={() => startContinuous(handleIncrement)}
               onMouseUp={stopContinuous}
@@ -239,12 +236,12 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
               onTouchEnd={stopContinuous}
               aria-label="Increment"
             >
-              <Plus className={currentIconSize} />
+              <Plus className={`rnx-number-input-icon--${size || "md"}`} />
             </Button>
           </Box>
         </Box>
         {error && (
-          <Box as="span" className="text-destructive text-xs font-medium">
+          <Box as="span" className="rnx-number-input-error-msg">
             {error}
           </Box>
         )}
@@ -252,4 +249,5 @@ export const NumberInput = forwardRef<HTMLInputElement, NumberInputProps>(
     );
   }
 );
-NumberInput.displayName = "NumberInput";
+NumberInputBase.displayName = "NumberInput";
+export const NumberInput = withLoading(NumberInputBase);

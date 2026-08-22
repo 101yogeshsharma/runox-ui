@@ -11,23 +11,38 @@ import { cn } from "../../utils/cn";
 // Uses: Button, Input, Popover
 
 import { cva, type VariantProps } from "class-variance-authority";
+import { withLoading } from "../../utils/withLoading";
+import { rnx } from "../../utils/rnx";
+
+
+import "./ColorPicker.css";
 
 export const colorPickerVariants = cva(
-  "flex w-full items-center justify-between rounded-md border border-input bg-transparent ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
+  "rnx-color-picker-trigger",
   {
     variants: {
+      variant: {
+        outline: "rnx-color-picker-trigger--variant-outline",
+        filled: "rnx-color-picker-trigger--variant-filled",
+        glass: "rnx-color-picker-trigger--variant-glass",
+        subtle: "rnx-color-picker-trigger--variant-subtle",
+      },
       size: {
-        sm: "h-8 px-3 py-1 text-xs",
-        md: "h-10 px-3 py-2 text-sm",
-        lg: "h-12 px-4 py-3 text-base",
+        sm: "rnx-color-picker-trigger--size-sm",
+        md: "rnx-color-picker-trigger--size-md",
+        lg: "rnx-color-picker-trigger--size-lg",
       },
     },
     defaultVariants: {
+      variant: "outline",
       size: "md",
     },
   }
 );
 
+/**
+ * Props for the ColorPicker component.
+ */
 export interface ColorPickerProps
   extends
     Omit<React.HTMLAttributes<HTMLDivElement>, "onChange">,
@@ -64,7 +79,7 @@ const DEFAULT_SWATCHES = [
   "#ffffff", // white
 ];
 
-export const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
+const ColorPickerBase = forwardRef<HTMLDivElement, ColorPickerProps>(
   (
     {
       className,
@@ -73,6 +88,7 @@ export const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
       label,
       error,
       size,
+      variant,
       disabled,
       swatches = DEFAULT_SWATCHES,
       ...props
@@ -99,8 +115,9 @@ export const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
 
     return (
       <Box
+        {...rnx({ component: 'ColorPicker', state: disabled ? 'disabled' : 'active' })}
         ref={ref}
-        className={cn("grid w-full gap-1.5", className)}
+        className={cn("rnx-color-picker-container", className)}
         {...props}
       >
         {label && <Label>{label}</Label>}
@@ -116,15 +133,15 @@ export const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
               variant="outline"
               disabled={disabled}
               className={cn(
-                colorPickerVariants({ size }),
+                colorPickerVariants({ variant, size }),
                 error && "border-destructive focus-visible:ring-destructive"
               )}
             >
               <Box className="flex items-center gap-2">
                 <Box
                   className={cn(
-                    "ring-border rounded-full border shadow-sm ring-1",
-                    size === "lg" ? "h-5 w-5" : "h-4 w-4"
+                    "rnx-color-picker-preview",
+                    `rnx-color-picker-preview--${size || "md"}`
                   )}
                   style={{ backgroundColor: displayValue }}
                 />
@@ -142,7 +159,7 @@ export const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
           }
         >
           <Box className="flex flex-col gap-3">
-            <Box className="grid grid-cols-7 gap-2">
+            <Box className="grid grid-cols-7 gap-2" role="group" aria-label="Color swatches">
               {swatches.map((color) => (
                 <Button
                   key={color}
@@ -150,15 +167,16 @@ export const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
                   variant="ghost"
                   size="icon"
                   className={cn(
-                    "border-border/50 flex h-6 w-6 items-center justify-center rounded-md border p-0 shadow-sm transition-transform hover:scale-110",
-                    displayValue === color &&
-                      "ring-ring scale-110 ring-2 ring-offset-1"
+                    "rnx-color-picker-swatch",
+                    displayValue.toLowerCase() === color.toLowerCase() &&
+                      "rnx-color-picker-swatch--active"
                   )}
                   style={{ backgroundColor: color }}
                   onClick={() => {
                     handleChange(color);
                   }}
                   title={color}
+                  aria-label={`Select color ${color}`}
                 >
                   {displayValue.toLowerCase() === color.toLowerCase() && (
                     <Check
@@ -191,7 +209,7 @@ export const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
         </Popover>
 
         {error && (
-          <Box as="span" className="text-destructive text-xs font-medium">
+          <Box as="span" className="rnx-color-picker-error-msg">
             {error}
           </Box>
         )}
@@ -199,4 +217,5 @@ export const ColorPicker = forwardRef<HTMLDivElement, ColorPickerProps>(
     );
   }
 );
-ColorPicker.displayName = "ColorPicker";
+ColorPickerBase.displayName = "ColorPicker";
+export const ColorPicker = withLoading(ColorPickerBase);

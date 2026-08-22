@@ -5,16 +5,21 @@ import {
   type ThemeConfig,
 } from "../ThemeProvider/ThemeProvider";
 import { MakeWayProvider } from "../Motion/MakeWayContext";
-import { LazyMotionProvider } from "../Motion/LazyMotionProvider";
 import { ToastProvider, type ToastPosition } from "../Toast/Toast";
 
+/**
+ * Props for the RunoxProvider component.
+ */
 export interface RunoxProviderProps {
   children: ReactNode;
+  theme?: "dark" | "light" | "system";
   defaultTheme?: "dark" | "light" | "system";
   defaultConfig?: Partial<ThemeConfig>;
   enableSystem?: boolean;
   storageKey?: string;
   toastPosition?: ToastPosition;
+  tokens?: import("../../utils/defineTheme").RunoxTheme;
+  container?: HTMLElement | null;
 }
 
 export function RunoxProvider({
@@ -25,10 +30,10 @@ export function RunoxProvider({
   return (
     <ThemeProvider {...themeProps}>
       <MakeWayProvider>
-        <LazyMotionProvider>
-          <ToastProvider position={toastPosition}>{children}</ToastProvider>
-        </LazyMotionProvider>
+        <ToastProvider position={toastPosition}>{children}</ToastProvider>
       </MakeWayProvider>
     </ThemeProvider>
   );
 }
+
+RunoxProvider.displayName = "RunoxProvider";

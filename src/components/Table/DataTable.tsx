@@ -162,3 +162,5 @@ export function DataTable<TData>({
     </Box>
   );
 }
+
+DataTable.displayName = "Table.DataTable";

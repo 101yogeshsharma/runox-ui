@@ -11,15 +11,20 @@ import { useMakeWay } from "../Motion";
 import { useClickOutside, useFocusTrap } from "../../hooks";
 import { useMergeRefs } from "../../hooks/useMergeRefs";
 import { useScrollLock } from "../../hooks/useScrollLock";
+import { rnx } from "../../utils/rnx";
+
+import "./Modal.css";
 
 export interface ModalProps {
   isOpen: boolean;
   onClose: (open: boolean) => void;
   children: React.ReactNode;
+  variant?: "solid" | "glass" | "blur";
   hideCloseButton?: boolean;
   dismissible?: boolean;
   className?: string;
   size?: "sm" | "md" | "lg" | "xl" | "full";
+  mobileVariant?: "default" | "bottom-sheet";
 }
 
 const ModalContext = React.createContext<{ titleId: string }>({ titleId: "" });
@@ -30,9 +35,11 @@ const ModalComponent = React.forwardRef<HTMLDivElement, ModalProps>(
       isOpen,
       onClose,
       children,
+      variant = "solid",
       hideCloseButton = false,
       dismissible = true,
       size = "md",
+      mobileVariant = "default",
       className,
     },
     ref
@@ -80,11 +87,6 @@ const ModalComponent = React.forwardRef<HTMLDivElement, ModalProps>(
         };
       } else {
         setMounted(false);
-        // Wait for exit animation before unmounting DOM
-        const timer = setTimeout(() => {
-          setShouldRender(false);
-        }, 200); // 200ms matches CSS animation
-        return () => clearTimeout(timer);
       }
     }, [isOpen, registerModal, unregisterModal, modalId]);
 
@@ -93,19 +95,27 @@ const ModalComponent = React.forwardRef<HTMLDivElement, ModalProps>(
     return createPortal(
       /* Portal root — raw div required for createPortal */
       <Box
+        {...rnx({ component: 'Modal', state: isOpen ? 'open' : 'closed' })}
         className={"rnx-modal-overlay"}
         data-state={mounted ? "open" : "closed"}
         data-rnx-overlay="true"
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
+        onAnimationEnd={(e) => {
+          if (!mounted && e.target === e.currentTarget) {
+            setShouldRender(false);
+          }
+        }}
       >
         <ModalContext.Provider value={{ titleId }}>
           <Box
             ref={mergedRef}
             className={cn(
               "rnx-modal-content",
+              `rnx-modal-content--variant-${variant}`,
               `rnx-modal-content--${size}`,
+              mobileVariant === "bottom-sheet" && "rnx-modal-content--bottom-sheet",
               className
             )}
             data-state={mounted ? "open" : "closed"}

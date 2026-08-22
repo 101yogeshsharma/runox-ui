@@ -1,7 +1,24 @@
 @layer components {
+  .rnx-stepper {
+    display: flex;
+    width: 100%;
+  }
+  .rnx-stepper--horizontal {
+    align-items: center;
+    justify-content: space-between;
+  }
+  .rnx-stepper--vertical {
+    flex-direction: column;
+  }
+
   .rnx-stepper-indicator {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
     border-radius: 9999px;
     font-weight: 600;
+    border-style: solid;
     transition-property: all;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     transition-duration: 300ms;
@@ -26,28 +43,83 @@
     color: var(--muted-foreground);
   }
 
-  .rnx-stepper-separator {
-    transition-property: all;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 300ms;
+  .rnx-stepper-indicator--error {
+    background-color: var(--destructive);
+    border-color: var(--destructive);
+    color: var(--destructive-foreground);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--destructive) 15%, transparent);
+  }
 
+  /* Sizes */
+  .rnx-stepper--size-sm .rnx-stepper-indicator {
+    height: calc(1.5rem * var(--rnx-space-scale, 1));
+    width: calc(1.5rem * var(--rnx-space-scale, 1));
+    font-size: calc(0.75rem * var(--rnx-text-scale, 1));
+    border-width: 2px;
+  }
+  .rnx-stepper--size-md .rnx-stepper-indicator {
+    height: calc(2rem * var(--rnx-space-scale, 1));
+    width: calc(2rem * var(--rnx-space-scale, 1));
+    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+    border-width: 2px;
+  }
+  .rnx-stepper--size-lg .rnx-stepper-indicator {
+    height: calc(2.5rem * var(--rnx-space-scale, 1));
+    width: calc(2.5rem * var(--rnx-space-scale, 1));
+    font-size: calc(1rem * var(--rnx-text-scale, 1));
+    border-width: 3px;
+  }
+
+  .rnx-stepper--size-sm .rnx-stepper-indicator-icon {
+    height: 0.75rem;
+    width: 0.75rem;
+  }
+  .rnx-stepper--size-md .rnx-stepper-indicator-icon {
+    height: 1rem;
+    width: 1rem;
+  }
+  .rnx-stepper--size-lg .rnx-stepper-indicator-icon {
+    height: 1.25rem;
+    width: 1.25rem;
+  }
+
+  .rnx-stepper-separator {
+    position: relative;
+    overflow: hidden;
     background-color: var(--border);
+    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .rnx-stepper-separator--vertical {
+    margin-top: calc(0.5rem * var(--rnx-space-scale, 1));
+    margin-bottom: calc(0.5rem * var(--rnx-space-scale, 1));
+    min-height: calc(2rem * var(--rnx-space-scale, 1));
+    width: 2px;
+    flex: 1;
+  }
+  .rnx-stepper-separator--horizontal {
+    margin-left: calc(0.5rem * var(--rnx-space-scale, 1));
+    margin-right: calc(0.5rem * var(--rnx-space-scale, 1));
+    height: 2px;
+    flex: 1;
   }
 
   .rnx-stepper-separator-fill {
-    transition-property: all;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 300ms;
-
+    position: absolute;
+    inset-inline-start: 0;
+    top: 0;
     background-color: var(--primary);
+    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .rnx-stepper-separator-fill--vertical {
+    width: 100%;
+  }
+  .rnx-stepper-separator-fill--horizontal {
+    height: 100%;
   }
 
   .rnx-stepper-title {
     font-weight: 600;
-    transition-property:
-      color, background-color, border-color, text-decoration-color, fill, stroke;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 300ms;
+    transition: color 300ms cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .rnx-stepper-title--active {
@@ -58,7 +130,47 @@
     color: var(--muted-foreground);
   }
 
+  .rnx-stepper--size-sm .rnx-stepper-title {
+    font-size: calc(0.75rem * var(--rnx-text-scale, 1));
+  }
+  .rnx-stepper--size-md .rnx-stepper-title {
+    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+  }
+  .rnx-stepper--size-lg .rnx-stepper-title {
+    font-size: calc(1rem * var(--rnx-text-scale, 1));
+  }
+
   .rnx-stepper-desc {
     color: var(--muted-foreground);
+    margin-top: 0.125rem;
+  }
+  .rnx-stepper--size-sm .rnx-stepper-desc,
+  .rnx-stepper--size-md .rnx-stepper-desc {
+    font-size: calc(0.75rem * var(--rnx-text-scale, 1));
+  }
+  .rnx-stepper--size-lg .rnx-stepper-desc {
+    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+  }
+
+  /* Variants */
+  .rnx-stepper--variant-dots .rnx-stepper-indicator {
+    width: calc(0.75rem * var(--rnx-space-scale, 1)) !important;
+    height: calc(0.75rem * var(--rnx-space-scale, 1)) !important;
+    min-width: calc(0.75rem * var(--rnx-space-scale, 1));
+    border: none !important;
+    box-shadow: none !important;
+  }
+  .rnx-stepper--variant-dots .rnx-stepper-indicator--active {
+    background-color: var(--primary);
+    transform: scale(1.3);
+  }
+
+  .rnx-stepper--variant-pills {
+    background-color: var(--muted);
+    padding: calc(0.25rem * var(--rnx-space-scale, 1));
+    border-radius: 9999px;
+  }
+  .rnx-stepper--variant-pills .rnx-stepper-indicator {
+    border-radius: 9999px;
   }
 }

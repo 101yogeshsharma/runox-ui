@@ -68,6 +68,9 @@ function useKanbanColumn() {
   return context;
 }
 
+/**
+ * Props for the Kanban component.
+ */
 export interface KanbanProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
   "onDrop"
@@ -80,7 +83,7 @@ export interface KanbanProps extends Omit<
   ) => void;
 }
 
-export const Kanban = React.forwardRef<HTMLDivElement, KanbanProps>(
+const KanbanRoot = React.forwardRef<HTMLDivElement, KanbanProps>(
   ({ children, className, onCardMove, ...props }, ref) => {
     const [draggedItemId, setDraggedItemId] = useState<UniqueIdentifier | null>(
       null
@@ -291,7 +294,7 @@ export const Kanban = React.forwardRef<HTMLDivElement, KanbanProps>(
     );
   }
 );
-Kanban.displayName = "Kanban";
+KanbanRoot.displayName = "Kanban";
 
 export interface KanbanColumnProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
@@ -316,6 +319,8 @@ export const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
       <KanbanColumnContext.Provider value={id}>
         <Flex
           ref={ref}
+          role="list"
+          aria-label={typeof props["aria-label"] === "string" ? props["aria-label"] : `Column ${String(id)}`}
           direction="col"
           gap="sm"
           onDragOver={(e) => handleDragOverColumn(e, id)}
@@ -334,7 +339,7 @@ export const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
     );
   }
 );
-KanbanColumn.displayName = "KanbanColumn";
+KanbanColumn.displayName = "Kanban.Column";
 
 export interface KanbanColumnHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   count?: number;
@@ -363,7 +368,7 @@ export const KanbanColumnHeader = React.forwardRef<
     </Flex>
   );
 });
-KanbanColumnHeader.displayName = "KanbanColumnHeader";
+KanbanColumnHeader.displayName = "Kanban.ColumnHeader";
 
 export interface KanbanCardProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
@@ -400,6 +405,9 @@ export const KanbanCard = React.forwardRef<HTMLDivElement, KanbanCardProps>(
     return (
       <Box
         ref={ref}
+        role="listitem"
+        tabIndex={0}
+        aria-roledescription="draggable card"
         draggable
         onDragStart={(e) => handleDragStart(e, id)}
         onDragOver={(e) => handleDragOverItem(e, id, columnId)}
@@ -421,4 +429,13 @@ export const KanbanCard = React.forwardRef<HTMLDivElement, KanbanCardProps>(
     );
   }
 );
-KanbanCard.displayName = "KanbanCard";
+KanbanRoot.displayName = "Kanban";
+KanbanColumn.displayName = "Kanban.Column";
+KanbanColumnHeader.displayName = "Kanban.ColumnHeader";
+KanbanCard.displayName = "Kanban.Card";
+
+export const Kanban = Object.assign(KanbanRoot, {
+  Column: KanbanColumn,
+  ColumnHeader: KanbanColumnHeader,
+  Card: KanbanCard,
+});

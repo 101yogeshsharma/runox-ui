@@ -1,4 +1,4 @@
-import { useEffect, RefObject } from "react";
+import { useEffect, RefObject, useRef } from "react";
 
 const FOCUSABLE_ELEMENTS = [
   "a[href]",
@@ -14,14 +14,28 @@ const FOCUSABLE_ELEMENTS = [
   "[contenteditable]",
 ].join(",");
 
+/**
+ * Traps keyboard focus within a container element, essential for modal accessibility.
+ * Returns focus to the previously focused element on cleanup.
+ *
+ * @param ref - Reference to the container element where focus should be trapped.
+ * @param active - Whether the focus trap is currently active.
+ *
+ * @example
+ * const modalRef = useRef(null);
+ * useFocusTrap(modalRef, isOpen);
+ */
 export function useFocusTrap<T extends HTMLElement = HTMLElement>(
   ref: RefObject<T | null>,
   active: boolean = true
 ) {
+  const timeoutIds = useRef<NodeJS.Timeout[]>([]);
+
   useEffect(() => {
     if (!active || !ref.current) return;
 
     const el = ref.current;
+    const previouslyFocused = document.activeElement as HTMLElement;
 
     // Auto-focus first focusable element on mount
     const focusableNodes = Array.from(
@@ -29,9 +43,9 @@ export function useFocusTrap<T extends HTMLElement = HTMLElement>(
     );
     if (focusableNodes.length > 0) {
       // Small timeout to ensure modal rendering is complete
-      setTimeout(() => focusableNodes[0].focus(), 10);
+      timeoutIds.current.push(setTimeout(() => focusableNodes[0].focus(), 10));
     } else {
-      setTimeout(() => el.focus(), 10);
+      timeoutIds.current.push(setTimeout(() => el.focus(), 10));
     }
 
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -65,6 +79,9 @@ export function useFocusTrap<T extends HTMLElement = HTMLElement>(
 
     return () => {
       el.removeEventListener("keydown", handleKeyDown);
+      timeoutIds.current.forEach(clearTimeout);
+      timeoutIds.current = [];
+      previouslyFocused?.focus();
     };
   }, [ref, active]);
 }

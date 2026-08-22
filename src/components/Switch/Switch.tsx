@@ -1,50 +1,76 @@
 "use client";
 import { Box } from "../../atoms/Box";
-import React, { forwardRef, useId } from "react";
+import React, { forwardRef, useId, useState } from "react";
 import { cn } from "../../utils/cn";
 import { mergeProps } from "../../utils/mergeProps";
 import { Label } from "../Label/Label";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
+import { rnx } from "../../utils/rnx";
+import { withLoading } from "../../utils/withLoading";
+
+
+import "./Switch.css";
+
+/**
+ * A toggle switch that allows users to choose between binary states.
+ */
+import { RnxColor } from "../../types";
 
 export interface SwitchProps extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
-  "size"
+  "size" | "color"
 > {
+  variant?: "solid" | "glow" | "glass";
+  color?: RnxColor;
+  thumbIconOn?: React.ReactNode;
+  thumbIconOff?: React.ReactNode;
   label?: string;
   size?: "sm" | "md" | "lg";
   onValueChange?: (checked: boolean) => void;
 }
 
-export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
+const SwitchBase = forwardRef<HTMLInputElement, SwitchProps>(
   (
     {
       className,
+      variant = "solid",
+      color = "primary",
+      thumbIconOn,
+      thumbIconOff,
       label,
       size = "md",
       id: customId,
       onValueChange,
       onChange,
       children,
+      checked: controlledChecked,
+      defaultChecked,
       ...props
     },
     ref
   ) => {
     const generatedId = useId();
     const id = customId || generatedId;
-    const { config } = useTheme();
+
+    const [uncontrolledChecked, setUncontrolledChecked] = useState(!!defaultChecked);
+    const isChecked = controlledChecked !== undefined ? controlledChecked : uncontrolledChecked;
 
     return (
       <Box
         className={cn(
           "rnx-switch-wrapper",
-          `rounded-${config.radius}`,
           className
         )}
+        {...rnx({
+          component: "Switch",
+          state: props.disabled ? "disabled" : isChecked ? "checked" : "default",
+        })}
       >
         <Box
           className={cn(
             "rnx-switch-container",
-            `rnx-switch-container--${size}`
+            `rnx-switch-container--${size}`,
+            `rnx-switch-container--variant-${variant}`,
+            color !== "primary" && `rnx-switch-container--color-${color}`
           )}
         >
           <input
@@ -54,8 +80,13 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
                 type: "checkbox",
                 role: "switch",
                 id,
+                checked: controlledChecked,
+                defaultChecked,
                 className: "rnx-switch-input",
                 onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+                  if (controlledChecked === undefined) {
+                    setUncontrolledChecked(e.target.checked);
+                  }
                   onChange?.(e);
                   onValueChange?.(e.target.checked);
                 },
@@ -66,7 +97,9 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
           <Box
             as="span"
             className={cn("rnx-switch-thumb", `rnx-switch-thumb--${size}`)}
-          />
+          >
+            {isChecked ? thumbIconOn : thumbIconOff}
+          </Box>
         </Box>
         {(label || children) && (
           <Label htmlFor={id} className="rnx-switch-label">
@@ -78,4 +111,5 @@ export const Switch = forwardRef<HTMLInputElement, SwitchProps>(
   }
 );
 
-Switch.displayName = "Switch";
+SwitchBase.displayName = "Switch";
+export const Switch = withLoading(SwitchBase);

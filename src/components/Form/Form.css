@@ -1,0 +1,29 @@
+﻿@layer components {
+  .rnx-form-item {
+    display: flex;
+    flex-direction: column;
+    gap: calc(0.5rem * var(--rnx-space-scale, 1));
+  }
+
+  .rnx-form-label {
+    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+    line-height: 1;
+    font-weight: 500;
+  }
+
+  .rnx-form-label--error {
+    color: var(--destructive);
+  }
+
+  .rnx-form-description {
+    font-size: calc(0.8rem * var(--rnx-text-scale, 1));
+    color: var(--muted-foreground);
+  }
+
+  .rnx-form-message {
+    font-size: calc(0.8rem * var(--rnx-text-scale, 1));
+    font-weight: 500;
+    color: var(--destructive);
+  }
+}
+

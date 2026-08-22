@@ -1,8 +1,10 @@
 @layer components {
   .rnx-sortable-list {
+    border-radius: var(--radius);
   }
 
   .rnx-sortable-item {
+    border-radius: calc(var(--radius) - 2px);
     transition-property: opacity;
     transition-duration: 200ms;
   }

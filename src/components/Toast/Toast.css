@@ -1,4 +1,4 @@
-@layer components {
+﻿@layer components {
   .rnx-toast-viewport {
     position: fixed;
     z-index: var(--z-toast);
@@ -6,14 +6,14 @@
     width: 100%;
     max-height: 100vh;
     flex-direction: column;
-    gap: 0.5rem; /* space-y-2 */
-    padding: 1rem; /* p-4 */
+    gap: calc(0.5rem * var(--rnx-space-scale, 1));
+    padding: calc(1rem * var(--rnx-space-scale, 1));
     pointer-events: none;
   }
 
   @media (min-width: 768px) {
     .rnx-toast-viewport {
-      max-width: 420px;
+      max-width: calc(420px * var(--rnx-space-scale, 1));
     }
   }
 
@@ -54,19 +54,19 @@
     width: 100%;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
+    gap: calc(1rem * var(--rnx-space-scale, 1));
     overflow: hidden;
     border: 1px solid var(--border);
+    border-radius: var(--radius);
     box-shadow:
-      0 10px 15px -3px rgb(0 0 0 / 0.1),
-      0 4px 6px -4px rgb(0 0 0 / 0.1); /* shadow-lg */
+      var(--shadow-lg); /* shadow-lg */
     will-change: transform, opacity;
   }
 
   .rnx-toast-content {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: calc(0.25rem * var(--rnx-space-scale, 1));
   }
 
   .rnx-toast-title {
@@ -79,9 +79,9 @@
 
   .rnx-toast-close {
     position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    padding: 0.25rem;
+    top: calc(0.5rem * var(--rnx-space-scale, 1));
+    right: calc(0.5rem * var(--rnx-space-scale, 1));
+    padding: calc(0.25rem * var(--rnx-space-scale, 1));
     opacity: 0;
     transition: opacity 0.2s;
     color: inherit;
@@ -100,36 +100,36 @@
 
   /* Sizes */
   .rnx-toast--sm {
-    padding: 0.75rem;
-    padding-right: 2rem;
+    padding: calc(0.75rem * var(--rnx-space-scale, 1));
+    padding-right: calc(2rem * var(--rnx-space-scale, 1));
   }
   .rnx-toast--sm .rnx-toast-title {
-    font-size: 0.75rem;
+    font-size: calc(0.75rem * var(--rnx-text-scale, 1));
   }
   .rnx-toast--sm .rnx-toast-description {
-    font-size: 0.625rem;
+    font-size: calc(0.625rem * var(--rnx-text-scale, 1));
   }
 
   .rnx-toast--md {
-    padding: 1rem;
-    padding-right: 2.5rem;
+    padding: calc(1rem * var(--rnx-space-scale, 1));
+    padding-right: calc(2.5rem * var(--rnx-space-scale, 1));
   }
   .rnx-toast--md .rnx-toast-title {
-    font-size: 0.875rem;
+    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
   }
   .rnx-toast--md .rnx-toast-description {
-    font-size: 0.75rem;
+    font-size: calc(0.75rem * var(--rnx-text-scale, 1));
   }
 
   .rnx-toast--lg {
-    padding: 1.5rem;
-    padding-right: 3rem;
+    padding: calc(1.5rem * var(--rnx-space-scale, 1));
+    padding-right: calc(3rem * var(--rnx-space-scale, 1));
   }
   .rnx-toast--lg .rnx-toast-title {
-    font-size: 1rem;
+    font-size: calc(1rem * var(--rnx-text-scale, 1));
   }
   .rnx-toast--lg .rnx-toast-description {
-    font-size: 0.875rem;
+    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
   }
 
   /* Colors */
@@ -221,3 +221,4 @@
     }
   }
 }
+

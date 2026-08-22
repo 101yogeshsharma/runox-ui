@@ -1,11 +1,31 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 
-type UseControllableStateParams<T> = {
+/**
+ * Parameters for the useControllableState hook.
+ *
+ * @property prop - The controlled value passed from the parent.
+ * @property defaultProp - The initial default value for uncontrolled state.
+ * @property onChange - Callback invoked when the value changes.
+ */
+export type UseControllableStateParams<T> = {
   prop?: T;
   defaultProp?: T;
   onChange?: (state: T) => void;
 };
 
+/**
+ * Manages component state that can be controlled externally or used as uncontrolled.
+ *
+ * @param params - The controllable state parameters.
+ * @returns A tuple containing the current state value and a state setter function.
+ *
+ * @example
+ * const [value, setValue] = useControllableState({
+ *   prop: props.value,
+ *   defaultProp: props.defaultValue,
+ *   onChange: props.onChange
+ * });
+ */
 export function useControllableState<T>({
   prop,
   defaultProp,
