@@ -16,7 +16,7 @@ import { useEffect } from "react";
 export function useHotkeys(
   key: string,
   callback: (e: KeyboardEvent) => void,
-  dependencies: any[] = []
+  dependencies: any[] = [],
 ) {
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -35,7 +35,7 @@ export function useHotkeys(
       const needsAlt = keys.includes("alt");
 
       const mainKey = keys.find(
-        (k) => !["cmd", "meta", "ctrl", "shift", "alt"].includes(k)
+        (k) => !["cmd", "meta", "ctrl", "shift", "alt"].includes(k),
       );
 
       // Some special key normalization
@@ -65,6 +65,6 @@ export function useHotkeys(
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `dependencies` is a caller-provided escape hatch; key/callback are listed
   }, [key, callback, ...dependencies]);
 }

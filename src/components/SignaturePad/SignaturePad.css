@@ -13,7 +13,7 @@
     position: absolute;
     top: calc(0.5rem * var(--rnx-space-scale, 1));
     right: calc(0.5rem * var(--rnx-space-scale, 1));
-    z-index: 10;
+    z-index: var(--z-component);
     display: flex;
     gap: calc(0.5rem * var(--rnx-space-scale, 1));
   }

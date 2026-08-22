@@ -3,7 +3,7 @@
   .rnx-modal-overlay {
     position: fixed;
     inset: 0;
-    z-index: 50;
+    z-index: var(--z-modal);
     background-color: var(--rnx-modal-overlay-bg);
     backdrop-filter: blur(4px);
     display: flex;
@@ -19,7 +19,7 @@
   /* Modal Content */
   .rnx-modal-content {
     position: relative;
-    z-index: 50;
+    z-index: var(--z-modal);
     display: flex;
     flex-direction: column;
     gap: calc(1rem * var(--rnx-space-scale, 1));
@@ -28,7 +28,8 @@
     border: 1px solid var(--border);
     box-shadow: var(--shadow-lg);
     overflow: hidden;
-    animation: rnx-modal-in 300ms cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards;
+    animation: rnx-modal-in 300ms cubic-bezier(0.175, 0.885, 0.32, 1.15)
+      forwards;
   }
   .rnx-modal-content[data-state="closed"] {
     animation: rnx-modal-out 200ms ease-in forwards;
@@ -99,7 +100,9 @@
   }
   .rnx-modal-close:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--ring);
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px var(--ring);
   }
 
   .rnx-modal-header {
@@ -107,7 +110,8 @@
     flex-direction: column;
     gap: calc(0.375rem * var(--rnx-space-scale, 1));
     text-align: left;
-    padding: calc(1.25rem * var(--rnx-space-scale, 1)) calc(1.5rem * var(--rnx-space-scale, 1));
+    padding: calc(1.25rem * var(--rnx-space-scale, 1))
+      calc(1.5rem * var(--rnx-space-scale, 1));
     border-bottom: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
   }
   .rnx-modal-body {
@@ -120,7 +124,8 @@
     flex-direction: row;
     justify-content: flex-end;
     gap: calc(0.5rem * var(--rnx-space-scale, 1));
-    padding: calc(1rem * var(--rnx-space-scale, 1)) calc(1.5rem * var(--rnx-space-scale, 1));
+    padding: calc(1rem * var(--rnx-space-scale, 1))
+      calc(1.5rem * var(--rnx-space-scale, 1));
     background-color: color-mix(in srgb, var(--secondary) 30%, transparent);
     border-top: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
   }
@@ -140,4 +145,3 @@
     }
   }
 }
-

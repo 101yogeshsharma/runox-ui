@@ -277,7 +277,7 @@
     position: absolute;
     right: calc(1rem * var(--rnx-space-scale, 1));
     top: calc(1rem * var(--rnx-space-scale, 1));
-    z-index: 10;
+    z-index: var(--z-component);
   }
 
   .rnx-drawer-close-icon-btn {

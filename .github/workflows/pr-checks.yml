@@ -29,6 +29,9 @@ jobs:
       - name: Run Lint
         run: npm run lint
 
+      - name: Check Style Conventions
+        run: npm run test:conventions
+
       - name: Run Typecheck
         run: npm run typecheck
 

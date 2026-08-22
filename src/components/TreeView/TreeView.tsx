@@ -59,13 +59,13 @@ const TreeRoot = React.forwardRef<HTMLDivElement, TreeProps>(
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [internalSelectedId, setInternalSelectedId] = useState<string | null>(
-      defaultSelectedId || null
+      defaultSelectedId || null,
     );
     const [internalExpandedIds, setInternalExpandedIds] = useState<Set<string>>(
-      new Set(defaultExpandedIds)
+      new Set(defaultExpandedIds),
     );
 
     const currentSelectedId =
@@ -77,8 +77,8 @@ const TreeRoot = React.forwardRef<HTMLDivElement, TreeProps>(
       () => (expandedIds !== undefined ? new Set(expandedIds) : null),
 
       // JSON.stringify gives a stable dep when the array contents haven't changed
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-      [expandedIds ? JSON.stringify([...expandedIds].sort()) : null]
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- content-hash dep is intentional; the raw array identity changes every render
+      [expandedIds ? JSON.stringify([...expandedIds].sort()) : null],
     );
     const currentExpandedIds = controlledExpandedSet ?? internalExpandedIds;
 
@@ -89,7 +89,7 @@ const TreeRoot = React.forwardRef<HTMLDivElement, TreeProps>(
         }
         onSelectChange?.(id);
       },
-      [selectedId, onSelectChange]
+      [selectedId, onSelectChange],
     );
 
     const toggleExpanded = useCallback(
@@ -106,7 +106,7 @@ const TreeRoot = React.forwardRef<HTMLDivElement, TreeProps>(
         }
         onExpandedChange?.(Array.from(nextSet));
       },
-      [currentExpandedIds, expandedIds, onExpandedChange]
+      [currentExpandedIds, expandedIds, onExpandedChange],
     );
 
     const contextValue = useMemo(
@@ -116,32 +116,29 @@ const TreeRoot = React.forwardRef<HTMLDivElement, TreeProps>(
         expandedIds: currentExpandedIds,
         toggleExpanded,
       }),
-      [currentSelectedId, handleSelect, currentExpandedIds, toggleExpanded]
+      [currentSelectedId, handleSelect, currentExpandedIds, toggleExpanded],
     );
 
     return (
       <TreeContext.Provider value={contextValue}>
         <Flex
-          {...rnx({ component: 'TreeView' })}
+          {...rnx({ component: "TreeView" })}
           ref={ref}
           role="tree"
           direction="col"
           fullWidth
-          className={cn(
-            "rnx-treeview",
-            className
-          )}
+          className={cn("rnx-treeview", className)}
           onKeyDown={(e) => {
             if (
               ["ArrowDown", "ArrowUp", "ArrowRight", "ArrowLeft"].includes(
-                e.key
+                e.key,
               )
             ) {
               e.preventDefault();
               const focusableItems = Array.from(
                 e.currentTarget.querySelectorAll<HTMLElement>(
-                  '[role="treeitem"] > [tabindex="0"]'
-                )
+                  '[role="treeitem"] > [tabindex="0"]',
+                ),
               ).filter((el) => el.offsetWidth > 0 || el.offsetHeight > 0);
 
               const active = document.activeElement as HTMLElement;
@@ -173,7 +170,7 @@ const TreeRoot = React.forwardRef<HTMLDivElement, TreeProps>(
                     parentGroup?.closest('[role="treeitem"]');
                   const parentFocusable =
                     parentTreeItem?.querySelector<HTMLElement>(
-                      ':scope > [tabindex="0"]'
+                      ':scope > [tabindex="0"]',
                     );
                   if (parentFocusable) parentFocusable.focus();
                 }
@@ -187,7 +184,7 @@ const TreeRoot = React.forwardRef<HTMLDivElement, TreeProps>(
         </Flex>
       </TreeContext.Provider>
     );
-  }
+  },
 );
 TreeRoot.displayName = "TreeView";
 
@@ -219,7 +216,7 @@ export const TreeFolder = React.forwardRef<HTMLDivElement, TreeFolderProps>(
           align="center"
           className={cn(
             "rnx-treeview-node",
-            isSelected && "rnx-treeview-node--selected"
+            isSelected && "rnx-treeview-node--selected",
           )}
           tabIndex={0}
           onKeyDown={(e) => {
@@ -239,7 +236,7 @@ export const TreeFolder = React.forwardRef<HTMLDivElement, TreeFolderProps>(
           <ChevronRight
             className={cn(
               "rnx-treeview-chevron",
-              isExpanded && "rnx-treeview-chevron--expanded"
+              isExpanded && "rnx-treeview-chevron--expanded",
             )}
           />
           <Box className="rnx-treeview-icon">
@@ -254,21 +251,20 @@ export const TreeFolder = React.forwardRef<HTMLDivElement, TreeFolderProps>(
         <div
           className={cn(
             "rnx-treeview-collapse",
-            isExpanded ? "rnx-treeview-collapse--expanded" : "rnx-treeview-collapse--collapsed"
+            isExpanded
+              ? "rnx-treeview-collapse--expanded"
+              : "rnx-treeview-collapse--collapsed",
           )}
         >
           <div className="rnx-treeview-collapse-inner">
-            <Box
-              role="group"
-              className="rnx-treeview-content"
-            >
+            <Box role="group" className="rnx-treeview-content">
               {children}
             </Box>
           </div>
         </div>
       </Flex>
     );
-  }
+  },
 );
 TreeFolder.displayName = "TreeView.Folder";
 
@@ -291,7 +287,7 @@ export const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
         className={cn(
           "rnx-treeview-node",
           isSelected && "rnx-treeview-node--selected",
-          className
+          className,
         )}
         tabIndex={0}
         onKeyDown={(e) => {
@@ -316,7 +312,7 @@ export const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
         </Box>
       </Flex>
     );
-  }
+  },
 );
 TreeItem.displayName = "TreeView.Item";
 

@@ -79,7 +79,7 @@
     border: 1px solid var(--border);
     background-color: var(--card);
     border-radius: var(--radius);
-    z-index: 50;
+    z-index: var(--z-modal);
     overflow: hidden;
     box-shadow: var(--shadow-md);
     padding: calc(0.25rem * var(--rnx-space-scale, 1));

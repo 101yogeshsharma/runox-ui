@@ -9,7 +9,9 @@
     border: 1px solid var(--border);
     background-color: var(--background);
     box-shadow: var(--shadow-sm);
-    transition: border-color 150ms ease, box-shadow 150ms ease;
+    transition:
+      border-color 150ms ease,
+      box-shadow 150ms ease;
   }
 
   .rnx-ai-input:focus-within {
@@ -74,7 +76,9 @@
     background: transparent;
     border: none;
     cursor: pointer;
-    transition: background-color 150ms ease, color 150ms ease;
+    transition:
+      background-color 150ms ease,
+      color 150ms ease;
   }
   .rnx-ai-input-action-btn:hover {
     background-color: var(--muted);
@@ -106,45 +110,4 @@
     pointer-events: none;
     opacity: 0.5;
   }
-
-  /* StreamingText cursor styles */
-  .rnx-streaming-text {
-    display: inline;
-  }
-
-  .rnx-streaming-text__cursor {
-    display: inline-block;
-    margin-left: 2px;
-    font-weight: 400;
-    line-height: 1;
-    vertical-align: baseline;
-    animation: rnx-cursor-blink 1s step-end infinite;
-  }
-
-  .rnx-streaming-text__cursor--pipe::after {
-    content: '|';
-    color: var(--primary);
-  }
-
-  .rnx-streaming-text__cursor--block::after {
-    content: '█';
-    color: var(--primary);
-    font-size: 0.85em;
-  }
-
-  .rnx-streaming-text__cursor--glow::after {
-    content: '|';
-    color: var(--primary);
-    text-shadow: 0 0 8px var(--primary);
-  }
-
-  @keyframes rnx-cursor-blink {
-    0%, 50% {
-      opacity: 1;
-    }
-    51%, 100% {
-      opacity: 0;
-    }
-  }
 }
-
