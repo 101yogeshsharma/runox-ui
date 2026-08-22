@@ -55,7 +55,7 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
       setActiveSnapPoint,
       isDraggable = true,
     },
-    ref
+    ref,
   ) => {
     const [mounted, setMounted] = useState(false);
     const [renderState, setRenderState] = useState<"closed" | "open">("closed");
@@ -71,7 +71,7 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
     const [dragging, setDragging] = useState(false);
     const [internalExpanded, setInternalExpanded] = useState(false);
 
-    useFocusTrap(contentRef, isOpen);
+    useFocusTrap(contentRef, isOpen && shouldRender);
     useScrollLock(isOpen);
 
     useEffect(() => {
@@ -103,7 +103,7 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
       if (!isDraggable) return;
       if (
         (e.target as HTMLElement).closest(
-          "button, input, textarea, a, select, [role='button']"
+          "button, input, textarea, a, select, [role='button']",
         )
       )
         return;
@@ -227,6 +227,7 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
 
           <Box
             ref={mergedRef}
+            tabIndex={-1}
             role="dialog"
             aria-modal="true"
             aria-labelledby={titleId}
@@ -246,7 +247,7 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
               internalExpanded
                 ? "!h-screen !w-screen !rounded-none border-none"
                 : "",
-              className
+              className,
             )}
             {...rnx({ component: "Drawer", state: isOpen ? "open" : "closed" })}
           >
@@ -262,7 +263,7 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
                   className="rnx-drawer-collapse-btn"
                   onClick={() => {
                     const idx = snapPoints.indexOf(
-                      activeSnapPoint as string | number
+                      activeSnapPoint as string | number,
                     );
                     if (idx === snapPoints.length - 1) {
                       setActiveSnapPoint(snapPoints[0]);
@@ -309,9 +310,9 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
           </Box>
         </Box>
       </DrawerTitleContext.Provider>,
-      document.body
+      document.body,
     );
-  }
+  },
 );
 
 DrawerComponent.displayName = "Drawer";

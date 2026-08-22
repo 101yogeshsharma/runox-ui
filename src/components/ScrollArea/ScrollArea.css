@@ -1,4 +1,4 @@
-﻿@layer components {
+@layer components {
   /* 
   Premium custom scrollbars for rnx-scroll-area 
   Works perfectly in WebKit/Blink (Chrome, Edge, Safari) and supports Firefox scrollbar-width 
@@ -22,7 +22,7 @@
 
   .rnx-scroll-area::-webkit-scrollbar-thumb {
     background-color: color-mix(in srgb, var(--foreground) 20%, transparent);
-    border-radius: 9999px; /* full rounded */
+    border-radius: var(--radius-full); /* full rounded */
     border: 3px solid transparent;
     background-clip: padding-box;
     transition: background-color 0.2s ease-in-out;
@@ -36,28 +36,27 @@
   .rnx-scroll-area::-webkit-scrollbar-corner {
     background: transparent;
   }
-}
 
-.rnx-scroll-area-container {
-  border-radius: var(--radius);
-}
+  .rnx-scroll-area-container {
+    border-radius: var(--radius);
+  }
 
-.rnx-scroll-area--inherit-radius {
-  border-radius: inherit;
-}
+  .rnx-scroll-area--inherit-radius {
+    border-radius: inherit;
+  }
 
-.rnx-scrollbar {
-  position: absolute;
-  user-select: none;
-  z-index: 20;
-}
+  .rnx-scrollbar {
+    position: absolute;
+    user-select: none;
+    z-index: 20;
+  }
 
-.rnx-scrollbar-thumb {
-  background-color: color-mix(in srgb, var(--foreground) 20%, transparent);
-  transition: background-color 0.2s ease-in-out;
-}
+  .rnx-scrollbar-thumb {
+    background-color: color-mix(in srgb, var(--foreground) 20%, transparent);
+    transition: background-color 0.2s ease-in-out;
+  }
 
-.rnx-scrollbar-thumb:hover {
-  background-color: color-mix(in srgb, var(--foreground) 40%, transparent);
+  .rnx-scrollbar-thumb:hover {
+    background-color: color-mix(in srgb, var(--foreground) 40%, transparent);
+  }
 }
-

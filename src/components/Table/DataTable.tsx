@@ -24,7 +24,7 @@ export function flexRender(
     | number
     | undefined
     | null,
-  props: Record<string, unknown>
+  props: Record<string, unknown>,
 ) {
   if (typeof Comp === "function") {
     return <Comp {...props} />;
@@ -35,6 +35,7 @@ export function flexRender(
 interface DataTableProps<TData> {
   columns: ColumnDef<TData>[];
   data: TData[];
+  getRowId?: (row: TData, index: number) => string;
   enableSorting?: boolean;
   enablePagination?: boolean;
   enableFiltering?: boolean;
@@ -45,6 +46,7 @@ interface DataTableProps<TData> {
 export function DataTable<TData>({
   columns,
   data,
+  getRowId,
   enableSorting = true,
   enablePagination = true,
   enableFiltering = false,
@@ -54,6 +56,7 @@ export function DataTable<TData>({
   const table = useDataTable({
     data,
     columns,
+    getRowId,
     enableSorting,
     enablePagination,
     enableFiltering,
@@ -64,6 +67,13 @@ export function DataTable<TData>({
     normal: "py-3",
     comfortable: "py-5",
   };
+
+  const columnsById = new Map(
+    columns.map((column, index) => [
+      column.id || column.accessorKey || String(index),
+      column,
+    ]),
+  );
 
   const getCellContent = (row: TData, col: ColumnDef<TData>) => {
     if (col.cell) {
@@ -103,9 +113,7 @@ export function DataTable<TData>({
               className="rnx-data-table__header-row"
             >
               {headerGroup.headers.map((header) => {
-                const columnDef = columns.find(
-                  (c, i) => (c.id || c.accessorKey || String(i)) === header.id
-                );
+                const columnDef = columnsById.get(header.id);
                 if (!columnDef) return null;
                 return (
                   <TableHead
@@ -130,9 +138,7 @@ export function DataTable<TData>({
                 className="rnx-data-table__row"
               >
                 {table.getHeaderGroups()[0]?.headers.map((header) => {
-                  const columnDef = columns.find(
-                    (c, i) => (c.id || c.accessorKey || String(i)) === header.id
-                  );
+                  const columnDef = columnsById.get(header.id);
                   // Skip cells for columns that can't be resolved (e.g. display-only columns)
                   if (!columnDef) return null;
                   return (

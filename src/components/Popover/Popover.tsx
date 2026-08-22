@@ -6,7 +6,6 @@ import {
   useFloatingPosition,
   useClickOutside,
   useControllableState,
-  useFocusTrap,
 } from "../../hooks";
 import { useMergeRefs } from "../../hooks/useMergeRefs";
 import { Box } from "../../atoms/Box";
@@ -47,7 +46,7 @@ export const Popover = React.forwardRef<HTMLDivElement, PopoverProps>(
       style,
       matchTriggerWidth = false,
     },
-    ref
+    ref,
   ) => {
     const [isOpen, setIsOpen] = useControllableState({
       prop: isOpenProp,
@@ -72,10 +71,8 @@ export const Popover = React.forwardRef<HTMLDivElement, PopoverProps>(
       sideOffset,
       contentMounted,
       "bottom",
-      align
+      align,
     );
-
-    useFocusTrap(contentRef, isOpen);
 
     // Close when clicking outside content (on the overlay)
     useClickOutside(contentRef, (e) => {
@@ -168,7 +165,7 @@ export const Popover = React.forwardRef<HTMLDivElement, PopoverProps>(
             "rnx-popover-content",
             `rnx-popover-content--variant-${variant}`,
             `rnx-popover-content--${size}`,
-            className
+            className,
           )}
           data-state={mounted && position ? "open" : "closed"}
           data-side={position?.placed || "bottom"}
@@ -195,7 +192,7 @@ export const Popover = React.forwardRef<HTMLDivElement, PopoverProps>(
           )}
           {children}
         </Box>,
-        document.body
+        document.body,
       );
     };
 
@@ -205,7 +202,7 @@ export const Popover = React.forwardRef<HTMLDivElement, PopoverProps>(
         {renderContent()}
       </>
     );
-  }
+  },
 );
 
 Popover.displayName = "Popover";

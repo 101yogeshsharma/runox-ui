@@ -4,13 +4,13 @@
   }
 
   .rnx-dropdown-badge {
-    border-radius: 0.125rem;
+    border-radius: calc(var(--radius) - 10px);
     font-weight: 400;
   }
 
   .rnx-dropdown-badge-remove-btn {
     cursor: pointer;
-    border-radius: 9999px;
+    border-radius: var(--radius-full);
     outline: none;
   }
 

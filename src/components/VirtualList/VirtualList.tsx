@@ -44,7 +44,7 @@ function useVirtualization(options: {
       }
     },
     parentRef,
-    16
+    16,
   );
 
   useEffect(() => {
@@ -69,7 +69,7 @@ function useVirtualization(options: {
   const endIndex = Math.min(
     count - 1,
     Math.ceil((scrollTop + (viewportHeight || itemHeight)) / itemHeight) +
-      overscan
+      overscan,
   );
 
   const virtualItems: Array<{ index: number; start: number; size: number }> =
@@ -117,7 +117,9 @@ function VirtualListItemComponent<T>({
   );
 }
 
-const VirtualListItem = React.memo(VirtualListItemComponent) as typeof VirtualListItemComponent;
+const VirtualListItem = React.memo(
+  VirtualListItemComponent,
+) as typeof VirtualListItemComponent;
 
 export function VirtualList<T>({
   items,
@@ -127,18 +129,27 @@ export function VirtualList<T>({
   className,
   itemClassName,
 }: VirtualListProps<T>) {
+  if (!Number.isFinite(itemHeight) || itemHeight <= 0) {
+    throw new Error(
+      "VirtualList itemHeight must be a finite number greater than zero",
+    );
+  }
+
   const estimateSize = React.useCallback(() => itemHeight, [itemHeight]);
-  const virtualOptions = React.useMemo(() => ({
-    count: items.length,
-    estimateSize,
-    overscan: 5,
-  }), [items.length, estimateSize]);
+  const virtualOptions = React.useMemo(
+    () => ({
+      count: items.length,
+      estimateSize,
+      overscan: 5,
+    }),
+    [items.length, estimateSize],
+  );
 
   const rowVirtualizer = useVirtualization(virtualOptions);
 
   return (
     <Box
-      {...rnx({ component: 'VirtualList' })}
+      {...rnx({ component: "VirtualList" })}
       ref={rowVirtualizer.parentRef}
       className={cn(VIRTUAL_LIST_CONTAINER_CLASS, className)}
       style={{

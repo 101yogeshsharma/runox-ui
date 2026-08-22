@@ -52,7 +52,7 @@
 
   .rnx-pagination--variant-pills .rnx-button,
   .rnx-pagination--variant-pills .rnx-pagination-ellipsis {
-    border-radius: 9999px;
+    border-radius: var(--radius-full);
   }
   .rnx-pagination--variant-pills .rnx-button[aria-current="page"] {
     background-color: var(--primary);

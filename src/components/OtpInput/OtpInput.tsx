@@ -1,7 +1,5 @@
 "use client";
 import { Box } from "../../atoms/Box";
-import { Input } from "../Input/Input";
-// Uses: Input
 import React, {
   useState,
   useRef,
@@ -16,7 +14,6 @@ import "./OtpInput.css";
 import { cva, type VariantProps } from "class-variance-authority";
 import { withLoading } from "../../utils/withLoading";
 import { rnx } from "../../utils/rnx";
-
 
 export const otpInputVariants = cva("rnx-otp-input", {
   variants: {
@@ -73,12 +70,12 @@ const OtpInputBase = forwardRef<HTMLDivElement, OtpInputProps>(
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [internalValue, setInternalValue] = useState<string[]>(
       Array(length)
         .fill("")
-        .map((_, i) => (value && value[i] ? value[i] : ""))
+        .map((_, i) => (value && value[i] ? value[i] : "")),
     );
 
     const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
@@ -91,14 +88,14 @@ const OtpInputBase = forwardRef<HTMLDivElement, OtpInputProps>(
         setInternalValue(
           Array(length)
             .fill("")
-            .map((_, i) => (value && value[i] ? value[i] : ""))
+            .map((_, i) => (value && value[i] ? value[i] : "")),
         );
       }
     }, [value, length]);
 
     const handleChange = (
       e: React.ChangeEvent<HTMLInputElement>,
-      index: number
+      index: number,
     ) => {
       const val = e.target.value;
       if (!/^[0-9]*$/.test(val)) return; // Only allow numbers
@@ -126,7 +123,7 @@ const OtpInputBase = forwardRef<HTMLDivElement, OtpInputProps>(
 
     const handleKeyDown = (
       e: React.KeyboardEvent<HTMLInputElement>,
-      index: number
+      index: number,
     ) => {
       const currentArr =
         value !== undefined
@@ -147,7 +144,7 @@ const OtpInputBase = forwardRef<HTMLDivElement, OtpInputProps>(
 
     const handlePaste = (
       e: React.ClipboardEvent<HTMLInputElement>,
-      startIndex: number
+      startIndex: number,
     ) => {
       e.preventDefault();
       const remaining = length - startIndex;
@@ -188,13 +185,16 @@ const OtpInputBase = forwardRef<HTMLDivElement, OtpInputProps>(
 
     return (
       <Box
-        {...rnx({ component: 'OtpInput', state: disabled ? 'disabled' : 'active' })}
+        {...rnx({
+          component: "OtpInput",
+          state: disabled ? "disabled" : "active",
+        })}
         ref={containerRef}
         {...mergeProps(
           {
             className: cn("rnx-otp-input-container", className),
           },
-          props
+          props,
         )}
       >
         <Box className="rnx-otp-input-group">
@@ -217,7 +217,7 @@ const OtpInputBase = forwardRef<HTMLDivElement, OtpInputProps>(
                 otpInputVariants({ variant, size }),
                 color && `rnx-otp-input--color-${color}`,
                 error && "rnx-otp-input--error",
-                inputClassName
+                inputClassName,
               )}
               aria-label={`Digit ${index + 1} of ${length}`}
               autoComplete="one-time-code"
@@ -231,7 +231,7 @@ const OtpInputBase = forwardRef<HTMLDivElement, OtpInputProps>(
         )}
       </Box>
     );
-  }
+  },
 );
 
 OtpInputBase.displayName = "OtpInput";

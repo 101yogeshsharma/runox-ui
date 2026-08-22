@@ -1,16 +1,7 @@
 "use client";
 
-import React, {
-  useCallback,
-  useState,
-  useEffect,
-  useRef,
-} from "react";
-import {
-  UploadCloud,
-  X,
-  File as FileIcon,
-} from "lucide-react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
+import { UploadCloud, X, File as FileIcon } from "lucide-react";
 import { cn } from "../../utils/cn";
 import { Button } from "../Button";
 import { Text } from "../../atoms/Text";
@@ -112,11 +103,12 @@ export function FileUploader({
       }
       return null;
     },
-    [maxSize, accept]
+    [maxSize, accept],
   );
 
   const handleFiles = useCallback(
     (newFiles: FileList | File[]) => {
+      if (disabled) return;
       const fileArray = Array.from(newFiles);
 
       const validFiles: File[] = [];
@@ -144,19 +136,22 @@ export function FileUploader({
         return updated;
       });
     },
-    [maxFiles, multiple, onFilesChange, validateFile, onFileRejected]
+    [disabled, maxFiles, multiple, onFilesChange, validateFile, onFileRejected],
   );
 
   const onDragOver = (e: React.DragEvent) => {
+    if (disabled) return;
     e.preventDefault();
     setIsDragActive(true);
   };
 
   const onDragLeave = () => {
+    if (disabled) return;
     setIsDragActive(false);
   };
 
   const onDrop = (e: React.DragEvent) => {
+    if (disabled) return;
     e.preventDefault();
     setIsDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
@@ -165,6 +160,7 @@ export function FileUploader({
   };
 
   const onFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (disabled) return;
     if (e.target.files && e.target.files.length > 0) {
       handleFiles(e.target.files);
     }
@@ -173,6 +169,7 @@ export function FileUploader({
   };
 
   const removeFile = (index: number) => {
+    if (disabled) return;
     setFiles((prev) => {
       const updated = prev.filter((_, i) => i !== index);
       onFilesChange?.(updated);
@@ -182,15 +179,20 @@ export function FileUploader({
 
   return (
     <Box
-      {...rnx({ component: 'FileUploader', state: disabled ? 'disabled' : 'active' })}
+      {...rnx({
+        component: "FileUploader",
+        state: disabled ? "disabled" : "active",
+      })}
       className={cn("w-full space-y-4", className)}
       {...props}
     >
       <Box
         className={cn(
           "rnx-file-uploader-dropzone relative flex w-full cursor-pointer flex-col items-center justify-center p-6",
-          isDragActive && "rnx-file-uploader-dropzone--active"
+          isDragActive && "rnx-file-uploader-dropzone--active",
         )}
+        aria-disabled={disabled || undefined}
+        tabIndex={disabled ? -1 : 0}
         onDragOver={onDragOver}
         onDragLeave={onDragLeave}
         onDrop={onDrop}
@@ -200,6 +202,7 @@ export function FileUploader({
           className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
           multiple={multiple}
           accept={accept}
+          disabled={disabled}
           onChange={onFileInputChange}
         />
         <UploadCloud className="rnx-file-uploader-icon mb-3 h-10 w-10" />
@@ -264,6 +267,8 @@ export function FileUploader({
                       e.preventDefault();
                       removeFile(i);
                     }}
+                    disabled={disabled}
+                    aria-label={`Remove ${file.name}`}
                   >
                     <X className="h-4 w-4" />
                   </Button>

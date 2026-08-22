@@ -3,41 +3,33 @@ import { Box } from "../../atoms/Box";
 import React, { useState, forwardRef, useId } from "react";
 import { X } from "lucide-react";
 import { cn } from "../../utils/cn";
-import { mergeProps } from "../../utils/mergeProps";
 
 import { cva, type VariantProps } from "class-variance-authority";
 import { Label } from "../Label/Label";
-import { Button } from "../Button/Button";
-import { Input } from "../Input/Input";
 import { withLoading } from "../../utils/withLoading";
 import { rnx } from "../../utils/rnx";
 import { RnxColor } from "../../types";
 
-// Uses: Button, Input
-
 import "./TagInput.css";
 
-export const tagInputVariants = cva(
-  "rnx-tag-input-wrapper",
-  {
-    variants: {
-      variant: {
-        outline: "rnx-tag-input-wrapper--variant-outline",
-        filled: "rnx-tag-input-wrapper--variant-filled",
-        glass: "rnx-tag-input-wrapper--variant-glass",
-      },
-      size: {
-        sm: "rnx-tag-input-wrapper--sm",
-        md: "rnx-tag-input-wrapper--md",
-        lg: "rnx-tag-input-wrapper--lg",
-      },
+export const tagInputVariants = cva("rnx-tag-input-wrapper", {
+  variants: {
+    variant: {
+      outline: "rnx-tag-input-wrapper--variant-outline",
+      filled: "rnx-tag-input-wrapper--variant-filled",
+      glass: "rnx-tag-input-wrapper--variant-glass",
     },
-    defaultVariants: {
-      variant: "outline",
-      size: "md",
+    size: {
+      sm: "rnx-tag-input-wrapper--sm",
+      md: "rnx-tag-input-wrapper--md",
+      lg: "rnx-tag-input-wrapper--lg",
     },
-  }
-);
+  },
+  defaultVariants: {
+    variant: "outline",
+    size: "md",
+  },
+});
 
 /**
  * Props for the TagInput component.
@@ -79,7 +71,7 @@ const TagInputBase = forwardRef<HTMLInputElement, TagInputProps>(
       disabled,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [internalTags, setInternalTags] = useState<string[]>(defaultValue);
     const [inputValue, setInputValue] = useState("");
@@ -119,16 +111,10 @@ const TagInputBase = forwardRef<HTMLInputElement, TagInputProps>(
           component: "TagInput",
           state: disabled ? "disabled" : error ? "error" : "default",
         })}
-        className={cn(
-          "rnx-tag-input-container",
-          className
-        )}
+        className={cn("rnx-tag-input-container", className)}
       >
         {label && (
-          <Label
-            htmlFor={id}
-            className="rnx-tag-input-label"
-          >
+          <Label htmlFor={id} className="rnx-tag-input-label">
             {label}
           </Label>
         )}
@@ -136,7 +122,7 @@ const TagInputBase = forwardRef<HTMLInputElement, TagInputProps>(
           className={cn(
             tagInputVariants({ variant, size }),
             error && "rnx-tag-input-wrapper--error",
-            inputContainerClassName
+            inputContainerClassName,
           )}
         >
           {tags.map((tag, index) => (
@@ -147,7 +133,7 @@ const TagInputBase = forwardRef<HTMLInputElement, TagInputProps>(
                 "rnx-tag-item",
                 `rnx-tag-item--${size || "md"}`,
                 `rnx-tag-item--tag-${tagVariant}`,
-                color && `rnx-tag-item--color-${color}`
+                color && `rnx-tag-item--color-${color}`,
               )}
             >
               {tag}
@@ -178,17 +164,13 @@ const TagInputBase = forwardRef<HTMLInputElement, TagInputProps>(
           />
         </Box>
         {error && (
-          <Box
-            as="span"
-            id={`${id}-error`}
-            className="rnx-tag-input-error-msg"
-          >
+          <Box as="span" id={`${id}-error`} className="rnx-tag-input-error-msg">
             {error}
           </Box>
         )}
       </Box>
     );
-  }
+  },
 );
 
 TagInputBase.displayName = "TagInput";

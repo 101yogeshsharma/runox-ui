@@ -10,8 +10,10 @@
     flex-shrink: 0;
     align-items: center;
     cursor: pointer;
-    transition: background-color 150ms ease, box-shadow 150ms ease;
-    border-radius: 9999px;
+    transition:
+      background-color 150ms ease,
+      box-shadow 150ms ease;
+    border-radius: var(--radius-full);
     border: 2px solid transparent;
     background-color: var(--input);
   }
@@ -103,7 +105,8 @@
 
   /* Variants */
   .rnx-switch-container--variant-glow:has(.rnx-switch-input:checked) {
-    box-shadow: 0 0 12px color-mix(in srgb, var(--rnx-switch-active-color) 60%, transparent);
+    box-shadow: 0 0 12px
+      color-mix(in srgb, var(--rnx-switch-active-color) 60%, transparent);
   }
   .rnx-switch-container--variant-glass {
     background-color: color-mix(in srgb, var(--background) 50%, transparent);
@@ -134,4 +137,3 @@
     opacity: 0.7;
   }
 }
-

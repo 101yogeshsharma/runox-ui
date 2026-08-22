@@ -1,15 +1,21 @@
-﻿@layer components {
+@layer components {
   .rnx-button {
     position: relative;
     overflow: clip;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: var(--spacing-2, calc(0.5rem * var(--rnx-space-scale, 1)));
+    gap: calc(0.5rem * var(--rnx-space-scale, 1));
     font-family: inherit;
     font-weight: 500;
     cursor: pointer;
-    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease,
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      opacity 0.2s ease;
     border: 1px solid transparent;
     border-radius: var(--radius);
     outline: none;
@@ -106,7 +112,11 @@
     border-color: var(--border);
   }
   .rnx-button--solid-secondary:hover {
-    background-color: color-mix(in srgb, var(--secondary) 80%, var(--foreground));
+    background-color: color-mix(
+      in srgb,
+      var(--secondary) 80%,
+      var(--foreground)
+    );
   }
 
   .rnx-button--solid-danger {
@@ -255,7 +265,11 @@
     color: var(--secondary-foreground, var(--foreground));
   }
   .rnx-button--icon-secondary:hover {
-    background-color: color-mix(in srgb, var(--secondary) 80%, var(--foreground));
+    background-color: color-mix(
+      in srgb,
+      var(--secondary) 80%,
+      var(--foreground)
+    );
   }
 
   .rnx-button--icon-danger {
@@ -268,9 +282,8 @@
 
   /* Fab */
   .rnx-button--variant-fab {
-    border-radius: 9999px;
-    box-shadow:
-      var(--shadow-lg);
+    border-radius: var(--radius-full);
+    box-shadow: var(--shadow-lg);
     backdrop-filter: blur(var(--glass-blur, 12px));
   }
   .rnx-button--variant-fab:active {
@@ -353,17 +366,20 @@
 
   /* === Sizes === */
   .rnx-button--size-sm {
-    padding: calc(0.25rem * var(--rnx-space-scale, 1)) calc(0.5rem * var(--rnx-space-scale, 1));
+    padding: calc(0.25rem * var(--rnx-space-scale, 1))
+      calc(0.5rem * var(--rnx-space-scale, 1));
     font-size: calc(0.75rem * var(--rnx-text-scale, 1));
   }
 
   .rnx-button--size-md {
-    padding: calc(0.5rem * var(--rnx-space-scale, 1)) calc(1rem * var(--rnx-space-scale, 1));
+    padding: calc(0.5rem * var(--rnx-space-scale, 1))
+      calc(1rem * var(--rnx-space-scale, 1));
     font-size: calc(0.875rem * var(--rnx-text-scale, 1));
   }
 
   .rnx-button--size-lg {
-    padding: calc(0.75rem * var(--rnx-space-scale, 1)) calc(1.5rem * var(--rnx-space-scale, 1));
+    padding: calc(0.75rem * var(--rnx-space-scale, 1))
+      calc(1.5rem * var(--rnx-space-scale, 1));
     font-size: calc(1rem * var(--rnx-text-scale, 1));
   }
 
@@ -390,5 +406,3 @@
     justify-content: center;
   }
 }
-
-

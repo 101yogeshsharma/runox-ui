@@ -26,7 +26,7 @@ type FormFieldContextValue<
 };
 
 const FormFieldContext = React.createContext<FormFieldContextValue>(
-  {} as FormFieldContextValue
+  {} as FormFieldContextValue,
 );
 
 const FormField = <
@@ -61,26 +61,56 @@ const useFormField = () => {
     formItemId: `${id}-form-item`,
     formDescriptionId: `${id}-form-item-description`,
     formMessageId: `${id}-form-item-message`,
+    hasDescription: itemContext.hasDescription,
+    hasMessage: itemContext.hasMessage,
+    registerDescription: itemContext.registerDescription,
+    registerMessage: itemContext.registerMessage,
     ...fieldState,
   };
 };
 
 type FormItemContextValue = {
   id: string;
+  hasDescription: boolean;
+  hasMessage: boolean;
+  registerDescription: () => () => void;
+  registerMessage: () => () => void;
 };
 
-const FormItemContext = React.createContext<FormItemContextValue>(
-  {} as FormItemContextValue
-);
+const FormItemContext = React.createContext<FormItemContextValue>({
+  id: "",
+  hasDescription: false,
+  hasMessage: false,
+  registerDescription: () => () => {},
+  registerMessage: () => () => {},
+});
 
 const FormItem = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => {
   const id = React.useId();
+  const [hasDescription, setHasDescription] = React.useState(false);
+  const [hasMessage, setHasMessage] = React.useState(false);
+  const registerDescription = React.useCallback(() => {
+    setHasDescription(true);
+    return () => setHasDescription(false);
+  }, []);
+  const registerMessage = React.useCallback(() => {
+    setHasMessage(true);
+    return () => setHasMessage(false);
+  }, []);
 
   return (
-    <FormItemContext.Provider value={{ id }}>
+    <FormItemContext.Provider
+      value={{
+        id,
+        hasDescription,
+        hasMessage,
+        registerDescription,
+        registerMessage,
+      }}
+    >
       <Box ref={ref} className={cn("rnx-form-item", className)} {...props} />
     </FormItemContext.Provider>
   );
@@ -99,7 +129,7 @@ const FormLabel = React.forwardRef<
       className={cn(
         "rnx-form-label",
         error && "rnx-form-label--error",
-        className
+        className,
       )}
       htmlFor={formItemId}
       {...props}
@@ -111,19 +141,28 @@ FormLabel.displayName = "Form.Label";
 const FormControl = React.forwardRef<
   React.ElementRef<typeof Slot>,
   React.ComponentPropsWithoutRef<typeof Slot>
->(({ ...props }, ref) => {
-  const { error, formItemId, formDescriptionId, formMessageId } =
-    useFormField();
+>(({ "aria-describedby": ariaDescribedBy, ...props }, ref) => {
+  const {
+    error,
+    formItemId,
+    formDescriptionId,
+    formMessageId,
+    hasDescription,
+    hasMessage,
+  } = useFormField();
+  const describedBy = [
+    hasDescription ? formDescriptionId : undefined,
+    error && hasMessage ? formMessageId : undefined,
+    ariaDescribedBy,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <Slot
       ref={ref}
       id={formItemId}
-      aria-describedby={
-        !error
-          ? `${formDescriptionId}`
-          : `${formDescriptionId} ${formMessageId}`
-      }
+      aria-describedby={describedBy || undefined}
       aria-invalid={!!error}
       {...props}
     />
@@ -135,7 +174,9 @@ const FormDescription = React.forwardRef<
   HTMLParagraphElement,
   Omit<React.HTMLAttributes<HTMLParagraphElement>, "color">
 >(({ className, ...props }, ref) => {
-  const { formDescriptionId } = useFormField();
+  const { formDescriptionId, registerDescription } = useFormField();
+
+  React.useEffect(() => registerDescription(), [registerDescription]);
 
   return (
     <Text
@@ -154,8 +195,13 @@ const FormMessage = React.forwardRef<
   HTMLParagraphElement,
   Omit<React.HTMLAttributes<HTMLParagraphElement>, "color">
 >(({ className, children, ...props }, ref) => {
-  const { error, formMessageId } = useFormField();
+  const { error, formMessageId, registerMessage } = useFormField();
   const body = error ? String(error?.message ?? "") : children;
+
+  React.useEffect(() => {
+    if (!body) return;
+    return registerMessage();
+  }, [body, registerMessage]);
 
   if (!body) {
     return null;
@@ -167,6 +213,7 @@ const FormMessage = React.forwardRef<
       variant="body"
       ref={ref}
       id={formMessageId}
+      aria-live={error ? "polite" : undefined}
       className={cn("rnx-form-message", className)}
       {...props}
     >

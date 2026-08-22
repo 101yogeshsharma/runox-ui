@@ -1,4 +1,5 @@
 import type { RunoxTheme } from "./defineTheme";
+import { foregroundForBackground } from "./contrast";
 import type { ThemeConfig } from "../components/ThemeProvider";
 
 /**
@@ -7,7 +8,7 @@ import type { ThemeConfig } from "../components/ThemeProvider";
  */
 export function generateCSSVariables(
   theme: RunoxTheme,
-  config: Partial<ThemeConfig> = {}
+  config: Partial<ThemeConfig> = {},
 ): string {
   const vars: string[] = [];
 
@@ -24,16 +25,9 @@ export function generateCSSVariables(
   if (theme.primaryColor) {
     if (theme.primaryColor.startsWith("#")) {
       vars.push(`  --primary: ${theme.primaryColor};`);
-      let hex = theme.primaryColor.replace("#", "");
-      if (hex.length === 3) {
-        hex = hex.split("").map((c) => c + c).join("");
-      }
-      const r = parseInt(hex.substring(0, 2), 16);
-      const g = parseInt(hex.substring(2, 4), 16);
-      const b = parseInt(hex.substring(4, 6), 16);
-      const yiq = (r * 299 + g * 587 + b * 114) / 1000;
-      const fg = yiq >= 128 ? "#09090b" : "#fafafa";
-      vars.push(`  --primary-foreground: ${fg};`);
+      vars.push(
+        `  --primary-foreground: ${foregroundForBackground(theme.primaryColor)};`,
+      );
     } else {
       // Named colors would map to tailwind var if we supported it fully in CSS output,
       // but typically users exporting raw CSS want the hex values.
@@ -61,7 +55,9 @@ export function generateCSSVariables(
       md: 0.1,
       lg: 0.2,
     };
-    vars.push(`  --shadow-intensity: ${shadowMap[theme.shadowIntensity] ?? 0.1};`);
+    vars.push(
+      `  --shadow-intensity: ${shadowMap[theme.shadowIntensity] ?? 0.1};`,
+    );
   }
 
   if (theme.glassBlurIntensity) {
@@ -71,7 +67,9 @@ export function generateCSSVariables(
       md: "12px",
       lg: "24px",
     };
-    vars.push(`  --glass-blur: ${blurMap[theme.glassBlurIntensity] ?? "12px"};`);
+    vars.push(
+      `  --glass-blur: ${blurMap[theme.glassBlurIntensity] ?? "12px"};`,
+    );
   }
 
   if (vars.length === 0) return "";

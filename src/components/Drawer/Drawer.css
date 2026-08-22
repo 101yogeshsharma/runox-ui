@@ -9,7 +9,10 @@
   .rnx-drawer-backdrop {
     position: absolute;
     inset: 0;
-    background-color: var(--overlay, var(--overlay, color-mix(in srgb, var(--foreground) 40%, transparent)));
+    background-color: var(
+      --overlay,
+      var(--overlay, color-mix(in srgb, var(--foreground) 40%, transparent))
+    );
     backdrop-filter: blur(calc(4px * var(--rnx-space-scale, 1)));
   }
 
@@ -248,7 +251,7 @@
 
   .rnx-drawer-collapse-btn {
     height: calc(1.5rem * var(--rnx-space-scale, 1));
-    border-radius: 9999px;
+    border-radius: var(--radius-full);
     padding-left: calc(1rem * var(--rnx-space-scale, 1));
     padding-right: calc(1rem * var(--rnx-space-scale, 1));
     padding-top: 0;
@@ -280,11 +283,13 @@
   .rnx-drawer-close-icon-btn {
     height: calc(2rem * var(--rnx-space-scale, 1));
     width: calc(2rem * var(--rnx-space-scale, 1));
-    border-radius: 9999px;
+    border-radius: var(--radius-full);
     padding: 0;
     background-color: color-mix(in srgb, var(--foreground) 4%, transparent);
     color: var(--foreground);
-    transition: background-color 150ms ease, transform 100ms ease;
+    transition:
+      background-color 150ms ease,
+      transform 100ms ease;
   }
   .rnx-drawer-close-icon-btn:hover {
     background-color: color-mix(in srgb, var(--foreground) 10%, transparent);
@@ -348,4 +353,3 @@
     color: color-mix(in srgb, var(--foreground) 60%, transparent);
   }
 }
-

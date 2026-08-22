@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 
 export type ColumnSortState = "asc" | "desc" | false;
 
@@ -69,6 +69,7 @@ export interface DataTableInstance<TData> {
 interface UseDataTableProps<TData> {
   data: TData[];
   columns: ColumnDef<TData>[];
+  getRowId?: (row: TData, index: number) => string;
   enableSorting?: boolean;
   enablePagination?: boolean;
   enableFiltering?: boolean;
@@ -77,6 +78,7 @@ interface UseDataTableProps<TData> {
 export function useDataTable<TData>({
   data,
   columns,
+  getRowId: getRowIdProp,
   enableSorting = true,
   enablePagination = true,
   enableFiltering = true,
@@ -137,6 +139,18 @@ export function useDataTable<TData>({
     ? Math.max(1, Math.ceil(filteredData.length / pageSize))
     : 1;
 
+  useEffect(() => {
+    setPageIndex((currentPage) => Math.min(currentPage, pageCount - 1));
+  }, [pageCount]);
+
+  const getRowId = (original: TData, index: number) => {
+    const rawId = (original as { id?: string | number }).id;
+    return (
+      getRowIdProp?.(original, index) ??
+      (rawId !== undefined ? String(rawId) : String(data.indexOf(original)))
+    );
+  };
+
   const tableColumns = columns.map((col, index): Column<TData> => {
     const id = col.id || col.accessorKey || String(index);
     return {
@@ -195,11 +209,8 @@ export function useDataTable<TData>({
       });
     },
     getRowModel: () => ({
-      rows: paginatedData.map((original) => {
-        // Prefer the row's own `id` field; fall back to its stable index in the original data array
-        const rawId = (original as { id?: string | number }).id;
-        const id =
-          rawId !== undefined ? String(rawId) : String(data.indexOf(original));
+      rows: paginatedData.map((original, index) => {
+        const id = getRowId(original, index);
         return {
           id,
           original,
@@ -209,11 +220,8 @@ export function useDataTable<TData>({
     }),
 
     getFilteredSelectedRowModel: () => ({
-      rows: sortedData.filter((original) => {
-        const rawId = (original as { id?: string | number }).id;
-        // Must match the same ID logic as getRowModel
-        const id =
-          rawId !== undefined ? String(rawId) : String(data.indexOf(original));
+      rows: sortedData.filter((original, index) => {
+        const id = getRowId(original, index);
         return !!rowSelection[id];
       }),
     }),

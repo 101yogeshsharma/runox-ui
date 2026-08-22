@@ -45,7 +45,7 @@ export function KanbanBoard<T extends { id?: UniqueIdentifier }>({
   React.useEffect(() => {
     if (process.env.NODE_ENV !== "production") {
       console.warn(
-        "[runox-ui] KanbanBoard is deprecated and will be removed in a future release. Please migrate to Kanban instead."
+        "[runox-ui] KanbanBoard is deprecated and will be removed in a future release. Please migrate to Kanban instead.",
       );
     }
   }, []);
@@ -55,21 +55,21 @@ export function KanbanBoard<T extends { id?: UniqueIdentifier }>({
       if (keyExtractor) return keyExtractor(item);
       if ("id" in item && item.id !== undefined) return item.id;
       throw new Error(
-        "KanbanBoard items must have an id property or a keyExtractor must be provided."
+        "KanbanBoard items must have an id property or a keyExtractor must be provided.",
       );
     },
-    [keyExtractor]
+    [keyExtractor],
   );
   const [draggedItemId, setDraggedItemId] = useState<UniqueIdentifier | null>(
-    null
+    null,
   );
   const [dragOverItemId, setDragOverItemId] = useState<UniqueIdentifier | null>(
-    null
+    null,
   );
   const [dragOverColumnId, setDragOverColumnId] =
     useState<UniqueIdentifier | null>(null);
   const [dropPosition, setDropPosition] = useState<"before" | "after" | null>(
-    null
+    null,
   );
 
   const handleDragStart = useCallback(
@@ -78,11 +78,15 @@ export function KanbanBoard<T extends { id?: UniqueIdentifier }>({
       e.dataTransfer.effectAllowed = "move";
       e.dataTransfer.setData("text/plain", itemId.toString());
     },
-    []
+    [],
   );
 
   const handleDragOverItem = useCallback(
-    (e: React.DragEvent<HTMLElement>, itemId: UniqueIdentifier, colId: UniqueIdentifier) => {
+    (
+      e: React.DragEvent<HTMLElement>,
+      itemId: UniqueIdentifier,
+      colId: UniqueIdentifier,
+    ) => {
       e.preventDefault();
       e.stopPropagation();
       e.dataTransfer.dropEffect = "move";
@@ -93,7 +97,7 @@ export function KanbanBoard<T extends { id?: UniqueIdentifier }>({
       const midY = rect.top + rect.height / 2;
       setDropPosition(e.clientY < midY ? "before" : "after");
     },
-    [draggedItemId]
+    [draggedItemId],
   );
 
   const handleDragLeaveItem = useCallback(
@@ -103,7 +107,7 @@ export function KanbanBoard<T extends { id?: UniqueIdentifier }>({
         setDropPosition(null);
       }
     },
-    [dragOverItemId]
+    [dragOverItemId],
   );
 
   const handleDragOverColumn = useCallback(
@@ -112,14 +116,15 @@ export function KanbanBoard<T extends { id?: UniqueIdentifier }>({
       e.dataTransfer.dropEffect = "move";
       if (!dragOverItemId) setDragOverColumnId(colId);
     },
-    [dragOverItemId]
+    [dragOverItemId],
   );
 
   const handleDragLeaveColumn = useCallback(
     (e: React.DragEvent<HTMLElement>, colId: UniqueIdentifier) => {
-      if (dragOverColumnId === colId && !dragOverItemId) setDragOverColumnId(null);
+      if (dragOverColumnId === colId && !dragOverItemId)
+        setDragOverColumnId(null);
     },
-    [dragOverColumnId, dragOverItemId]
+    [dragOverColumnId, dragOverItemId],
   );
 
   const resetDragState = useCallback(() => {
@@ -129,72 +134,83 @@ export function KanbanBoard<T extends { id?: UniqueIdentifier }>({
     setDropPosition(null);
   }, []);
 
-  const moveItem = useCallback((
-    activeId: UniqueIdentifier,
-    overId: UniqueIdentifier | null,
-    overColId: UniqueIdentifier | null,
-    position: "before" | "after" | null
-  ) => {
-    let activeColIndex = -1;
-    let activeItemIndex = -1;
+  const moveItem = useCallback(
+    (
+      activeId: UniqueIdentifier,
+      overId: UniqueIdentifier | null,
+      overColId: UniqueIdentifier | null,
+      position: "before" | "after" | null,
+    ) => {
+      let activeColIndex = -1;
+      let activeItemIndex = -1;
 
-    for (let i = 0; i < columns.length; i++) {
-      const idx = columns[i].items.findIndex(
-        (item) => getItemId(item) === activeId
-      );
-      if (idx !== -1) {
-        activeColIndex = i;
-        activeItemIndex = idx;
-        break;
-      }
-    }
-
-    if (activeColIndex === -1) return;
-
-    const newColumns = columns.map((c) => ({ ...c, items: [...c.items] }));
-    const [movedItem] = newColumns[activeColIndex].items.splice(
-      activeItemIndex,
-      1
-    );
-
-    if (overId !== null) {
-      let overColIndex = -1;
-      let overItemIndex = -1;
-      for (let i = 0; i < newColumns.length; i++) {
-        const idx = newColumns[i].items.findIndex(
-          (item) => getItemId(item) === overId
+      for (let i = 0; i < columns.length; i++) {
+        const idx = columns[i].items.findIndex(
+          (item) => getItemId(item) === activeId,
         );
         if (idx !== -1) {
-          overColIndex = i;
-          overItemIndex = idx;
+          activeColIndex = i;
+          activeItemIndex = idx;
           break;
         }
       }
 
-      if (overColIndex !== -1) {
-        let newIndex = overItemIndex;
-        if (position === "after") {
-          newIndex = overItemIndex + 1;
-        }
-        newIndex = Math.max(
-          0,
-          Math.min(newIndex, newColumns[overColIndex].items.length)
-        );
-        newColumns[overColIndex].items.splice(newIndex, 0, movedItem);
-      } else {
-        newColumns[activeColIndex].items.splice(activeItemIndex, 0, movedItem);
-      }
-    } else if (overColId !== null) {
-      const overColIndex = newColumns.findIndex((c) => c.id === overColId);
-      if (overColIndex !== -1) {
-        newColumns[overColIndex].items.push(movedItem);
-      } else {
-        newColumns[activeColIndex].items.splice(activeItemIndex, 0, movedItem);
-      }
-    }
+      if (activeColIndex === -1) return;
 
-    onColumnsChange(newColumns);
-  }, [columns, onColumnsChange, getItemId]);
+      const newColumns = columns.map((c) => ({ ...c, items: [...c.items] }));
+      const [movedItem] = newColumns[activeColIndex].items.splice(
+        activeItemIndex,
+        1,
+      );
+
+      if (overId !== null) {
+        let overColIndex = -1;
+        let overItemIndex = -1;
+        for (let i = 0; i < newColumns.length; i++) {
+          const idx = newColumns[i].items.findIndex(
+            (item) => getItemId(item) === overId,
+          );
+          if (idx !== -1) {
+            overColIndex = i;
+            overItemIndex = idx;
+            break;
+          }
+        }
+
+        if (overColIndex !== -1) {
+          let newIndex = overItemIndex;
+          if (position === "after") {
+            newIndex = overItemIndex + 1;
+          }
+          newIndex = Math.max(
+            0,
+            Math.min(newIndex, newColumns[overColIndex].items.length),
+          );
+          newColumns[overColIndex].items.splice(newIndex, 0, movedItem);
+        } else {
+          newColumns[activeColIndex].items.splice(
+            activeItemIndex,
+            0,
+            movedItem,
+          );
+        }
+      } else if (overColId !== null) {
+        const overColIndex = newColumns.findIndex((c) => c.id === overColId);
+        if (overColIndex !== -1) {
+          newColumns[overColIndex].items.push(movedItem);
+        } else {
+          newColumns[activeColIndex].items.splice(
+            activeItemIndex,
+            0,
+            movedItem,
+          );
+        }
+      }
+
+      onColumnsChange(newColumns);
+    },
+    [columns, onColumnsChange, getItemId],
+  );
 
   const handleDropItem = useCallback(
     (e: React.DragEvent<HTMLElement>, targetItemId: UniqueIdentifier) => {
@@ -207,20 +223,25 @@ export function KanbanBoard<T extends { id?: UniqueIdentifier }>({
       moveItem(draggedItemId, targetItemId, null, dropPosition);
       resetDragState();
     },
-    [draggedItemId, dropPosition, moveItem, resetDragState]
+    [draggedItemId, dropPosition, moveItem, resetDragState],
   );
 
   const handleDropColumn = useCallback(
     (e: React.DragEvent<HTMLElement>, targetColId: UniqueIdentifier) => {
       e.preventDefault();
-      if (!draggedItemId) { resetDragState(); return; }
+      if (!draggedItemId) {
+        resetDragState();
+        return;
+      }
       moveItem(draggedItemId, null, targetColId, "after");
       resetDragState();
     },
-    [draggedItemId, moveItem, resetDragState]
+    [draggedItemId, moveItem, resetDragState],
   );
 
-  const handleDragEnd = useCallback(() => { resetDragState(); }, [resetDragState]);
+  const handleDragEnd = useCallback(() => {
+    resetDragState();
+  }, [resetDragState]);
 
   const scrollContainerRef = React.useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
@@ -253,7 +274,10 @@ export function KanbanBoard<T extends { id?: UniqueIdentifier }>({
   };
 
   return (
-    <Box {...rnx({ component: 'KanbanBoard' })} className="group relative h-full w-full">
+    <Box
+      {...rnx({ component: "KanbanBoard" })}
+      className="group relative h-full w-full"
+    >
       {/* Scroll Left Button */}
       <Button
         onClick={() => scroll("left")}
@@ -263,7 +287,7 @@ export function KanbanBoard<T extends { id?: UniqueIdentifier }>({
           "rnx-kanban-scroll-button absolute top-1/2 left-2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center",
           !canScrollLeft
             ? "rnx-kanban-scroll-button--hidden"
-            : "rnx-kanban-scroll-button--visible"
+            : "rnx-kanban-scroll-button--visible",
         )}
         aria-label="Scroll left"
       >
@@ -279,7 +303,7 @@ export function KanbanBoard<T extends { id?: UniqueIdentifier }>({
           "rnx-kanban-scroll-button absolute top-1/2 right-2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center",
           !canScrollRight
             ? "rnx-kanban-scroll-button--hidden"
-            : "rnx-kanban-scroll-button--visible"
+            : "rnx-kanban-scroll-button--visible",
         )}
         aria-label="Scroll right"
       >
@@ -292,8 +316,8 @@ export function KanbanBoard<T extends { id?: UniqueIdentifier }>({
         gap="lg"
         justify="start"
         className={cn(
-          "scrollbar-hide h-full min-h-96 w-full overflow-x-auto py-4 py-12",
-          className
+          "scrollbar-hide h-full min-h-96 w-full overflow-x-auto py-12",
+          className,
         )}
       >
         <Box className="w-8 shrink-0" />
@@ -338,10 +362,23 @@ interface MemoizedCardProps<T> {
   colId: UniqueIdentifier;
   dropPosition: "before" | "after" | null;
   renderItem: (item: T) => React.ReactNode;
-  handleDragStart: (e: React.DragEvent<HTMLElement>, itemId: UniqueIdentifier) => void;
-  handleDragOverItem: (e: React.DragEvent<HTMLElement>, itemId: UniqueIdentifier, colId: UniqueIdentifier) => void;
-  handleDragLeaveItem: (e: React.DragEvent<HTMLElement>, itemId: UniqueIdentifier) => void;
-  handleDropItem: (e: React.DragEvent<HTMLElement>, itemId: UniqueIdentifier) => void;
+  handleDragStart: (
+    e: React.DragEvent<HTMLElement>,
+    itemId: UniqueIdentifier,
+  ) => void;
+  handleDragOverItem: (
+    e: React.DragEvent<HTMLElement>,
+    itemId: UniqueIdentifier,
+    colId: UniqueIdentifier,
+  ) => void;
+  handleDragLeaveItem: (
+    e: React.DragEvent<HTMLElement>,
+    itemId: UniqueIdentifier,
+  ) => void;
+  handleDropItem: (
+    e: React.DragEvent<HTMLElement>,
+    itemId: UniqueIdentifier,
+  ) => void;
   handleDragEnd: () => void;
 }
 
@@ -377,10 +414,8 @@ function MemoizedCardComponent<T>({
       onDragEnd={handleDragEnd}
       className={cn(
         "rnx-kanban-card touch-none",
-        isDragging
-          ? "rnx-kanban-card--dragging"
-          : "rnx-kanban-card--draggable",
-        indicatorStyles
+        isDragging ? "rnx-kanban-card--dragging" : "rnx-kanban-card--draggable",
+        indicatorStyles,
       )}
     >
       {renderItem(item)}
@@ -388,7 +423,9 @@ function MemoizedCardComponent<T>({
   );
 }
 
-export const MemoizedCard = React.memo(MemoizedCardComponent) as typeof MemoizedCardComponent;
+export const MemoizedCard = React.memo(
+  MemoizedCardComponent,
+) as typeof MemoizedCardComponent;
 (MemoizedCard as any).displayName = "MemoizedCard";
 
 interface MemoizedColumnProps<T> {
@@ -399,13 +436,35 @@ interface MemoizedColumnProps<T> {
   dropPosition: "before" | "after" | null;
   getItemId: (item: T) => UniqueIdentifier;
   renderItem: (item: T) => React.ReactNode;
-  handleDragOverColumn: (e: React.DragEvent<HTMLElement>, colId: UniqueIdentifier) => void;
-  handleDragLeaveColumn: (e: React.DragEvent<HTMLElement>, colId: UniqueIdentifier) => void;
-  handleDropColumn: (e: React.DragEvent<HTMLElement>, colId: UniqueIdentifier) => void;
-  handleDragStart: (e: React.DragEvent<HTMLElement>, itemId: UniqueIdentifier) => void;
-  handleDragOverItem: (e: React.DragEvent<HTMLElement>, itemId: UniqueIdentifier, colId: UniqueIdentifier) => void;
-  handleDragLeaveItem: (e: React.DragEvent<HTMLElement>, itemId: UniqueIdentifier) => void;
-  handleDropItem: (e: React.DragEvent<HTMLElement>, itemId: UniqueIdentifier) => void;
+  handleDragOverColumn: (
+    e: React.DragEvent<HTMLElement>,
+    colId: UniqueIdentifier,
+  ) => void;
+  handleDragLeaveColumn: (
+    e: React.DragEvent<HTMLElement>,
+    colId: UniqueIdentifier,
+  ) => void;
+  handleDropColumn: (
+    e: React.DragEvent<HTMLElement>,
+    colId: UniqueIdentifier,
+  ) => void;
+  handleDragStart: (
+    e: React.DragEvent<HTMLElement>,
+    itemId: UniqueIdentifier,
+  ) => void;
+  handleDragOverItem: (
+    e: React.DragEvent<HTMLElement>,
+    itemId: UniqueIdentifier,
+    colId: UniqueIdentifier,
+  ) => void;
+  handleDragLeaveItem: (
+    e: React.DragEvent<HTMLElement>,
+    itemId: UniqueIdentifier,
+  ) => void;
+  handleDropItem: (
+    e: React.DragEvent<HTMLElement>,
+    itemId: UniqueIdentifier,
+  ) => void;
   handleDragEnd: () => void;
 }
 
@@ -434,17 +493,14 @@ function MemoizedColumnComponent<T>({
       onDrop={(e) => handleDropColumn(e, col.id)}
       className={cn(
         "rnx-kanban-column w-80 shrink-0 p-4",
-        isColumnDragOver && "rnx-kanban-column--drag-over"
+        isColumnDragOver && "rnx-kanban-column--drag-over",
       )}
     >
       <Flex align="center" justify="between" className="mb-4 px-2">
         <Text as="h3" className="rnx-kanban-column-title">
           {col.title}
         </Text>
-        <Box
-          as="span"
-          className="rnx-kanban-column-count px-2.5 py-0.5"
-        >
+        <Box as="span" className="rnx-kanban-column-count px-2.5 py-0.5">
           {col.items.length}
         </Box>
       </Flex>
@@ -478,5 +534,7 @@ function MemoizedColumnComponent<T>({
   );
 }
 
-export const MemoizedColumn = React.memo(MemoizedColumnComponent) as typeof MemoizedColumnComponent;
+export const MemoizedColumn = React.memo(
+  MemoizedColumnComponent,
+) as typeof MemoizedColumnComponent;
 (MemoizedColumn as any).displayName = "MemoizedColumn";

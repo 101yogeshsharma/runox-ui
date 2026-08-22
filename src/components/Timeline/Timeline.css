@@ -1,4 +1,4 @@
-﻿@layer components {
+@layer components {
   .rnx-timeline {
     margin: 0;
     list-style: none;
@@ -44,7 +44,7 @@
     flex-shrink: 0;
     align-items: center;
     justify-content: center;
-    border-radius: 9999px;
+    border-radius: var(--radius-full);
     height: calc(0.75rem * var(--rnx-space-scale, 1));
     width: calc(0.75rem * var(--rnx-space-scale, 1));
   }

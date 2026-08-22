@@ -75,7 +75,7 @@ const CarouselRoot = React.forwardRef<
       effect = "slide",
       ...props
     },
-    ref
+    ref,
   ) => {
     const carouselRef = React.useRef<HTMLDivElement>(null);
     const [canScrollPrev, setCanScrollPrev] = React.useState(false);
@@ -98,7 +98,7 @@ const CarouselRoot = React.forwardRef<
       // Only apply scrollSnapAlign to actual slides (role="group"), not the
       // padding spacer boxes at the start/end of CarouselContent.
       const items = Array.from(
-        container.querySelectorAll<HTMLElement>('[role="group"]')
+        container.querySelectorAll<HTMLElement>('[role="group"]'),
       );
       items.forEach((child) => {
         child.style.scrollSnapAlign = snapAlign;
@@ -108,7 +108,7 @@ const CarouselRoot = React.forwardRef<
         // Use requestAnimationFrame to ensure layout is calculated
         requestAnimationFrame(() => {
           const items = Array.from(
-            container.querySelectorAll('[role="group"]')
+            container.querySelectorAll('[role="group"]'),
           ) as HTMLElement[];
           if (!items.length) return;
           const firstChild = items[0];
@@ -140,10 +140,8 @@ const CarouselRoot = React.forwardRef<
     const api = React.useMemo<CarouselApi>(() => {
       const listeners: Record<string, ((api: CarouselApi) => void)[]> = {};
 
-       
       const _listeners: Record<string, ((api: CarouselApi) => void)[]> = {};
 
-       
       const _checkPhysicalScrollPrev = () => {
         if (!carouselRef.current) return false;
         const container = carouselRef.current;
@@ -152,7 +150,6 @@ const CarouselRoot = React.forwardRef<
           : container.scrollTop > 0;
       };
 
-       
       const _checkPhysicalScrollNext = () => {
         if (!carouselRef.current) return false;
         const container = carouselRef.current;
@@ -202,7 +199,7 @@ const CarouselRoot = React.forwardRef<
 
           const flexWrapper = container.firstElementChild as HTMLElement;
           const firstItem = flexWrapper?.querySelector(
-            '[role="group"]'
+            '[role="group"]',
           ) as HTMLElement;
           const scrollAmount = firstItem
             ? isHorizontal
@@ -227,7 +224,7 @@ const CarouselRoot = React.forwardRef<
 
           const flexWrapper = container.firstElementChild as HTMLElement;
           const firstItem = flexWrapper?.querySelector(
-            '[role="group"]'
+            '[role="group"]',
           ) as HTMLElement;
           const scrollAmount = firstItem
             ? isHorizontal
@@ -263,7 +260,7 @@ const CarouselRoot = React.forwardRef<
 
         const flexWrapper = container.firstElementChild as HTMLElement;
         const items = flexWrapper?.querySelectorAll(
-          '[role="group"]'
+          '[role="group"]',
         ) as NodeListOf<HTMLElement>;
         if (!items || items.length === 0) return 0;
 
@@ -289,7 +286,7 @@ const CarouselRoot = React.forwardRef<
 
         const flexWrapper = container.firstElementChild as HTMLElement;
         const items = flexWrapper?.querySelectorAll(
-          '[role="group"]'
+          '[role="group"]',
         ) as NodeListOf<HTMLElement>;
         if (!items || items.length === 0) return;
 
@@ -365,7 +362,7 @@ const CarouselRoot = React.forwardRef<
       (index: number) => {
         api?.scrollTo(index);
       },
-      [api]
+      [api],
     );
 
     const handleKeyDown = React.useCallback(
@@ -378,7 +375,7 @@ const CarouselRoot = React.forwardRef<
           scrollNext();
         }
       },
-      [scrollPrev, scrollNext]
+      [scrollPrev, scrollNext],
     );
 
     React.useEffect(() => {
@@ -459,7 +456,7 @@ const CarouselRoot = React.forwardRef<
         }
       },
       carouselRef,
-      100
+      100,
     );
 
     React.useEffect(() => {
@@ -506,30 +503,50 @@ const CarouselRoot = React.forwardRef<
         return () => {
           resizeObserver.disconnect();
           mutationObserver.disconnect();
+          if (scrollTimeoutRef.current) {
+            clearTimeout(scrollTimeoutRef.current);
+            scrollTimeoutRef.current = null;
+          }
         };
       }
     }, [api, opts?.loop, orientation]);
 
-    const contextValue = React.useMemo(() => ({
-      carouselRef,
-      api: api,
-      opts,
-      orientation:
-        orientation || (opts?.axis === "y" ? "vertical" : "horizontal"),
-      scrollPrev,
-      scrollNext,
-      scrollTo,
-      canScrollPrev,
-      canScrollNext,
-      selectedIndex,
-      slideCount,
-      effect,
-    }), [carouselRef, api, opts, orientation, scrollPrev, scrollNext, scrollTo, canScrollPrev, canScrollNext, selectedIndex, slideCount, effect]);
+    const contextValue = React.useMemo(
+      () => ({
+        carouselRef,
+        api: api,
+        opts,
+        orientation:
+          orientation || (opts?.axis === "y" ? "vertical" : "horizontal"),
+        scrollPrev,
+        scrollNext,
+        scrollTo,
+        canScrollPrev,
+        canScrollNext,
+        selectedIndex,
+        slideCount,
+        effect,
+      }),
+      [
+        carouselRef,
+        api,
+        opts,
+        orientation,
+        scrollPrev,
+        scrollNext,
+        scrollTo,
+        canScrollPrev,
+        canScrollNext,
+        selectedIndex,
+        slideCount,
+        effect,
+      ],
+    );
 
     return (
       <CarouselContext.Provider value={contextValue}>
         <Box
-          {...rnx({ component: 'Carousel' })}
+          {...rnx({ component: "Carousel" })}
           ref={ref}
           onKeyDownCapture={handleKeyDown}
           className={cn("relative", className)}
@@ -541,7 +558,7 @@ const CarouselRoot = React.forwardRef<
         </Box>
       </CarouselContext.Provider>
     );
-  }
+  },
 );
 CarouselRoot.displayName = "Carousel";
 
@@ -563,7 +580,7 @@ const CarouselContent = React.forwardRef<
     const applyEffect = () => {
       // Refresh items in case they change
       items = Array.from(
-        container.querySelectorAll('[role="group"]')
+        container.querySelectorAll('[role="group"]'),
       ) as HTMLElement[];
       if (!items.length) return;
 
@@ -646,21 +663,21 @@ const CarouselContent = React.forwardRef<
             ? React.cloneElement(child as React.ReactElement, {
                 key: "clone-pre-" + i,
               })
-            : child
+            : child,
         )}
         {childArray.map((child, i) =>
           React.isValidElement(child)
             ? React.cloneElement(child as React.ReactElement, {
                 key: "real-" + i,
               })
-            : child
+            : child,
         )}
         {childArray.map((child, i) =>
           React.isValidElement(child)
             ? React.cloneElement(child as React.ReactElement, {
                 key: "clone-post-" + i,
               })
-            : child
+            : child,
         )}
       </>
     );
@@ -671,7 +688,9 @@ const CarouselContent = React.forwardRef<
       ref={carouselRef}
       className={cn(
         "scrollbar-hide h-full overflow-auto scroll-smooth",
-        orientation === "horizontal" ? "overflow-y-hidden" : "overflow-x-hidden"
+        orientation === "horizontal"
+          ? "overflow-y-hidden"
+          : "overflow-x-hidden",
       )}
       style={{
         scrollSnapType:
@@ -687,7 +706,7 @@ const CarouselContent = React.forwardRef<
         className={cn(
           "flex h-full items-center",
           orientation === "horizontal" ? "-ms-4" : "-mt-4 flex-col",
-          className
+          className,
         )}
         {...props}
       >
@@ -726,7 +745,7 @@ const CarouselItem = React.forwardRef<
       className={cn(
         "min-w-0 shrink-0 grow-0 basis-full snap-center",
         orientation === "horizontal" ? "ps-4" : "pt-4",
-        className
+        className,
       )}
       {...props}
     />
@@ -751,7 +770,7 @@ const CarouselPrevious = React.forwardRef<
           ? "top-1/2 left-4 -translate-y-1/2"
           : "top-4 left-1/2 -translate-x-1/2 rotate-90",
         !canScrollPrev ? "hidden" : "",
-        className
+        className,
       )}
       disabled={!canScrollPrev}
       onClick={scrollPrev}
@@ -781,7 +800,7 @@ const CarouselNext = React.forwardRef<
           ? "top-1/2 right-4 -translate-y-1/2"
           : "bottom-4 left-1/2 -translate-x-1/2 rotate-90",
         !canScrollNext ? "hidden" : "",
-        className
+        className,
       )}
       disabled={!canScrollNext}
       onClick={scrollNext}
@@ -810,7 +829,7 @@ const CarouselCaption = React.forwardRef<
           : position === "center"
             ? "justify-center"
             : "justify-end",
-        className
+        className,
       )}
       {...props}
     />
@@ -831,7 +850,7 @@ const CarouselDots = React.forwardRef<
       ref={ref}
       className={cn(
         "absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-2",
-        className
+        className,
       )}
       {...props}
     >
@@ -842,7 +861,7 @@ const CarouselDots = React.forwardRef<
             "h-2 w-2 rounded-full transition-all",
             selectedIndex === index
               ? "bg-primary w-4"
-              : "bg-primary/30 hover:bg-primary/50"
+              : "bg-primary/30 hover:bg-primary/50",
           )}
           aria-label={`Go to slide ${index + 1}`}
           aria-current={selectedIndex === index}

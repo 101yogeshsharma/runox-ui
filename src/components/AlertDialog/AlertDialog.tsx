@@ -162,7 +162,7 @@ export const AlertDialogContent = forwardRef<
     // Actually, standard alert dialogs force user to click an action. Let's not close on outside click.
   });
 
-  useFocusTrap(contentRef, isOpen);
+  useFocusTrap(contentRef, isOpen && shouldRender);
   useScrollLock(isOpen);
 
   useEffect(() => {
@@ -204,11 +204,12 @@ export const AlertDialogContent = forwardRef<
     >
       <Box
         ref={mergedRef}
+        tabIndex={-1}
         className={cn(
           "rnx-alert-dialog-content",
           `rnx-alert-dialog-content--variant-${variant}`,
           `rnx-alert-dialog-content--${size}`,
-          className
+          className,
         )}
         data-state={mounted ? "open" : "closed"}
         {...props}
@@ -216,7 +217,7 @@ export const AlertDialogContent = forwardRef<
         {children}
       </Box>
     </Box>,
-    document.body
+    document.body,
   );
 });
 AlertDialogContent.displayName = "AlertDialog.Content";
@@ -308,7 +309,7 @@ export const AlertDialogAction = forwardRef<
         buttonVariants({ variant: "solid", color: "primary" }),
         "rnx-alert-dialog-action",
         className,
-        child.props.className
+        child.props.className,
       ),
       ref: (node: HTMLButtonElement) => {
         if (typeof ref === "function") ref(node);
@@ -374,7 +375,7 @@ export const AlertDialogCancel = forwardRef<
         buttonVariants({ variant: "outline", color: "default" }),
         "rnx-alert-dialog-cancel",
         className,
-        child.props.className
+        child.props.className,
       ),
       ref: (node: HTMLButtonElement) => {
         if (typeof ref === "function") ref(node);
