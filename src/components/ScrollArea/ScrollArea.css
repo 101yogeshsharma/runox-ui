@@ -45,10 +45,15 @@
     border-radius: inherit;
   }
 
+  /*
+    Legacy aliases: `rnx-scrollbar*` classes predate the single-block convention
+    (the ScrollBar subcomponent's canonical block is `rnx-scroll-area`).
+    They are deprecated; removal targeted for the next major version.
+  */
   .rnx-scrollbar {
     position: absolute;
     user-select: none;
-    z-index: 20;
+    z-index: var(--z-sticky);
   }
 
   .rnx-scrollbar-thumb {

@@ -23,10 +23,12 @@ function setRef<T>(ref: PossibleRef<T>, value: T) {
 export function useMergeRefs<T>(
   ...refs: PossibleRef<T>[]
 ): React.RefCallback<T> {
+  // `refs` is a rest parameter producing a new array each render; spreading it
+  // keeps the memo keyed on the individual refs, which is the intended identity.
   return useMemo(() => {
     return (node: T) => {
       refs.forEach((ref) => setRef(ref, node));
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, refs);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- rest array identity
+  }, [...refs]);
 }

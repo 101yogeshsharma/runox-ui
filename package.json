@@ -392,6 +392,7 @@
     "test:coverage": "cross-env VITE_CONFIG_NATIVE_IGNORE_WARNING=true vitest run --coverage",
     "test:exports": "node scripts/verify-package-exports.js",
     "test:package": "node scripts/test-packed-package.js",
+    "test:conventions": "node scripts/check-style-conventions.js",
     "prepare": "husky",
     "build:npm": "npm run build && npm pack",
     "yalc:push": "npm run build && yalc push",

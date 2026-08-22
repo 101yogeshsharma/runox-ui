@@ -55,14 +55,14 @@
     background-color: var(--card);
     border: 1px solid var(--border);
     color: var(--muted-foreground);
-    border-radius: 0.375rem;
+    border-radius: var(--radius-sm);
     font-size: calc(0.75rem * var(--rnx-text-scale, 1));
     font-weight: 500;
     box-shadow: var(--shadow-sm);
   }
 
   .rnx-kanban-card {
-    border-radius: 0.5rem;
+    border-radius: calc(var(--radius-sm) + 2px);
   }
   .rnx-kanban-card:focus {
     outline: none;

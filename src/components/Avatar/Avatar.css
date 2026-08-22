@@ -79,7 +79,7 @@
     right: 0;
     border-radius: var(--radius-full);
     border: 2px solid var(--background);
-    z-index: 10;
+    z-index: var(--z-component);
   }
   .rnx-avatar-status--sm {
     width: calc(0.625rem * var(--rnx-space-scale, 1));

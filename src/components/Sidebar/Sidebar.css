@@ -66,13 +66,16 @@
     align-items: center;
     gap: calc(0.5rem * var(--rnx-space-scale, 1));
     border-radius: var(--radius);
-    padding: calc(0.5rem * var(--rnx-space-scale, 1)) calc(0.75rem * var(--rnx-space-scale, 1));
+    padding: calc(0.5rem * var(--rnx-space-scale, 1))
+      calc(0.75rem * var(--rnx-space-scale, 1));
     font-size: calc(0.875rem * var(--rnx-text-scale, 1));
     font-weight: 500;
     color: var(--muted-foreground);
     text-decoration: none;
     outline: none;
-    transition: background-color 150ms ease, color 150ms ease;
+    transition:
+      background-color 150ms ease,
+      color 150ms ease;
   }
 
   .rnx-sidebar-item:hover {
@@ -96,7 +99,7 @@
     top: 0;
     bottom: 0;
     left: 0;
-    z-index: 50;
+    z-index: var(--z-modal);
     transform: translateX(0);
   }
   @media (min-width: 768px) {
@@ -109,7 +112,7 @@
   .rnx-sidebar-backdrop {
     position: fixed;
     inset: 0;
-    z-index: 40;
+    z-index: var(--z-sidebar);
     background-color: color-mix(in srgb, var(--foreground) 50%, transparent);
     backdrop-filter: blur(4px);
   }
@@ -132,4 +135,3 @@
     display: none;
   }
 }
-

@@ -9,6 +9,23 @@
   --radius-lg: 16px;
   --radius-xl: 24px;
   --radius-full: 9999px;
+
+  /*
+    Z-index scale — stacking contract, lowest to highest:
+    base < raised < content < component < sticky < overlay < sidebar < modal < popover < toast < tooltip
+    Never use raw numeric z-index in component CSS; always consume these tokens.
+  */
+  --z-base: 0;
+  --z-raised: 1;
+  --z-content: 2;
+  --z-component: 10;
+  --z-sticky: 20;
+  --z-overlay: 30;
+  --z-sidebar: 40;
+  --z-modal: 50;
+  --z-popover: 60;
+  --z-toast: 70;
+  --z-tooltip: 80;
 }
 
 @utility auto-rows-bento {
@@ -323,7 +340,7 @@
       transform 300ms cubic-bezier(0.4, 0, 0.2, 1),
       width 300ms cubic-bezier(0.4, 0, 0.2, 1),
       opacity 200ms ease;
-    z-index: 0;
+    z-index: var(--z-base);
     pointer-events: none;
   }
   .rnx-tabs-indicator--default {
@@ -355,7 +372,7 @@
       background-color 200ms ease,
       border-color 200ms ease,
       box-shadow 200ms ease;
-    z-index: 10;
+    z-index: var(--z-component);
     border: none;
     background: transparent;
     color: inherit;
@@ -419,7 +436,7 @@
   .rnx-modal-overlay {
     position: fixed;
     inset: 0;
-    z-index: 50;
+    z-index: var(--z-modal);
     background-color: var(--rnx-modal-overlay-bg, rgba(0, 0, 0, 0.6));
     backdrop-filter: blur(4px);
     display: flex;
@@ -434,7 +451,7 @@
 
   .rnx-modal-content {
     position: relative;
-    z-index: 50;
+    z-index: var(--z-modal);
     display: flex;
     flex-direction: column;
     gap: calc(1rem * var(--rnx-space-scale, 1));
@@ -587,7 +604,7 @@
   /* Popover */
   .rnx-popover-content {
     position: absolute;
-    z-index: 50;
+    z-index: var(--z-modal);
     min-width: 18rem;
     width: max-content;
     max-width: calc(100vw - 2rem);
@@ -595,7 +612,7 @@
     border: 1px solid var(--border);
     background-color: color-mix(in srgb, var(--popover) 80%, transparent);
     backdrop-filter: blur(12px);
-    padding: 1rem;
+    padding: calc(1rem * var(--rnx-space-scale, 1));
     color: var(--popover-foreground);
     box-shadow: var(--shadow-md);
     outline: none;
@@ -624,11 +641,12 @@
   /* Tooltip */
   .rnx-tooltip-content {
     position: absolute;
-    z-index: 50;
+    z-index: var(--z-modal);
     border-radius: calc(var(--radius) - 4px);
     border: 1px solid var(--border);
     background-color: var(--popover);
-    padding: 0.375rem 0.75rem;
+    padding: calc(0.375rem * var(--rnx-space-scale, 1))
+      calc(0.75rem * var(--rnx-space-scale, 1));
     color: var(--popover-foreground);
     font-size: 0.75rem;
     box-shadow: var(--shadow-md);
@@ -647,13 +665,13 @@
   /* ContextMenu */
   .rnx-context-menu-content {
     position: fixed;
-    z-index: 50;
+    z-index: var(--z-modal);
     min-width: 12rem;
     overflow: hidden;
     border-radius: var(--radius);
     border: 1px solid var(--border);
     background-color: var(--popover);
-    padding: 0.25rem;
+    padding: calc(0.25rem * var(--rnx-space-scale, 1));
     color: var(--popover-foreground);
     box-shadow: var(--shadow-lg);
     outline: none;
@@ -695,8 +713,9 @@
 
   .rnx-modal-close {
     position: absolute;
-    right: 1rem;
-    top: 1rem;
+    right: calc(1rem * var(--rnx-space-scale, 1));
+    top: calc(1rem * var(--rnx-space-scale, 1));
+    /* radius-exception: fixed micro-radius for a 1rem icon button */
     border-radius: 0.125rem;
     opacity: 0.7;
     transition: opacity 200ms;
@@ -716,13 +735,14 @@
   .rnx-modal-header {
     display: flex;
     flex-direction: column;
-    gap: 0.375rem;
+    gap: calc(0.375rem * var(--rnx-space-scale, 1));
     text-align: left;
-    padding: 1.25rem 1.5rem;
+    padding: calc(1.25rem * var(--rnx-space-scale, 1))
+      calc(1.5rem * var(--rnx-space-scale, 1));
     border-bottom: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
   }
   .rnx-modal-body {
-    padding: 1.5rem;
+    padding: calc(1.5rem * var(--rnx-space-scale, 1));
     overflow-y: auto;
     max-height: 60vh;
   }
@@ -730,8 +750,9 @@
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
-    gap: 0.5rem;
-    padding: 1rem 1.5rem;
+    gap: calc(0.5rem * var(--rnx-space-scale, 1));
+    padding: calc(1rem * var(--rnx-space-scale, 1))
+      calc(1.5rem * var(--rnx-space-scale, 1));
     background-color: color-mix(in srgb, var(--secondary) 30%, transparent);
     border-top: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
   }
@@ -744,6 +765,7 @@
       right: 0;
       width: 100%;
       max-width: 100%;
+      /* radius-exception: sheet shape with square bottom edge, independent of theme radius */
       border-radius: 1rem 1rem 0 0;
       margin: 0;
       max-height: 90dvh;
@@ -1485,7 +1507,7 @@
   .rnx-checkbox-wrapper {
     display: inline-flex;
     align-items: flex-start;
-    gap: 0.5rem;
+    gap: calc(0.5rem * var(--rnx-space-scale, 1));
   }
   .rnx-checkbox-container {
     display: flex;
@@ -1500,7 +1522,7 @@
     height: 100%;
     cursor: pointer;
     margin: 0;
-    z-index: 10;
+    z-index: var(--z-component);
   }
   .rnx-checkbox-box {
     display: flex;
@@ -1588,7 +1610,7 @@
   .rnx-switch-wrapper {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: calc(0.5rem * var(--rnx-space-scale, 1));
   }
   .rnx-switch-container {
     position: relative;
@@ -1608,7 +1630,7 @@
     height: 100%;
     cursor: inherit;
     margin: 0;
-    z-index: 10;
+    z-index: var(--z-component);
   }
   .rnx-switch-thumb {
     display: block;
@@ -1687,7 +1709,7 @@
   .rnx-radio-group {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: calc(0.5rem * var(--rnx-space-scale, 1));
   }
   .rnx-radio-group--horizontal {
     flex-direction: row;
@@ -1696,7 +1718,7 @@
   .rnx-radio-wrapper {
     display: inline-flex;
     align-items: flex-start;
-    gap: 0.5rem;
+    gap: calc(0.5rem * var(--rnx-space-scale, 1));
   }
   .rnx-radio-container {
     display: flex;
@@ -1711,7 +1733,7 @@
     height: 100%;
     cursor: pointer;
     margin: 0;
-    z-index: 10;
+    z-index: var(--z-component);
   }
   .rnx-radio-box {
     display: flex;

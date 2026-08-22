@@ -1,7 +1,7 @@
-﻿@layer components {
+@layer components {
   .rnx-tooltip-content {
     position: absolute;
-    z-index: 50;
+    z-index: var(--z-modal);
     border-radius: calc(var(--radius) - 4px);
     border: 1px solid var(--border);
     box-shadow: var(--shadow-md);
@@ -9,20 +9,25 @@
     overflow: hidden;
     pointer-events: none;
     transform-origin: top;
-    transition: opacity 150ms ease, transform 150ms ease;
+    transition:
+      opacity 150ms ease,
+      transform 150ms ease;
   }
 
   /* Sizes */
   .rnx-tooltip-content--sm {
-    padding: calc(0.25rem * var(--rnx-space-scale, 1)) calc(0.5rem * var(--rnx-space-scale, 1));
+    padding: calc(0.25rem * var(--rnx-space-scale, 1))
+      calc(0.5rem * var(--rnx-space-scale, 1));
     font-size: calc(0.7rem * var(--rnx-text-scale, 1));
   }
   .rnx-tooltip-content--md {
-    padding: calc(0.375rem * var(--rnx-space-scale, 1)) calc(0.75rem * var(--rnx-space-scale, 1));
+    padding: calc(0.375rem * var(--rnx-space-scale, 1))
+      calc(0.75rem * var(--rnx-space-scale, 1));
     font-size: calc(0.75rem * var(--rnx-text-scale, 1));
   }
   .rnx-tooltip-content--lg {
-    padding: calc(0.5rem * var(--rnx-space-scale, 1)) calc(1rem * var(--rnx-space-scale, 1));
+    padding: calc(0.5rem * var(--rnx-space-scale, 1))
+      calc(1rem * var(--rnx-space-scale, 1));
     font-size: calc(0.875rem * var(--rnx-text-scale, 1));
   }
 
@@ -67,4 +72,3 @@
     animation: rnx-dropdown-out 150ms ease-in forwards;
   }
 }
-

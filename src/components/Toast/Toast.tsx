@@ -160,7 +160,7 @@ export const ToastItem: React.FC<{
       handleClose();
     }, duration);
     return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- timer must not reset when the (stable) onRemove callback identity changes
   }, [toast.duration]);
 
   const handleClose = () => {

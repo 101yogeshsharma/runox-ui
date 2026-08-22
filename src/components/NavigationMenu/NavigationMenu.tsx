@@ -97,7 +97,7 @@ const NavigationMenu = React.forwardRef<HTMLDivElement, NavigationMenuProps>(
           ref={mergedRef}
           role={isMenubar ? "menubar" : "navigation"}
           className={cn(
-            isMenubar ? "rnx-nav-menu--menubar" : "rnx-nav-menu",
+            isMenubar ? "rnx-navigation-menu--menubar" : "rnx-navigation-menu",
             className,
           )}
           onMouseLeave={handleMouseLeave}
@@ -123,7 +123,7 @@ const NavigationMenuList = React.forwardRef<
     <Box
       as={isMenubar ? "div" : "ul"}
       ref={ref}
-      className={cn("rnx-nav-menu-list", className)}
+      className={cn("rnx-navigation-menu-list", className)}
       {...props}
     />
   );
@@ -150,7 +150,7 @@ const NavigationMenuItem = React.forwardRef<
       <Box
         as={isMenubar ? "div" : "li"}
         ref={ref}
-        className={cn("rnx-nav-menu-item", className)}
+        className={cn("rnx-navigation-menu-item", className)}
         {...props}
       >
         {children}
@@ -160,7 +160,7 @@ const NavigationMenuItem = React.forwardRef<
 });
 NavigationMenuItem.displayName = "NavigationMenuItem";
 
-const navigationMenuTriggerStyle = cva("rnx-nav-menu-trigger");
+const navigationMenuTriggerStyle = cva("rnx-navigation-menu-trigger");
 
 const NavigationMenuTrigger = React.forwardRef<
   HTMLButtonElement,
@@ -176,7 +176,7 @@ const NavigationMenuTrigger = React.forwardRef<
     const { value, setTriggerRef } = useContext(NavigationMenuItemContext);
     const isOpen = activeValue === value;
     const isMenubar = variant === "menubar";
-    const contentId = `rnx-nav-menu-content-${menuId}-${value}`;
+    const contentId = `rnx-navigation-menu-content-${menuId}-${value}`;
 
     return (
       <button
@@ -186,15 +186,15 @@ const NavigationMenuTrigger = React.forwardRef<
           else if (ref) ref.current = node;
         }}
         type="button"
-        id={`rnx-nav-menu-trigger-${menuId}-${value}`}
+        id={`rnx-navigation-menu-trigger-${menuId}-${value}`}
         role={isMenubar ? "menuitem" : undefined}
         aria-haspopup={isMenubar ? "menu" : undefined}
         aria-expanded={isOpen}
         aria-controls={contentId}
         data-state={isOpen ? "open" : "closed"}
         className={cn(
-          "rnx-nav-menu-trigger",
-          isMenubar && "rnx-nav-menu-trigger--menubar",
+          "rnx-navigation-menu-trigger",
+          isMenubar && "rnx-navigation-menu-trigger--menubar",
           className,
         )}
         onClick={(e) => {
@@ -227,7 +227,10 @@ const NavigationMenuTrigger = React.forwardRef<
       >
         {children}
         {!isMenubar && (
-          <ChevronDown className="rnx-nav-menu__chevron" aria-hidden="true" />
+          <ChevronDown
+            className="rnx-navigation-menu__chevron"
+            aria-hidden="true"
+          />
         )}
       </button>
     );
@@ -245,7 +248,7 @@ const NavigationMenuContent = React.forwardRef<
   const { value, triggerRef } = useContext(NavigationMenuItemContext);
   const isOpen = activeValue === value;
   const isMenubar = variant === "menubar";
-  const contentId = `rnx-nav-menu-content-${menuId}-${value}`;
+  const contentId = `rnx-navigation-menu-content-${menuId}-${value}`;
 
   const contentRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
@@ -284,7 +287,7 @@ const NavigationMenuContent = React.forwardRef<
       role="menu"
       data-state={isOpen ? "open" : "closed"}
       data-rnx-overlay="true"
-      className={cn("rnx-nav-menu-content", className)}
+      className={cn("rnx-navigation-menu-content", className)}
       style={{
         top: position?.top ?? -9999,
         left: position?.left ?? -9999,
@@ -320,7 +323,7 @@ const NavigationMenuContent = React.forwardRef<
         }
         onKeyDown?.(e);
       }}
-      aria-labelledby={`rnx-nav-menu-trigger-${menuId}-${value}`}
+      aria-labelledby={`rnx-navigation-menu-trigger-${menuId}-${value}`}
       {...props}
     >
       {children}
@@ -337,7 +340,7 @@ const NavigationMenuLink = React.forwardRef<
   <a
     ref={ref}
     data-active={active ? "" : undefined}
-    className={cn("rnx-nav-menu-link", className)}
+    className={cn("rnx-navigation-menu-link", className)}
     {...props}
   />
 ));
@@ -353,8 +356,8 @@ const NavigationMenuDropdownItem = React.forwardRef<
       ref={ref}
       role="menuitem"
       className={cn(
-        "rnx-nav-menu-dropdown-item",
-        inset && "rnx-nav-menu-dropdown-item--inset",
+        "rnx-navigation-menu-dropdown-item",
+        inset && "rnx-navigation-menu-dropdown-item--inset",
         className,
       )}
       onClick={(e) => {
@@ -376,13 +379,13 @@ const NavigationMenuCheckboxItem = React.forwardRef<
       ref={ref}
       role="menuitemcheckbox"
       aria-checked={checked}
-      className={cn("rnx-nav-menu-checkbox-item", className)}
+      className={cn("rnx-navigation-menu-checkbox-item", className)}
       onClick={(e) => {
         onClick?.(e);
       }}
       {...props}
     >
-      <Box as="span" className="rnx-nav-menu-indicator-icon">
+      <Box as="span" className="rnx-navigation-menu-indicator-icon">
         {checked && <Check className="h-4 w-4" />}
       </Box>
       {children}
@@ -414,13 +417,13 @@ const NavigationMenuRadioItem = React.forwardRef<
       ref={ref}
       role="menuitemradio"
       aria-checked={checked}
-      className={cn("rnx-nav-menu-radio-item", className)}
+      className={cn("rnx-navigation-menu-radio-item", className)}
       onClick={(e) => {
         onClick?.(e);
       }}
       {...props}
     >
-      <Box as="span" className="rnx-nav-menu-indicator-icon">
+      <Box as="span" className="rnx-navigation-menu-indicator-icon">
         {checked && <Circle className="h-2 w-2 fill-current" />}
       </Box>
       {children}
@@ -436,8 +439,8 @@ const NavigationMenuLabel = React.forwardRef<
   <Box
     ref={ref}
     className={cn(
-      "rnx-nav-menu-label",
-      inset && "rnx-nav-menu-label--inset",
+      "rnx-navigation-menu-label",
+      inset && "rnx-navigation-menu-label--inset",
       className,
     )}
     {...props}
@@ -452,7 +455,7 @@ const NavigationMenuSeparator = React.forwardRef<
   <Box
     ref={ref}
     role="separator"
-    className={cn("rnx-nav-menu-separator", className)}
+    className={cn("rnx-navigation-menu-separator", className)}
     {...props}
   />
 ));
@@ -465,7 +468,7 @@ const NavigationMenuShortcut = ({
   return (
     <Box
       as="span"
-      className={cn("rnx-nav-menu-shortcut", className)}
+      className={cn("rnx-navigation-menu-shortcut", className)}
       {...props}
     />
   );
@@ -481,8 +484,8 @@ const NavigationMenuViewport = React.forwardRef<
     <Box
       ref={ref}
       className={cn(
-        "rnx-nav-menu__viewport relative origin-top-center overflow-hidden transition-all duration-200",
-        activeValue && "rnx-nav-menu__viewport--open",
+        "rnx-navigation-menu__viewport relative origin-top-center overflow-hidden transition-all duration-200",
+        activeValue && "rnx-navigation-menu__viewport--open",
         className,
       )}
       {...props}
@@ -501,7 +504,7 @@ const NavigationMenuIndicator = React.forwardRef<
     <Box
       ref={ref}
       className={cn(
-        "rnx-nav-menu__indicator top-full z-[1] flex h-1.5 items-end justify-center overflow-hidden transition-all duration-200",
+        "rnx-navigation-menu__indicator top-full z-[1] flex h-1.5 items-end justify-center overflow-hidden transition-all duration-200",
         className,
       )}
       {...props}
@@ -513,7 +516,7 @@ const NavigationMenuIndicator = React.forwardRef<
 NavigationMenuIndicator.displayName = "NavigationMenuIndicator";
 
 const NavigationMenuSub = ({ children }: { children: React.ReactNode }) => (
-  <Box className="rnx-nav-menu__sub relative">{children}</Box>
+  <Box className="rnx-navigation-menu__sub relative">{children}</Box>
 );
 const NavigationMenuSubTrigger = NavigationMenuDropdownItem;
 const NavigationMenuSubContent = NavigationMenuContent;

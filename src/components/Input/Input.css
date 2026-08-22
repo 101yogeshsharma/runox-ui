@@ -213,7 +213,7 @@
   /* Ensure focused element overlaps others to preserve active border rings */
   .rnx-input-group > *:focus-visible,
   .rnx-input-group > *:focus-within {
-    z-index: 1;
+    z-index: var(--z-raised);
   }
 
   /* Addons */

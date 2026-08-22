@@ -339,7 +339,7 @@ const CarouselRoot = React.forwardRef<
         _trigger: trigger,
       };
       return apiObj;
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- embla setter fns are stable; re-creating on them would loop
     }, [orientation, opts?.loop]);
 
     const onSelect = React.useCallback((api: CarouselApi) => {

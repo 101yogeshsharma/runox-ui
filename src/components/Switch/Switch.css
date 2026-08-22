@@ -24,7 +24,7 @@
     height: 100%;
     cursor: inherit;
     margin: 0;
-    z-index: 10;
+    z-index: var(--z-component);
   }
   .rnx-switch-thumb {
     display: flex;

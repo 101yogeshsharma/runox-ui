@@ -43,7 +43,7 @@
     cursor: pointer;
     margin: 0;
     padding: 0;
-    z-index: 10;
+    z-index: var(--z-component);
   }
 
   /* Visual Track */
@@ -88,7 +88,7 @@
     background: var(--background);
     border-radius: 50%;
     pointer-events: none;
-    z-index: 2;
+    z-index: var(--z-content);
     transition: transform 0.15s ease;
   }
 

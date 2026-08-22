@@ -4,6 +4,8 @@ import { Box } from "../../atoms/Box";
 import React, { useEffect, useState } from "react";
 import { cn } from "../../utils/cn";
 
+import "./StreamingText.css";
+
 /**
  * Props for the StreamingText component.
  */
@@ -46,13 +48,17 @@ export const StreamingText = ({
   }, [text, speed, onComplete]);
 
   return (
-    <Box as="span" className={cn("rnx-streaming-text whitespace-pre-wrap", className)} {...props}>
+    <Box
+      as="span"
+      className={cn("rnx-streaming-text whitespace-pre-wrap", className)}
+      {...props}
+    >
       {displayedText}
       {showCursor && !isFinished && (
         <span
           className={cn(
             "rnx-streaming-text__cursor",
-            `rnx-streaming-text__cursor--${cursor}`
+            `rnx-streaming-text__cursor--${cursor}`,
           )}
           aria-hidden="true"
         />

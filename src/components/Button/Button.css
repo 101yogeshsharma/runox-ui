@@ -72,7 +72,7 @@
     border-right-color: transparent;
     border-radius: 50%;
     animation: rnx-spin 1s linear infinite;
-    z-index: 10;
+    z-index: var(--z-component);
   }
 
   @keyframes rnx-spin {

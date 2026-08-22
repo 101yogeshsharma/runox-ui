@@ -63,7 +63,7 @@
       transform 300ms cubic-bezier(0.4, 0, 0.2, 1),
       width 300ms cubic-bezier(0.4, 0, 0.2, 1),
       opacity 200ms ease;
-    z-index: 0;
+    z-index: var(--z-base);
     pointer-events: none;
   }
   .rnx-tabs-indicator--default {
@@ -116,7 +116,7 @@
       background-color 200ms ease,
       border-color 200ms ease,
       box-shadow 200ms ease;
-    z-index: 10;
+    z-index: var(--z-component);
     border: none;
     background: transparent;
     color: inherit;

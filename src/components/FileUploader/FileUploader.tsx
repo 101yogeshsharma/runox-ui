@@ -59,7 +59,7 @@ export function FileUploader({
   // Revoke ALL remaining URLs only when the component unmounts
   useEffect(() => {
     return () => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- unmount-only cleanup; the ref map is intentionally not a dependency
       for (const url of objectUrlMap.current.values()) {
         URL.revokeObjectURL(url);
       }
