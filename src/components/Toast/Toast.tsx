@@ -56,6 +56,9 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
 }) => {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [mounted, setMounted] = useState(false);
+  const removalTimers = React.useRef<
+    Map<string, ReturnType<typeof setTimeout>>
+  >(new Map());
 
   useEffect(() => {
     setMounted(true);
@@ -67,12 +70,25 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
   }, []);
 
   const removeToast = useCallback((id: string) => {
-    setToasts((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, status: "closing" } : t))
-    );
-    setTimeout(() => {
+    setToasts((prev) => {
+      const toast = prev.find((item) => item.id === id);
+      if (!toast || toast.status === "closing") return prev;
+      return prev.map((t) => (t.id === id ? { ...t, status: "closing" } : t));
+    });
+    if (removalTimers.current.has(id)) return;
+    const timer = setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
+      removalTimers.current.delete(id);
     }, 200);
+    removalTimers.current.set(id, timer);
+  }, []);
+
+  React.useEffect(() => {
+    const timers = removalTimers.current;
+    return () => {
+      timers.forEach((timer) => clearTimeout(timer));
+      timers.clear();
+    };
   }, []);
 
   // Group toasts by their resolved position
@@ -83,7 +99,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
       acc[pos].push(toast);
       return acc;
     },
-    {} as Record<ToastPosition, ToastMessage[]>
+    {} as Record<ToastPosition, ToastMessage[]>,
   );
 
   const activePositions = Object.keys(toastsByPosition) as ToastPosition[];
@@ -93,7 +109,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
       toast: addToast,
       dismiss: removeToast,
     }),
-    [addToast, removeToast]
+    [addToast, removeToast],
   );
 
   return (
@@ -108,7 +124,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
                 key={pos}
                 className={cn(
                   "rnx-toast-viewport",
-                  `rnx-toast-viewport--${pos}`
+                  `rnx-toast-viewport--${pos}`,
                 )}
               >
                 {toastsByPosition[pos].map((t) => (
@@ -121,7 +137,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
               </Box>
             ))}
           </>,
-          document.body
+          document.body,
         )}
     </ToastContext.Provider>
   );
@@ -134,10 +150,10 @@ export const useToast = () => {
   return context;
 };
 
-export const ToastItem: React.FC<{ toast: ToastMessage; onRemove: () => void }> = ({
-  toast,
-  onRemove,
-}) => {
+export const ToastItem: React.FC<{
+  toast: ToastMessage;
+  onRemove: () => void;
+}> = ({ toast, onRemove }) => {
   useEffect(() => {
     const duration = toast.duration || 5000;
     const timer = setTimeout(() => {
@@ -170,7 +186,7 @@ export const ToastItem: React.FC<{ toast: ToastMessage; onRemove: () => void }> 
         "rnx-toast",
         `rnx-toast--${toast.variant || "info"}`,
         `rnx-toast--${toast.size || "md"}`,
-        isClosing ? "rnx-toast--closing" : "rnx-toast--opening"
+        isClosing ? "rnx-toast--closing" : "rnx-toast--opening",
       )}
     >
       <Box className="rnx-toast-content">
@@ -206,5 +222,5 @@ export const Toast = Object.assign(
     Provider: ToastProvider,
     Item: ToastItem,
     useToast,
-  }
+  },
 );

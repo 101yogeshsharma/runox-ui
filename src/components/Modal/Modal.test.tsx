@@ -1,20 +1,24 @@
 "use client";
 import { Box } from "../../atoms/Box";
 import React from "react";
-import { render, fireEvent } from "@testing-library/react";
+import { render, fireEvent, screen, act } from "@testing-library/react";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from "./Modal";
-import { vi } from "vitest";
+import { afterEach, vi } from "vitest";
 
 import { MakeWayProvider } from "../Motion";
 
 describe("Modal", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it("does not render when isOpen is false", () => {
     const { queryByRole } = render(
       <MakeWayProvider>
         <Modal isOpen={false} onClose={vi.fn()}>
           <Box>Modal Content</Box>
         </Modal>
-      </MakeWayProvider>
+      </MakeWayProvider>,
     );
     expect(queryByRole("dialog")).toBeNull();
   });
@@ -27,7 +31,7 @@ describe("Modal", () => {
           <ModalBody>Body</ModalBody>
           <ModalFooter>Footer</ModalFooter>
         </Modal>
-      </MakeWayProvider>
+      </MakeWayProvider>,
     );
     expect(getByRole("dialog")).toBeInTheDocument();
     expect(getByText("Header")).toBeInTheDocument();
@@ -42,7 +46,7 @@ describe("Modal", () => {
         <Modal isOpen={true} onClose={onClose}>
           <Box>Content</Box>
         </Modal>
-      </MakeWayProvider>
+      </MakeWayProvider>,
     );
     fireEvent.mouseDown(getByRole("dialog"));
     expect(onClose).toHaveBeenCalled();
@@ -55,9 +59,34 @@ describe("Modal", () => {
         <Modal isOpen={true} onClose={onClose}>
           <Box>Content</Box>
         </Modal>
-      </MakeWayProvider>
+      </MakeWayProvider>,
     );
     fireEvent.click(getByLabelText("Close"));
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it("focuses modal content after the portal mounts and restores focus", () => {
+    vi.useFakeTimers();
+    const trigger = document.createElement("button");
+    trigger.textContent = "Open modal";
+    document.body.appendChild(trigger);
+    trigger.focus();
+
+    const { unmount } = render(
+      <MakeWayProvider>
+        <Modal isOpen={true} onClose={vi.fn()}>
+          <ModalBody>Body</ModalBody>
+        </Modal>
+      </MakeWayProvider>,
+    );
+
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    expect(screen.getByLabelText("Close")).toHaveFocus();
+    unmount();
+    expect(trigger).toHaveFocus();
+    trigger.remove();
   });
 });

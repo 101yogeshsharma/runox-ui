@@ -2,7 +2,7 @@
   .rnx-input-container {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-1-5, calc(0.375rem * var(--rnx-space-scale, 1)));
+    gap: calc(0.375rem * var(--rnx-space-scale, 1));
     width: 100%;
   }
 
@@ -20,7 +20,11 @@
     border-radius: var(--radius);
     background-color: var(--input);
     color: var(--foreground);
-    transition: color 200ms ease, background-color 200ms ease, border-color 200ms ease, box-shadow 200ms ease;
+    transition:
+      color 200ms ease,
+      background-color 200ms ease,
+      border-color 200ms ease,
+      box-shadow 200ms ease;
   }
 
   .rnx-input::file-selector-button {
@@ -57,13 +61,15 @@
 
   .rnx-input--size-md {
     height: calc(2.5rem * var(--rnx-space-scale, 1));
-    padding: calc(0.5rem * var(--rnx-space-scale, 1)) calc(0.75rem * var(--rnx-space-scale, 1));
+    padding: calc(0.5rem * var(--rnx-space-scale, 1))
+      calc(0.75rem * var(--rnx-space-scale, 1));
     font-size: calc(0.875rem * var(--rnx-text-scale, 1));
   }
 
   .rnx-input--size-lg {
     height: calc(3rem * var(--rnx-space-scale, 1));
-    padding: calc(0.75rem * var(--rnx-space-scale, 1)) calc(1rem * var(--rnx-space-scale, 1));
+    padding: calc(0.75rem * var(--rnx-space-scale, 1))
+      calc(1rem * var(--rnx-space-scale, 1));
     font-size: calc(1rem * var(--rnx-text-scale, 1));
   }
 
@@ -234,4 +240,3 @@
     color: var(--muted-foreground);
   }
 }
-

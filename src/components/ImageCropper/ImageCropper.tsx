@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import Cropper, { Point, Area } from "react-easy-crop";
 import { Slider } from "../Slider";
 import { Button } from "../Button";
@@ -36,36 +36,52 @@ export function ImageCropper({
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
   const [isCropping, setIsCropping] = useState(false);
+  const isMounted = useRef(true);
+  const cropOperation = useRef(0);
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const handleCropComplete = useCallback(
     (croppedArea: Area, croppedAreaPixels: Area) => {
       setCroppedAreaPixels(croppedAreaPixels);
     },
-    []
+    [],
   );
 
   const handleSave = useCallback(async () => {
     if (!croppedAreaPixels) return;
+    const operation = ++cropOperation.current;
     setIsCropping(true);
     try {
       const croppedImage = await getCroppedImg(image, croppedAreaPixels);
-      onCropComplete(croppedImage);
+      if (isMounted.current && cropOperation.current === operation) {
+        onCropComplete(croppedImage);
+      }
     } catch (e) {
       console.error(e);
     } finally {
-      setIsCropping(false);
+      if (isMounted.current && cropOperation.current === operation) {
+        setIsCropping(false);
+      }
     }
   }, [croppedAreaPixels, image, onCropComplete]);
 
+  const handleCancel = useCallback(() => {
+    cropOperation.current += 1;
+    onCancel?.();
+  }, [onCancel]);
+
   return (
     <Flex
-      {...rnx({ component: 'ImageCropper' })}
+      {...rnx({ component: "ImageCropper" })}
       direction="col"
       gap="md"
-      className={cn(
-        "rnx-image-cropper w-full",
-        className
-      )}
+      className={cn("rnx-image-cropper w-full", className)}
     >
       <Box
         role="region"
@@ -99,7 +115,7 @@ export function ImageCropper({
       </Flex>
       <Flex justify="end" gap="sm" className="rnx-image-cropper-actions mt-2">
         {onCancel && (
-          <Button variant="outline" onClick={onCancel}>
+          <Button variant="outline" onClick={handleCancel}>
             Cancel
           </Button>
         )}
@@ -129,7 +145,7 @@ export async function getCroppedImg(
   imageSrc: string,
   pixelCrop: Area,
   rotation = 0,
-  flip = { horizontal: false, vertical: false }
+  flip = { horizontal: false, vertical: false },
 ): Promise<string> {
   const image = await createImage(imageSrc);
   const canvas = document.createElement("canvas");
@@ -173,7 +189,7 @@ export async function getCroppedImg(
     0,
     0,
     pixelCrop.width,
-    pixelCrop.height
+    pixelCrop.height,
   );
 
   // As Base64 string

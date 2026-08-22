@@ -24,14 +24,14 @@ export function useClipboard({ timeout = 2000 }: UseClipboardOptions = {}) {
 
   const onCopy = useCallback(async (text: string) => {
     if (!text) return;
-    if (typeof navigator === 'undefined' || !navigator.clipboard) {
+    if (typeof navigator === "undefined" || !navigator.clipboard) {
       setHasCopied(false);
       return;
     }
     try {
       await navigator.clipboard.writeText(text);
       setHasCopied(true);
-    } catch (error) {
+    } catch {
       setHasCopied(false);
     }
   }, []);

@@ -1,4 +1,4 @@
-﻿@layer components {
+@layer components {
   .rnx-syntax-highlighter {
     width: 100%;
     overflow: hidden;
@@ -14,7 +14,8 @@
     justify-content: space-between;
     background-color: color-mix(in srgb, var(--card) 40%, transparent);
     border-bottom: 1px solid color-mix(in srgb, var(--border) 20%, transparent);
-    padding: calc(0.5rem * var(--rnx-space-scale, 1)) calc(1rem * var(--rnx-space-scale, 1));
+    padding: calc(0.5rem * var(--rnx-space-scale, 1))
+      calc(1rem * var(--rnx-space-scale, 1));
   }
 
   .rnx-syntax-highlighter-controls {
@@ -27,7 +28,7 @@
   .rnx-syntax-highlighter-dot {
     height: 0.75rem;
     width: 0.75rem;
-    border-radius: 9999px;
+    border-radius: var(--radius-full);
   }
   .rnx-syntax-highlighter-dot--destructive {
     background-color: var(--destructive);

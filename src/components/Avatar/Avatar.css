@@ -1,4 +1,4 @@
-﻿@layer components {
+@layer components {
   .rnx-avatar {
     position: relative;
     display: flex;
@@ -50,7 +50,7 @@
 
   /* Shapes */
   .rnx-avatar--circle {
-    border-radius: 9999px;
+    border-radius: var(--radius-full);
   }
   .rnx-avatar--square {
     border-radius: 0;
@@ -61,7 +61,9 @@
 
   /* Variants */
   .rnx-avatar--variant-ringed {
-    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--primary);
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px var(--primary);
   }
 
   .rnx-avatar--variant-glass {
@@ -75,7 +77,7 @@
     position: absolute;
     bottom: 0;
     right: 0;
-    border-radius: 9999px;
+    border-radius: var(--radius-full);
     border: 2px solid var(--background);
     z-index: 10;
   }
@@ -105,4 +107,3 @@
     background-color: var(--warning);
   }
 }
-

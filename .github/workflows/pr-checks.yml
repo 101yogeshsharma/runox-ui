@@ -29,6 +29,9 @@ jobs:
       - name: Run Lint
         run: npm run lint
 
+      - name: Run Typecheck
+        run: npm run typecheck
+
   test:
     name: Test Check
     runs-on: ubuntu-latest
@@ -66,3 +69,9 @@ jobs:
 
       - name: Run Build
         run: npm run build
+
+      - name: Verify Package Exports
+        run: npm run test:exports
+
+      - name: Verify Packed Package
+        run: npm run test:package

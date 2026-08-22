@@ -2,6 +2,11 @@ import { cn } from "./cn";
 
 type AnyProps = Record<string, any>;
 
+interface MergeProps {
+  <T extends AnyProps, U extends AnyProps>(a: T, b: U): T & U;
+  <T extends AnyProps[]>(...args: T): AnyProps;
+}
+
 /**
  * Merges two or more prop objects, combining event handlers, classNames, styles,
  * and aria attributes. Consumer props take precedence over internal props.
@@ -12,9 +17,7 @@ type AnyProps = Record<string, any>;
  * );
  * // merged.onClick calls both handlers; merged.className is 'base custom'
  */
-export function mergeProps<T extends AnyProps, U extends AnyProps>(a: T, b: U): T & U;
-export function mergeProps<T extends AnyProps[]>(...args: T): AnyProps;
-export function mergeProps(...args: AnyProps[]): AnyProps {
+export const mergeProps: MergeProps = (...args: AnyProps[]): AnyProps => {
   const merged: AnyProps = {};
 
   for (const props of args) {
@@ -39,7 +42,8 @@ export function mergeProps(...args: AnyProps[]): AnyProps {
       } else if (key === "style") {
         merged[key] = { ...internal, ...consumer };
       } else if (key === "aria-describedby" || key === "aria-labelledby") {
-        merged[key] = [internal, consumer].filter(Boolean).join(" ") || undefined;
+        merged[key] =
+          [internal, consumer].filter(Boolean).join(" ") || undefined;
       } else {
         merged[key] = consumer !== undefined ? consumer : internal;
       }
@@ -47,4 +51,4 @@ export function mergeProps(...args: AnyProps[]): AnyProps {
   }
 
   return merged;
-}
+};

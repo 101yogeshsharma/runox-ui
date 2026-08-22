@@ -35,7 +35,7 @@ export function useFloatingPosition(
   offset: number = 8,
   triggerRecalc?: any,
   preferredPosition: "top" | "right" | "bottom" | "left" = "bottom",
-  align: "start" | "center" | "end" = "start"
+  align: "start" | "center" | "end" = "start",
 ) {
   const [position, setPosition] = useState<FloatingPosition | null>(null);
 
@@ -52,6 +52,14 @@ export function useFloatingPosition(
 
       const anchorRect = anchor.getBoundingClientRect();
       const floatingRect = floating.getBoundingClientRect();
+
+      // Skip measurement until both elements have been laid out
+      if (
+        !Number.isFinite(anchorRect.width) ||
+        !Number.isFinite(floatingRect.width)
+      ) {
+        return;
+      }
 
       const viewportHeight = window.innerHeight;
       const viewportWidth = window.innerWidth;

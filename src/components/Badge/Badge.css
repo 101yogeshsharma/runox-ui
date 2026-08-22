@@ -1,4 +1,4 @@
-﻿@layer components {
+@layer components {
   .rnx-badge {
     display: inline-flex;
     align-items: center;
@@ -12,7 +12,8 @@
     animation: rnx-badge-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
   @keyframes rnx-badge-pulse {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 1;
     }
     50% {
@@ -41,7 +42,7 @@
 
   /* === Shapes === */
   .rnx-badge--shape-circle {
-    border-radius: 9999px;
+    border-radius: var(--radius-full);
   }
   .rnx-badge--shape-rounded {
     border-radius: calc(var(--radius) - 4px);
@@ -66,15 +67,18 @@
 
   /* === Sizes === */
   .rnx-badge--size-sm {
-    padding: calc(0.125rem * var(--rnx-space-scale, 1)) calc(0.5rem * var(--rnx-space-scale, 1));
+    padding: calc(0.125rem * var(--rnx-space-scale, 1))
+      calc(0.5rem * var(--rnx-space-scale, 1));
     font-size: calc(0.625rem * var(--rnx-text-scale, 1));
   }
   .rnx-badge--size-md {
-    padding: calc(0.125rem * var(--rnx-space-scale, 1)) calc(0.625rem * var(--rnx-space-scale, 1));
+    padding: calc(0.125rem * var(--rnx-space-scale, 1))
+      calc(0.625rem * var(--rnx-space-scale, 1));
     font-size: calc(0.75rem * var(--rnx-text-scale, 1));
   }
   .rnx-badge--size-lg {
-    padding: calc(0.25rem * var(--rnx-space-scale, 1)) calc(0.75rem * var(--rnx-space-scale, 1));
+    padding: calc(0.25rem * var(--rnx-space-scale, 1))
+      calc(0.75rem * var(--rnx-space-scale, 1));
     font-size: calc(0.875rem * var(--rnx-text-scale, 1));
   }
   .rnx-badge--size-lg .rnx-badge__icon svg {
@@ -266,4 +270,3 @@
     color: var(--warning);
   }
 }
-

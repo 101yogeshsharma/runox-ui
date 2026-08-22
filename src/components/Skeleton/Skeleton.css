@@ -29,7 +29,8 @@
     animation: rnx-skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   }
   @keyframes rnx-skeleton-pulse {
-    0%, 100% {
+    0%,
+    100% {
       opacity: 1;
     }
     50% {
@@ -49,7 +50,7 @@
   }
 
   .rnx-skeleton-circular {
-    border-radius: 9999px;
+    border-radius: var(--radius-full);
   }
 
   .rnx-skeleton-rectangular {

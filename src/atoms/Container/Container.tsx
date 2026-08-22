@@ -29,9 +29,9 @@ const maxWidthMap: Record<string, string> = {
 
 const paddingMap = {
   none: "0px",
-  sm: "var(--spacing-4, 1rem)",
-  md: "var(--spacing-6, 1.5rem)",
-  lg: "var(--spacing-8, 2rem)",
+  sm: "calc(1rem * var(--rnx-space-scale, 1))",
+  md: "calc(1.5rem * var(--rnx-space-scale, 1))",
+  lg: "calc(2rem * var(--rnx-space-scale, 1))",
 };
 
 export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
@@ -49,12 +49,12 @@ export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
       as: Component = "div",
       ...props
     },
-    ref
+    ref,
   ) => {
     const maxWidthVars = generateResponsiveVars(
       "rnx-container-max",
       fluid ? "full" : maxWidth,
-      (val) => maxWidthMap[val] || val
+      (val) => maxWidthMap[val] || val,
     );
 
     const dynamicStyles = {
@@ -72,7 +72,7 @@ export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
         className={cn(
           "rnx-container",
           surface && `rnx-container--surface-${surface}`,
-          className
+          className,
         )}
         style={dynamicStyles}
         {...props}
@@ -80,7 +80,7 @@ export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
         {children}
       </Component>
     );
-  }
+  },
 );
 
 Container.displayName = "Container";

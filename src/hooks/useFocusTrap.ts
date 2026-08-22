@@ -10,7 +10,7 @@ const FOCUSABLE_ELEMENTS = [
   "iframe",
   "object",
   "embed",
-  '[tabindex="0"]',
+  '[tabindex]:not([tabindex="-1"])',
   "[contenteditable]",
 ].join(",");
 
@@ -27,7 +27,7 @@ const FOCUSABLE_ELEMENTS = [
  */
 export function useFocusTrap<T extends HTMLElement = HTMLElement>(
   ref: RefObject<T | null>,
-  active: boolean = true
+  active: boolean = true,
 ) {
   const timeoutIds = useRef<NodeJS.Timeout[]>([]);
 
@@ -39,7 +39,7 @@ export function useFocusTrap<T extends HTMLElement = HTMLElement>(
 
     // Auto-focus first focusable element on mount
     const focusableNodes = Array.from(
-      el.querySelectorAll<HTMLElement>(FOCUSABLE_ELEMENTS)
+      el.querySelectorAll<HTMLElement>(FOCUSABLE_ELEMENTS),
     );
     if (focusableNodes.length > 0) {
       // Small timeout to ensure modal rendering is complete
@@ -52,7 +52,7 @@ export function useFocusTrap<T extends HTMLElement = HTMLElement>(
       if (e.key !== "Tab") return;
 
       const nodes = Array.from(
-        el.querySelectorAll<HTMLElement>(FOCUSABLE_ELEMENTS)
+        el.querySelectorAll<HTMLElement>(FOCUSABLE_ELEMENTS),
       );
       if (nodes.length === 0) {
         e.preventDefault();
@@ -81,7 +81,7 @@ export function useFocusTrap<T extends HTMLElement = HTMLElement>(
       el.removeEventListener("keydown", handleKeyDown);
       timeoutIds.current.forEach(clearTimeout);
       timeoutIds.current = [];
-      previouslyFocused?.focus();
+      if (previouslyFocused?.isConnected) previouslyFocused.focus();
     };
   }, [ref, active]);
 }

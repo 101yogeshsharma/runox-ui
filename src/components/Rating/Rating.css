@@ -13,9 +13,11 @@
     border: none;
     background: transparent;
     padding: calc(0.125rem * var(--rnx-space-scale, 1));
-    border-radius: 9999px;
+    border-radius: var(--radius-full);
     outline: none;
-    transition: transform 150ms ease-out, color 150ms ease-out;
+    transition:
+      transform 150ms ease-out,
+      color 150ms ease-out;
   }
 
   .rnx-rating__item:not(:disabled) {
@@ -84,4 +86,3 @@
     width: calc(2rem * var(--rnx-space-scale, 1));
   }
 }
-

@@ -2,7 +2,7 @@
   .rnx-carousel__button {
     background-color: color-mix(in srgb, var(--background) 50%, transparent);
     /* hover:bg-background/80 handled by pseudo-class */
-    border-radius: 9999px;
+    border-radius: var(--radius-full);
     backdrop-filter: blur(calc(4px * var(--rnx-space-scale, 1)));
   }
 
