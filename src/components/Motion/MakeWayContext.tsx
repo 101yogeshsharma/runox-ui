@@ -8,7 +8,7 @@ import React, {
   useMemo,
 } from "react";
 
-interface MakeWayContextType {
+export interface MakeWayContextType {
   isModalOpen: boolean;
   registerModal: (id: string) => void;
   unregisterModal: (id: string) => void;

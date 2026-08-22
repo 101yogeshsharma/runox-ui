@@ -4,15 +4,19 @@ import { Box } from "../../atoms/Box";
 import { useMergeRefs } from "../../hooks/useMergeRefs";
 import { cn } from "../../utils/cn";
 import "./Button.css";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
+import { rnx } from "../../utils/rnx";
+import { warnInvalidProps } from "../../utils/warn";
 
 import type {
   PolymorphicComponentPropsWithRef,
 } from "../../utils/types";
 
+/**
+ * The standard interactive button component. Use to trigger actions, submit forms, or handle click events.
+ */
 export interface ButtonBaseProps {
   variant?: "solid" | "outline" | "ghost" | "glass" | "icon" | "fab";
-  color?: "default" | "primary" | "danger" | "success";
+  color?: "default" | "primary" | "secondary" | "danger" | "success";
   size?: "sm" | "md" | "lg" | "icon" | "fab";
   fullWidth?: boolean;
   isLoading?: boolean;
@@ -47,7 +51,7 @@ export function buttonVariants({
   );
 }
 
-export const Button = forwardRef(
+const ButtonBase = forwardRef(
   (props: ButtonProps<React.ElementType>, forwardedRef: React.Ref<unknown>) => {
     const {
       children,
@@ -63,11 +67,20 @@ export const Button = forwardRef(
       as,
       ...rest
     } = props;
-    const { config } = useTheme();
 
     const Component = as || "button";
     const localRef = useRef<HTMLElement>(null);
-    const disabled = "disabled" in rest ? !!rest.disabled : false;
+    const disabled = ("disabled" in rest ? !!rest.disabled : false) || isLoading;
+
+    // Dev-mode warning for missing aria-label on icon/fab buttons
+    if (process.env.NODE_ENV !== "production") {
+      if ((variant === "icon" || variant === "fab") && !rest["aria-label"]) {
+        warnInvalidProps(
+          "Button",
+          `variant="${variant}" was used without an \`aria-label\`. Icon-only buttons must have an \`aria-label\` for screen readers.`
+        );
+      }
+    }
 
     const mergedRef = useMergeRefs(forwardedRef, localRef);
 
@@ -110,6 +123,12 @@ export const Button = forwardRef(
     return (
       <Tag
         ref={mergedRef}
+        {...rnx({
+          component: "Button",
+          variant: variant,
+          state: isLoading ? "loading" : disabled ? "disabled" : undefined,
+          action: "type" in rest && rest.type === "submit" ? "submit" : undefined,
+        })}
         className={cn(
           "rnx-button",
           `rnx-button--${variant}-${color}`,
@@ -117,7 +136,6 @@ export const Button = forwardRef(
           variant === "fab" && "rnx-button--variant-fab",
           fullWidth && "rnx-button--full-width",
           isLoading && "rnx-button--loading",
-          `rounded-${config.radius}`,
           className
         )}
         {...rest}
@@ -167,6 +185,7 @@ export const Button = forwardRef(
       </Tag>
     );
   }
-) as unknown as ButtonComponent;
+);
 
-Object.assign(Button, { displayName: "Button" });
+ButtonBase.displayName = "Button";
+export const Button = React.memo(ButtonBase) as unknown as ButtonComponent;

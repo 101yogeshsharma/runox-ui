@@ -1,6 +1,7 @@
 @layer components {
   .rnx-virtual-list {
     border: 1px solid var(--border);
+    border-radius: var(--radius);
     background-color: var(--card);
   }
 

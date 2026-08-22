@@ -9,4 +9,83 @@
     color: var(--rnx-text-color);
     text-align: var(--rnx-text-align);
   }
+
+  /* Shorthand / modifiers */
+  .rnx-text--muted {
+    color: var(--muted-foreground);
+  }
+  .rnx-text--subtle {
+    opacity: 0.8;
+  }
+  .rnx-text--strong {
+    font-weight: 600;
+  }
+  .rnx-text--italic {
+    font-style: italic;
+  }
+  .rnx-text--underline {
+    text-decoration-line: underline;
+    text-underline-offset: 4px;
+  }
+  .rnx-text--strikethrough {
+    text-decoration-line: line-through;
+  }
+
+  /* Letter spacing */
+  .rnx-text--tracking-tighter {
+    letter-spacing: -0.05em;
+  }
+  .rnx-text--tracking-tight {
+    letter-spacing: -0.025em;
+  }
+  .rnx-text--tracking-normal {
+    letter-spacing: 0em;
+  }
+  .rnx-text--tracking-wide {
+    letter-spacing: 0.025em;
+  }
+  .rnx-text--tracking-wider {
+    letter-spacing: 0.05em;
+  }
+  .rnx-text--tracking-widest {
+    letter-spacing: 0.1em;
+  }
+
+  /* Gradients */
+  .rnx-text--gradient-primary {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(to bottom right, var(--foreground), color-mix(in srgb, var(--foreground) 50%, transparent));
+  }
+  .rnx-text--gradient-info {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(to bottom right, var(--info), color-mix(in srgb, var(--info) 40%, var(--primary-foreground)));
+  }
+  .rnx-text--gradient-success {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(to bottom right, var(--success), color-mix(in srgb, var(--success) 40%, var(--primary-foreground)));
+  }
+  .rnx-text--gradient-warning {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(to bottom right, var(--warning), color-mix(in srgb, var(--warning) 40%, var(--primary-foreground)));
+  }
+  .rnx-text--gradient-danger {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(to bottom right, var(--destructive), color-mix(in srgb, var(--destructive) 40%, var(--primary-foreground)));
+  }
+  .rnx-text--gradient-ai {
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    background-image: linear-gradient(to bottom right, var(--ai), color-mix(in srgb, var(--info) 70%, var(--ai)));
+  }
 }

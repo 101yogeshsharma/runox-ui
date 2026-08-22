@@ -1,10 +1,13 @@
 import { defineConfig } from "tsup";
 import { preserveDirectivesPlugin } from "esbuild-plugin-preserve-directives";
-import preserveDirectives from "rollup-plugin-preserve-directives";
 
 export default defineConfig({
   entry: {
     index: "src/index.ts",
+    cli: "src/cli/index.ts",
+    "codemods/mui": "src/cli/codemods/mui.ts",
+    "codemods/chakra": "src/cli/codemods/chakra.ts",
+    "codemods/shadcn": "src/cli/codemods/shadcn.ts",
     accordion: "src/components/Accordion/index.ts",
     ai: "src/components/AI/index.ts",
     alert: "src/components/Alert/index.ts",
@@ -25,6 +28,7 @@ export default defineConfig({
     contextmenu: "src/components/ContextMenu/ContextMenu.tsx",
     drawer: "src/components/Drawer/Drawer.tsx",
     dropdown: "src/components/Dropdown/index.ts",
+    select: "src/components/Select/Select.tsx",
     fileuploader: "src/components/FileUploader/index.ts",
     form: "src/components/Form/Form.tsx",
     hovercard: "src/components/HoverCard/HoverCard.tsx",
@@ -73,7 +77,7 @@ export default defineConfig({
     virtuallist: "src/components/VirtualList/index.ts",
   },
   format: ["cjs", "esm"],
-  dts: true,
+  dts: false,
   splitting: true,
   treeshake: true,
   sourcemap: true,

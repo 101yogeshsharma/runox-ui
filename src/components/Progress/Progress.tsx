@@ -3,15 +3,21 @@ import React, { forwardRef } from "react";
 import { Box } from "../../atoms/Box";
 import { Text } from "../../atoms/Text";
 import { cn } from "../../utils/cn";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
 import "./Progress.css";
+import { withLoading } from "../../utils/withLoading";
+import { rnx } from "../../utils/rnx";
 
+
+/**
+ * An animated bar showing the completion status of a task or process.
+ */
 export interface ProgressProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
   "color"
 > {
   value?: number;
   max?: number;
+  variant?: "solid" | "striped" | "indeterminate" | "glass";
   showValue?: boolean;
   size?: "sm" | "md" | "lg";
   color?: "primary" | "success" | "warning" | "danger";
@@ -19,12 +25,13 @@ export interface ProgressProps extends Omit<
   indicatorClassName?: string;
 }
 
-export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
+const ProgressBase = forwardRef<HTMLDivElement, ProgressProps>(
   (
     {
       className,
       value = 0,
       max = 100,
+      variant = "solid",
       showValue = false,
       size = "md",
       color = "primary",
@@ -34,12 +41,12 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
     },
     ref
   ) => {
-    const { config } = useTheme();
     const safeMax = max > 0 ? max : 100;
     const percentage = Math.min(100, Math.max(0, (value / safeMax) * 100));
 
     return (
       <Box
+        {...rnx({ component: 'Progress', state: value !== undefined && value >= 100 ? 'active' : 'inactive' })}
         className={cn(
           "rnx-progress-container",
           `rnx-progress--${size}`,
@@ -51,23 +58,27 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
           role="progressbar"
           aria-valuemin={0}
           aria-valuemax={max}
-          aria-valuenow={value}
+          aria-valuenow={variant === "indeterminate" ? undefined : Math.round(value)}
           className={cn(
             "rnx-progress",
-            `rounded-${config.radius}`,
-            `rnx-progress--${color}`
+            `rnx-progress--${color}`,
+            variant && variant !== "solid" && `rnx-progress--variant-${variant}`
           )}
           {...props}
         >
           <Box
             className={cn("rnx-progress-indicator", indicatorClassName)}
-            style={{ transform: `translateX(-${100 - percentage}%)` }}
+            style={
+              variant === "indeterminate"
+                ? undefined
+                : { transform: `translateX(-${100 - percentage}%)` }
+            }
           />
         </Box>
-        {showValue && (
+        {showValue && variant !== "indeterminate" && (
           <Text as="span" variant="caption" className="rnx-progress-value-text">
             {formatLabel
-              ? formatLabel(value, max)
+              ? formatLabel(value, safeMax)
               : `${Math.round(percentage)}%`}
           </Text>
         )}
@@ -76,4 +87,5 @@ export const Progress = forwardRef<HTMLDivElement, ProgressProps>(
   }
 );
 
-Progress.displayName = "Progress";
+ProgressBase.displayName = "Progress";
+export const Progress = withLoading(ProgressBase);

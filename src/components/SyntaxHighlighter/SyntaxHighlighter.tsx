@@ -9,8 +9,12 @@ import { Highlight, themes, Language } from "prism-react-renderer";
 import { Check, Copy } from "lucide-react";
 import { cn } from "../../utils/cn";
 import { Button } from "../Button";
+import { rnx } from "../../utils/rnx";
 // Uses: Button
 
+/**
+ * Props for the SyntaxHighlighter component.
+ */
 export interface SyntaxHighlighterProps extends React.HTMLAttributes<HTMLDivElement> {
   code: string;
   language: Language;
@@ -59,8 +63,9 @@ export const SyntaxHighlighter = React.forwardRef<
 
     return (
       <Box
+        {...rnx({ component: 'SyntaxHighlighter' })}
         className={cn(
-          "text-foreground border-border/20 w-full overflow-hidden rounded-xl border bg-[var(--code-block-bg)]",
+          "rnx-syntax-highlighter",
           className
         )}
         ref={ref}
@@ -69,29 +74,28 @@ export const SyntaxHighlighter = React.forwardRef<
         {withHeader && (
           <Flex
             align="center"
-            gap="sm"
-            className="bg-card/40 border-border/20 border-b px-4 py-2"
+            className="rnx-syntax-highlighter-header"
           >
-            <Box className="flex w-1/3 items-center space-x-2">
-              <Box className="bg-destructive h-3 w-3 rounded-full" />
-              <Box className="bg-warning h-3 w-3 rounded-full" />
-              <Box className="bg-success h-3 w-3 rounded-full" />
+            <Box className="rnx-syntax-highlighter-controls">
+              <Box className="rnx-syntax-highlighter-dot rnx-syntax-highlighter-dot--destructive" />
+              <Box className="rnx-syntax-highlighter-dot rnx-syntax-highlighter-dot--warning" />
+              <Box className="rnx-syntax-highlighter-dot rnx-syntax-highlighter-dot--success" />
             </Box>
-            <Box className="flex w-1/3 justify-center">
-              <Text className="text-muted-foreground font-mono text-xs">
+            <Box className="rnx-syntax-highlighter-lang-wrapper">
+              <Text className="rnx-syntax-highlighter-lang">
                 {language}
               </Text>
             </Box>
-            <Box className="flex w-1/3 justify-end">
+            <Box className="rnx-syntax-highlighter-btn-wrapper">
               <Button
                 size="icon"
                 variant="ghost"
-                className="text-muted-foreground hover:bg-muted/10 hover:text-foreground h-7 w-7"
                 onClick={copyToClipboard}
+                aria-label={isCopied ? "Code copied" : "Copy code"}
                 title="Copy code"
               >
                 {isCopied ? (
-                  <Check className="text-success h-3.5 w-3.5" />
+                  <Check className="h-3.5 w-3.5" />
                 ) : (
                   <Copy className="h-3.5 w-3.5" />
                 )}
@@ -101,33 +105,33 @@ export const SyntaxHighlighter = React.forwardRef<
         )}
 
         <Box className="relative">
-          <Button
-            size="icon"
-            variant="ghost"
-            className={cn(
-              "text-muted-foreground hover:bg-muted/10 hover:text-foreground absolute top-2 right-2 h-8 w-8",
-              withHeader && "hidden" // If header exists, we usually put a different copy mechanism or skip it, but let's keep it in the top right of the code block.
-            )}
-            onClick={copyToClipboard}
-            title="Copy code"
-          >
-            {isCopied ? (
-              <Check className="text-success h-4 w-4" />
-            ) : (
-              <Copy className="h-4 w-4" />
-            )}
-          </Button>
+          {!withHeader && (
+            <Button
+              size="icon"
+              variant="ghost"
+              className="rnx-syntax-highlighter-copy-btn"
+              onClick={copyToClipboard}
+              aria-label={isCopied ? "Code copied" : "Copy code"}
+              title="Copy code"
+            >
+              {isCopied ? (
+                <Check className="h-4 w-4" />
+              ) : (
+                <Copy className="h-4 w-4" />
+              )}
+            </Button>
+          )}
 
           <Highlight
             theme={themes.vsDark}
             code={code.trim()}
             language={language}
           >
-            {({ className, style, tokens, getLineProps, getTokenProps }) => (
+            {({ className: highlightClass, style, tokens, getLineProps, getTokenProps }) => (
               <pre
                 className={cn(
-                  className,
-                  "m-0 overflow-x-auto bg-transparent! p-4 font-mono text-sm leading-relaxed"
+                  highlightClass,
+                  "rnx-syntax-highlighter-pre"
                 )}
                 style={style}
               >
@@ -145,7 +149,7 @@ export const SyntaxHighlighter = React.forwardRef<
                       {showLineNumbers && (
                         <Box
                           as="span"
-                          className="rnx-syntax-highlighter__line-number table-cell pr-4 text-right opacity-50 select-none"
+                          className="rnx-syntax-highlighter__line-number table-cell select-none"
                         >
                           {i + 1}
                         </Box>

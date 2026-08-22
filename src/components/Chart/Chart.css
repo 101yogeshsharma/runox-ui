@@ -1,0 +1,22 @@
+﻿@layer components {
+  .rnx-chart-container {
+    height: 18rem;
+    width: 100%;
+  }
+
+  .rnx-chart-tooltip {
+    background-color: color-mix(in srgb, var(--background) 80%, transparent);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: calc(0.75rem * var(--rnx-space-scale, 1));
+    box-shadow: var(--shadow-xl);
+    backdrop-filter: blur(calc(8px * var(--rnx-space-scale, 1)));
+  }
+
+  .rnx-chart-tooltip-title {
+    color: var(--foreground);
+    margin-bottom: calc(0.5rem * var(--rnx-space-scale, 1));
+    font-weight: 500;
+  }
+}
+

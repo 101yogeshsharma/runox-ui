@@ -1,4 +1,4 @@
-@layer components {
+﻿@layer components {
   .rnx-avatar {
     position: relative;
     display: flex;
@@ -28,24 +28,24 @@
 
   /* Sizes */
   .rnx-avatar--sm {
-    height: 2rem;
-    width: 2rem;
-    font-size: 0.75rem;
+    height: calc(2rem * var(--rnx-space-scale, 1));
+    width: calc(2rem * var(--rnx-space-scale, 1));
+    font-size: calc(0.75rem * var(--rnx-text-scale, 1));
   }
   .rnx-avatar--md {
-    height: 2.5rem;
-    width: 2.5rem;
-    font-size: 0.875rem;
+    height: calc(2.5rem * var(--rnx-space-scale, 1));
+    width: calc(2.5rem * var(--rnx-space-scale, 1));
+    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
   }
   .rnx-avatar--lg {
-    height: 3.5rem;
-    width: 3.5rem;
-    font-size: 1.125rem;
+    height: calc(3.5rem * var(--rnx-space-scale, 1));
+    width: calc(3.5rem * var(--rnx-space-scale, 1));
+    font-size: calc(1.125rem * var(--rnx-text-scale, 1));
   }
   .rnx-avatar--xl {
-    height: 5rem;
-    width: 5rem;
-    font-size: 1.5rem;
+    height: calc(5rem * var(--rnx-space-scale, 1));
+    width: calc(5rem * var(--rnx-space-scale, 1));
+    font-size: calc(1.5rem * var(--rnx-text-scale, 1));
   }
 
   /* Shapes */
@@ -56,5 +56,53 @@
     border-radius: 0;
   }
   .rnx-avatar--rounded {
+    border-radius: var(--radius);
+  }
+
+  /* Variants */
+  .rnx-avatar--variant-ringed {
+    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--primary);
+  }
+
+  .rnx-avatar--variant-glass {
+    background-color: color-mix(in srgb, var(--card) 60%, transparent);
+    backdrop-filter: blur(calc(12px * var(--rnx-space-scale, 1)));
+    border-color: color-mix(in srgb, var(--border) 40%, transparent);
+  }
+
+  /* Status Indicator */
+  .rnx-avatar-status {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    border-radius: 9999px;
+    border: 2px solid var(--background);
+    z-index: 10;
+  }
+  .rnx-avatar-status--sm {
+    width: calc(0.625rem * var(--rnx-space-scale, 1));
+    height: calc(0.625rem * var(--rnx-space-scale, 1));
+  }
+  .rnx-avatar-status--md {
+    width: calc(0.75rem * var(--rnx-space-scale, 1));
+    height: calc(0.75rem * var(--rnx-space-scale, 1));
+  }
+  .rnx-avatar-status--lg,
+  .rnx-avatar-status--xl {
+    width: calc(0.875rem * var(--rnx-space-scale, 1));
+    height: calc(0.875rem * var(--rnx-space-scale, 1));
+  }
+  .rnx-avatar-status--online {
+    background-color: var(--success);
+  }
+  .rnx-avatar-status--offline {
+    background-color: var(--muted-foreground);
+  }
+  .rnx-avatar-status--busy {
+    background-color: var(--destructive);
+  }
+  .rnx-avatar-status--away {
+    background-color: var(--warning);
   }
 }
+

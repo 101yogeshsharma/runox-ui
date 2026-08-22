@@ -1,5 +1,18 @@
 import { useEffect } from "react";
 
+/**
+ * Registers a keyboard shortcut handler for the specified key combination.
+ *
+ * @param key - The keyboard shortcut combination (e.g., "cmd+k", "ctrl+shift+a").
+ * @param callback - The function to call when the keyboard shortcut is triggered.
+ * @param dependencies - Array of dependencies for the hook.
+ *
+ * @example
+ * useHotkeys("cmd+s", (e) => {
+ *   e.preventDefault();
+ *   saveDocument();
+ * });
+ */
 export function useHotkeys(
   key: string,
   callback: (e: KeyboardEvent) => void,

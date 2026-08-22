@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import { cn } from "../../utils/cn";
 import "./TreeView.css";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
+import { rnx } from "../../utils/rnx";
 
 interface TreeContextType {
   selectedId: string | null;
@@ -46,7 +46,7 @@ export interface TreeProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode;
 }
 
-export const Tree = React.forwardRef<HTMLDivElement, TreeProps>(
+const TreeRoot = React.forwardRef<HTMLDivElement, TreeProps>(
   (
     {
       className,
@@ -61,7 +61,6 @@ export const Tree = React.forwardRef<HTMLDivElement, TreeProps>(
     },
     ref
   ) => {
-    const { config } = useTheme();
     const [internalSelectedId, setInternalSelectedId] = useState<string | null>(
       defaultSelectedId || null
     );
@@ -123,13 +122,13 @@ export const Tree = React.forwardRef<HTMLDivElement, TreeProps>(
     return (
       <TreeContext.Provider value={contextValue}>
         <Flex
+          {...rnx({ component: 'TreeView' })}
           ref={ref}
           role="tree"
           direction="col"
           fullWidth
           className={cn(
-            "overflow-hidden",
-            `rounded-${config.radius}`,
+            "rnx-treeview",
             className
           )}
           onKeyDown={(e) => {
@@ -190,7 +189,7 @@ export const Tree = React.forwardRef<HTMLDivElement, TreeProps>(
     );
   }
 );
-Tree.displayName = "Tree";
+TreeRoot.displayName = "TreeView";
 
 export interface TreeFolderProps extends React.HTMLAttributes<HTMLDivElement> {
   value: string;
@@ -219,7 +218,6 @@ export const TreeFolder = React.forwardRef<HTMLDivElement, TreeFolderProps>(
         <Flex
           align="center"
           className={cn(
-            "group relative cursor-pointer rounded-md px-2 py-1.5 text-sm",
             "rnx-treeview-node",
             isSelected && "rnx-treeview-node--selected"
           )}
@@ -240,11 +238,11 @@ export const TreeFolder = React.forwardRef<HTMLDivElement, TreeFolderProps>(
         >
           <ChevronRight
             className={cn(
-              "rnx-treeview-chevron mr-1 h-4 w-4 shrink-0",
-              isExpanded && "rotate-90"
+              "rnx-treeview-chevron",
+              isExpanded && "rnx-treeview-chevron--expanded"
             )}
           />
-          <Box className="rnx-treeview-icon mr-2">
+          <Box className="rnx-treeview-icon">
             {isExpanded
               ? openIcon || icon || <FolderOpenIcon className="h-4 w-4" />
               : icon || <FolderIcon className="h-4 w-4" />}
@@ -255,14 +253,14 @@ export const TreeFolder = React.forwardRef<HTMLDivElement, TreeFolderProps>(
         </Flex>
         <div
           className={cn(
-            "grid transition-all duration-200 ease-in-out",
-            isExpanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+            "rnx-treeview-collapse",
+            isExpanded ? "rnx-treeview-collapse--expanded" : "rnx-treeview-collapse--collapsed"
           )}
         >
-          <div className="overflow-hidden">
+          <div className="rnx-treeview-collapse-inner">
             <Box
               role="group"
-              className="rnx-treeview-content mt-1 ml-4 flex flex-col space-y-1 border-l pl-2"
+              className="rnx-treeview-content"
             >
               {children}
             </Box>
@@ -272,7 +270,7 @@ export const TreeFolder = React.forwardRef<HTMLDivElement, TreeFolderProps>(
     );
   }
 );
-TreeFolder.displayName = "TreeFolder";
+TreeFolder.displayName = "TreeView.Folder";
 
 export interface TreeItemProps extends React.HTMLAttributes<HTMLDivElement> {
   value: string;
@@ -291,7 +289,6 @@ export const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
         ref={ref}
         role="treeitem"
         className={cn(
-          "group relative cursor-pointer rounded-md px-2 py-1.5 text-sm",
           "rnx-treeview-node",
           isSelected && "rnx-treeview-node--selected",
           className
@@ -310,9 +307,8 @@ export const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
         }}
         {...props}
       >
-        <Box className="mr-1 w-5 shrink-0" />{" "}
-        {/* Spacer for chevron alignment */}
-        <Box className="rnx-treeview-icon mr-2">
+        <Box className="rnx-treeview-spacer" />
+        <Box className="rnx-treeview-icon">
           {icon || <FileIcon className="h-4 w-4" />}
         </Box>
         <Box as="span" className="truncate">
@@ -322,4 +318,11 @@ export const TreeItem = React.forwardRef<HTMLDivElement, TreeItemProps>(
     );
   }
 );
-TreeItem.displayName = "TreeItem";
+TreeItem.displayName = "TreeView.Item";
+
+export const Tree = Object.assign(TreeRoot, {
+  Folder: TreeFolder,
+  Item: TreeItem,
+});
+
+export const TreeView = Tree;

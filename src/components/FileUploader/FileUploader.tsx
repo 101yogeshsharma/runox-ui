@@ -17,10 +17,13 @@ import { Text } from "../../atoms/Text";
 import { Box } from "../../atoms/Box";
 import { Image as RunoxImage } from "../Image/Image";
 import { Progress } from "../Progress/Progress";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
+import { rnx } from "../../utils/rnx";
 import "./FileUploader.css";
 // Uses: Button, Image, Progress
 
+/**
+ * Props for the FileUploader component.
+ */
 export interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
   onFilesChange?: (files: File[]) => void;
   maxFiles?: number;
@@ -29,6 +32,7 @@ export interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> 
   progresses?: Record<string, number>;
   maxSize?: number;
   onFileRejected?: (file: File, reason: string) => void;
+  disabled?: boolean;
 }
 
 export function FileUploader({
@@ -40,9 +44,9 @@ export function FileUploader({
   progresses,
   maxSize,
   onFileRejected,
+  disabled,
   ...props
 }: FileUploaderProps) {
-  const { config } = useTheme();
   const [files, setFiles] = useState<File[]>([]);
   const [isDragActive, setIsDragActive] = useState(false);
   // Stable map from file object reference → object URL to avoid creating a new URL every render
@@ -178,7 +182,8 @@ export function FileUploader({
 
   return (
     <Box
-      className={cn("w-full space-y-4", `rounded-${config.radius}`, className)}
+      {...rnx({ component: 'FileUploader', state: disabled ? 'disabled' : 'active' })}
+      className={cn("w-full space-y-4", className)}
       {...props}
     >
       <Box

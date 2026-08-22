@@ -21,7 +21,6 @@ import { useScrollLock } from "../../hooks/useScrollLock";
 import { Text } from "../../atoms/Text";
 import { Box } from "../../atoms/Box";
 import "./AlertDialog.css";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
 
 const AlertDialogContext = createContext<{
   isOpen: boolean;
@@ -35,6 +34,9 @@ const AlertDialogContext = createContext<{
   descriptionId: "",
 });
 
+/**
+ * Props for the AlertDialog component.
+ */
 export interface AlertDialogProps {
   children: React.ReactNode;
   defaultOpen?: boolean;
@@ -130,13 +132,17 @@ export const AlertDialogTrigger = forwardRef<
     </Button>
   );
 });
-AlertDialogTrigger.displayName = "AlertDialogTrigger";
+AlertDialogTrigger.displayName = "AlertDialog.Trigger";
+
+export interface AlertDialogContentProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: "solid" | "glass" | "destructive";
+  size?: "sm" | "md" | "lg";
+}
 
 export const AlertDialogContent = forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
->(({ className, children, ...props }, ref) => {
-  const { config } = useTheme();
+  AlertDialogContentProps
+>(({ className, variant = "solid", size = "md", children, ...props }, ref) => {
   const { isOpen, setIsOpen, titleId, descriptionId } =
     useContext(AlertDialogContext);
   const [mounted, setMounted] = useState(false);
@@ -200,7 +206,8 @@ export const AlertDialogContent = forwardRef<
         ref={mergedRef}
         className={cn(
           "rnx-alert-dialog-content",
-          `rounded-${config.radius}`,
+          `rnx-alert-dialog-content--variant-${variant}`,
+          `rnx-alert-dialog-content--${size}`,
           className
         )}
         data-state={mounted ? "open" : "closed"}
@@ -212,7 +219,7 @@ export const AlertDialogContent = forwardRef<
     document.body
   );
 });
-AlertDialogContent.displayName = "AlertDialogContent";
+AlertDialogContent.displayName = "AlertDialog.Content";
 
 export const AlertDialogHeader = ({
   className,
@@ -220,7 +227,7 @@ export const AlertDialogHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <Box className={cn("rnx-alert-dialog-header", className)} {...props} />
 );
-AlertDialogHeader.displayName = "AlertDialogHeader";
+AlertDialogHeader.displayName = "AlertDialog.Header";
 
 export const AlertDialogFooter = ({
   className,
@@ -228,7 +235,7 @@ export const AlertDialogFooter = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <Box className={cn("rnx-alert-dialog-footer", className)} {...props} />
 );
-AlertDialogFooter.displayName = "AlertDialogFooter";
+AlertDialogFooter.displayName = "AlertDialog.Footer";
 
 export const AlertDialogTitle = forwardRef<
   HTMLHeadingElement,
@@ -246,7 +253,7 @@ export const AlertDialogTitle = forwardRef<
     />
   );
 });
-AlertDialogTitle.displayName = "AlertDialogTitle";
+AlertDialogTitle.displayName = "AlertDialog.Title";
 
 export const AlertDialogDescription = forwardRef<
   HTMLParagraphElement,
@@ -264,7 +271,7 @@ export const AlertDialogDescription = forwardRef<
     />
   );
 });
-AlertDialogDescription.displayName = "AlertDialogDescription";
+AlertDialogDescription.displayName = "AlertDialog.Description";
 
 export interface AlertDialogActionProps extends Omit<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -298,7 +305,8 @@ export const AlertDialogAction = forwardRef<
     return React.cloneElement(child, {
       ...props,
       className: cn(
-        buttonVariants({ variant: "solid", color: "danger" }),
+        buttonVariants({ variant: "solid", color: "primary" }),
+        "rnx-alert-dialog-action",
         className,
         child.props.className
       ),
@@ -322,16 +330,14 @@ export const AlertDialogAction = forwardRef<
     <Button
       ref={ref}
       onClick={handleClick as React.MouseEventHandler<HTMLButtonElement>}
-      variant="solid"
-      color="danger"
-      className={className}
+      className={cn("rnx-alert-dialog-action", className)}
       {...props}
     >
       {children}
     </Button>
   );
 });
-AlertDialogAction.displayName = "AlertDialogAction";
+AlertDialogAction.displayName = "AlertDialog.Action";
 
 export interface AlertDialogCancelProps extends Omit<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -398,7 +404,7 @@ export const AlertDialogCancel = forwardRef<
     </Button>
   );
 });
-AlertDialogCancel.displayName = "AlertDialogCancel";
+AlertDialogCancel.displayName = "AlertDialog.Cancel";
 
 // Dummy components to match API
 export const AlertDialogPortal = ({
@@ -406,7 +412,9 @@ export const AlertDialogPortal = ({
 }: {
   children: React.ReactNode;
 }) => <>{children}</>;
+AlertDialogPortal.displayName = "AlertDialog.Portal";
 export const AlertDialogOverlay = () => null;
+AlertDialogOverlay.displayName = "AlertDialog.Overlay";
 
 export const AlertDialog = Object.assign(AlertDialogComponent, {
   Trigger: AlertDialogTrigger,

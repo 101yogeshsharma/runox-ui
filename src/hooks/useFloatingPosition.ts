@@ -1,11 +1,33 @@
 import { RefObject, useEffect, useState } from "react";
 
+/**
+ * Position data for a floating element.
+ *
+ * @property top - The top position in pixels.
+ * @property left - The left position in pixels.
+ * @property placed - The actual edge where the element was placed.
+ */
 export type FloatingPosition = {
   top: number;
   left: number;
   placed: "bottom" | "top" | "left" | "right";
 };
 
+/**
+ * Calculates position for floating elements (dropdowns, tooltips, popovers) relative to an anchor element, with collision avoidance.
+ *
+ * @param anchorRef - Reference to the anchor element.
+ * @param floatingRef - Reference to the floating element to be positioned.
+ * @param active - Whether the floating positioning is active.
+ * @param offset - Distance in pixels from the anchor.
+ * @param triggerRecalc - A dependency used to trigger a position recalculation.
+ * @param preferredPosition - The preferred edge to place the floating element.
+ * @param align - The alignment relative to the chosen edge.
+ * @returns The calculated floating position, or null if uncalculated.
+ *
+ * @example
+ * const position = useFloatingPosition(buttonRef, tooltipRef, isOpen, 8, null, "top", "center");
+ */
 export function useFloatingPosition(
   anchorRef: RefObject<HTMLElement | null>,
   floatingRef: RefObject<HTMLElement | null>,

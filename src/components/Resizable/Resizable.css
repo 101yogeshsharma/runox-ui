@@ -1,0 +1,70 @@
+@layer components {
+  .rnx-resizable-handle {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--border);
+    touch-action: none;
+    outline: none;
+    transition: background-color 150ms ease;
+  }
+
+  .rnx-resizable-handle:focus-visible {
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px var(--ring);
+  }
+
+  .rnx-resizable-handle[data-panel-group-direction="horizontal"] {
+    width: 1px;
+    cursor: col-resize;
+  }
+
+  .rnx-resizable-handle[data-panel-group-direction="horizontal"]::after {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    left: 50%;
+    width: 0.5rem;
+    transform: translateX(-50%);
+  }
+
+  .rnx-resizable-handle[data-panel-group-direction="vertical"] {
+    height: 1px;
+    width: 100%;
+    cursor: row-resize;
+  }
+
+  .rnx-resizable-handle[data-panel-group-direction="vertical"]::after {
+    content: "";
+    position: absolute;
+    inset-inline: 0;
+    top: 50%;
+    height: 0.5rem;
+    transform: translateY(-50%);
+  }
+
+  .rnx-resizable-handle__grip {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    display: flex;
+    height: 1.25rem;
+    width: 0.75rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background-color: var(--card);
+    color: var(--muted-foreground);
+    box-shadow: var(--shadow-sm);
+    pointer-events: none;
+  }
+
+  .rnx-resizable-handle[data-panel-group-direction="vertical"] .rnx-resizable-handle__grip {
+    transform: translate(-50%, -50%) rotate(90deg);
+  }
+}

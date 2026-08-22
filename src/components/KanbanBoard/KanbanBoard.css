@@ -1,4 +1,4 @@
-@layer components {
+﻿@layer components {
   .rnx-kanban-scroll-button {
     background-color: var(--background);
     border: 1px solid var(--border);
@@ -26,8 +26,8 @@
 
   .rnx-kanban-scroll-icon {
     color: var(--foreground);
-    width: 1.25rem;
-    height: 1.25rem;
+    width: calc(1.25rem * var(--rnx-space-scale, 1));
+    height: calc(1.25rem * var(--rnx-space-scale, 1));
   }
 
   .rnx-kanban-column {
@@ -47,7 +47,7 @@
   }
 
   .rnx-kanban-column-title {
-    font-size: 0.875rem;
+    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
     font-weight: 600;
   }
 
@@ -56,7 +56,7 @@
     border: 1px solid var(--border);
     color: var(--muted-foreground);
     border-radius: 0.375rem;
-    font-size: 0.75rem;
+    font-size: calc(0.75rem * var(--rnx-text-scale, 1));
     font-weight: 500;
     box-shadow: var(--shadow-sm);
   }
@@ -91,3 +91,4 @@
     border-bottom: 2px solid var(--primary);
   }
 }
+

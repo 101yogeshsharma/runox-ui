@@ -4,19 +4,21 @@ import { cn } from "../../utils/cn";
 import { mergeProps } from "../../utils/mergeProps";
 import "./Input.css";
 
+/**
+ * Props for the InputGroup component.
+ */
 export interface InputGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   children?: React.ReactNode;
 }
 
-import { useTheme } from "../ThemeProvider/ThemeProvider";
+import { withLoading } from "../../utils/withLoading";
 
-export const InputGroup = forwardRef<HTMLDivElement, InputGroupProps>(
+const InputGroupBase = forwardRef<HTMLDivElement, InputGroupProps>(
   ({ className, children, ...props }, ref) => {
-    const { config } = useTheme();
     return (
       <Box
         ref={ref}
-        className={cn("rnx-input-group", `rounded-${config.radius}`, className)}
+        className={cn("rnx-input-group", className)}
         {...mergeProps({}, props)}
       >
         {children}
@@ -25,4 +27,5 @@ export const InputGroup = forwardRef<HTMLDivElement, InputGroupProps>(
   }
 );
 
-InputGroup.displayName = "InputGroup";
+InputGroupBase.displayName = "InputGroup";
+export const InputGroup = withLoading(InputGroupBase);

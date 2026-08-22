@@ -1,15 +1,13 @@
 "use client";
 import React, { forwardRef, createContext, useContext, useId } from "react";
 import { Box } from "../../atoms/Box";
+import { rnx } from "../../utils/rnx";
 import { ChevronDown } from "lucide-react";
 import { cn } from "../../utils/cn";
 import { useControllableState } from "../../hooks";
-
-type AccordionContextType = {
-  value: string | string[];
-  onValueChange: (value: string) => void;
-  accordionId: string;
-};
+import { AccordionItemProps, AccordionProps } from "./Accordion.interface";
+import { AccordionContextItemType, AccordionContextType } from "./Accordion.types";
+import "./Accordion.css";
 
 const AccordionContext = createContext<AccordionContextType | null>(null);
 
@@ -19,10 +17,6 @@ function useAccordionContext() {
     throw new Error("Accordion components must be used within an Accordion");
   return context;
 }
-
-type AccordionContextItemType = {
-  value: string;
-};
 
 const AccordionItemContext = createContext<AccordionContextItemType | null>(
   null,
@@ -37,22 +31,12 @@ function useAccordionItemContext() {
   return context;
 }
 
-export interface AccordionProps extends Omit<
-  React.HTMLAttributes<HTMLDivElement>,
-  "onChange" | "defaultValue"
-> {
-  type?: "single" | "multiple";
-  value?: string | string[];
-  defaultValue?: string | string[];
-  onValueChange?: (value: string | string[]) => void;
-  collapsible?: boolean;
-}
-
 const AccordionComponent = forwardRef<HTMLDivElement, AccordionProps>(
   (
     {
       className,
       type = "single",
+      variant = "default",
       value: valueProp,
       defaultValue,
       onValueChange,
@@ -73,23 +57,24 @@ const AccordionComponent = forwardRef<HTMLDivElement, AccordionProps>(
     });
     const accordionId = useId().replace(/:/g, "");
 
-    const handleValueChange = (itemValue: string) => {
+    const handleValueChange = React.useCallback((itemValue: string) => {
       if (type === "multiple") {
-        const arrValue = (Array.isArray(value) ? value : []) as string[];
-        if (arrValue.includes(itemValue)) {
-          setValue(arrValue.filter((v) => v !== itemValue));
-        } else {
-          setValue([...arrValue, itemValue]);
-        }
+        const currentValues = Array.isArray(value) ? value : [];
+        const nextValues = currentValues.includes(itemValue)
+          ? currentValues.filter((v) => v !== itemValue)
+          : [...currentValues, itemValue];
+        setValue(nextValues);
       } else {
-        const strValue = typeof value === "string" ? value : "";
-        if (strValue === itemValue && collapsible) {
-          setValue("");
+        const currentValue = typeof value === "string" ? value : "";
+        if (currentValue === itemValue) {
+          if (collapsible) {
+            setValue("");
+          }
         } else {
           setValue(itemValue);
         }
       }
-    };
+    }, [type, value, collapsible, setValue]);
 
     return (
       <AccordionContext.Provider
@@ -99,16 +84,21 @@ const AccordionComponent = forwardRef<HTMLDivElement, AccordionProps>(
           accordionId,
         }}
       >
-        <Box ref={ref} className={cn("rnx-accordion", className)} {...props} />
+        <Box
+          {...rnx({ component: 'Accordion' })}
+          ref={ref}
+          className={cn(
+            "rnx-accordion",
+            variant && variant !== "default" && `rnx-accordion--variant-${variant}`,
+            className
+          )}
+          {...props}
+        />
       </AccordionContext.Provider>
     );
   },
 );
 AccordionComponent.displayName = "Accordion";
-
-export interface AccordionItemProps extends React.HTMLAttributes<HTMLDivElement> {
-  value: string;
-}
 
 export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
   ({ className, value, ...props }, ref) => (
@@ -116,12 +106,13 @@ export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
       <Box
         ref={ref}
         className={cn("rnx-accordion-item", className)}
+        {...rnx({ component: "AccordionItem" })}
         {...props}
       />
     </AccordionItemContext.Provider>
   ),
 );
-AccordionItem.displayName = "AccordionItem";
+AccordionItem.displayName = "Accordion.Item";
 
 export const AccordionTrigger = forwardRef<
   HTMLButtonElement,
@@ -183,7 +174,7 @@ export const AccordionTrigger = forwardRef<
     </Box>
   );
 });
-AccordionTrigger.displayName = "AccordionTrigger";
+AccordionTrigger.displayName = "Accordion.Trigger";
 
 export const AccordionContent = forwardRef<
   HTMLDivElement,
@@ -206,18 +197,18 @@ export const AccordionContent = forwardRef<
       role="region"
       aria-labelledby={triggerId}
       aria-hidden={!isOpen}
-      {...(!isOpen ? { inert: true } : {})}
+      inert={(!isOpen ? "" : undefined) as any}
       data-state={isOpen ? "open" : "closed"}
       className={cn("rnx-accordion-content", className)}
       {...props}
     >
       <Box className="rnx-accordion-content-inner">
-        <Box className="pt-0 pb-4 break-words">{children}</Box>
+        <Box className="rnx-accordion-content-body">{children}</Box>
       </Box>
     </Box>
   );
 });
-AccordionContent.displayName = "AccordionContent";
+AccordionContent.displayName = "Accordion.Content";
 
 export const Accordion = Object.assign(AccordionComponent, {
   Item: AccordionItem,

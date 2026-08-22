@@ -19,6 +19,7 @@ import {
 } from "../../hooks";
 import { useMergeRefs } from "../../hooks/useMergeRefs";
 import { Box } from "../../atoms/Box";
+import { rnx } from "../../utils/rnx";
 import { Button } from "../Button";
 import { Badge } from "../Badge";
 import {
@@ -30,7 +31,6 @@ import {
   CommandList,
   CommandSeparator,
 } from "../Command/Command";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
 import "./Dropdown.css";
 
 interface DropdownContextValue {
@@ -58,6 +58,9 @@ export function useDropdownContext() {
   return context;
 }
 
+/**
+ * Props for the Dropdown component.
+ */
 export interface DropdownProps {
   children: React.ReactNode;
   value?: string | string[];
@@ -65,7 +68,7 @@ export interface DropdownProps {
   multiple?: boolean;
 }
 
-export const Dropdown = React.forwardRef<HTMLDivElement, DropdownProps>(
+const DropdownRoot = React.forwardRef<HTMLDivElement, DropdownProps>(
   (
     { children, value: controlledValue, onValueChange, multiple = false },
     ref
@@ -73,7 +76,6 @@ export const Dropdown = React.forwardRef<HTMLDivElement, DropdownProps>(
     const [isOpen, setIsOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const triggerRef = useRef<HTMLButtonElement>(null);
-    const { config } = useTheme();
 
     const [value, setValue] = useControllableState<string | string[]>({
       prop: controlledValue,
@@ -96,7 +98,7 @@ export const Dropdown = React.forwardRef<HTMLDivElement, DropdownProps>(
       <DropdownContext.Provider value={contextValue}>
         <Box
           ref={ref}
-          className={cn("rnx-dropdown", `rounded-${config.radius}`)}
+          className={cn("rnx-dropdown")}
         >
           {children}
         </Box>
@@ -104,7 +106,7 @@ export const Dropdown = React.forwardRef<HTMLDivElement, DropdownProps>(
     );
   }
 );
-Dropdown.displayName = "Dropdown";
+DropdownRoot.displayName = "Dropdown";
 
 export interface DropdownTriggerProps extends Omit<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -212,7 +214,7 @@ export const DropdownTrigger = React.forwardRef<
     </Button>
   );
 });
-DropdownTrigger.displayName = "DropdownTrigger";
+DropdownTrigger.displayName = "Dropdown.Trigger";
 
 export interface DropdownContentProps {
   children: React.ReactNode;
@@ -238,7 +240,6 @@ export const DropdownContent = React.forwardRef<
     ref
   ) => {
     const { isOpen, setIsOpen, triggerRef } = useDropdownContext();
-    const { config } = useTheme();
     const contentRef = useRef<HTMLDivElement>(null);
     const mergedRef = useMergeRefs(contentRef, ref);
     const [mounted, setMounted] = useState(false);
@@ -280,7 +281,6 @@ export const DropdownContent = React.forwardRef<
     if (!mounted || typeof document === "undefined") return null;
 
     let matchedWidth: number | undefined;
-
     if (position && triggerRef.current && contentRef.current) {
       const anchorRect = triggerRef.current.getBoundingClientRect();
       matchedWidth = anchorRect.width;
@@ -291,8 +291,7 @@ export const DropdownContent = React.forwardRef<
         ref={mergedRef}
         role="dialog"
         className={cn(
-          "rnx-dropdown-content",
-          `rounded-${config.radius}`,
+          "rnx-dropdown-content z-50",
           className
         )}
         data-state={isOpen && position ? "open" : "closed"}
@@ -303,7 +302,6 @@ export const DropdownContent = React.forwardRef<
           left: position?.left || 0,
           visibility: position ? "visible" : "hidden",
           width: matchTriggerWidth ? matchedWidth : undefined,
-          zIndex: 50,
         }}
         {...props}
       >
@@ -316,7 +314,7 @@ export const DropdownContent = React.forwardRef<
     );
   }
 );
-DropdownContent.displayName = "DropdownContent";
+DropdownContent.displayName = "Dropdown.Content";
 
 export interface DropdownItemProps extends Omit<
   React.ComponentPropsWithoutRef<typeof CommandItem>,
@@ -370,7 +368,15 @@ export const DropdownItem = React.forwardRef<HTMLDivElement, DropdownItemProps>(
           (typeof children === "string" ? children.toLowerCase() : undefined)
         }
         onSelect={handleSelect}
-        className={cn(isSelectable && "relative pl-8", className)}
+        data-disabled={props.disabled}
+        className={cn(
+          "rnx-dropdown__item",
+          props.disabled && "rnx-dropdown__item--disabled",
+          isSelected && "rnx-dropdown__item--selected",
+          isSelectable && "relative pl-8",
+          className
+        )}
+        {...rnx({ component: "DropdownItem", state: isSelected ? "selected" : "unselected" })}
         {...props}
       >
         {isSelectable && (
@@ -390,7 +396,7 @@ export const DropdownItem = React.forwardRef<HTMLDivElement, DropdownItemProps>(
     );
   }
 );
-DropdownItem.displayName = "DropdownItem";
+DropdownItem.displayName = "Dropdown.Item";
 
 export interface DropdownEmptyProps {
   children: React.ReactNode;
@@ -407,7 +413,7 @@ export const DropdownEmpty = React.forwardRef<
     </CommandEmpty>
   );
 });
-DropdownEmpty.displayName = "DropdownEmpty";
+DropdownEmpty.displayName = "Dropdown.Empty";
 
 export interface DropdownGroupProps {
   children: React.ReactNode;
@@ -425,7 +431,7 @@ export const DropdownGroup = React.forwardRef<
     </CommandGroup>
   );
 });
-DropdownGroup.displayName = "DropdownGroup";
+DropdownGroup.displayName = "Dropdown.Group";
 
 export interface DropdownSearchProps {
   placeholder?: string;
@@ -445,7 +451,7 @@ export const DropdownSearch = React.forwardRef<
     />
   );
 });
-DropdownSearch.displayName = "DropdownSearch";
+DropdownSearch.displayName = "Dropdown.Search";
 
 export interface DropdownDividerProps extends React.ComponentPropsWithoutRef<
   typeof CommandSeparator
@@ -463,4 +469,15 @@ export const DropdownDivider = React.forwardRef<
     />
   );
 });
-DropdownDivider.displayName = "DropdownDivider";
+DropdownDivider.displayName = "Dropdown.Divider";
+
+export const Dropdown = Object.assign(DropdownRoot, {
+  Trigger: DropdownTrigger,
+  Content: DropdownContent,
+  Item: DropdownItem,
+  Empty: DropdownEmpty,
+  Group: DropdownGroup,
+  Search: DropdownSearch,
+  Divider: DropdownDivider,
+  Separator: DropdownDivider,
+});

@@ -16,7 +16,7 @@ import { cn } from "../../utils/cn";
 import { Label } from "../Label/Label";
 import { Text } from "../../atoms/Text";
 
-const Form = FormProvider;
+import "./Form.css";
 
 type FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,
@@ -81,11 +81,11 @@ const FormItem = React.forwardRef<
 
   return (
     <FormItemContext.Provider value={{ id }}>
-      <Box ref={ref} className={cn("space-y-2", className)} {...props} />
+      <Box ref={ref} className={cn("rnx-form-item", className)} {...props} />
     </FormItemContext.Provider>
   );
 });
-FormItem.displayName = "FormItem";
+FormItem.displayName = "Form.Item";
 
 const FormLabel = React.forwardRef<
   HTMLLabelElement,
@@ -97,8 +97,8 @@ const FormLabel = React.forwardRef<
     <Label
       ref={ref}
       className={cn(
-        "text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-        error && "text-destructive",
+        "rnx-form-label",
+        error && "rnx-form-label--error",
         className
       )}
       htmlFor={formItemId}
@@ -106,7 +106,7 @@ const FormLabel = React.forwardRef<
     />
   );
 });
-FormLabel.displayName = "FormLabel";
+FormLabel.displayName = "Form.Label";
 
 const FormControl = React.forwardRef<
   React.ElementRef<typeof Slot>,
@@ -129,7 +129,7 @@ const FormControl = React.forwardRef<
     />
   );
 });
-FormControl.displayName = "FormControl";
+FormControl.displayName = "Form.Control";
 
 const FormDescription = React.forwardRef<
   HTMLParagraphElement,
@@ -143,12 +143,12 @@ const FormDescription = React.forwardRef<
       variant="body"
       ref={ref}
       id={formDescriptionId}
-      className={cn("text-muted-foreground text-[0.8rem]", className)}
+      className={cn("rnx-form-description", className)}
       {...props}
     />
   );
 });
-FormDescription.displayName = "FormDescription";
+FormDescription.displayName = "Form.Description";
 
 const FormMessage = React.forwardRef<
   HTMLParagraphElement,
@@ -167,14 +167,23 @@ const FormMessage = React.forwardRef<
       variant="body"
       ref={ref}
       id={formMessageId}
-      className={cn("text-destructive text-[0.8rem] font-medium", className)}
+      className={cn("rnx-form-message", className)}
       {...props}
     >
       {body}
     </Text>
   );
 });
-FormMessage.displayName = "FormMessage";
+FormMessage.displayName = "Form.Message";
+
+const Form = Object.assign(FormProvider, {
+  Item: FormItem,
+  Label: FormLabel,
+  Control: FormControl,
+  Description: FormDescription,
+  Message: FormMessage,
+  Field: FormField,
+});
 
 export {
   useFormField,

@@ -5,17 +5,25 @@ import { cn } from "../../utils/cn";
 import { Label } from "../Label/Label";
 import { useControllableState } from "../../hooks/useControllableState";
 import { mergeProps } from "../../utils/mergeProps";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
 import "./Slider.css";
+import { rnx } from "../../utils/rnx";
+import { withLoading } from "../../utils/withLoading";
 
+
+import { RnxColor } from "../../types";
+
+/**
+ * An interactive bar allowing users to select single or range values by sliding a thumb control.
+ */
 export interface SliderProps extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   "size" | "color" | "min" | "max" | "step"
 > {
+  variant?: "solid" | "glass";
   label?: string;
   error?: string;
   size?: "sm" | "md" | "lg";
-  color?: "primary" | "success" | "warning" | "danger";
+  color?: RnxColor;
   value?: number;
   defaultValue?: number;
   onValueChange?: (value: number) => void;
@@ -26,10 +34,11 @@ export interface SliderProps extends Omit<
   formatLabel?: (value: number) => React.ReactNode;
 }
 
-export const Slider = forwardRef<HTMLInputElement, SliderProps>(
+const SliderBase = forwardRef<HTMLInputElement, SliderProps>(
   (
     {
       className,
+      variant = "solid",
       label,
       error,
       size = "md",
@@ -49,7 +58,6 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
   ) => {
     const generatedId = useId();
     const id = customId || generatedId;
-    const { config } = useTheme();
 
     const [currentValue = min, setCurrentValue] = useControllableState({
       prop: value,
@@ -72,9 +80,12 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
       <Box
         className={cn(
           "rnx-slider-container",
-          `rounded-${config.radius}`,
           className
         )}
+        {...rnx({
+          component: "Slider",
+          state: props.disabled ? "disabled" : error ? "error" : "default",
+        })}
       >
         {(label || displayValue) && (
           <Box className="rnx-slider-header">
@@ -96,7 +107,8 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
           className={cn(
             "rnx-slider-wrapper",
             `rnx-slider--${size}`,
-            `rnx-slider--${color}`,
+            `rnx-slider--color-${color}`,
+            variant && variant !== "solid" && `rnx-slider--variant-${variant}`,
             error && "rnx-slider--error"
           )}
           style={{ "--slider-ratio": ratio } as React.CSSProperties}
@@ -139,4 +151,5 @@ export const Slider = forwardRef<HTMLInputElement, SliderProps>(
   }
 );
 
-Slider.displayName = "Slider";
+SliderBase.displayName = "Slider";
+export const Slider = withLoading(SliderBase);

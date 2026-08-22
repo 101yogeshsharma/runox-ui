@@ -53,7 +53,7 @@ describe("ThemeProvider", () => {
   it("should return default config if useTheme is used outside provider", () => {
     render(<TestComponent />);
     expect(screen.getByTestId("theme").textContent).toBe("system");
-    expect(screen.getByTestId("primary-color").textContent).toBe("zinc");
+    expect(screen.getByTestId("primary-color").textContent).toBe("blue");
   });
 
   it("should initialize with default system config", () => {
@@ -64,13 +64,13 @@ describe("ThemeProvider", () => {
     );
     
     expect(screen.getByTestId("theme").textContent).toBe("system");
-    expect(screen.getByTestId("primary-color").textContent).toBe("zinc");
+    expect(screen.getByTestId("primary-color").textContent).toBe("blue");
     expect(screen.getByTestId("radius").textContent).toBe("md");
     
     // By default matchMedia resolves to false (light)
     expect(document.documentElement.classList.contains("light")).toBe(true);
     expect(document.documentElement.getAttribute("data-theme")).toBe("light");
-    expect(document.documentElement.getAttribute("data-color")).toBe("zinc");
+    expect(document.documentElement.getAttribute("data-color")).toBe("blue");
   });
 
   it("should initialize with dark system config when prefers-color-scheme is dark", () => {

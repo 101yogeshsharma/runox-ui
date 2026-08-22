@@ -7,40 +7,18 @@ import React, {
   useMemo,
   useCallback,
 } from "react";
+import { applyTheme as applyCustomTheme } from "../../utils/applyTheme";
+import { Theme } from "./ThemeProvider.types";
+import type { ThemeProviderProps, ThemeProviderState, ThemeConfig } from "./ThemeProvider.interface";
+
 import "../../styles/globals.css";
-
-export type ThemeRadius = "none" | "sm" | "md" | "lg" | "xl";
-
-// Safelist for Tailwind dynamically injected classes
-// rounded-none rounded-sm rounded-md rounded-lg rounded-xl
-
-type Theme = "dark" | "light" | "system";
-
-export interface ThemeConfig {
-  theme: Theme;
-  primaryColor: string;
-  radius: ThemeRadius;
-}
-
-interface ThemeProviderProps {
-  children: React.ReactNode;
-  defaultTheme?: Theme;
-  defaultConfig?: Partial<ThemeConfig>;
-  enableSystem?: boolean;
-  storageKey?: string;
-}
-
-interface ThemeProviderState {
-  config: ThemeConfig;
-  setConfig: (config: Partial<ThemeConfig>) => void;
-  theme: Theme;
-  setTheme: (theme: Theme) => void;
-}
 
 const defaultConfigState: ThemeConfig = {
   theme: "system",
-  primaryColor: "zinc",
+  primaryColor: "blue",
   radius: "md",
+  density: "comfortable",
+  disableDevWarnings: false,
 };
 
 const initialState: ThemeProviderState = {
@@ -58,6 +36,8 @@ export function ThemeProvider({
   defaultConfig,
   enableSystem = true,
   storageKey = "runox-ui-theme",
+  tokens,
+  container,
   ...props
 }: ThemeProviderProps) {
   const [config, setConfigState] = useState<ThemeConfig>(
@@ -79,6 +59,25 @@ export function ThemeProvider({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Synchronize dynamic/controlled props when they change
+  useEffect(() => {
+    if (props.theme !== undefined) {
+      setConfigState((prev) => ({ ...prev, theme: props.theme! }));
+    }
+  }, [props.theme]);
+
+  useEffect(() => {
+    if (defaultConfig) {
+      setConfigState((prev) => ({ ...prev, ...defaultConfig }));
+    }
+  }, [defaultConfig]);
+
+  useEffect(() => {
+    if (defaultTheme !== undefined && !defaultConfig?.theme && props.theme === undefined) {
+      setConfigState((prev) => ({ ...prev, theme: defaultTheme }));
+    }
+  }, [defaultTheme, defaultConfig?.theme, props.theme]);
 
   const setConfig = useCallback(
     (newConfig: Partial<ThemeConfig>) => {
@@ -105,7 +104,7 @@ export function ThemeProvider({
   );
 
   useEffect(() => {
-    const root = window.document.documentElement;
+    const root = container || window.document.documentElement;
 
     const applyTheme = (resolvedTheme: "light" | "dark") => {
       root.classList.remove("light", "dark");
@@ -158,21 +157,67 @@ export function ThemeProvider({
       root.style.setProperty("--radius", `var(--radius-${config.radius})`);
     }
 
+    // Sync dev warnings
+    if (typeof window !== "undefined") {
+      (window as any).__RUNOX_DISABLE_WARNINGS__ = config.disableDevWarnings;
+    }
+
+    // Density application — skip when using a custom container,
+    // as the container owner manages data-density externally
+    if (config.density && !container) {
+      root.setAttribute("data-density", config.density);
+    }
+
+    // Apply zero-config theming tokens
+    if (tokens) {
+      applyCustomTheme(tokens, root);
+      
+      // Override primaryColor and radius if provided in tokens
+      if (tokens.primaryColor) {
+        if (tokens.primaryColor.startsWith("#")) {
+          root.style.setProperty("--primary", tokens.primaryColor);
+          let hex = tokens.primaryColor.replace("#", "");
+          if (hex.length === 3) {
+            hex = hex.split("").map((c) => c + c).join("");
+          }
+          const r = parseInt(hex.substring(0, 2), 16);
+          const g = parseInt(hex.substring(2, 4), 16);
+          const b = parseInt(hex.substring(4, 6), 16);
+          const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+          const fg = yiq >= 128 ? "#09090b" : "#fafafa";
+          root.style.setProperty("--primary-foreground", fg);
+        } else {
+          root.setAttribute("data-color", tokens.primaryColor);
+        }
+      }
+      if (tokens.radius) {
+        if (tokens.radius === "none") {
+          root.style.setProperty("--radius", "0px");
+        } else {
+          root.style.setProperty("--radius", `var(--radius-${tokens.radius})`);
+        }
+      }
+    }
+
     return () => {
       if (mediaQuery && mediaListener) {
         mediaQuery.removeEventListener("change", mediaListener);
       }
     };
-  }, [config, enableSystem]);
+  }, [config, enableSystem, tokens, container]);
 
   const contextValue = useMemo(
-    () => ({
-      config,
-      setConfig,
-      theme: config.theme,
-      setTheme,
-    }),
-    [config, setConfig, setTheme]
+    () => {
+      // Merge tokens into config so components reading useTheme().config get the updated values
+      const mergedConfig = tokens ? { ...config, ...tokens } : config;
+      return {
+        config: mergedConfig,
+        setConfig,
+        theme: config.theme,
+        setTheme,
+      };
+    },
+    [config, tokens, setConfig, setTheme]
   );
 
   return (
@@ -188,3 +233,7 @@ export const useTheme = () => {
     throw new Error("useTheme must be used within a ThemeProvider");
   return context;
 };
+
+export type { ThemeConfig, ThemeProviderProps, ThemeProviderState } from "./ThemeProvider.interface";
+export type { Theme, ThemeDensity, ThemeRadius } from "./ThemeProvider.types";
+

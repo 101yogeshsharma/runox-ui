@@ -59,9 +59,9 @@ export function generateResponsiveVars<T>(
 
 export const gapMap: Record<string, string> = {
   none: "0px",
-  xs: "var(--spacing-1, 4px)",
-  sm: "var(--spacing-2, 8px)",
-  md: "var(--spacing-4, 16px)",
-  lg: "var(--spacing-6, 24px)",
-  xl: "var(--spacing-8, 32px)",
+  xs: "var(--spacing-1, 0.25rem)",
+  sm: "var(--spacing-2, 0.5rem)",
+  md: "var(--spacing-4, 1rem)",
+  lg: "var(--spacing-6, 1.5rem)",
+  xl: "var(--spacing-8, 2rem)",
 };

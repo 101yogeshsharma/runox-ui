@@ -10,19 +10,24 @@ import React, {
 } from "react";
 import { cn } from "../../utils/cn";
 import { Box } from "../../atoms/Box";
+import { rnx } from "../../utils/rnx";
 import { useControllableState } from "../../hooks";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
+
+import "./Tabs.css";
 
 const TabsContext = createContext<{
   activeValue?: string;
   setActiveValue: (value: string) => void;
-  variant?: "default" | "underline";
+  variant?: "default" | "underline" | "pills" | "bordered" | "glass";
   id?: string;
   size?: "sm" | "md" | "lg";
 }>({
   setActiveValue: () => {},
 });
 
+/**
+ * A set of tabbed panels that allow switching between multiple content panels in a single space.
+ */
 export interface TabsProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
   "defaultValue"
@@ -30,11 +35,11 @@ export interface TabsProps extends Omit<
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
-  variant?: "default" | "underline";
+  variant?: "default" | "underline" | "pills" | "bordered" | "glass";
   size?: "sm" | "md" | "lg";
 }
 
-export const Tabs = forwardRef<HTMLDivElement, TabsProps>(
+const TabsRoot = forwardRef<HTMLDivElement, TabsProps>(
   (
     {
       className,
@@ -53,28 +58,32 @@ export const Tabs = forwardRef<HTMLDivElement, TabsProps>(
       onChange: onValueChange,
     });
     const uniqueId = React.useId();
-    const { config } = useTheme();
+
+    const handleSetActiveValue = useCallback(
+      (v: string) => setActiveValue(v),
+      [setActiveValue]
+    );
+
+    const contextValue = React.useMemo(() => ({
+      activeValue,
+      setActiveValue: handleSetActiveValue,
+      variant,
+      id: uniqueId,
+      size,
+    }), [activeValue, handleSetActiveValue, variant, uniqueId, size]);
 
     return (
-      <TabsContext.Provider
-        value={{
-          activeValue,
-          setActiveValue: (v) => setActiveValue(v),
-          variant,
-          id: uniqueId,
-          size,
-        }}
-      >
+      <TabsContext.Provider value={contextValue}>
         <Box
           ref={ref}
-          className={cn("rnx-tabs", `rounded-${config.radius}`, className)}
+          className={cn("rnx-tabs", className)}
           {...props}
         />
       </TabsContext.Provider>
     );
   }
 );
-Tabs.displayName = "Tabs";
+TabsRoot.displayName = "Tabs";
 
 export const TabsList = forwardRef<
   HTMLDivElement,
@@ -87,6 +96,11 @@ export const TabsList = forwardRef<
     opacity: 0,
   });
   const listRef = useRef<HTMLDivElement>(null);
+  const mountedRef = useRef(false);
+
+  useEffect(() => {
+    mountedRef.current = true;
+  }, []);
 
   const mergedRef = useCallback(
     (node: HTMLDivElement) => {
@@ -102,21 +116,19 @@ export const TabsList = forwardRef<
     const list = listRef.current;
     if (!list) return;
 
-    let timeoutId: NodeJS.Timeout;
     const updateIndicator = () => {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => {
-        const activeTab = list.querySelector(
-          `[data-state="active"]`
-        ) as HTMLElement;
-        if (activeTab) {
-          setIndicatorStyle({
-            left: activeTab.offsetLeft,
-            width: activeTab.offsetWidth,
-            opacity: 1,
-          });
-        }
-      }, 10);
+      const activeTab = list.querySelector(
+        `[data-state="active"]`
+      ) as HTMLElement;
+      if (activeTab) {
+        setIndicatorStyle({
+          left: activeTab.offsetLeft,
+          width: activeTab.offsetWidth,
+          opacity: 1,
+        });
+      } else {
+        setIndicatorStyle((prev) => ({ ...prev, opacity: 0 }));
+      }
     };
 
     updateIndicator();
@@ -124,15 +136,12 @@ export const TabsList = forwardRef<
     const observer = new ResizeObserver(updateIndicator);
     observer.observe(list);
 
-    // Also observe the active tab specifically if it's there
-    const activeTab = list.querySelector(
-      `[data-state="active"]`
-    ) as HTMLElement;
-    if (activeTab) observer.observe(activeTab);
+    // Also observe all tabs in the list to handle label/content width shifts
+    const tabs = list.querySelectorAll(`[role="tab"]`);
+    tabs.forEach((tab) => observer.observe(tab));
 
     return () => {
       observer.disconnect();
-      clearTimeout(timeoutId);
     };
   }, [activeValue]);
 
@@ -140,27 +149,30 @@ export const TabsList = forwardRef<
     <Box
       ref={mergedRef}
       role="tablist"
-      className={cn("rnx-tabs-list", className)}
+      className={cn(
+        "rnx-tabs-list",
+        variant && variant !== "default" && `rnx-tabs-list--variant-${variant}`,
+        className
+      )}
       {...props}
     >
       <Box
         className={cn(
           "rnx-tabs-indicator",
-          variant === "underline"
-            ? "rnx-tabs-indicator--underline"
-            : "rnx-tabs-indicator--default"
+          `rnx-tabs-indicator--${variant || "default"}`
         )}
         style={{
-          left: indicatorStyle.left,
           width: indicatorStyle.width,
+          transform: `translateX(${indicatorStyle.left}px)`,
           opacity: indicatorStyle.opacity,
+          ...(mountedRef.current ? {} : { transition: "none" }),
         }}
       />
       {children}
     </Box>
   );
 });
-TabsList.displayName = "TabsList";
+TabsList.displayName = "Tabs.List";
 
 export interface TabsTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   value: string;
@@ -222,16 +234,17 @@ export const TabsTrigger = forwardRef<HTMLButtonElement, TabsTriggerProps>(
           `rnx-tabs-trigger--${size}`,
           className
         )}
+        {...rnx({ component: "TabTrigger", state: isActive ? "active" : "inactive" })}
         {...props}
       >
-        <Box as="span" style={{ position: "relative", zIndex: 20 }}>
+        <Box as="span" className="relative z-20">
           {children}
         </Box>
       </Box>
     );
   }
 );
-TabsTrigger.displayName = "TabsTrigger";
+TabsTrigger.displayName = "Tabs.Trigger";
 
 export interface TabsContentProps extends React.HTMLAttributes<HTMLDivElement> {
   value: string;
@@ -259,4 +272,10 @@ export const TabsContent = forwardRef<HTMLDivElement, TabsContentProps>(
     );
   }
 );
-TabsContent.displayName = "TabsContent";
+TabsContent.displayName = "Tabs.Content";
+
+export const Tabs = Object.assign(TabsRoot, {
+  List: TabsList,
+  Trigger: TabsTrigger,
+  Content: TabsContent,
+});

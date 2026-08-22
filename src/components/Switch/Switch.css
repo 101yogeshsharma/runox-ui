@@ -1,0 +1,137 @@
+@layer components {
+  .rnx-switch-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: calc(0.5rem * var(--rnx-space-scale, 1));
+  }
+  .rnx-switch-container {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 150ms ease, box-shadow 150ms ease;
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-color: var(--input);
+  }
+  .rnx-switch-input {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: inherit;
+    margin: 0;
+    z-index: 10;
+  }
+  .rnx-switch-thumb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: var(--background);
+    color: var(--foreground);
+    transition: transform 150ms ease;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .rnx-switch-container--sm {
+    width: calc(1.75rem * var(--rnx-space-scale, 1));
+    height: calc(1rem * var(--rnx-space-scale, 1));
+  }
+  .rnx-switch-thumb--sm {
+    width: calc(0.75rem * var(--rnx-space-scale, 1));
+    height: calc(0.75rem * var(--rnx-space-scale, 1));
+    transform: translateX(0);
+  }
+  .rnx-switch-input:checked + .rnx-switch-thumb--sm {
+    transform: translateX(calc(0.75rem * var(--rnx-space-scale, 1)));
+  }
+
+  .rnx-switch-container--md {
+    width: calc(2.25rem * var(--rnx-space-scale, 1));
+    height: calc(1.25rem * var(--rnx-space-scale, 1));
+  }
+  .rnx-switch-thumb--md {
+    width: calc(1rem * var(--rnx-space-scale, 1));
+    height: calc(1rem * var(--rnx-space-scale, 1));
+    transform: translateX(0);
+  }
+  .rnx-switch-input:checked + .rnx-switch-thumb--md {
+    transform: translateX(calc(1rem * var(--rnx-space-scale, 1)));
+  }
+
+  .rnx-switch-container--lg {
+    width: calc(2.75rem * var(--rnx-space-scale, 1));
+    height: calc(1.5rem * var(--rnx-space-scale, 1));
+  }
+  .rnx-switch-thumb--lg {
+    width: calc(1.25rem * var(--rnx-space-scale, 1));
+    height: calc(1.25rem * var(--rnx-space-scale, 1));
+    transform: translateX(0);
+  }
+  .rnx-switch-input:checked + .rnx-switch-thumb--lg {
+    transform: translateX(calc(1.25rem * var(--rnx-space-scale, 1)));
+  }
+
+  /* Colors */
+  .rnx-switch-container {
+    --rnx-switch-active-color: var(--primary);
+  }
+  .rnx-switch-container:has(.rnx-switch-input:checked) {
+    background-color: var(--rnx-switch-active-color);
+  }
+  .rnx-switch-container--color-primary {
+    --rnx-switch-active-color: var(--primary);
+  }
+  .rnx-switch-container--color-secondary {
+    --rnx-switch-active-color: var(--secondary);
+  }
+  .rnx-switch-container--color-success {
+    --rnx-switch-active-color: var(--success);
+  }
+  .rnx-switch-container--color-warning {
+    --rnx-switch-active-color: var(--warning);
+  }
+  .rnx-switch-container--color-danger,
+  .rnx-switch-container--color-destructive {
+    --rnx-switch-active-color: var(--destructive);
+  }
+  .rnx-switch-container--color-info {
+    --rnx-switch-active-color: var(--info);
+  }
+
+  /* Variants */
+  .rnx-switch-container--variant-glow:has(.rnx-switch-input:checked) {
+    box-shadow: 0 0 12px color-mix(in srgb, var(--rnx-switch-active-color) 60%, transparent);
+  }
+  .rnx-switch-container--variant-glass {
+    background-color: color-mix(in srgb, var(--background) 50%, transparent);
+    backdrop-filter: blur(8px);
+    border-color: color-mix(in srgb, var(--border) 40%, transparent);
+  }
+
+  .rnx-switch-input:focus-visible + .rnx-switch-thumb {
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px var(--ring);
+  }
+  .rnx-switch-container:has(.rnx-switch-input:disabled) {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  .rnx-switch-container:has(.rnx-switch-input:disabled:not(:checked)) {
+    background-color: var(--muted-foreground);
+  }
+  .rnx-switch-label {
+    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--foreground);
+  }
+  .rnx-switch-container:has(.rnx-switch-input:disabled) ~ .rnx-switch-label {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+}
+

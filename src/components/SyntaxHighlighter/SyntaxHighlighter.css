@@ -1,5 +1,83 @@
-@layer components {
+﻿@layer components {
+  .rnx-syntax-highlighter {
+    width: 100%;
+    overflow: hidden;
+    border-radius: var(--radius);
+    border: 1px solid color-mix(in srgb, var(--border) 20%, transparent);
+    background-color: var(--code-block-bg, var(--card));
+    color: var(--foreground);
+  }
+
+  .rnx-syntax-highlighter-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: color-mix(in srgb, var(--card) 40%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--border) 20%, transparent);
+    padding: calc(0.5rem * var(--rnx-space-scale, 1)) calc(1rem * var(--rnx-space-scale, 1));
+  }
+
+  .rnx-syntax-highlighter-controls {
+    display: flex;
+    width: 33.333%;
+    align-items: center;
+    gap: calc(0.5rem * var(--rnx-space-scale, 1));
+  }
+
+  .rnx-syntax-highlighter-dot {
+    height: 0.75rem;
+    width: 0.75rem;
+    border-radius: 9999px;
+  }
+  .rnx-syntax-highlighter-dot--destructive {
+    background-color: var(--destructive);
+  }
+  .rnx-syntax-highlighter-dot--warning {
+    background-color: var(--warning);
+  }
+  .rnx-syntax-highlighter-dot--success {
+    background-color: var(--success);
+  }
+
+  .rnx-syntax-highlighter-lang-wrapper {
+    display: flex;
+    width: 33.333%;
+    justify-content: center;
+  }
+
+  .rnx-syntax-highlighter-lang {
+    font-family: monospace;
+    font-size: calc(0.75rem * var(--rnx-text-scale, 1));
+    color: var(--muted-foreground);
+  }
+
+  .rnx-syntax-highlighter-btn-wrapper {
+    display: flex;
+    width: 33.333%;
+    justify-content: flex-end;
+  }
+
+  .rnx-syntax-highlighter-copy-btn {
+    position: absolute;
+    top: calc(0.5rem * var(--rnx-space-scale, 1));
+    right: calc(0.5rem * var(--rnx-space-scale, 1));
+  }
+
+  .rnx-syntax-highlighter-pre {
+    margin: 0;
+    overflow-x: auto;
+    background-color: transparent !important;
+    padding: calc(1rem * var(--rnx-space-scale, 1));
+    font-family: monospace;
+    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+    line-height: 1.625;
+  }
+
   .rnx-syntax-highlighter__line-number {
     width: 1%;
+    padding-right: calc(1rem * var(--rnx-space-scale, 1));
+    text-align: right;
+    opacity: 0.5;
+    user-select: none;
   }
 }

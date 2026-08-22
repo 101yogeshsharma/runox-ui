@@ -4,16 +4,27 @@ import React, { forwardRef, useId } from "react";
 import { cn } from "../../utils/cn";
 import { mergeProps } from "../../utils/mergeProps";
 import { Label } from "../Label/Label";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
+import { rnx } from "../../utils/rnx";
+import { warnInvalidProps } from "../../utils/warn";
 import "./Input.css";
 
+import { X } from "lucide-react";
+
+/**
+ * A basic text input field. Use in forms for short textual data.
+ */
 export interface InputProps extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
-  "size"
+  "size" | "prefix"
 > {
+  variant?: "outline" | "filled" | "glass" | "flushed";
   size?: "sm" | "md" | "lg";
   label?: string;
   error?: string;
+  clearable?: boolean;
+  onClear?: () => void;
+  prefix?: React.ReactNode;
+  suffix?: React.ReactNode;
 }
 
 const InputComponent = forwardRef<HTMLInputElement, InputProps>(
@@ -21,42 +32,96 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>(
     {
       label,
       error,
+      variant = "outline",
       size = "md",
+      clearable = false,
+      onClear,
+      prefix,
+      suffix,
       className = "",
       disabled,
       id: customId,
+      value,
+      onChange,
       ...props
     },
     ref
   ) => {
-    const { config } = useTheme();
     const generatedId = useId();
     const id = customId || generatedId;
+
+    if (process.env.NODE_ENV !== "production") {
+      if (!label && !props["aria-label"] && !props["aria-labelledby"]) {
+        warnInvalidProps(
+          "Input",
+          "An Input component was rendered without a `label`, `aria-label`, or `aria-labelledby` prop. This severely impacts accessibility."
+        );
+      }
+    }
+
+    const showClear = clearable && !disabled && value !== undefined && String(value).length > 0;
 
     const inputNode = (
       <input
         ref={ref}
+        value={value}
+        onChange={onChange}
+        {...rnx({
+          component: "Input",
+          state: error ? "error" : disabled ? "disabled" : undefined,
+        })}
         {...mergeProps(
           {
             id,
             disabled,
             className: cn(
               "rnx-input",
+              `rnx-input--variant-${variant}`,
               `rnx-input--size-${size}`,
-              `rounded-${config.radius}`,
-              error && "rnx-input--error",
+              error ? "rnx-input--error" : undefined,
+              prefix ? "ps-9" : undefined,
+              suffix || showClear ? "pe-9" : undefined,
               className
             ),
             "aria-invalid": !!error,
             "aria-describedby": error ? `${id}-error` : undefined,
+            "aria-label": !label && !props["aria-label"] && !props["aria-labelledby"] ? "Input field" : props["aria-label"],
           },
           props
         )}
       />
     );
 
+    const wrappedInput = (prefix || suffix || showClear) ? (
+      <Box className="rnx-input-wrapper">
+        {prefix && (
+          <Box className="rnx-input-prefix">
+            {prefix}
+          </Box>
+        )}
+        {inputNode}
+        {showClear ? (
+          <button
+            type="button"
+            aria-label="Clear input"
+            onClick={(e) => {
+              e.preventDefault();
+              onClear?.();
+            }}
+            className="rnx-input-clear-btn"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        ) : suffix ? (
+          <Box className="rnx-input-suffix">
+            {suffix}
+          </Box>
+        ) : null}
+      </Box>
+    ) : inputNode;
+
     if (!label && !error) {
-      return inputNode;
+      return wrappedInput;
     }
 
     return (
@@ -66,7 +131,7 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>(
             {label}
           </Label>
         )}
-        {inputNode}
+        {wrappedInput}
         {error && (
           <Box as="span" id={`${id}-error`} className={"rnx-input-error-msg"}>
             {error}

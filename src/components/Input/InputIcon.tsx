@@ -3,13 +3,18 @@ import { Box } from "../../atoms/Box";
 import { cn } from "../../utils/cn";
 import { mergeProps } from "../../utils/mergeProps";
 import "./Input.css";
+import { withLoading } from "../../utils/withLoading";
 
+
+/**
+ * Props for the InputIcon component.
+ */
 export interface InputIconProps extends React.HTMLAttributes<HTMLDivElement> {
   position: "left" | "right";
   children?: React.ReactNode;
 }
 
-export const InputIcon = forwardRef<HTMLDivElement, InputIconProps>(
+const InputIconBase = forwardRef<HTMLDivElement, InputIconProps>(
   ({ position, className, children, ...props }, ref) => {
     return (
       <Box
@@ -27,4 +32,5 @@ export const InputIcon = forwardRef<HTMLDivElement, InputIconProps>(
   }
 );
 
-InputIcon.displayName = "InputIcon";
+InputIconBase.displayName = "InputIcon";
+export const InputIcon = withLoading(InputIconBase);

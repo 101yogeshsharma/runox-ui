@@ -7,7 +7,6 @@ import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { cn } from "../../utils/cn";
 import { Input, InputGroup, InputIcon } from "../Input";
 import "./Calendar.css";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
 
 export type CalendarProps = Omit<
   React.HTMLAttributes<HTMLDivElement>,
@@ -86,7 +85,6 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
     },
     ref
   ) => {
-    const { config } = useTheme();
     const [value, setValue] = useControllableState<
       Date | Date[] | { from?: Date; to?: Date } | undefined
     >({
@@ -266,8 +264,8 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
       <Box
         ref={ref}
         className={cn(
+          "rnx-calendar",
           mode !== "time" && "w-fit p-3",
-          `rounded-${config.radius}`,
           className
         )}
         {...props}

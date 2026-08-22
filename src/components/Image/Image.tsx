@@ -4,9 +4,16 @@ import React, { useState } from "react";
 import { Box } from "../../atoms/Box";
 import { cn } from "../../utils/cn";
 
+import "./Image.css";
+
+/**
+ * Props for the Image component.
+ */
 export interface ImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   fallbackSrc?: string;
   blurDataURL?: string; // For blur-up effect
+  zoom?: boolean;
+  decorative?: boolean;
   children?: React.ReactNode;
 }
 
@@ -18,6 +25,8 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
       fallbackSrc,
       alt = "",
       blurDataURL,
+      zoom = false,
+      decorative = false,
       children,
       onLoad,
       onError,
@@ -58,13 +67,19 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
     };
 
     return (
-      <Box className={cn("relative overflow-hidden", className)}>
+      <Box
+        className={cn(
+          "rnx-image-container",
+          zoom && "rnx-image-container--zoom",
+          className
+        )}
+      >
         {/* Blur placeholder */}
         {blurDataURL && status === "loading" && (
           <img
             src={blurDataURL}
             alt="placeholder"
-            className="absolute inset-0 h-full w-full object-cover blur-md filter"
+            className="rnx-image-placeholder"
             aria-hidden="true"
           />
         )}
@@ -72,7 +87,7 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
         {/* Skeleton fallback if no blurDataURL */}
         {!blurDataURL && status === "loading" && (
           <Box
-            className="bg-muted absolute inset-0 h-full w-full animate-pulse"
+            className="rnx-image-fallback animate-pulse"
             aria-hidden="true"
           />
         )}
@@ -80,7 +95,7 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
         {/* Main image */}
         {status === "error" ? (
           children || (
-            <Box className="bg-muted text-muted-foreground flex h-full w-full items-center justify-center text-center text-sm">
+            <Box className="rnx-image-error" role="alert">
               Failed to load
             </Box>
           )
@@ -88,11 +103,12 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
           <img
             ref={ref}
             src={currentSrc}
-            alt={alt}
+            alt={decorative ? "" : alt}
+            role={decorative ? "presentation" : props.role}
             onLoad={handleLoad}
             onError={handleError}
             className={cn(
-              "h-full w-full object-cover transition-opacity duration-300",
+              "rnx-image",
               status === "loaded" ? "opacity-100" : "opacity-0"
             )}
             {...props}

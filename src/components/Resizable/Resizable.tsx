@@ -240,29 +240,67 @@ const ResizableHandle = React.forwardRef<
     };
   }, [direction]);
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    const handle = handleRef.current;
+    if (!handle) return;
+    const prevPanel = handle.previousElementSibling as HTMLElement;
+    const nextPanel = handle.nextElementSibling as HTMLElement;
+    if (!prevPanel || !nextPanel) return;
+
+    let delta = 0;
+    if (direction === "horizontal") {
+      if (e.key === "ArrowLeft") delta = -5;
+      else if (e.key === "ArrowRight") delta = 5;
+    } else {
+      if (e.key === "ArrowUp") delta = -5;
+      else if (e.key === "ArrowDown") delta = 5;
+    }
+
+    if (delta !== 0) {
+      e.preventDefault();
+      const prevFlex = parseFloat(getComputedStyle(prevPanel).flexGrow) || 50;
+      const nextFlex = parseFloat(getComputedStyle(nextPanel).flexGrow) || 50;
+      const totalSize = prevFlex + nextFlex;
+      const newPrev = Math.max(0, Math.min(totalSize, prevFlex + delta));
+      const newNext = totalSize - newPrev;
+      prevPanel.style.setProperty("--panel-flex-grow", newPrev.toString());
+      nextPanel.style.setProperty("--panel-flex-grow", newNext.toString());
+    }
+  };
+
   return (
     <Box
       ref={setRefs}
+      role="separator"
+      tabIndex={0}
+      aria-orientation={direction}
+      aria-valuenow={50}
+      aria-valuemin={0}
+      aria-valuemax={100}
+      onKeyDown={handleKeyDown}
       className={cn(
-        "bg-border focus-visible:ring-ring relative flex w-px cursor-col-resize touch-none items-center justify-center after:absolute after:inset-y-0 after:start-1/2 after:w-1 after:-translate-x-1/2 focus-visible:ring-1 focus-visible:ring-offset-1 focus-visible:outline-none data-[panel-group-direction=vertical]:h-px data-[panel-group-direction=vertical]:w-full data-[panel-group-direction=vertical]:cursor-row-resize data-[panel-group-direction=vertical]:after:start-0 data-[panel-group-direction=vertical]:after:h-1 data-[panel-group-direction=vertical]:after:w-full data-[panel-group-direction=vertical]:after:translate-x-0 data-[panel-group-direction=vertical]:after:-translate-y-1/2",
+        "rnx-resizable-handle",
         className
       )}
       data-panel-group-direction={direction}
       {...props}
     >
       {withHandle && (
-        <Box
-          className={cn(
-            "bg-border z-10 flex h-4 w-3 items-center justify-center rounded-sm border",
-            direction === "vertical" && "rotate-90"
-          )}
-        >
+        <Box className="rnx-resizable-handle__grip">
           <GripVertical className="h-2.5 w-2.5" />
         </Box>
       )}
     </Box>
   );
 });
-ResizableHandle.displayName = "ResizableHandle";
+ResizableHandle.displayName = "Resizable.Handle";
+ResizablePanel.displayName = "Resizable.Panel";
+ResizablePanelGroup.displayName = "Resizable.PanelGroup";
+
+export const Resizable = Object.assign(ResizablePanelGroup, {
+  PanelGroup: ResizablePanelGroup,
+  Panel: ResizablePanel,
+  Handle: ResizableHandle,
+});
 
 export { ResizablePanelGroup, ResizablePanel, ResizableHandle };

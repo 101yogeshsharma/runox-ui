@@ -3,7 +3,7 @@
     display: flex;
     width: 100%;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: calc(0.5rem * var(--rnx-space-scale, 1));
   }
 
   .rnx-slider-header {
@@ -13,14 +13,14 @@
   }
 
   .rnx-slider-label {
-    font-size: 0.875rem;
+    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
     font-weight: 500;
     line-height: 1;
     color: var(--foreground);
   }
 
   .rnx-slider-value {
-    font-size: 0.75rem;
+    font-size: calc(0.75rem * var(--rnx-text-scale, 1));
     color: var(--muted-foreground);
     font-family: monospace;
   }
@@ -93,7 +93,7 @@
   /* Focus Styles */
   .rnx-slider-input:focus-visible ~ .rnx-slider-track {
     outline: 2px solid var(--ring);
-    outline-offset: 2px;
+    outline-offset: calc(2px * var(--rnx-space-scale, 1));
   }
 
   /* Hover & Active Styles */
@@ -122,38 +122,61 @@
   }
 
   .rnx-slider-error-text {
-    font-size: 0.75rem;
+    font-size: calc(0.75rem * var(--rnx-text-scale, 1));
     font-weight: 500;
     color: var(--destructive);
   }
 
   /* Sizes */
   .rnx-slider--sm {
-    height: 1.25rem;
-    --thumb-size: 1.25rem;
+    height: calc(1.25rem * var(--rnx-space-scale, 1));
+    --thumb-size: calc(1.25rem * var(--rnx-space-scale, 1));
   }
 
   .rnx-slider--md {
-    height: 1.5rem;
-    --thumb-size: 1.5rem;
+    height: calc(1.5rem * var(--rnx-space-scale, 1));
+    --thumb-size: calc(1.5rem * var(--rnx-space-scale, 1));
   }
 
   .rnx-slider--lg {
-    height: 2rem;
-    --thumb-size: 2rem;
+    height: calc(2rem * var(--rnx-space-scale, 1));
+    --thumb-size: calc(2rem * var(--rnx-space-scale, 1));
   }
 
   /* Colors */
-  .rnx-slider--primary {
+  .rnx-slider--primary,
+  .rnx-slider--color-primary {
     --rnx-slider-color: var(--primary);
   }
-  .rnx-slider--success {
+  .rnx-slider--secondary,
+  .rnx-slider--color-secondary {
+    --rnx-slider-color: var(--secondary);
+  }
+  .rnx-slider--success,
+  .rnx-slider--color-success {
     --rnx-slider-color: var(--success);
   }
-  .rnx-slider--warning {
+  .rnx-slider--warning,
+  .rnx-slider--color-warning {
     --rnx-slider-color: var(--warning);
   }
-  .rnx-slider--danger {
+  .rnx-slider--danger,
+  .rnx-slider--destructive,
+  .rnx-slider--color-danger,
+  .rnx-slider--color-destructive {
     --rnx-slider-color: var(--destructive);
   }
+  .rnx-slider--info,
+  .rnx-slider--color-info {
+    --rnx-slider-color: var(--info);
+  }
+
+  /* Variants */
+  .rnx-slider--variant-glass .rnx-slider-track {
+    background: color-mix(in srgb, var(--background) 40%, transparent);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+  }
 }
+

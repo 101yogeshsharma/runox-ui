@@ -1,12 +1,16 @@
 "use client";
 import React from "react";
-import { m, HTMLMotionProps } from "framer-motion";
+import { cn } from "../../utils/cn";
 
-export interface SlideInProps extends HTMLMotionProps<"div"> {
+/**
+ * Props for the SlideIn component.
+ */
+export interface SlideInProps extends React.HTMLAttributes<HTMLDivElement> {
   direction?: "up" | "down" | "left" | "right";
   distance?: number;
   duration?: number;
   delay?: number;
+  as?: React.ElementType;
 }
 
 export const SlideIn: React.FC<SlideInProps> = ({
@@ -15,34 +19,32 @@ export const SlideIn: React.FC<SlideInProps> = ({
   distance = 20,
   duration = 0.4,
   delay = 0,
+  className,
+  as: Tag = "div",
+  style,
   ...props
 }) => {
-  const getInitialOffset = () => {
-    switch (direction) {
-      case "up":
-        return { y: distance, x: 0 };
-      case "down":
-        return { y: -distance, x: 0 };
-      case "left":
-        return { x: distance, y: 0 };
-      case "right":
-        return { x: -distance, y: 0 };
-      default:
-        return { y: distance, x: 0 };
-    }
-  };
-
-  const offset = getInitialOffset();
+  const directionClass = {
+    up: "rnx-motion-slide-up",
+    down: "rnx-motion-slide-down",
+    left: "rnx-motion-slide-left",
+    right: "rnx-motion-slide-right",
+  }[direction];
 
   return (
-    <m.div
-      initial={{ opacity: 0, x: offset.x, y: offset.y }}
-      animate={{ opacity: 1, x: 0, y: 0 }}
-      exit={{ opacity: 0, x: offset.x, y: offset.y }}
-      transition={{ duration, delay, ease: [0.16, 1, 0.3, 1] }}
+    <Tag
+      className={cn(directionClass, className)}
+      style={
+        {
+          animationDuration: `${duration}s`,
+          animationDelay: `${delay}s`,
+          "--rnx-slide-distance": `${distance}px`,
+          ...style,
+        } as React.CSSProperties
+      }
       {...props}
     >
       {children}
-    </m.div>
+    </Tag>
   );
 };

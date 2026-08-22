@@ -1,5 +1,6 @@
 import React from "react";
 import { cn } from "../../utils/cn";
+import { withLoading } from "../../utils/withLoading";
 import "./Text.css";
 
 export type TextVariant =
@@ -23,18 +24,36 @@ export type TextColor =
 export type TextWeight = "normal" | "medium" | "semibold" | "bold";
 export type TextAlign = "left" | "center" | "right";
 
+export type TextTracking =
+  | "tighter"
+  | "tight"
+  | "normal"
+  | "wide"
+  | "wider"
+  | "widest";
+
 import type {
   PolymorphicComponentPropsWithRef,
 } from "../../utils/types";
 
+/**
+ * Props for the Text component.
+ */
 export interface TextBaseProps {
   variant?: TextVariant;
   color?: TextColor;
   weight?: TextWeight;
   align?: TextAlign;
+  tracking?: TextTracking;
   truncate?: boolean;
   maxLines?: number;
   gradient?: "primary" | "info" | "success" | "warning" | "danger" | "ai";
+  muted?: boolean;
+  subtle?: boolean;
+  strong?: boolean;
+  italic?: boolean;
+  underline?: boolean;
+  strikethrough?: boolean;
 }
 
 export type TextProps<C extends React.ElementType> =
@@ -124,47 +143,53 @@ const defaultElement: Record<TextVariant, React.ElementType> = {
 };
 
 const colorMap: Record<TextColor, string> = {
-  primary: "var(--text-main)",
-  secondary: "var(--text-muted)",
-  brand: "var(--brand-alt)",
-  success: "var(--brand-success)",
-  danger: "var(--brand-danger)",
-  warning: "var(--brand-warning)",
+  primary: "var(--foreground)",
+  secondary: "var(--muted-foreground)",
+  brand: "var(--primary)",
+  success: "var(--success)",
+  danger: "var(--destructive)",
+  warning: "var(--warning)",
   inherit: "inherit",
 };
 
-const gradientClasses: Record<string, string> = {
-  primary:
-    "bg-clip-text text-transparent bg-gradient-to-br from-foreground to-foreground/50",
-  info: "bg-clip-text text-transparent bg-gradient-to-br from-info to-cyan-300",
-  success:
-    "bg-clip-text text-transparent bg-gradient-to-br from-success to-emerald-200",
-  warning:
-    "bg-clip-text text-transparent bg-gradient-to-br from-warning to-yellow-200",
-  danger:
-    "bg-clip-text text-transparent bg-gradient-to-br from-destructive to-rose-300",
-  ai: "bg-clip-text text-transparent bg-gradient-to-br from-ai via-purple-500 to-cyan-400",
-};
+function inferVariant(as?: React.ElementType): TextVariant {
+  if (!as) return "body";
+  if (as === "h1") return "h1";
+  if (as === "h2") return "h2";
+  if (as === "h3") return "h3";
+  if (as === "h4") return "h4";
+  if (as === "code") return "code";
+  return "body";
+}
 
-export const Text = React.forwardRef(
+const TextBase = React.forwardRef(
   (props: TextProps<React.ElementType>, ref: React.Ref<unknown>) => {
     const {
       children,
-      variant = "body",
+      variant: explicitVariant,
       color = "inherit",
       weight,
       align,
+      tracking,
       truncate = false,
       maxLines,
       gradient,
+      muted,
+      subtle,
+      strong,
+      italic,
+      underline,
+      strikethrough,
       as,
       style,
       className,
       ...rest
     } = props;
+
+    const variant = explicitVariant || inferVariant(as);
     const Component = as || defaultElement[variant];
 
-    const combinedStyles: React.CSSProperties = {
+    const combinedStyles = React.useMemo(() => ({
       "--rnx-text-fs": variantStyles[variant].fontSize,
       "--rnx-text-lh": variantStyles[variant].lineHeight,
       "--rnx-text-ff": variantStyles[variant].fontFamily,
@@ -173,7 +198,7 @@ export const Text = React.forwardRef(
         : variantStyles[variant].fontWeight,
       "--rnx-text-ls": variantStyles[variant].letterSpacing,
       "--rnx-text-tt": variantStyles[variant].textTransform,
-      "--rnx-text-color": gradient ? "transparent" : colorMap[color],
+      "--rnx-text-color": gradient ? "transparent" : muted ? "var(--muted-foreground)" : colorMap[color],
       "--rnx-text-align": align || "inherit",
       ...(truncate
         ? {
@@ -191,14 +216,21 @@ export const Text = React.forwardRef(
           }
         : {}),
       ...style,
-    } as React.CSSProperties;
+    } as React.CSSProperties), [variant, weight, gradient, muted, color, align, truncate, maxLines, style]);
 
     return (
       <Component
         ref={ref}
         className={cn(
           "rnx-text",
-          gradient && gradientClasses[gradient],
+          gradient && `rnx-text--gradient-${gradient}`,
+          tracking && `rnx-text--tracking-${tracking}`,
+          muted && "rnx-text--muted",
+          subtle && "rnx-text--subtle",
+          strong && "rnx-text--strong",
+          italic && "rnx-text--italic",
+          underline && "rnx-text--underline",
+          strikethrough && "rnx-text--strikethrough",
           className
         )}
         style={combinedStyles}
@@ -208,6 +240,7 @@ export const Text = React.forwardRef(
       </Component>
     );
   }
-) as unknown as TextComponent;
+);
 
-Object.assign(Text, { displayName: "Text" });
+TextBase.displayName = "Text";
+export const Text = withLoading(TextBase) as unknown as TextComponent;

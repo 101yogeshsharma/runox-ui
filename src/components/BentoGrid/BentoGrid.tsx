@@ -3,19 +3,30 @@ import { Box } from "../../atoms/Box";
 
 import React from "react";
 import { cn } from "../../utils/cn";
+import { rnx } from "../../utils/rnx";
 
-export const BentoGrid = React.forwardRef<
+import { RnxColor } from "../../types";
+import "./BentoGrid.css";
+
+export interface BentoGridProps extends React.ComponentPropsWithoutRef<"div"> {
+  className?: string;
+  variant?: "default" | "bordered" | "glass" | "subtle";
+  color?: RnxColor;
+  children?: React.ReactNode;
+}
+
+const BentoGridRoot = React.forwardRef<
   HTMLDivElement,
-  {
-    className?: string;
-    children?: React.ReactNode;
-  } & React.ComponentPropsWithoutRef<"div">
->(({ className, children, ...props }, ref) => {
+  BentoGridProps
+>(({ className, variant = "default", color, children, ...props }, ref) => {
   return (
     <Box
+      {...rnx({ component: 'BentoGrid', variant: variant !== "default" ? variant : undefined })}
       ref={ref}
       className={cn(
-        "mx-auto grid max-w-7xl grid-cols-1 gap-4 md:auto-rows-[18rem] md:grid-cols-3",
+        "rnx-bento-grid",
+        variant && variant !== "default" && `rnx-bento-grid--variant-${variant}`,
+        color && `rnx-bento-grid--color-${color}`,
         className
       )}
       {...props}
@@ -24,39 +35,48 @@ export const BentoGrid = React.forwardRef<
     </Box>
   );
 });
-BentoGrid.displayName = "BentoGrid";
+BentoGridRoot.displayName = "BentoGrid";
+
+export interface BentoGridItemProps extends Omit<React.ComponentPropsWithoutRef<"div">, "title"> {
+  className?: string;
+  variant?: "default" | "bordered" | "glass" | "subtle";
+  color?: RnxColor;
+  title?: string | React.ReactNode;
+  description?: string | React.ReactNode;
+  header?: React.ReactNode;
+  icon?: React.ReactNode;
+}
 
 export const BentoGridItem = React.forwardRef<
   HTMLDivElement,
-  {
-    className?: string;
-    title?: string | React.ReactNode;
-    description?: string | React.ReactNode;
-    header?: React.ReactNode;
-    icon?: React.ReactNode;
-  } & React.ComponentPropsWithoutRef<"div">
->(({ className, title, description, header, icon, ...props }, ref) => {
+  BentoGridItemProps
+>(({ className, variant = "default", color, title, description, header, icon, ...props }, ref) => {
   return (
     <Box
       ref={ref}
       className={cn(
-        "group/bento bg-card text-card-foreground border-border hover:bg-accent/30 row-span-1 flex flex-col justify-between space-y-4 rounded-xl border p-4 transition duration-200",
-        "dark:hover:border-border/80 shadow-sm hover:shadow-md dark:shadow-none dark:hover:shadow-none",
+        "rnx-bento-item",
+        variant && variant !== "default" && `rnx-bento-item--variant-${variant}`,
+        color && `rnx-bento-item--color-${color}`,
         className
       )}
       {...props}
     >
       {header}
-      <Box className="transition duration-200">
+      <Box className="rnx-bento-item__content">
         {icon}
-        <Box className="text-foreground mt-2 mb-2 font-sans font-bold">
+        <Box className="rnx-bento-item__title">
           {title}
         </Box>
-        <Box className="text-muted-foreground font-sans text-xs font-normal">
+        <Box className="rnx-bento-item__description">
           {description}
         </Box>
       </Box>
     </Box>
   );
 });
-BentoGridItem.displayName = "BentoGridItem";
+BentoGridItem.displayName = "BentoGrid.Item";
+
+export const BentoGrid = Object.assign(BentoGridRoot, {
+  Item: BentoGridItem,
+});

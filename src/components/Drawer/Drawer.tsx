@@ -13,17 +13,21 @@ import { X } from "lucide-react";
 import { Button } from "../Button";
 import { Text } from "../../atoms/Text";
 import { Box } from "../../atoms/Box";
+import { rnx } from "../../utils/rnx";
 import { useFocusTrap } from "../../hooks/useFocusTrap";
 import { useScrollLock } from "../../hooks/useScrollLock";
 import { useMergeRefs } from "../../hooks/useMergeRefs";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
 import "./Drawer.css";
 
 const DrawerTitleContext = createContext<string | undefined>(undefined);
 
+/**
+ * A panel that slides in from the edge of the screen.
+ */
 export interface DrawerProps {
   isOpen: boolean;
   onClose: () => void;
+  variant?: "solid" | "glass" | "blur";
   position?: "left" | "right" | "top" | "bottom";
   size?: "sm" | "md" | "lg" | "full";
   children: React.ReactNode;
@@ -40,6 +44,7 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
     {
       isOpen,
       onClose,
+      variant = "glass",
       position = "right",
       size = "md",
       children,
@@ -52,7 +57,6 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
     },
     ref
   ) => {
-    const { config } = useTheme();
     const [mounted, setMounted] = useState(false);
     const [renderState, setRenderState] = useState<"closed" | "open">("closed");
     const [shouldRender, setShouldRender] = useState(false);
@@ -236,25 +240,26 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
             style={dynamicStyle}
             className={cn(
               "rnx-drawer-content",
+              `rnx-drawer-content--variant-${variant}`,
               `rnx-drawer--${position}`,
               `rnx-drawer--${position}-${size}`,
-              `rounded-${config.radius}`,
               internalExpanded
                 ? "!h-screen !w-screen !rounded-none border-none"
                 : "",
               className
             )}
+            {...rnx({ component: "Drawer", state: isOpen ? "open" : "closed" })}
           >
             {isDraggable &&
             isVertical &&
             snapPoints &&
             activeSnapPoint !== undefined &&
             setActiveSnapPoint ? (
-              <Box className={"mt-3 mb-1 flex justify-center"}>
+              <Box className="rnx-drawer-collapse-btn-wrapper">
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="bg-foreground/5 hover:bg-foreground/10 text-foreground h-6 rounded-full px-4 py-0 text-xs"
+                  className="rnx-drawer-collapse-btn"
                   onClick={() => {
                     const idx = snapPoints.indexOf(
                       activeSnapPoint as string | number
@@ -272,11 +277,11 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
                 </Button>
               </Box>
             ) : isDraggable && isVertical ? (
-              <Box className={"mt-3 mb-1 flex justify-center"}>
+              <Box className="rnx-drawer-collapse-btn-wrapper">
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="bg-foreground/5 hover:bg-foreground/10 text-foreground h-6 rounded-full px-4 py-0 text-xs"
+                  className="rnx-drawer-collapse-btn"
                   onClick={() => setInternalExpanded(!internalExpanded)}
                 >
                   {internalExpanded ? "Collapse" : "Expand"}
@@ -284,21 +289,20 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
               </Box>
             ) : null}
             {!hideCloseButton && (
-              <Box className={"rnx-drawer-close-btn"}>
+              <Box className="rnx-drawer-close-btn">
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={onClose}
-                  className="bg-foreground/[0.04] hover:bg-foreground/10 text-foreground h-8 w-8 rounded-full p-0"
+                  className="rnx-drawer-close-icon-btn"
                 >
                   <X size={16} />
                 </Button>
               </Box>
             )}
             <Box
-              className={"rnx-drawer-scroll-area"}
+              className={"rnx-drawer-scroll-area touch-auto"}
               onPointerDown={(e) => e.stopPropagation()}
-              style={{ touchAction: "auto" }}
             >
               {children}
             </Box>

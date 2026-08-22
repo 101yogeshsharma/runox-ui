@@ -9,19 +9,23 @@ import { Label } from "../Label/Label";
 import { Button } from "../Button/Button";
 import { Input } from "../Input/Input";
 import { Tooltip } from "../Tooltip";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
 // Uses: Button, Input, Tooltip
+import { rnx } from "../../utils/rnx";
 
 import { cva, type VariantProps } from "class-variance-authority";
+import { withLoading } from "../../utils/withLoading";
+
+
+import "./PasswordInput.css";
 
 export const passwordInputVariants = cva(
-  "flex w-full rounded-md border border-input bg-transparent ring-offset-background file:border-0 file:bg-transparent file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 transition-colors",
+  "rnx-password-input",
   {
     variants: {
       size: {
-        sm: "h-8 px-3 py-1 text-xs pe-16 file:text-xs",
-        md: "h-10 px-3 py-2 text-sm pe-20 file:text-sm",
-        lg: "h-12 px-4 py-3 text-base pe-24 file:text-base",
+        sm: "rnx-password-input--sm",
+        md: "rnx-password-input--md",
+        lg: "rnx-password-input--lg",
       },
     },
     defaultVariants: {
@@ -30,10 +34,14 @@ export const passwordInputVariants = cva(
   }
 );
 
+/**
+ * Props for the PasswordInput component.
+ */
 export interface PasswordInputProps
   extends
     Omit<React.InputHTMLAttributes<HTMLInputElement>, "size">,
     VariantProps<typeof passwordInputVariants> {
+  variant?: "outline" | "filled" | "glass" | "flushed";
   label?: string;
   error?: string;
   patternMessage?: string;
@@ -42,13 +50,14 @@ export interface PasswordInputProps
   requiredMessage?: string;
 }
 
-export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
+const PasswordInputBase = forwardRef<HTMLInputElement, PasswordInputProps>(
   (
     {
       className,
       label,
       error,
-      size,
+      variant = "outline",
+      size = "md",
       disabled,
       patternMessage,
       minLengthMessage,
@@ -60,7 +69,6 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
     },
     ref
   ) => {
-    const { config } = useTheme();
     const [showPassword, setShowPassword] = useState(false);
     const [capsLockActive, setCapsLockActive] = useState(false);
     const [internalError, setInternalError] = useState("");
@@ -110,34 +118,24 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
       onChange?.(e);
     };
 
-    const buttonSizeClasses = {
-      sm: "h-6 w-6",
-      md: "h-8 w-8",
-      lg: "h-10 w-10",
-    };
-
-    const iconSizeClasses = {
-      sm: "h-3 w-3",
-      md: "h-4 w-4",
-      lg: "h-5 w-5",
-    };
-
-    const currentButtonSize = buttonSizeClasses[size || "md"];
-    const currentIconSize = iconSizeClasses[size || "md"];
     const displayError = error || internalError;
 
     return (
       <Box
         className={cn(
-          "grid w-full gap-1.5",
-          `rounded-${config.radius}`,
+          "rnx-password-input-container",
           className
         )}
+        {...rnx({
+          component: "PasswordInput",
+          state: disabled ? "disabled" : "active",
+        })}
       >
         {label && <Label>{label}</Label>}
-        <Box className="relative flex items-center">
+        <Box className="rnx-password-input-wrapper">
           <Input
             ref={ref}
+            variant={variant}
             {...mergeProps(
               {
                 type: showPassword ? "text" : "password",
@@ -151,23 +149,22 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
                 size: size ?? "md",
                 className: cn(
                   passwordInputVariants({ size }),
-                  displayError &&
-                    "border-destructive focus-visible:ring-destructive"
+                  displayError && "rnx-password-input--error"
                 ),
               },
               props
             )}
           />
-          <Box className="absolute inset-y-1 end-1 flex items-center gap-1">
+          <Box className="rnx-password-input-actions">
             {capsLockActive && (
               <Tooltip content="Caps Lock is ON">
                 <Box
                   className={cn(
-                    "text-warning flex items-center justify-center",
-                    currentButtonSize
+                    "rnx-password-capslock-indicator",
+                    `rnx-password-capslock-indicator--${size || "md"}`
                   )}
                 >
-                  <Keyboard className={currentIconSize} />
+                  <Keyboard className={`rnx-password-input-icon--${size || "md"}`} />
                 </Box>
               </Tooltip>
             )}
@@ -175,23 +172,24 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
               type="button"
               variant="ghost"
               size="icon"
+              aria-label={showPassword ? "Hide password" : "Show password"}
               className={cn(
-                "text-muted-foreground hover:text-foreground",
-                currentButtonSize
+                "rnx-password-input-btn",
+                `rnx-password-input-btn--${size || "md"}`
               )}
               disabled={disabled}
               onClick={togglePassword}
             >
               {showPassword ? (
-                <EyeOff className={currentIconSize} />
+                <EyeOff className={`rnx-password-input-icon--${size || "md"}`} />
               ) : (
-                <Eye className={currentIconSize} />
+                <Eye className={`rnx-password-input-icon--${size || "md"}`} />
               )}
             </Button>
           </Box>
         </Box>
         {displayError && (
-          <Box as="span" className="text-destructive text-xs font-medium">
+          <Box as="span" className="rnx-password-input-error-msg">
             {displayError}
           </Box>
         )}
@@ -199,4 +197,5 @@ export const PasswordInput = forwardRef<HTMLInputElement, PasswordInputProps>(
     );
   }
 );
-PasswordInput.displayName = "PasswordInput";
+PasswordInputBase.displayName = "PasswordInput";
+export const PasswordInput = withLoading(PasswordInputBase);
