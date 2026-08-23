@@ -63,12 +63,12 @@ export function generateCSSVariables(
   if (theme.glassBlurIntensity) {
     const blurMap: Record<string, string> = {
       none: "0px",
-      sm: "4px",
-      md: "12px",
-      lg: "24px",
+      sm: "6px",
+      md: "16px",
+      lg: "36px",
     };
     vars.push(
-      `  --glass-blur: ${blurMap[theme.glassBlurIntensity] ?? "12px"};`,
+      `  --glass-blur: ${blurMap[theme.glassBlurIntensity] ?? "16px"};`,
     );
   }
 
