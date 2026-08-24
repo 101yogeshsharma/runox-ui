@@ -193,6 +193,13 @@ const TextBase = React.forwardRef(
     const variant = explicitVariant || inferVariant(as);
     const Component = as || defaultElement[variant];
 
+    let textColor = colorMap[color];
+    if (gradient) {
+      textColor = "transparent";
+    } else if (muted) {
+      textColor = "var(--muted-foreground)";
+    }
+
     const combinedStyles = React.useMemo(
       () =>
         ({
@@ -204,11 +211,7 @@ const TextBase = React.forwardRef(
             : variantStyles[variant].fontWeight,
           "--rnx-text-ls": variantStyles[variant].letterSpacing,
           "--rnx-text-tt": variantStyles[variant].textTransform,
-          "--rnx-text-color": gradient
-            ? "transparent"
-            : muted
-              ? "var(--muted-foreground)"
-              : colorMap[color],
+          "--rnx-text-color": textColor,
           "--rnx-text-align": align || "inherit",
           ...(truncate
             ? {

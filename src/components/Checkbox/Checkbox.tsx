@@ -8,7 +8,6 @@ import { rnx } from "../../utils/rnx";
 import { withLoading } from "../../utils/withLoading";
 import "./Checkbox.css";
 
-
 import { useMergeRefs } from "../../hooks/useMergeRefs";
 
 import { RnxColor } from "../../types";
@@ -31,6 +30,29 @@ export interface CheckboxProps extends Omit<
   onValueChange?: (checked: boolean) => void;
 }
 
+function getCheckboxState(
+  disabled?: boolean,
+  error?: boolean,
+  indeterminate?: boolean,
+  checked?: boolean,
+): string {
+  if (disabled) return "disabled";
+  if (error) return "error";
+  if (indeterminate) return "indeterminate";
+  if (checked) return "checked";
+  return "default";
+}
+
+function getAriaDescribedBy(
+  id: string,
+  error?: boolean,
+  description?: React.ReactNode,
+): string | undefined {
+  if (error) return `${id}-error`;
+  if (description) return `${id}-desc`;
+  return undefined;
+}
+
 const CheckboxBase = forwardRef<HTMLInputElement, CheckboxProps>(
   (
     {
@@ -49,7 +71,7 @@ const CheckboxBase = forwardRef<HTMLInputElement, CheckboxProps>(
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     const generatedId = useId();
     const id = customId || generatedId;
@@ -62,6 +84,14 @@ const CheckboxBase = forwardRef<HTMLInputElement, CheckboxProps>(
       }
     }, [indeterminate]);
 
+    const state = getCheckboxState(
+      props.disabled,
+      !!error,
+      indeterminate,
+      props.checked,
+    );
+    const ariaDescribedBy = getAriaDescribedBy(id, !!error, description);
+
     return (
       <Box
         className={cn(
@@ -69,11 +99,11 @@ const CheckboxBase = forwardRef<HTMLInputElement, CheckboxProps>(
           `rnx-checkbox-wrapper--variant-${variant}`,
           color && `rnx-checkbox-wrapper--color-${color}`,
           labelPosition === "left" && "rnx-checkbox-wrapper--label-left",
-          className
+          className,
         )}
         {...rnx({
           component: "Checkbox",
-          state: props.disabled ? "disabled" : error ? "error" : indeterminate ? "indeterminate" : props.checked ? "checked" : "default",
+          state,
         })}
       >
         <Box className="rnx-checkbox-container">
@@ -85,20 +115,20 @@ const CheckboxBase = forwardRef<HTMLInputElement, CheckboxProps>(
                 id,
                 className: "rnx-checkbox-input",
                 "aria-invalid": !!error,
-                "aria-describedby": error ? `${id}-error` : description ? `${id}-desc` : undefined,
+                "aria-describedby": ariaDescribedBy,
                 onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
                   onChange?.(e);
                   onValueChange?.(e.target.checked);
                 },
               },
-              props
+              props,
             )}
           />
           <Box
             className={cn(
               "rnx-checkbox-box",
               `rnx-checkbox-box--${size}`,
-              error && "rnx-checkbox-box--error"
+              error && "rnx-checkbox-box--error",
             )}
           >
             {indeterminate ? (
@@ -136,7 +166,11 @@ const CheckboxBase = forwardRef<HTMLInputElement, CheckboxProps>(
               </Label>
             )}
             {description && (
-              <Box as="span" id={`${id}-desc`} className="rnx-checkbox-description">
+              <Box
+                as="span"
+                id={`${id}-desc`}
+                className="rnx-checkbox-description"
+              >
                 {description}
               </Box>
             )}
@@ -153,7 +187,7 @@ const CheckboxBase = forwardRef<HTMLInputElement, CheckboxProps>(
         )}
       </Box>
     );
-  }
+  },
 );
 
 CheckboxBase.displayName = "Checkbox";

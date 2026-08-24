@@ -157,6 +157,22 @@ const RadioBase = forwardRef<HTMLInputElement, RadioProps>(
       }
     };
 
+    let radioState = "default";
+    if (props.disabled) {
+      radioState = "disabled";
+    } else if (error) {
+      radioState = "error";
+    } else if (isChecked) {
+      radioState = "checked";
+    }
+
+    let ariaDescribedBy: string | undefined;
+    if (error) {
+      ariaDescribedBy = `${id}-error`;
+    } else if (description) {
+      ariaDescribedBy = `${id}-desc`;
+    }
+
     return (
       <Box
         className={cn(
@@ -166,13 +182,7 @@ const RadioBase = forwardRef<HTMLInputElement, RadioProps>(
         )}
         {...rnx({
           component: "Radio",
-          state: props.disabled
-            ? "disabled"
-            : error
-              ? "error"
-              : isChecked
-                ? "checked"
-                : "default",
+          state: radioState,
         })}
       >
         <Box className="rnx-radio-container">
@@ -188,11 +198,7 @@ const RadioBase = forwardRef<HTMLInputElement, RadioProps>(
                 onChange: handleChange,
                 className: "rnx-radio-input",
                 "aria-invalid": !!error,
-                "aria-describedby": error
-                  ? `${id}-error`
-                  : description
-                    ? `${id}-desc`
-                    : undefined,
+                "aria-describedby": ariaDescribedBy,
               },
               props,
             )}

@@ -141,11 +141,13 @@ function getRadianAngle(degreeValue: number) {
   return (degreeValue * Math.PI) / 180;
 }
 
+const DEFAULT_FLIP = { horizontal: false, vertical: false };
+
 export async function getCroppedImg(
   imageSrc: string,
   pixelCrop: Area,
   rotation = 0,
-  flip = { horizontal: false, vertical: false },
+  flip = DEFAULT_FLIP,
 ): Promise<string> {
   const image = await createImage(imageSrc);
   const canvas = document.createElement("canvas");

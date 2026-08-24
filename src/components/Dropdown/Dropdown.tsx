@@ -77,7 +77,7 @@ const DropdownRoot = React.forwardRef<HTMLDivElement, DropdownProps>(
     const [searchQuery, setSearchQuery] = useState("");
     const triggerRef = useRef<HTMLButtonElement>(null);
     const rawId = React.useId();
-    const contentId = `rnx-dropdown-content-${rawId.replace(/:/g, "")}`;
+    const contentId = `rnx-dropdown-content-${rawId.replaceAll(":", "")}`;
 
     const [value, setValue] = useControllableState<string | string[]>({
       prop: controlledValue,
@@ -85,17 +85,30 @@ const DropdownRoot = React.forwardRef<HTMLDivElement, DropdownProps>(
       onChange: onValueChange,
     });
 
-    const contextValue: DropdownContextValue = {
-      value,
-      onValueChange: setValue,
-      multiple,
-      isOpen,
-      setIsOpen,
-      searchQuery,
-      setSearchQuery,
-      triggerRef,
-      contentId,
-    };
+    const contextValue: DropdownContextValue = React.useMemo(
+      () => ({
+        value,
+        onValueChange: setValue,
+        multiple,
+        isOpen,
+        setIsOpen,
+        searchQuery,
+        setSearchQuery,
+        triggerRef,
+        contentId,
+      }),
+      [
+        value,
+        setValue,
+        multiple,
+        isOpen,
+        setIsOpen,
+        searchQuery,
+        setSearchQuery,
+        triggerRef,
+        contentId,
+      ],
+    );
 
     return (
       <DropdownContext.Provider value={contextValue}>

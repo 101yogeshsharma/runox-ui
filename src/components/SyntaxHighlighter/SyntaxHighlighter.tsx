@@ -68,9 +68,9 @@ export const SyntaxHighlighter = React.forwardRef<
       const checkTheme = () => {
         const root = document.documentElement;
         const hasDarkClass = root.classList.contains("dark");
-        const hasDarkTheme = root.getAttribute("data-theme") === "dark";
+        const hasDarkTheme = root.dataset.theme === "dark";
         const hasLightClass = root.classList.contains("light");
-        const hasLightTheme = root.getAttribute("data-theme") === "light";
+        const hasLightTheme = root.dataset.theme === "light";
         if (hasDarkClass || hasDarkTheme) {
           setIsDark(true);
         } else if (hasLightClass || hasLightTheme) {

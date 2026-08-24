@@ -71,7 +71,7 @@ function sanitizeStoredConfig(value: unknown): Partial<ThemeConfig> {
 
 function applyPrimaryColor(root: HTMLElement, color: string) {
   if (color.startsWith("#")) {
-    root.removeAttribute("data-color");
+    delete root.dataset.color;
     root.style.setProperty("--primary", color);
     root.style.setProperty(
       "--primary-foreground",
@@ -80,7 +80,7 @@ function applyPrimaryColor(root: HTMLElement, color: string) {
   } else {
     root.style.removeProperty("--primary");
     root.style.removeProperty("--primary-foreground");
-    root.setAttribute("data-color", color);
+    root.dataset.color = color;
   }
 }
 

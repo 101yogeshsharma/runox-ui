@@ -78,7 +78,11 @@ const TreeRoot = React.forwardRef<HTMLDivElement, TreeProps>(
 
       // JSON.stringify gives a stable dep when the array contents haven't changed
       // eslint-disable-next-line react-hooks/exhaustive-deps -- content-hash dep is intentional; the raw array identity changes every render
-      [expandedIds ? JSON.stringify([...expandedIds].sort()) : null],
+      [
+        expandedIds
+          ? JSON.stringify([...expandedIds].sort((a, b) => a.localeCompare(b)))
+          : null,
+      ],
     );
     const currentExpandedIds = controlledExpandedSet ?? internalExpandedIds;
 

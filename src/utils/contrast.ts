@@ -21,9 +21,9 @@ export function foregroundForBackground(hex: string): string {
       .join("");
   }
 
-  const r = parseInt(value.substring(0, 2), 16);
-  const g = parseInt(value.substring(2, 4), 16);
-  const b = parseInt(value.substring(4, 6), 16);
+  const r = Number.parseInt(value.substring(0, 2), 16);
+  const g = Number.parseInt(value.substring(2, 4), 16);
+  const b = Number.parseInt(value.substring(4, 6), 16);
   const yiq = (r * 299 + g * 587 + b * 114) / 1000;
 
   return yiq >= 128 ? FOREGROUND_ON_LIGHT : FOREGROUND_ON_DARK;

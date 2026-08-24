@@ -14,18 +14,16 @@ export function generateCSSVariables(
 
   // Density handling
   if (config.density === "compact") {
-    vars.push("  --rnx-space-scale: 0.75;");
-    vars.push("  --rnx-text-scale: 0.95;");
+    vars.push("  --rnx-space-scale: 0.75;", "  --rnx-text-scale: 0.95;");
   } else if (config.density === "spacious") {
-    vars.push("  --rnx-space-scale: 1.25;");
-    vars.push("  --rnx-text-scale: 1.05;");
+    vars.push("  --rnx-space-scale: 1.25;", "  --rnx-text-scale: 1.05;");
   }
 
   // Tokens handling
   if (theme.primaryColor) {
     if (theme.primaryColor.startsWith("#")) {
-      vars.push(`  --primary: ${theme.primaryColor};`);
       vars.push(
+        `  --primary: ${theme.primaryColor};`,
         `  --primary-foreground: ${foregroundForBackground(theme.primaryColor)};`,
       );
     } else {

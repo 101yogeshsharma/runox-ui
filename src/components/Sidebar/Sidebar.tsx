@@ -5,34 +5,29 @@ import { Box } from "../../atoms/Box";
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "../../utils/cn";
-import type {
-  PolymorphicComponentPropsWithRef,
-} from "../../utils/types";
+import type { PolymorphicComponentPropsWithRef } from "../../utils/types";
 import { createPortal } from "react-dom";
 import { Menu } from "lucide-react";
 import { Button } from "../Button";
 import { rnx } from "../../utils/rnx";
 
-const sidebarVariants = cva(
-  "rnx-sidebar",
-  {
-    variants: {
-      variant: {
-        solid: "",
-        glass: "rnx-sidebar--variant-glass",
-        floating: "rnx-sidebar--variant-floating",
-      },
-      collapsed: {
-        true: "rnx-sidebar--collapsed",
-        false: "rnx-sidebar--expanded",
-      },
+const sidebarVariants = cva("rnx-sidebar", {
+  variants: {
+    variant: {
+      solid: "",
+      glass: "rnx-sidebar--variant-glass",
+      floating: "rnx-sidebar--variant-floating",
     },
-    defaultVariants: {
-      variant: "solid",
-      collapsed: false,
+    collapsed: {
+      true: "rnx-sidebar--collapsed",
+      false: "rnx-sidebar--expanded",
     },
-  }
-);
+  },
+  defaultVariants: {
+    variant: "solid",
+    collapsed: false,
+  },
+});
 
 /**
  * Props for the Sidebar component.
@@ -46,16 +41,29 @@ export interface SidebarProps
 }
 
 const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
-  ({ className, variant = "solid", collapsed, mobileOpen, onMobileClose, ...props }, ref) => {
+  (
+    {
+      className,
+      variant = "solid",
+      collapsed,
+      mobileOpen,
+      onMobileClose,
+      ...props
+    },
+    ref,
+  ) => {
     const sidebar = (
       <aside
-        {...rnx({ component: 'Sidebar', state: collapsed ? 'inactive' : 'active' })}
+        {...rnx({
+          component: "Sidebar",
+          state: collapsed ? "inactive" : "active",
+        })}
         ref={ref}
         data-collapsed={collapsed}
         className={cn(
           sidebarVariants({ variant, collapsed }),
           mobileOpen && "rnx-sidebar--mobile-open",
-          className
+          className,
         )}
         {...props}
       />
@@ -66,19 +74,29 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
         {mobileOpen && typeof document !== "undefined"
           ? createPortal(
               <div
-                role="dialog"
-                aria-modal="true"
-                aria-label="Sidebar overlay"
+                role="button"
+                tabIndex={0}
+                aria-label="Close sidebar"
                 className="rnx-sidebar-backdrop"
                 onClick={onMobileClose}
+                onKeyDown={(e) => {
+                  if (
+                    e.key === "Enter" ||
+                    e.key === " " ||
+                    e.key === "Escape"
+                  ) {
+                    e.preventDefault();
+                    onMobileClose?.();
+                  }
+                }}
               />,
-              document.body
+              document.body,
             )
           : null}
         {sidebar}
       </>
     );
-  }
+  },
 );
 Sidebar.displayName = "Sidebar";
 
@@ -86,11 +104,7 @@ const SidebarHeader = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <Box
-    ref={ref}
-    className={cn("rnx-sidebar-header", className)}
-    {...props}
-  />
+  <Box ref={ref} className={cn("rnx-sidebar-header", className)} {...props} />
 ));
 SidebarHeader.displayName = "Sidebar.Header";
 
@@ -98,11 +112,7 @@ const SidebarContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <Box
-    ref={ref}
-    className={cn("rnx-sidebar-content", className)}
-    {...props}
-  />
+  <Box ref={ref} className={cn("rnx-sidebar-content", className)} {...props} />
 ));
 SidebarContent.displayName = "Sidebar.Content";
 
@@ -110,28 +120,21 @@ const SidebarFooter = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
-  <Box
-    ref={ref}
-    className={cn("rnx-sidebar-footer", className)}
-    {...props}
-  />
+  <Box ref={ref} className={cn("rnx-sidebar-footer", className)} {...props} />
 ));
 SidebarFooter.displayName = "Sidebar.Footer";
 
-const sidebarItemVariants = cva(
-  "rnx-sidebar-item",
-  {
-    variants: {
-      active: {
-        true: "rnx-sidebar-item--active",
-        false: "",
-      },
+const sidebarItemVariants = cva("rnx-sidebar-item", {
+  variants: {
+    active: {
+      true: "rnx-sidebar-item--active",
+      false: "",
     },
-    defaultVariants: {
-      active: false,
-    },
-  }
-);
+  },
+  defaultVariants: {
+    active: false,
+  },
+});
 
 export interface SidebarItemBaseProps extends VariantProps<
   typeof sidebarItemVariants
@@ -143,7 +146,7 @@ export type SidebarItemProps<C extends React.ElementType> =
   PolymorphicComponentPropsWithRef<C, SidebarItemBaseProps>;
 
 type SidebarItemComponent = <C extends React.ElementType = "a">(
-  props: SidebarItemProps<C>
+  props: SidebarItemProps<C>,
 ) => React.ReactElement | null;
 
 const SidebarItem: SidebarItemComponent = React.forwardRef(
@@ -157,7 +160,7 @@ const SidebarItem: SidebarItemComponent = React.forwardRef(
       ...props
     }: React.ComponentPropsWithoutRef<"a"> &
       SidebarItemBaseProps & { as?: React.ElementType },
-    ref: React.Ref<HTMLElement>
+    ref: React.Ref<HTMLElement>,
   ) => {
     const Component = as || "a";
     return (
@@ -167,10 +170,7 @@ const SidebarItem: SidebarItemComponent = React.forwardRef(
         {...props}
       >
         {icon && (
-          <Box
-            as="span"
-            className="rnx-sidebar-item-icon"
-          >
+          <Box as="span" className="rnx-sidebar-item-icon">
             {icon}
           </Box>
         )}
@@ -179,7 +179,7 @@ const SidebarItem: SidebarItemComponent = React.forwardRef(
         </Box>
       </Component>
     );
-  }
+  },
 ) as SidebarItemComponent;
 
 (SidebarItem as React.FC).displayName = "Sidebar.Item";
@@ -188,7 +188,13 @@ const SidebarMobileToggle = React.forwardRef<
   HTMLButtonElement,
   Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "color">
 >((props, ref) => (
-  <Button ref={ref} variant="ghost" size="icon" aria-label={props["aria-label"] || "Open sidebar"} {...props}>
+  <Button
+    ref={ref}
+    variant="ghost"
+    size="icon"
+    aria-label={props["aria-label"] || "Open sidebar"}
+    {...props}
+  >
     <Menu className="h-5 w-5" />
   </Button>
 ));
