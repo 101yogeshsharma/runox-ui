@@ -12,8 +12,8 @@
 
   /* WebKit (Chrome, Edge, Safari) */
   .rnx-scroll-area::-webkit-scrollbar {
-    width: 12px;
-    height: 12px;
+    width: var(--scrollbar-min-length);
+    height: var(--scrollbar-min-length);
   }
 
   .rnx-scroll-area::-webkit-scrollbar-track {
@@ -22,7 +22,7 @@
 
   .rnx-scroll-area::-webkit-scrollbar-thumb {
     background-color: color-mix(in srgb, var(--foreground) 20%, transparent);
-    border-radius: 9999px; /* full rounded */
+    border-radius: var(--radius-full); /* full rounded */
     border: 3px solid transparent;
     background-clip: padding-box;
     transition: background-color 0.2s ease-in-out;
@@ -36,8 +36,34 @@
   .rnx-scroll-area::-webkit-scrollbar-corner {
     background: transparent;
   }
-}
 
-.rnx-scroll-area--inherit-radius {
-  border-radius: inherit;
+  .rnx-scroll-area-container {
+    background-color: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+  }
+
+  .rnx-scroll-area--inherit-radius {
+    border-radius: inherit;
+  }
+
+  /*
+    Legacy aliases: `rnx-scrollbar*` classes predate the single-block convention
+    (the ScrollBar subcomponent's canonical block is `rnx-scroll-area`).
+    They are deprecated; removal targeted for the next major version.
+  */
+  .rnx-scrollbar {
+    position: absolute;
+    user-select: none;
+    z-index: var(--z-sticky);
+  }
+
+  .rnx-scrollbar-thumb {
+    background-color: color-mix(in srgb, var(--foreground) 20%, transparent);
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  .rnx-scrollbar-thumb:hover {
+    background-color: color-mix(in srgb, var(--foreground) 40%, transparent);
+  }
 }

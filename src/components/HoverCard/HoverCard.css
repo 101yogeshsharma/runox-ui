@@ -1,0 +1,59 @@
+@layer components {
+  .rnx-hover-card-content {
+    z-index: var(--z-dropdown, 50);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    color: var(--popover-foreground);
+    box-shadow: var(--shadow-md);
+    transition:
+      opacity 150ms ease,
+      transform 150ms ease;
+    outline: none;
+  }
+
+  /* Sizes */
+  .rnx-hover-card-content--sm {
+    min-width: var(--overlay-width-sm, 14rem);
+    padding: var(--space-3);
+    font-size: var(--text-xs);
+  }
+  .rnx-hover-card-content--md {
+    min-width: var(--overlay-width-md, 18rem);
+    padding: var(--space-4);
+    font-size: var(--text-sm);
+  }
+  .rnx-hover-card-content--lg {
+    min-width: var(--overlay-width-lg, 22rem);
+    padding: var(--space-5);
+    font-size: var(--text-base);
+  }
+
+  /* Variants */
+  .rnx-hover-card-content--variant-solid {
+    background-color: var(--popover);
+  }
+  .rnx-hover-card-content--variant-glass {
+    background-color: var(--glass-bg-overlay);
+    backdrop-filter: blur(var(--glass-blur, 16px));
+  }
+
+  /* Arrow */
+  .rnx-hover-card-arrow {
+    position: absolute;
+    width: var(--arrow-md);
+    height: var(--arrow-md);
+    background-color: inherit;
+    border: inherit;
+    transform: rotate(45deg);
+  }
+
+  .rnx-hover-card-content[data-state="open"] {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .rnx-hover-card-content[data-state="closed"] {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+}

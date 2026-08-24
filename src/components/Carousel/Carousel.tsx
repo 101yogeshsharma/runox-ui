@@ -7,6 +7,7 @@ import { cn } from "../../utils/cn";
 import { Box } from "../../atoms/Box";
 import { Button } from "../Button/Button";
 import { useThrottledEvent } from "../../hooks/use-throttled-event";
+import { rnx } from "../../utils/rnx";
 
 import "./Carousel.css";
 
@@ -59,7 +60,7 @@ function useCarousel() {
   return context;
 }
 
-const Carousel = React.forwardRef<
+const CarouselRoot = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & CarouselProps
 >(
@@ -74,7 +75,7 @@ const Carousel = React.forwardRef<
       effect = "slide",
       ...props
     },
-    ref
+    ref,
   ) => {
     const carouselRef = React.useRef<HTMLDivElement>(null);
     const [canScrollPrev, setCanScrollPrev] = React.useState(false);
@@ -97,7 +98,7 @@ const Carousel = React.forwardRef<
       // Only apply scrollSnapAlign to actual slides (role="group"), not the
       // padding spacer boxes at the start/end of CarouselContent.
       const items = Array.from(
-        container.querySelectorAll<HTMLElement>('[role="group"]')
+        container.querySelectorAll<HTMLElement>('[role="group"]'),
       );
       items.forEach((child) => {
         child.style.scrollSnapAlign = snapAlign;
@@ -107,7 +108,7 @@ const Carousel = React.forwardRef<
         // Use requestAnimationFrame to ensure layout is calculated
         requestAnimationFrame(() => {
           const items = Array.from(
-            container.querySelectorAll('[role="group"]')
+            container.querySelectorAll('[role="group"]'),
           ) as HTMLElement[];
           if (!items.length) return;
           const firstChild = items[0];
@@ -139,10 +140,8 @@ const Carousel = React.forwardRef<
     const api = React.useMemo<CarouselApi>(() => {
       const listeners: Record<string, ((api: CarouselApi) => void)[]> = {};
 
-       
       const _listeners: Record<string, ((api: CarouselApi) => void)[]> = {};
 
-       
       const _checkPhysicalScrollPrev = () => {
         if (!carouselRef.current) return false;
         const container = carouselRef.current;
@@ -151,7 +150,6 @@ const Carousel = React.forwardRef<
           : container.scrollTop > 0;
       };
 
-       
       const _checkPhysicalScrollNext = () => {
         if (!carouselRef.current) return false;
         const container = carouselRef.current;
@@ -201,7 +199,7 @@ const Carousel = React.forwardRef<
 
           const flexWrapper = container.firstElementChild as HTMLElement;
           const firstItem = flexWrapper?.querySelector(
-            '[role="group"]'
+            '[role="group"]',
           ) as HTMLElement;
           const scrollAmount = firstItem
             ? isHorizontal
@@ -226,7 +224,7 @@ const Carousel = React.forwardRef<
 
           const flexWrapper = container.firstElementChild as HTMLElement;
           const firstItem = flexWrapper?.querySelector(
-            '[role="group"]'
+            '[role="group"]',
           ) as HTMLElement;
           const scrollAmount = firstItem
             ? isHorizontal
@@ -262,7 +260,7 @@ const Carousel = React.forwardRef<
 
         const flexWrapper = container.firstElementChild as HTMLElement;
         const items = flexWrapper?.querySelectorAll(
-          '[role="group"]'
+          '[role="group"]',
         ) as NodeListOf<HTMLElement>;
         if (!items || items.length === 0) return 0;
 
@@ -288,7 +286,7 @@ const Carousel = React.forwardRef<
 
         const flexWrapper = container.firstElementChild as HTMLElement;
         const items = flexWrapper?.querySelectorAll(
-          '[role="group"]'
+          '[role="group"]',
         ) as NodeListOf<HTMLElement>;
         if (!items || items.length === 0) return;
 
@@ -341,7 +339,7 @@ const Carousel = React.forwardRef<
         _trigger: trigger,
       };
       return apiObj;
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- embla setter fns are stable; re-creating on them would loop
     }, [orientation, opts?.loop]);
 
     const onSelect = React.useCallback((api: CarouselApi) => {
@@ -364,7 +362,7 @@ const Carousel = React.forwardRef<
       (index: number) => {
         api?.scrollTo(index);
       },
-      [api]
+      [api],
     );
 
     const handleKeyDown = React.useCallback(
@@ -377,7 +375,7 @@ const Carousel = React.forwardRef<
           scrollNext();
         }
       },
-      [scrollPrev, scrollNext]
+      [scrollPrev, scrollNext],
     );
 
     React.useEffect(() => {
@@ -458,7 +456,7 @@ const Carousel = React.forwardRef<
         }
       },
       carouselRef,
-      100
+      100,
     );
 
     React.useEffect(() => {
@@ -505,29 +503,50 @@ const Carousel = React.forwardRef<
         return () => {
           resizeObserver.disconnect();
           mutationObserver.disconnect();
+          if (scrollTimeoutRef.current) {
+            clearTimeout(scrollTimeoutRef.current);
+            scrollTimeoutRef.current = null;
+          }
         };
       }
     }, [api, opts?.loop, orientation]);
 
+    const contextValue = React.useMemo(
+      () => ({
+        carouselRef,
+        api: api,
+        opts,
+        orientation:
+          orientation || (opts?.axis === "y" ? "vertical" : "horizontal"),
+        scrollPrev,
+        scrollNext,
+        scrollTo,
+        canScrollPrev,
+        canScrollNext,
+        selectedIndex,
+        slideCount,
+        effect,
+      }),
+      [
+        carouselRef,
+        api,
+        opts,
+        orientation,
+        scrollPrev,
+        scrollNext,
+        scrollTo,
+        canScrollPrev,
+        canScrollNext,
+        selectedIndex,
+        slideCount,
+        effect,
+      ],
+    );
+
     return (
-      <CarouselContext.Provider
-        value={{
-          carouselRef,
-          api: api,
-          opts,
-          orientation:
-            orientation || (opts?.axis === "y" ? "vertical" : "horizontal"),
-          scrollPrev,
-          scrollNext,
-          scrollTo,
-          canScrollPrev,
-          canScrollNext,
-          selectedIndex,
-          slideCount,
-          effect,
-        }}
-      >
+      <CarouselContext.Provider value={contextValue}>
         <Box
+          {...rnx({ component: "Carousel" })}
           ref={ref}
           onKeyDownCapture={handleKeyDown}
           className={cn("relative", className)}
@@ -539,9 +558,9 @@ const Carousel = React.forwardRef<
         </Box>
       </CarouselContext.Provider>
     );
-  }
+  },
 );
-Carousel.displayName = "Carousel";
+CarouselRoot.displayName = "Carousel";
 
 const CarouselContent = React.forwardRef<
   HTMLDivElement,
@@ -561,7 +580,7 @@ const CarouselContent = React.forwardRef<
     const applyEffect = () => {
       // Refresh items in case they change
       items = Array.from(
-        container.querySelectorAll('[role="group"]')
+        container.querySelectorAll('[role="group"]'),
       ) as HTMLElement[];
       if (!items.length) return;
 
@@ -634,7 +653,7 @@ const CarouselContent = React.forwardRef<
     };
   }, [carouselRef, orientation, effect]);
 
-  const renderChildren = () => {
+  const memoizedChildren = React.useMemo(() => {
     if (!opts?.loop) return children;
     const childArray = React.Children.toArray(children);
     return (
@@ -644,32 +663,34 @@ const CarouselContent = React.forwardRef<
             ? React.cloneElement(child as React.ReactElement, {
                 key: "clone-pre-" + i,
               })
-            : child
+            : child,
         )}
         {childArray.map((child, i) =>
           React.isValidElement(child)
             ? React.cloneElement(child as React.ReactElement, {
                 key: "real-" + i,
               })
-            : child
+            : child,
         )}
         {childArray.map((child, i) =>
           React.isValidElement(child)
             ? React.cloneElement(child as React.ReactElement, {
                 key: "clone-post-" + i,
               })
-            : child
+            : child,
         )}
       </>
     );
-  };
+  }, [children, opts?.loop]);
 
   return (
     <Box
       ref={carouselRef}
       className={cn(
         "scrollbar-hide h-full overflow-auto scroll-smooth",
-        orientation === "horizontal" ? "overflow-y-hidden" : "overflow-x-hidden"
+        orientation === "horizontal"
+          ? "overflow-y-hidden"
+          : "overflow-x-hidden",
       )}
       style={{
         scrollSnapType:
@@ -685,7 +706,7 @@ const CarouselContent = React.forwardRef<
         className={cn(
           "flex h-full items-center",
           orientation === "horizontal" ? "-ms-4" : "-mt-4 flex-col",
-          className
+          className,
         )}
         {...props}
       >
@@ -696,7 +717,7 @@ const CarouselContent = React.forwardRef<
               `var(--pad-start, 0px)`,
           }}
         />
-        {renderChildren()}
+        {memoizedChildren}
         <Box
           className="shrink-0"
           style={{
@@ -708,7 +729,7 @@ const CarouselContent = React.forwardRef<
     </Box>
   );
 });
-CarouselContent.displayName = "CarouselContent";
+CarouselContent.displayName = "Carousel.Content";
 
 const CarouselItem = React.forwardRef<
   HTMLDivElement,
@@ -722,16 +743,15 @@ const CarouselItem = React.forwardRef<
       role="group"
       aria-roledescription="slide"
       className={cn(
-        "min-w-0 shrink-0 grow-0 basis-full",
+        "min-w-0 shrink-0 grow-0 basis-full snap-center",
         orientation === "horizontal" ? "ps-4" : "pt-4",
-        className
+        className,
       )}
-      style={{ scrollSnapAlign: "center" }}
       {...props}
     />
   );
 });
-CarouselItem.displayName = "CarouselItem";
+CarouselItem.displayName = "Carousel.Item";
 
 const CarouselPrevious = React.forwardRef<
   HTMLButtonElement,
@@ -745,12 +765,12 @@ const CarouselPrevious = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        "rx-carousel__button absolute z-10 h-8 w-8",
+        "rnx-carousel__button absolute z-10 h-8 w-8",
         orientation === "horizontal"
           ? "top-1/2 left-4 -translate-y-1/2"
           : "top-4 left-1/2 -translate-x-1/2 rotate-90",
         !canScrollPrev ? "hidden" : "",
-        className
+        className,
       )}
       disabled={!canScrollPrev}
       onClick={scrollPrev}
@@ -761,7 +781,7 @@ const CarouselPrevious = React.forwardRef<
     </Button>
   );
 });
-CarouselPrevious.displayName = "CarouselPrevious";
+CarouselPrevious.displayName = "Carousel.Previous";
 
 const CarouselNext = React.forwardRef<
   HTMLButtonElement,
@@ -775,12 +795,12 @@ const CarouselNext = React.forwardRef<
       variant={variant}
       size={size}
       className={cn(
-        "rx-carousel__button absolute z-10 h-8 w-8",
+        "rnx-carousel__button absolute z-10 h-8 w-8",
         orientation === "horizontal"
           ? "top-1/2 right-4 -translate-y-1/2"
           : "bottom-4 left-1/2 -translate-x-1/2 rotate-90",
         !canScrollNext ? "hidden" : "",
-        className
+        className,
       )}
       disabled={!canScrollNext}
       onClick={scrollNext}
@@ -791,7 +811,7 @@ const CarouselNext = React.forwardRef<
     </Button>
   );
 });
-CarouselNext.displayName = "CarouselNext";
+CarouselNext.displayName = "Carousel.Next";
 
 const CarouselCaption = React.forwardRef<
   HTMLDivElement,
@@ -803,19 +823,19 @@ const CarouselCaption = React.forwardRef<
     <Box
       ref={ref}
       className={cn(
-        "rx-carousel__caption absolute inset-0 z-20 flex flex-col items-center",
+        "rnx-carousel__caption absolute inset-0 z-20 flex flex-col items-center",
         position === "top"
           ? "justify-start"
           : position === "center"
             ? "justify-center"
             : "justify-end",
-        className
+        className,
       )}
       {...props}
     />
   );
 });
-CarouselCaption.displayName = "CarouselCaption";
+CarouselCaption.displayName = "Carousel.Caption";
 
 const CarouselDots = React.forwardRef<
   HTMLDivElement,
@@ -830,7 +850,7 @@ const CarouselDots = React.forwardRef<
       ref={ref}
       className={cn(
         "absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-2",
-        className
+        className,
       )}
       {...props}
     >
@@ -841,7 +861,7 @@ const CarouselDots = React.forwardRef<
             "h-2 w-2 rounded-full transition-all",
             selectedIndex === index
               ? "bg-primary w-4"
-              : "bg-primary/30 hover:bg-primary/50"
+              : "bg-primary/30 hover:bg-primary/50",
           )}
           aria-label={`Go to slide ${index + 1}`}
           aria-current={selectedIndex === index}
@@ -851,7 +871,16 @@ const CarouselDots = React.forwardRef<
     </Box>
   );
 });
-CarouselDots.displayName = "CarouselDots";
+CarouselDots.displayName = "Carousel.Dots";
+
+const Carousel = Object.assign(CarouselRoot, {
+  Content: CarouselContent,
+  Item: CarouselItem,
+  Previous: CarouselPrevious,
+  Next: CarouselNext,
+  Caption: CarouselCaption,
+  Dots: CarouselDots,
+});
 
 export {
   type CarouselApi,

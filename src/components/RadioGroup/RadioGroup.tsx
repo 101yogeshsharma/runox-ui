@@ -2,9 +2,11 @@
 import { Box } from "../../atoms/Box";
 import React, { forwardRef, createContext, useContext, useId } from "react";
 import { cn } from "../../utils/cn";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
 import { useControllableState } from "../../hooks";
 import { Label } from "../Label/Label";
+import { withLoading } from "../../utils/withLoading";
+import { rnx } from "../../utils/rnx";
+
 
 const RadioGroupContext = createContext<{
   name: string;
@@ -17,6 +19,9 @@ const RadioGroupContext = createContext<{
   onChange: () => {},
 });
 
+/**
+ * Props for the RadioGroup component.
+ */
 export interface RadioGroupProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
   "onChange"
@@ -30,7 +35,7 @@ export interface RadioGroupProps extends Omit<
   size?: "sm" | "md" | "lg";
 }
 
-export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
+const RadioGroupBase = forwardRef<HTMLDivElement, RadioGroupProps>(
   (
     {
       className,
@@ -45,7 +50,6 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
     },
     ref
   ) => {
-    const { config } = useTheme();
     const generatedName = useId();
     const groupName = name || generatedName;
 
@@ -66,11 +70,11 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
         }}
       >
         <Box
+          {...rnx({ component: 'RadioGroup' })}
           ref={ref}
           role="radiogroup"
           className={cn(
             "rnx-radio-group",
-            `rounded-${config.radius}`,
             orientation === "horizontal" && "rnx-radio-group--horizontal",
             className
           )}
@@ -80,7 +84,8 @@ export const RadioGroup = forwardRef<HTMLDivElement, RadioGroupProps>(
     );
   }
 );
-RadioGroup.displayName = "RadioGroup";
+RadioGroupBase.displayName = "RadioGroup";
+const RadioGroupWithLoading = withLoading(RadioGroupBase);
 
 export interface RadioGroupItemProps extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
@@ -121,7 +126,7 @@ export const RadioGroupItem = forwardRef<HTMLInputElement, RadioGroupItemProps>(
             className={cn("rnx-radio-box", `rnx-radio-box--${context.size}`)}
           >
             <Box
-              className={cn("rnx-radio-dot", `rnx-radio-dot--${context.size}`)}
+              className={cn("rnx-radio-indicator", `rnx-radio-indicator--${context.size}`)}
             />
           </Box>
         </Box>
@@ -136,4 +141,8 @@ export const RadioGroupItem = forwardRef<HTMLInputElement, RadioGroupItemProps>(
     );
   }
 );
-RadioGroupItem.displayName = "RadioGroupItem";
+RadioGroupItem.displayName = "RadioGroup.Item";
+
+export const RadioGroup = Object.assign(RadioGroupWithLoading, {
+  Item: RadioGroupItem,
+});

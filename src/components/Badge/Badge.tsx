@@ -3,13 +3,18 @@ import React, { forwardRef } from "react";
 import { Box } from "../../atoms/Box";
 import { cn } from "../../utils/cn";
 import "./Badge.css";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
 
+import { withLoading } from "../../utils/withLoading";
+import { rnx } from "../../utils/rnx";
+
+/**
+ * A small visual indicator for tags, statuses, count values, or categories.
+ */
 export interface BadgeProps extends Omit<
   React.HTMLAttributes<HTMLSpanElement>,
   "color"
 > {
-  variant?: "solid" | "subtle" | "outline";
+  variant?: "solid" | "subtle" | "outline" | "glass" | "gradient";
   color?:
     | "primary"
     | "ai"
@@ -22,10 +27,11 @@ export interface BadgeProps extends Omit<
     | "danger";
   size?: "sm" | "md" | "lg";
   shape?: "circle" | "square" | "rounded";
+  pulse?: boolean;
   icon?: React.ReactNode;
 }
 
-export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
+const BadgeBase = forwardRef<HTMLSpanElement, BadgeProps>(
   (
     {
       children,
@@ -33,24 +39,32 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
       variant = "subtle",
       size = "md",
       shape = "circle",
+      pulse = false,
       icon,
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
-    const { config } = useTheme();
+    let variantClass = `rnx-badge--${variant}-${color}`;
+    if (variant === "glass") {
+      variantClass = "rnx-badge--glass";
+    } else if (variant === "gradient") {
+      variantClass = "rnx-badge--gradient";
+    }
+
     return (
       <Box
+        {...rnx({ component: "Badge", variant: variant || "subtle" })}
         as="span"
         ref={ref}
         className={cn(
           "rnx-badge",
-          `rnx-badge--${variant}-${color}`,
+          variantClass,
           `rnx-badge--size-${size}`,
           `rnx-badge--shape-${shape}`,
-          `rounded-${config.radius}`,
-          className
+          pulse && "rnx-badge--pulse",
+          className,
         )}
         {...props}
       >
@@ -62,7 +76,8 @@ export const Badge = forwardRef<HTMLSpanElement, BadgeProps>(
         {children}
       </Box>
     );
-  }
+  },
 );
 
-Badge.displayName = "Badge";
+BadgeBase.displayName = "Badge";
+export const Badge = withLoading(BadgeBase);

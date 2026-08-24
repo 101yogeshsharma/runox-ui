@@ -1,0 +1,70 @@
+@layer components {
+  .rnx-tooltip-content {
+    position: absolute;
+    z-index: var(--z-modal);
+    border-radius: calc(var(--radius) - 4px);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-md);
+    outline: none;
+    overflow: hidden;
+    pointer-events: none;
+    transform-origin: top;
+    transition:
+      opacity 150ms ease,
+      transform 150ms ease;
+  }
+
+  /* Sizes */
+  .rnx-tooltip-content--sm {
+    padding: var(--space-1) var(--space-2);
+    font-size: var(--text-xs);
+  }
+  .rnx-tooltip-content--md {
+    padding: var(--space-1-5) var(--space-3);
+    font-size: var(--text-xs);
+  }
+  .rnx-tooltip-content--lg {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--text-sm);
+  }
+
+  /* Variants */
+  .rnx-tooltip-content--variant-solid {
+    background-color: var(--foreground);
+    color: var(--background);
+    border-color: transparent;
+  }
+  .rnx-tooltip-content--variant-glass {
+    background-color: var(--glass-bg-overlay);
+    color: var(--popover-foreground);
+    backdrop-filter: blur(var(--glass-blur, 16px));
+    border-color: color-mix(in srgb, var(--border) 50%, transparent);
+  }
+  .rnx-tooltip-content--variant-subtle {
+    background-color: var(--muted);
+    color: var(--muted-foreground);
+    border-color: var(--border);
+  }
+  .rnx-tooltip-content--variant-inverted {
+    background-color: var(--background);
+    color: var(--foreground);
+    border-color: var(--border);
+  }
+
+  /* Arrow */
+  .rnx-tooltip-arrow {
+    position: absolute;
+    width: var(--arrow-sm);
+    height: var(--arrow-sm);
+    background-color: inherit;
+    border: inherit;
+    transform: rotate(45deg);
+  }
+
+  .rnx-tooltip-content[data-state="open"] {
+    animation: rnx-dropdown-in 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+  .rnx-tooltip-content[data-state="closed"] {
+    animation: rnx-dropdown-out 150ms ease-in forwards;
+  }
+}

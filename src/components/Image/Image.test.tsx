@@ -22,7 +22,7 @@ describe("Image", () => {
     // One for the placeholder, one for the actual image
     const images = getAllByRole("img", { hidden: true });
     expect(images[0]).toHaveAttribute("src", "data:image/jpeg;base64,123");
-    expect(images[0]).toHaveClass("blur-md");
+    expect(images[0]).toHaveClass("rnx-image-placeholder");
   });
 
   it("updates to loaded state on image load", () => {

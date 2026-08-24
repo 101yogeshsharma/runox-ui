@@ -16,6 +16,5 @@ describe("InputGroup", () => {
     const el = screen.getByTestId("input-group");
     expect(el).toBeInTheDocument();
     expect(el).toHaveClass("rnx-input-group");
-    expect(el).toHaveClass("rounded-md"); // default radius
   });
 });

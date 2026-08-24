@@ -1,9 +1,22 @@
 import { useEffect } from "react";
 
+/**
+ * Registers a keyboard shortcut handler for the specified key combination.
+ *
+ * @param key - The keyboard shortcut combination (e.g., "cmd+k", "ctrl+shift+a").
+ * @param callback - The function to call when the keyboard shortcut is triggered.
+ * @param dependencies - Array of dependencies for the hook.
+ *
+ * @example
+ * useHotkeys("cmd+s", (e) => {
+ *   e.preventDefault();
+ *   saveDocument();
+ * });
+ */
 export function useHotkeys(
   key: string,
   callback: (e: KeyboardEvent) => void,
-  dependencies: any[] = []
+  dependencies: any[] = [],
 ) {
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -22,7 +35,7 @@ export function useHotkeys(
       const needsAlt = keys.includes("alt");
 
       const mainKey = keys.find(
-        (k) => !["cmd", "meta", "ctrl", "shift", "alt"].includes(k)
+        (k) => !["cmd", "meta", "ctrl", "shift", "alt"].includes(k),
       );
 
       // Some special key normalization
@@ -52,6 +65,6 @@ export function useHotkeys(
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- `dependencies` is a caller-provided escape hatch; key/callback are listed
   }, [key, callback, ...dependencies]);
 }

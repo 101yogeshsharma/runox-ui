@@ -3,33 +3,66 @@ import { Box } from "../../atoms/Box";
 import React, { forwardRef } from "react";
 import { ChevronRight } from "lucide-react";
 import { cn } from "../../utils/cn";
+import { rnx } from "../../utils/rnx";
+
+import "./Breadcrumb.css";
 
 export interface BreadcrumbProps extends React.ComponentPropsWithoutRef<"nav"> {
   separator?: React.ReactNode;
+  variant?: "default" | "pills" | "glass";
+  size?: "sm" | "md" | "lg";
 }
 
+const BreadcrumbContext = React.createContext<{
+  variant?: "default" | "pills" | "glass";
+  size?: "sm" | "md" | "lg";
+}>({});
+
 export const BreadcrumbRoot = forwardRef<HTMLElement, BreadcrumbProps>(
-  ({ ...props }, ref) => (
-    <Box as="nav" ref={ref} aria-label="breadcrumb" {...props} />
-  )
+  ({ variant = "default", size = "md", children, ...props }, ref) => {
+    const contextValue = React.useMemo(
+      () => ({ variant, size }),
+      [variant, size],
+    );
+    return (
+      <BreadcrumbContext.Provider value={contextValue}>
+        <Box
+          {...rnx({ component: "Breadcrumb" })}
+          as="nav"
+          ref={ref}
+          aria-label="breadcrumb"
+          {...props}
+        >
+          {children}
+        </Box>
+      </BreadcrumbContext.Provider>
+    );
+  },
 );
-BreadcrumbRoot.displayName = "BreadcrumbRoot";
+BreadcrumbRoot.displayName = "Breadcrumb.Root";
 
 export const BreadcrumbList = forwardRef<
   HTMLOListElement,
   React.ComponentPropsWithoutRef<"ol">
->(({ className, ...props }, ref) => (
-  <Box
-    as="ol"
-    ref={ref}
-    className={cn(
-      "text-muted-foreground flex flex-wrap items-center gap-1.5 text-sm break-words sm:gap-2.5",
-      className
-    )}
-    {...props}
-  />
-));
-BreadcrumbList.displayName = "BreadcrumbList";
+>(({ className, ...props }, ref) => {
+  const { variant, size } = React.useContext(BreadcrumbContext);
+  return (
+    <Box
+      as="ol"
+      ref={ref}
+      className={cn(
+        "rnx-breadcrumb-list",
+        size && `rnx-breadcrumb-list--${size}`,
+        variant &&
+          variant !== "default" &&
+          `rnx-breadcrumb-list--variant-${variant}`,
+        className,
+      )}
+      {...props}
+    />
+  );
+});
+BreadcrumbList.displayName = "Breadcrumb.List";
 
 export const BreadcrumbItem = forwardRef<
   HTMLLIElement,
@@ -38,11 +71,11 @@ export const BreadcrumbItem = forwardRef<
   <Box
     as="li"
     ref={ref}
-    className={cn("inline-flex items-center gap-1.5", className)}
+    className={cn("rnx-breadcrumb-item", className)}
     {...props}
   />
 ));
-BreadcrumbItem.displayName = "BreadcrumbItem";
+BreadcrumbItem.displayName = "Breadcrumb.Item";
 
 export const BreadcrumbLink = forwardRef<
   HTMLAnchorElement,
@@ -51,15 +84,15 @@ export const BreadcrumbLink = forwardRef<
   <a
     ref={ref}
     className={cn(
-      "hover:text-foreground transition-colors",
-      active ? "text-foreground font-normal" : "",
-      className
+      "rnx-breadcrumb-link",
+      active && "rnx-breadcrumb-link--active",
+      className,
     )}
     aria-current={active ? "page" : undefined}
     {...props}
   />
 ));
-BreadcrumbLink.displayName = "BreadcrumbLink";
+BreadcrumbLink.displayName = "Breadcrumb.Link";
 
 export const BreadcrumbPage = forwardRef<
   HTMLSpanElement,
@@ -71,11 +104,11 @@ export const BreadcrumbPage = forwardRef<
     role="link"
     aria-disabled="true"
     aria-current="page"
-    className={cn("text-foreground font-normal", className)}
+    className={cn("rnx-breadcrumb-page", className)}
     {...props}
   />
 ));
-BreadcrumbPage.displayName = "BreadcrumbPage";
+BreadcrumbPage.displayName = "Breadcrumb.Page";
 
 export const BreadcrumbSeparator = ({
   children,
@@ -86,16 +119,16 @@ export const BreadcrumbSeparator = ({
     as="li"
     role="presentation"
     aria-hidden="true"
-    className={className}
+    className={cn("rnx-breadcrumb-separator", className)}
     {...props}
   >
-    {children ?? <ChevronRight className="h-3.5 w-3.5" />}
+    {children ?? <ChevronRight className="rnx-breadcrumb-separator-icon" />}
   </Box>
 );
-BreadcrumbSeparator.displayName = "BreadcrumbSeparator";
+BreadcrumbSeparator.displayName = "Breadcrumb.Separator";
 
 // Maintain the old unified component for backwards compatibility while we transition
-export const Breadcrumb: React.FC<
+const BreadcrumbComponent: React.FC<
   React.ComponentPropsWithoutRef<"nav"> & {
     separator?: React.ReactNode;
   }
@@ -117,3 +150,13 @@ export const Breadcrumb: React.FC<
     </BreadcrumbRoot>
   );
 };
+BreadcrumbComponent.displayName = "Breadcrumb";
+
+export const Breadcrumb = Object.assign(BreadcrumbComponent, {
+  Root: BreadcrumbRoot,
+  List: BreadcrumbList,
+  Item: BreadcrumbItem,
+  Link: BreadcrumbLink,
+  Page: BreadcrumbPage,
+  Separator: BreadcrumbSeparator,
+});

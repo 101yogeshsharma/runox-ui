@@ -6,16 +6,21 @@ import {
   useFloatingPosition,
   useClickOutside,
   useControllableState,
-  useFocusTrap,
 } from "../../hooks";
 import { useMergeRefs } from "../../hooks/useMergeRefs";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
 import { Box } from "../../atoms/Box";
+import { rnx } from "../../utils/rnx";
 import "./Popover.css";
 
+/**
+ * Props for the Popover component.
+ */
 export interface PopoverProps {
   trigger: React.ReactNode;
   children: React.ReactNode;
+  variant?: "solid" | "glass" | "tooltip";
+  size?: "sm" | "md" | "lg";
+  showArrow?: boolean;
   align?: "start" | "center" | "end";
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -30,6 +35,9 @@ export const Popover = React.forwardRef<HTMLDivElement, PopoverProps>(
     {
       trigger,
       children,
+      variant = "glass",
+      size = "md",
+      showArrow = false,
       align = "center",
       isOpen: isOpenProp,
       onOpenChange,
@@ -38,9 +46,8 @@ export const Popover = React.forwardRef<HTMLDivElement, PopoverProps>(
       style,
       matchTriggerWidth = false,
     },
-    ref
+    ref,
   ) => {
-    const { config } = useTheme();
     const [isOpen, setIsOpen] = useControllableState({
       prop: isOpenProp,
       defaultProp: false,
@@ -64,10 +71,8 @@ export const Popover = React.forwardRef<HTMLDivElement, PopoverProps>(
       sideOffset,
       contentMounted,
       "bottom",
-      align
+      align,
     );
-
-    useFocusTrap(contentRef, isOpen);
 
     // Close when clicking outside content (on the overlay)
     useClickOutside(contentRef, (e) => {
@@ -158,8 +163,9 @@ export const Popover = React.forwardRef<HTMLDivElement, PopoverProps>(
           role="dialog"
           className={cn(
             "rnx-popover-content",
-            `rounded-${config.radius}`,
-            className
+            `rnx-popover-content--variant-${variant}`,
+            `rnx-popover-content--${size}`,
+            className,
           )}
           data-state={mounted && position ? "open" : "closed"}
           data-side={position?.placed || "bottom"}
@@ -171,10 +177,22 @@ export const Popover = React.forwardRef<HTMLDivElement, PopoverProps>(
             visibility: position ? "visible" : "hidden",
             width: matchTriggerWidth ? matchedWidth : style?.width,
           }}
+          {...rnx({ component: "Popover", state: isOpen ? "open" : "closed" })}
         >
+          {showArrow && (
+            <span
+              className="rnx-popover-arrow"
+              style={{
+                top: position?.placed === "bottom" ? -4 : undefined,
+                bottom: position?.placed === "top" ? -4 : undefined,
+                left: position?.placed === "right" ? -4 : "calc(50% - 4px)",
+                right: position?.placed === "left" ? -4 : undefined,
+              }}
+            />
+          )}
           {children}
         </Box>,
-        document.body
+        document.body,
       );
     };
 
@@ -184,7 +202,7 @@ export const Popover = React.forwardRef<HTMLDivElement, PopoverProps>(
         {renderContent()}
       </>
     );
-  }
+  },
 );
 
 Popover.displayName = "Popover";

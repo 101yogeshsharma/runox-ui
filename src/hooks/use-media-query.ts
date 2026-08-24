@@ -1,36 +1,28 @@
-import { useState, useEffect, useMemo } from "react";
-import { useThrottledEvent } from "./use-throttled-event";
+import { useSyncExternalStore } from 'react';
 
+/**
+ * Returns whether the given media query matches the current viewport. SSR-safe.
+ *
+ * @param query - The media query string to match (e.g., "(min-width: 768px)").
+ * @returns True if the media query matches, false otherwise.
+ *
+ * @example
+ * const isDesktop = useMediaQuery("(min-width: 1024px)");
+ */
 export function useMediaQuery(query: string): boolean {
-  const getMatches = (query: string): boolean => {
-    // Prevents SSR issues
-    if (typeof window !== "undefined") {
-      return window.matchMedia(query).matches;
-    }
-    return false;
+  const subscribe = (callback: () => void) => {
+    if (typeof window === 'undefined') return () => {};
+    const mql = window.matchMedia(query);
+    mql.addEventListener('change', callback);
+    return () => mql.removeEventListener('change', callback);
   };
 
-  const [matches, setMatches] = useState<boolean>(getMatches(query));
+  const getSnapshot = () => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia(query).matches;
+  };
 
-  const matchMedia = useMemo(() => {
-    if (typeof window !== "undefined") {
-      return window.matchMedia(query);
-    }
-    return null;
-  }, [query]);
+  const getServerSnapshot = () => false;
 
-  useThrottledEvent(
-    "change",
-    () => {
-      setMatches(getMatches(query));
-    },
-    matchMedia,
-    100
-  );
-
-  useEffect(() => {
-    setMatches(getMatches(query));
-  }, [query]);
-
-  return matches;
+  return useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 }

@@ -14,7 +14,6 @@ import { cn } from "../../utils/cn";
 import { Box } from "../../atoms/Box";
 import { Text } from "../../atoms/Text";
 import { Button } from "../Button";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
 // Uses: Button
 import "./Toast.css";
 
@@ -57,6 +56,9 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
 }) => {
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
   const [mounted, setMounted] = useState(false);
+  const removalTimers = React.useRef<
+    Map<string, ReturnType<typeof setTimeout>>
+  >(new Map());
 
   useEffect(() => {
     setMounted(true);
@@ -68,12 +70,25 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
   }, []);
 
   const removeToast = useCallback((id: string) => {
-    setToasts((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, status: "closing" } : t))
-    );
-    setTimeout(() => {
+    setToasts((prev) => {
+      const toast = prev.find((item) => item.id === id);
+      if (!toast || toast.status === "closing") return prev;
+      return prev.map((t) => (t.id === id ? { ...t, status: "closing" } : t));
+    });
+    if (removalTimers.current.has(id)) return;
+    const timer = setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
+      removalTimers.current.delete(id);
     }, 200);
+    removalTimers.current.set(id, timer);
+  }, []);
+
+  React.useEffect(() => {
+    const timers = removalTimers.current;
+    return () => {
+      timers.forEach((timer) => clearTimeout(timer));
+      timers.clear();
+    };
   }, []);
 
   // Group toasts by their resolved position
@@ -84,7 +99,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
       acc[pos].push(toast);
       return acc;
     },
-    {} as Record<ToastPosition, ToastMessage[]>
+    {} as Record<ToastPosition, ToastMessage[]>,
   );
 
   const activePositions = Object.keys(toastsByPosition) as ToastPosition[];
@@ -94,7 +109,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
       toast: addToast,
       dismiss: removeToast,
     }),
-    [addToast, removeToast]
+    [addToast, removeToast],
   );
 
   return (
@@ -109,7 +124,7 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
                 key={pos}
                 className={cn(
                   "rnx-toast-viewport",
-                  `rnx-toast-viewport--${pos}`
+                  `rnx-toast-viewport--${pos}`,
                 )}
               >
                 {toastsByPosition[pos].map((t) => (
@@ -122,11 +137,12 @@ export const ToastProvider: React.FC<ToastProviderProps> = ({
               </Box>
             ))}
           </>,
-          document.body
+          document.body,
         )}
     </ToastContext.Provider>
   );
 };
+ToastProvider.displayName = "Toast.Provider";
 
 export const useToast = () => {
   const context = useContext(ToastContext);
@@ -134,22 +150,28 @@ export const useToast = () => {
   return context;
 };
 
-const ToastItem: React.FC<{ toast: ToastMessage; onRemove: () => void }> = ({
-  toast,
-  onRemove,
-}) => {
-  const { config } = useTheme();
+export const ToastItem: React.FC<{
+  toast: ToastMessage;
+  onRemove: () => void;
+}> = ({ toast, onRemove }) => {
   useEffect(() => {
     const duration = toast.duration || 5000;
     const timer = setTimeout(() => {
       handleClose();
     }, duration);
     return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- timer must not reset when the (stable) onRemove callback identity changes
   }, [toast.duration]);
 
   const handleClose = () => {
     onRemove();
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "Escape") {
+      e.stopPropagation();
+      handleClose();
+    }
   };
 
   const isClosing = toast.status === "closing";
@@ -158,12 +180,13 @@ const ToastItem: React.FC<{ toast: ToastMessage; onRemove: () => void }> = ({
     <Box
       role="status"
       aria-live="polite"
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
       className={cn(
         "rnx-toast",
         `rnx-toast--${toast.variant || "info"}`,
         `rnx-toast--${toast.size || "md"}`,
         isClosing ? "rnx-toast--closing" : "rnx-toast--opening",
-        `rounded-${config.radius}`
       )}
     >
       <Box className="rnx-toast-content">
@@ -183,10 +206,18 @@ const ToastItem: React.FC<{ toast: ToastMessage; onRemove: () => void }> = ({
         size="icon"
         className="rnx-toast-close"
         onClick={handleClose}
-        aria-label="Close toast"
+        aria-label="Dismiss notification"
       >
         <X className="h-4 w-4" />
       </Button>
     </Box>
   );
+};
+ToastProvider.displayName = "Toast.Provider";
+ToastItem.displayName = "Toast.Item";
+
+export const Toast = {
+  Provider: ToastProvider,
+  Item: ToastItem,
+  useToast,
 };

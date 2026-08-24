@@ -1,0 +1,152 @@
+@layer components {
+  .rnx-switch-wrapper {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .rnx-switch-container {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    cursor: pointer;
+    transition:
+      background-color 150ms ease,
+      box-shadow 150ms ease;
+    border-radius: var(--radius-full);
+    border: 2px solid transparent;
+    background-color: var(--input);
+  }
+  .rnx-switch-input {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: inherit;
+    margin: 0;
+    z-index: var(--z-component);
+  }
+  .rnx-switch-thumb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: var(--background);
+    color: var(--foreground);
+    transition: transform 150ms ease;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .rnx-switch-container--sm {
+    width: var(--space-7);
+    height: var(--space-4);
+  }
+  .rnx-switch-thumb--sm {
+    width: var(--space-3);
+    height: var(--space-3);
+    transform: translateX(0);
+  }
+  .rnx-switch-input:checked + .rnx-switch-thumb--sm {
+    transform: translateX(var(--space-3));
+  }
+
+  .rnx-switch-container--md {
+    width: var(--space-9);
+    height: var(--space-5);
+  }
+  .rnx-switch-thumb--md {
+    width: var(--space-4);
+    height: var(--space-4);
+    transform: translateX(0);
+  }
+  .rnx-switch-input:checked + .rnx-switch-thumb--md {
+    transform: translateX(var(--space-4));
+  }
+
+  .rnx-switch-container:hover:not(.rnx-switch-container--disabled) {
+    opacity: 0.9;
+  }
+
+  .rnx-switch-container--lg {
+    width: var(--space-12);
+    height: var(--space-6);
+  }
+  .rnx-switch-thumb--lg {
+    width: var(--space-5);
+    height: var(--space-5);
+    transform: translateX(0);
+  }
+  .rnx-switch-input:checked + .rnx-switch-thumb--lg {
+    transform: translateX(var(--space-5));
+  }
+
+  /* Colors */
+  .rnx-switch-container:has(.rnx-switch-input:checked) {
+    background-color: var(--rnx-switch-active-color);
+  }
+  .rnx-switch-container--color-primary {
+    --rnx-switch-active-color: var(--primary);
+  }
+  .rnx-switch-container--color-secondary {
+    --rnx-switch-active-color: var(--secondary);
+  }
+  .rnx-switch-container--color-success {
+    --rnx-switch-active-color: var(--success);
+  }
+  .rnx-switch-container--color-warning {
+    --rnx-switch-active-color: var(--warning);
+  }
+  .rnx-switch-container--color-danger,
+  .rnx-switch-container--color-destructive {
+    --rnx-switch-active-color: var(--destructive);
+  }
+  .rnx-switch-container--color-info {
+    --rnx-switch-active-color: var(--info);
+  }
+
+  /* Variants */
+  .rnx-switch-container--variant-glow:has(.rnx-switch-input:checked) {
+    box-shadow: 0 0 12px
+      color-mix(in srgb, var(--rnx-switch-active-color) 60%, transparent);
+  }
+  .rnx-switch-container--variant-glass {
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur, 16px));
+    border-color: color-mix(in srgb, var(--border) 40%, transparent);
+  }
+
+  .rnx-switch-input:focus-visible + .rnx-switch-thumb {
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px var(--ring);
+  }
+  .rnx-switch-container:has(.rnx-switch-input:disabled) {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  .rnx-switch-container:has(.rnx-switch-input:disabled:not(:checked)) {
+    background-color: var(--muted-foreground);
+  }
+  .rnx-switch-container:active:not(:has(.rnx-switch-input:disabled))
+    .rnx-switch-thumb {
+    width: calc(var(--space-4) + 2px);
+  }
+  .rnx-switch-container--error {
+    border-color: var(--destructive);
+  }
+  .rnx-switch-wrapper--loading {
+    opacity: 0.6;
+    cursor: wait;
+    pointer-events: none;
+  }
+  .rnx-switch-label {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    cursor: pointer;
+    color: var(--foreground);
+  }
+  .rnx-switch-container:has(.rnx-switch-input:disabled) ~ .rnx-switch-label {
+    cursor: not-allowed;
+    opacity: 0.7;
+  }
+}

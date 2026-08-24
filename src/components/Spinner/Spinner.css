@@ -1,0 +1,63 @@
+@layer components {
+  .rnx-spinner {
+    display: inline-block;
+    animation: rnx-spinner-spin 1s linear infinite;
+    color: var(--muted-foreground);
+    flex-shrink: 0;
+  }
+
+  .rnx-spinner--size-sm {
+    height: var(--space-4);
+    width: var(--space-4);
+  }
+  .rnx-spinner--size-md {
+    height: var(--space-6);
+    width: var(--space-6);
+  }
+  .rnx-spinner--size-lg {
+    height: var(--space-8);
+    width: var(--space-8);
+  }
+  .rnx-spinner--size-xl {
+    height: var(--space-12);
+    width: var(--space-12);
+  }
+
+  .rnx-spinner--color-current {
+    color: currentColor;
+  }
+  .rnx-spinner--color-primary {
+    color: var(--primary);
+  }
+  .rnx-spinner--color-secondary {
+    color: var(--secondary);
+  }
+  .rnx-spinner--color-muted {
+    color: var(--muted-foreground);
+  }
+  .rnx-spinner--color-destructive,
+  .rnx-spinner--color-danger {
+    color: var(--destructive);
+  }
+  .rnx-spinner--color-inverse {
+    color: var(--primary-foreground);
+  }
+  .rnx-spinner--color-success {
+    color: var(--success);
+  }
+  .rnx-spinner--color-warning {
+    color: var(--warning);
+  }
+  .rnx-spinner--color-info {
+    color: var(--info);
+  }
+}
+
+@keyframes rnx-spinner-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

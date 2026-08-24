@@ -15,10 +15,10 @@ import {
   useFloatingPosition,
   useClickOutside,
   useControllableState,
-  useFocusTrap,
 } from "../../hooks";
 import { useMergeRefs } from "../../hooks/useMergeRefs";
 import { Box } from "../../atoms/Box";
+import { rnx } from "../../utils/rnx";
 import { Button } from "../Button";
 import { Badge } from "../Badge";
 import {
@@ -30,7 +30,6 @@ import {
   CommandList,
   CommandSeparator,
 } from "../Command/Command";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
 import "./Dropdown.css";
 
 interface DropdownContextValue {
@@ -42,22 +41,26 @@ interface DropdownContextValue {
   searchQuery: string;
   setSearchQuery: (query: string) => void;
   triggerRef: React.RefObject<HTMLButtonElement | null>;
+  contentId: string;
 }
 
 const DropdownContext = createContext<DropdownContextValue | undefined>(
-  undefined
+  undefined,
 );
 
 export function useDropdownContext() {
   const context = useContext(DropdownContext);
   if (!context) {
     throw new Error(
-      "Dropdown components must be used within a Dropdown provider"
+      "Dropdown components must be used within a Dropdown provider",
     );
   }
   return context;
 }
 
+/**
+ * Props for the Dropdown component.
+ */
 export interface DropdownProps {
   children: React.ReactNode;
   value?: string | string[];
@@ -65,15 +68,16 @@ export interface DropdownProps {
   multiple?: boolean;
 }
 
-export const Dropdown = React.forwardRef<HTMLDivElement, DropdownProps>(
+const DropdownRoot = React.forwardRef<HTMLDivElement, DropdownProps>(
   (
     { children, value: controlledValue, onValueChange, multiple = false },
-    ref
+    ref,
   ) => {
     const [isOpen, setIsOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const triggerRef = useRef<HTMLButtonElement>(null);
-    const { config } = useTheme();
+    const rawId = React.useId();
+    const contentId = `rnx-dropdown-content-${rawId.replaceAll(":", "")}`;
 
     const [value, setValue] = useControllableState<string | string[]>({
       prop: controlledValue,
@@ -81,30 +85,41 @@ export const Dropdown = React.forwardRef<HTMLDivElement, DropdownProps>(
       onChange: onValueChange,
     });
 
-    const contextValue: DropdownContextValue = {
-      value,
-      onValueChange: setValue,
-      multiple,
-      isOpen,
-      setIsOpen,
-      searchQuery,
-      setSearchQuery,
-      triggerRef,
-    };
+    const contextValue: DropdownContextValue = React.useMemo(
+      () => ({
+        value,
+        onValueChange: setValue,
+        multiple,
+        isOpen,
+        setIsOpen,
+        searchQuery,
+        setSearchQuery,
+        triggerRef,
+        contentId,
+      }),
+      [
+        value,
+        setValue,
+        multiple,
+        isOpen,
+        setIsOpen,
+        searchQuery,
+        setSearchQuery,
+        triggerRef,
+        contentId,
+      ],
+    );
 
     return (
       <DropdownContext.Provider value={contextValue}>
-        <Box
-          ref={ref}
-          className={cn("rnx-dropdown", `rounded-${config.radius}`)}
-        >
+        <Box ref={ref} className={cn("rnx-dropdown")}>
           {children}
         </Box>
       </DropdownContext.Provider>
     );
-  }
+  },
 );
-Dropdown.displayName = "Dropdown";
+DropdownRoot.displayName = "Dropdown";
 
 export interface DropdownTriggerProps extends Omit<
   React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -119,8 +134,15 @@ export const DropdownTrigger = React.forwardRef<
   HTMLButtonElement,
   DropdownTriggerProps
 >(({ placeholder, className, width, size = "md", ...props }, ref) => {
-  const { value, multiple, isOpen, setIsOpen, onValueChange, triggerRef } =
-    useDropdownContext();
+  const {
+    value,
+    multiple,
+    isOpen,
+    setIsOpen,
+    onValueChange,
+    triggerRef,
+    contentId,
+  } = useDropdownContext();
   const mergedRef = useMergeRefs(ref, triggerRef);
 
   const removeTag = (e: React.MouseEvent, optionValue: string) => {
@@ -167,7 +189,7 @@ export const DropdownTrigger = React.forwardRef<
                 <X
                   className={cn(
                     "rnx-dropdown-badge-remove-icon",
-                    size === "lg" ? "h-3.5 w-3.5" : "h-3 w-3"
+                    size === "lg" ? "h-3.5 w-3.5" : "h-3 w-3",
                   )}
                 />
               </Box>
@@ -193,6 +215,8 @@ export const DropdownTrigger = React.forwardRef<
       size={multiple ? undefined : size}
       role="combobox"
       aria-expanded={isOpen}
+      aria-controls={contentId}
+      aria-haspopup="listbox"
       onClick={() => setIsOpen(!isOpen)}
       className={cn(
         "rnx-dropdown-trigger justify-between",
@@ -200,7 +224,7 @@ export const DropdownTrigger = React.forwardRef<
           "rnx-dropdown-trigger-empty",
         multiple ? multiDropdownClasses[size] : "",
         !width && "w-48",
-        className
+        className,
       )}
       style={{ width, minWidth: width }}
       {...props}
@@ -212,7 +236,7 @@ export const DropdownTrigger = React.forwardRef<
     </Button>
   );
 });
-DropdownTrigger.displayName = "DropdownTrigger";
+DropdownTrigger.displayName = "Dropdown.Trigger";
 
 export interface DropdownContentProps {
   children: React.ReactNode;
@@ -235,10 +259,9 @@ export const DropdownContent = React.forwardRef<
       matchTriggerWidth = true,
       ...props
     },
-    ref
+    ref,
   ) => {
-    const { isOpen, setIsOpen, triggerRef } = useDropdownContext();
-    const { config } = useTheme();
+    const { isOpen, setIsOpen, triggerRef, contentId } = useDropdownContext();
     const contentRef = useRef<HTMLDivElement>(null);
     const mergedRef = useMergeRefs(contentRef, ref);
     const [mounted, setMounted] = useState(false);
@@ -258,10 +281,9 @@ export const DropdownContent = React.forwardRef<
       4,
       mounted,
       "bottom",
-      "center"
+      "center",
     );
 
-    useFocusTrap(contentRef, isOpen);
     useClickOutside(contentRef, (e) => {
       if (triggerRef.current?.contains(e.target as Node)) return;
       if (isOpen) setIsOpen(false);
@@ -271,16 +293,16 @@ export const DropdownContent = React.forwardRef<
       const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === "Escape" && isOpen) {
           setIsOpen(false);
+          triggerRef.current?.focus();
         }
       };
       document.addEventListener("keydown", handleKeyDown);
       return () => document.removeEventListener("keydown", handleKeyDown);
-    }, [isOpen, setIsOpen]);
+    }, [isOpen, setIsOpen, triggerRef]);
 
     if (!mounted || typeof document === "undefined") return null;
 
     let matchedWidth: number | undefined;
-
     if (position && triggerRef.current && contentRef.current) {
       const anchorRect = triggerRef.current.getBoundingClientRect();
       matchedWidth = anchorRect.width;
@@ -289,12 +311,8 @@ export const DropdownContent = React.forwardRef<
     return createPortal(
       <Box
         ref={mergedRef}
-        role="dialog"
-        className={cn(
-          "rnx-dropdown-content",
-          `rounded-${config.radius}`,
-          className
-        )}
+        role="menu"
+        className={cn("rnx-dropdown-content z-50", className)}
         data-state={isOpen && position ? "open" : "closed"}
         data-side={position?.placed || "bottom"}
         style={{
@@ -303,20 +321,19 @@ export const DropdownContent = React.forwardRef<
           left: position?.left || 0,
           visibility: position ? "visible" : "hidden",
           width: matchTriggerWidth ? matchedWidth : undefined,
-          zIndex: 50,
         }}
         {...props}
       >
         <Command>
           {searchable && <CommandInput placeholder={searchPlaceholder} />}
-          <CommandList>{children}</CommandList>
+          <CommandList id={contentId}>{children}</CommandList>
         </Command>
       </Box>,
-      document.body
+      document.body,
     );
-  }
+  },
 );
-DropdownContent.displayName = "DropdownContent";
+DropdownContent.displayName = "Dropdown.Content";
 
 export interface DropdownItemProps extends Omit<
   React.ComponentPropsWithoutRef<typeof CommandItem>,
@@ -331,7 +348,7 @@ export interface DropdownItemProps extends Omit<
 export const DropdownItem = React.forwardRef<HTMLDivElement, DropdownItemProps>(
   (
     { children, value: itemValue, onSelect: onSelectProp, className, ...props },
-    ref
+    ref,
   ) => {
     const { value, onValueChange, multiple, setIsOpen } = useDropdownContext();
 
@@ -365,12 +382,24 @@ export const DropdownItem = React.forwardRef<HTMLDivElement, DropdownItemProps>(
     return (
       <CommandItem
         ref={ref}
+        role="menuitem"
         value={
           itemValue ||
           (typeof children === "string" ? children.toLowerCase() : undefined)
         }
         onSelect={handleSelect}
-        className={cn(isSelectable && "relative pl-8", className)}
+        data-disabled={props.disabled}
+        className={cn(
+          "rnx-dropdown__item",
+          props.disabled && "rnx-dropdown__item--disabled",
+          isSelected && "rnx-dropdown__item--selected",
+          isSelectable && "relative pl-8",
+          className,
+        )}
+        {...rnx({
+          component: "DropdownItem",
+          state: isSelected ? "selected" : "unselected",
+        })}
         {...props}
       >
         {isSelectable && (
@@ -380,7 +409,7 @@ export const DropdownItem = React.forwardRef<HTMLDivElement, DropdownItemProps>(
                 "h-4 w-4",
                 isSelected
                   ? "rnx-dropdown-item-icon-selected"
-                  : "rnx-dropdown-item-icon-unselected"
+                  : "rnx-dropdown-item-icon-unselected",
               )}
             />
           </Flex>
@@ -388,9 +417,9 @@ export const DropdownItem = React.forwardRef<HTMLDivElement, DropdownItemProps>(
         {children}
       </CommandItem>
     );
-  }
+  },
 );
-DropdownItem.displayName = "DropdownItem";
+DropdownItem.displayName = "Dropdown.Item";
 
 export interface DropdownEmptyProps {
   children: React.ReactNode;
@@ -407,7 +436,7 @@ export const DropdownEmpty = React.forwardRef<
     </CommandEmpty>
   );
 });
-DropdownEmpty.displayName = "DropdownEmpty";
+DropdownEmpty.displayName = "Dropdown.Empty";
 
 export interface DropdownGroupProps {
   children: React.ReactNode;
@@ -425,7 +454,7 @@ export const DropdownGroup = React.forwardRef<
     </CommandGroup>
   );
 });
-DropdownGroup.displayName = "DropdownGroup";
+DropdownGroup.displayName = "Dropdown.Group";
 
 export interface DropdownSearchProps {
   placeholder?: string;
@@ -445,7 +474,7 @@ export const DropdownSearch = React.forwardRef<
     />
   );
 });
-DropdownSearch.displayName = "DropdownSearch";
+DropdownSearch.displayName = "Dropdown.Search";
 
 export interface DropdownDividerProps extends React.ComponentPropsWithoutRef<
   typeof CommandSeparator
@@ -463,4 +492,15 @@ export const DropdownDivider = React.forwardRef<
     />
   );
 });
-DropdownDivider.displayName = "DropdownDivider";
+DropdownDivider.displayName = "Dropdown.Divider";
+
+export const Dropdown = Object.assign(DropdownRoot, {
+  Trigger: DropdownTrigger,
+  Content: DropdownContent,
+  Item: DropdownItem,
+  Empty: DropdownEmpty,
+  Group: DropdownGroup,
+  Search: DropdownSearch,
+  Divider: DropdownDivider,
+  Separator: DropdownDivider,
+});

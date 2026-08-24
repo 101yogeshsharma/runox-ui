@@ -46,12 +46,53 @@
     color: var(--muted-foreground);
   }
 
+  .rnx-table-container,
   .rnx-data-table-container {
     background-color: var(--card);
     border: 1px solid var(--border);
+    border-radius: var(--radius);
     overflow: hidden;
   }
 
+  /* Table Variants */
+  .rnx-table--variant-striped .rnx-table__body tr:nth-child(even) {
+    background-color: color-mix(in srgb, var(--muted) 40%, transparent);
+  }
+
+  .rnx-table--variant-glass {
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur, 16px));
+  }
+
+  .rnx-table--variant-ghost {
+    background-color: transparent;
+    border: none;
+  }
+
+  /* Table Sizes */
+  .rnx-table--size-sm th,
+  .rnx-table--size-sm td {
+    padding: var(--space-1-5) var(--space-3);
+    font-size: var(--text-xs);
+  }
+
+  .rnx-table--size-md th,
+  .rnx-table--size-md td {
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-sm);
+  }
+
+  .rnx-table--size-lg th,
+  .rnx-table--size-lg td {
+    padding: var(--space-4) var(--space-6);
+    font-size: var(--text-base);
+  }
+
+  /*
+    Legacy aliases: `rnx-data-table__*` classes predate the single-block convention.
+    They share selector lists with the canonical `rnx-table__*` names and are
+    deprecated; removal targeted for the next major version.
+  */
   .rnx-data-table__header {
     background-color: color-mix(in srgb, var(--foreground) 2%, transparent);
   }

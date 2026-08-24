@@ -1,26 +1,20 @@
 "use client";
 
-import React, {
-  useCallback,
-  useState,
-  useEffect,
-  useRef,
-} from "react";
-import {
-  UploadCloud,
-  X,
-  File as FileIcon,
-} from "lucide-react";
+import React, { useCallback, useState, useEffect, useRef } from "react";
+import { UploadCloud, X, File as FileIcon } from "lucide-react";
 import { cn } from "../../utils/cn";
 import { Button } from "../Button";
 import { Text } from "../../atoms/Text";
 import { Box } from "../../atoms/Box";
 import { Image as RunoxImage } from "../Image/Image";
 import { Progress } from "../Progress/Progress";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
+import { rnx } from "../../utils/rnx";
 import "./FileUploader.css";
 // Uses: Button, Image, Progress
 
+/**
+ * Props for the FileUploader component.
+ */
 export interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> {
   onFilesChange?: (files: File[]) => void;
   maxFiles?: number;
@@ -29,6 +23,7 @@ export interface FileUploaderProps extends React.HTMLAttributes<HTMLDivElement> 
   progresses?: Record<string, number>;
   maxSize?: number;
   onFileRejected?: (file: File, reason: string) => void;
+  disabled?: boolean;
 }
 
 export function FileUploader({
@@ -40,9 +35,9 @@ export function FileUploader({
   progresses,
   maxSize,
   onFileRejected,
+  disabled,
   ...props
 }: FileUploaderProps) {
-  const { config } = useTheme();
   const [files, setFiles] = useState<File[]>([]);
   const [isDragActive, setIsDragActive] = useState(false);
   // Stable map from file object reference → object URL to avoid creating a new URL every render
@@ -64,7 +59,7 @@ export function FileUploader({
   // Revoke ALL remaining URLs only when the component unmounts
   useEffect(() => {
     return () => {
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- unmount-only cleanup; the ref map is intentionally not a dependency
       for (const url of objectUrlMap.current.values()) {
         URL.revokeObjectURL(url);
       }
@@ -108,11 +103,12 @@ export function FileUploader({
       }
       return null;
     },
-    [maxSize, accept]
+    [maxSize, accept],
   );
 
   const handleFiles = useCallback(
     (newFiles: FileList | File[]) => {
+      if (disabled) return;
       const fileArray = Array.from(newFiles);
 
       const validFiles: File[] = [];
@@ -140,19 +136,22 @@ export function FileUploader({
         return updated;
       });
     },
-    [maxFiles, multiple, onFilesChange, validateFile, onFileRejected]
+    [disabled, maxFiles, multiple, onFilesChange, validateFile, onFileRejected],
   );
 
   const onDragOver = (e: React.DragEvent) => {
+    if (disabled) return;
     e.preventDefault();
     setIsDragActive(true);
   };
 
   const onDragLeave = () => {
+    if (disabled) return;
     setIsDragActive(false);
   };
 
   const onDrop = (e: React.DragEvent) => {
+    if (disabled) return;
     e.preventDefault();
     setIsDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
@@ -161,6 +160,7 @@ export function FileUploader({
   };
 
   const onFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (disabled) return;
     if (e.target.files && e.target.files.length > 0) {
       handleFiles(e.target.files);
     }
@@ -168,7 +168,10 @@ export function FileUploader({
     e.target.value = "";
   };
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const removeFile = (index: number) => {
+    if (disabled) return;
     setFiles((prev) => {
       const updated = prev.filter((_, i) => i !== index);
       onFilesChange?.(updated);
@@ -178,23 +181,40 @@ export function FileUploader({
 
   return (
     <Box
-      className={cn("w-full space-y-4", `rounded-${config.radius}`, className)}
+      {...rnx({
+        component: "FileUploader",
+        state: disabled ? "disabled" : "active",
+      })}
+      className={cn("w-full space-y-4", className)}
       {...props}
     >
       <Box
         className={cn(
           "rnx-file-uploader-dropzone relative flex w-full cursor-pointer flex-col items-center justify-center p-6",
-          isDragActive && "rnx-file-uploader-dropzone--active"
+          isDragActive && "rnx-file-uploader-dropzone--active",
         )}
+        role="button"
+        aria-label="Upload files"
+        aria-disabled={disabled || undefined}
+        tabIndex={disabled ? -1 : 0}
+        onKeyDown={(e) => {
+          if (disabled) return;
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            inputRef.current?.click();
+          }
+        }}
         onDragOver={onDragOver}
         onDragLeave={onDragLeave}
         onDrop={onDrop}
       >
         <input
+          ref={inputRef}
           type="file"
           className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
           multiple={multiple}
           accept={accept}
+          disabled={disabled}
           onChange={onFileInputChange}
         />
         <UploadCloud className="rnx-file-uploader-icon mb-3 h-10 w-10" />
@@ -259,6 +279,8 @@ export function FileUploader({
                       e.preventDefault();
                       removeFile(i);
                     }}
+                    disabled={disabled}
+                    aria-label={`Remove ${file.name}`}
                   >
                     <X className="h-4 w-4" />
                   </Button>

@@ -1,9 +1,9 @@
 @layer components {
   .rnx-avatar {
     position: relative;
-    display: flex;
+    display: inline-flex;
     flex-shrink: 0;
-    overflow: hidden;
+    overflow: visible;
     border: 1px solid var(--border);
     background-color: var(--background);
   }
@@ -13,6 +13,8 @@
     height: 100%;
     width: 100%;
     object-fit: cover;
+    border-radius: inherit;
+    overflow: hidden;
   }
 
   .rnx-avatar-fallback {
@@ -24,37 +26,88 @@
     background-color: var(--muted);
     font-weight: 500;
     color: var(--muted-foreground);
+    border-radius: inherit;
+    overflow: hidden;
   }
 
   /* Sizes */
   .rnx-avatar--sm {
-    height: 2rem;
-    width: 2rem;
-    font-size: 0.75rem;
+    height: var(--space-8);
+    width: var(--space-8);
+    font-size: var(--text-xs);
   }
   .rnx-avatar--md {
-    height: 2.5rem;
-    width: 2.5rem;
-    font-size: 0.875rem;
+    height: var(--space-10);
+    width: var(--space-10);
+    font-size: var(--text-sm);
   }
   .rnx-avatar--lg {
-    height: 3.5rem;
-    width: 3.5rem;
-    font-size: 1.125rem;
+    height: var(--space-14);
+    width: var(--space-14);
+    font-size: var(--text-lg);
   }
   .rnx-avatar--xl {
-    height: 5rem;
-    width: 5rem;
-    font-size: 1.5rem;
+    height: var(--space-20, 5rem);
+    width: var(--space-20, 5rem);
+    font-size: var(--text-2xl);
   }
 
   /* Shapes */
   .rnx-avatar--circle {
-    border-radius: 9999px;
+    border-radius: var(--radius-full);
   }
   .rnx-avatar--square {
     border-radius: 0;
   }
   .rnx-avatar--rounded {
+    border-radius: var(--radius);
+  }
+
+  /* Variants */
+  .rnx-avatar--variant-ringed {
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px var(--primary);
+  }
+
+  .rnx-avatar--variant-glass {
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur, 16px));
+    border-color: color-mix(in srgb, var(--border) 40%, transparent);
+  }
+
+  /* Status Indicator */
+  .rnx-avatar-status {
+    position: absolute;
+    bottom: -1px;
+    right: -1px;
+    border-radius: var(--radius-full);
+    border: 2px solid var(--background);
+    z-index: var(--z-component);
+  }
+  .rnx-avatar-status--sm {
+    width: var(--space-2-5);
+    height: var(--space-2-5);
+  }
+  .rnx-avatar-status--md {
+    width: var(--space-3);
+    height: var(--space-3);
+  }
+  .rnx-avatar-status--lg,
+  .rnx-avatar-status--xl {
+    width: var(--space-3-5);
+    height: var(--space-3-5);
+  }
+  .rnx-avatar-status--online {
+    background-color: var(--success);
+  }
+  .rnx-avatar-status--offline {
+    background-color: var(--muted-foreground);
+  }
+  .rnx-avatar-status--busy {
+    background-color: var(--destructive);
+  }
+  .rnx-avatar-status--away {
+    background-color: var(--warning);
   }
 }

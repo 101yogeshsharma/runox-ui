@@ -28,3 +28,7 @@ Rules:
 
 - Do not restate context already covered in overview.md.
 - If a plan for the same feature already exists, update it in place — do not create a duplicate folder.
+
+# Git Commits and Pushes Rule
+- **NEVER** automatically run `git commit` or `git push` unless the user explicitly requests it.
+- **ALWAYS** ask for the user's permission and wait for approval before committing or pushing changes to the repository.

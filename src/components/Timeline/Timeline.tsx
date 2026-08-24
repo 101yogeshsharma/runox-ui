@@ -1,8 +1,8 @@
+import * as React from "react";
 import { Box } from "../../atoms/Box";
-import React from "react";
 import { cn } from "../../utils/cn";
 import "./Timeline.css";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
+import { rnx } from "../../utils/rnx";
 
 const TimelineContext = React.createContext<{
   orientation: "vertical" | "horizontal";
@@ -10,37 +10,40 @@ const TimelineContext = React.createContext<{
   orientation: "vertical",
 });
 
+/**
+ * Props for the Timeline component.
+ */
 export interface TimelineProps extends React.HTMLAttributes<HTMLUListElement> {
   orientation?: "vertical" | "horizontal";
 }
 
-export const Timeline = React.forwardRef<HTMLUListElement, TimelineProps>(
+const TimelineRoot = React.forwardRef<HTMLUListElement, TimelineProps>(
   ({ className, orientation = "vertical", ...props }, ref) => {
-    const { config } = useTheme();
     return (
       <TimelineContext.Provider value={{ orientation }}>
         <Box
+          {...rnx({ component: "Timeline" })}
           as="ul"
           ref={ref}
           className={cn(
             "rnx-timeline",
-            "m-0 list-none p-0",
-            orientation === "horizontal" && "flex w-full flex-row",
-            `rounded-${config.radius}`,
-            className
+            orientation === "horizontal" && "rnx-timeline--horizontal",
+            className,
           )}
           {...props}
         />
       </TimelineContext.Provider>
     );
-  }
+  },
 );
-Timeline.displayName = "Timeline";
+TimelineRoot.displayName = "Timeline";
 
-export interface TimelineItemProps extends React.HTMLAttributes<HTMLLIElement> {}
+export interface TimelineItemProps extends React.HTMLAttributes<HTMLLIElement> {
+  status?: "completed" | "active" | "pending" | "error";
+}
 
 export const TimelineItem = React.forwardRef<HTMLLIElement, TimelineItemProps>(
-  ({ className, ...props }, ref) => {
+  ({ className, status, ...props }, ref) => {
     const { orientation } = React.useContext(TimelineContext);
     return (
       <Box
@@ -48,18 +51,18 @@ export const TimelineItem = React.forwardRef<HTMLLIElement, TimelineItemProps>(
         ref={ref}
         className={cn(
           "rnx-timeline-item",
-          "relative flex",
           orientation === "vertical"
-            ? "min-h-12 flex-row"
-            : "min-w-24 flex-1 flex-col",
-          className
+            ? "rnx-timeline-item--vertical"
+            : "rnx-timeline-item--horizontal",
+          status && `rnx-timeline-item--${status}`,
+          className,
         )}
         {...props}
       />
     );
-  }
+  },
 );
-TimelineItem.displayName = "TimelineItem";
+TimelineItem.displayName = "Timeline.Item";
 
 export interface TimelineSeparatorProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -73,46 +76,59 @@ export const TimelineSeparator = React.forwardRef<
       ref={ref}
       className={cn(
         "rnx-timeline-separator",
-        "flex flex-none items-center",
-        orientation === "vertical" ? "flex-col" : "w-full flex-row",
-        className
+        orientation === "vertical"
+          ? "rnx-timeline-separator--vertical"
+          : "rnx-timeline-separator--horizontal",
+        className,
       )}
       {...props}
     />
   );
 });
-TimelineSeparator.displayName = "TimelineSeparator";
+TimelineSeparator.displayName = "Timeline.Separator";
 
 export interface TimelineDotProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: "default" | "outline" | "ghost";
+  status?: "completed" | "active" | "pending" | "error";
   color?:
     "default" | "primary" | "secondary" | "destructive" | "success" | "warning";
 }
 
 export const TimelineDot = React.forwardRef<HTMLDivElement, TimelineDotProps>(
-  ({ className, variant = "default", color = "default", ...props }, ref) => {
+  (
+    { className, variant = "default", status, color = "default", ...props },
+    ref,
+  ) => {
     const { orientation } = React.useContext(TimelineContext);
+    let mappedColor = color;
+    if (status === "completed") {
+      mappedColor = "success";
+    } else if (status === "active") {
+      mappedColor = "primary";
+    } else if (status === "error") {
+      mappedColor = "destructive";
+    }
+
     return (
       <Box
         ref={ref}
         className={cn(
           "rnx-timeline-dot",
           `rnx-timeline-dot--${variant}`,
-          `rnx-timeline-dot--color-${color}`,
-          "z-10 flex shrink-0 items-center justify-center",
-          orientation === "vertical" ? "my-1.5" : "mx-1.5",
-          {
-            "h-3 w-3": !props.children, // default small dot
-            "h-6 w-6": !!props.children, // larger if containing icon
-          },
-          className
+          `rnx-timeline-dot--color-${mappedColor}`,
+          orientation === "vertical"
+            ? "rnx-timeline-dot--vertical"
+            : "rnx-timeline-dot--horizontal",
+          status && `rnx-timeline-dot--status-${status}`,
+          props.children ? "rnx-timeline-dot--with-children" : undefined,
+          className,
         )}
         {...props}
       />
     );
-  }
+  },
 );
-TimelineDot.displayName = "TimelineDot";
+TimelineDot.displayName = "Timeline.Dot";
 
 export interface TimelineConnectorProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -126,15 +142,16 @@ export const TimelineConnector = React.forwardRef<
       ref={ref}
       className={cn(
         "rnx-timeline-connector",
-        "grow",
-        orientation === "vertical" ? "min-h-6 w-px" : "h-px min-w-6",
-        className
+        orientation === "vertical"
+          ? "rnx-timeline-connector--vertical"
+          : "rnx-timeline-connector--horizontal",
+        className,
       )}
       {...props}
     />
   );
 });
-TimelineConnector.displayName = "TimelineConnector";
+TimelineConnector.displayName = "Timeline.Connector";
 
 export interface TimelineContentProps extends React.HTMLAttributes<HTMLDivElement> {}
 
@@ -148,14 +165,21 @@ export const TimelineContent = React.forwardRef<
       ref={ref}
       className={cn(
         "rnx-timeline-content",
-        "flex-1 text-sm",
         orientation === "vertical"
-          ? "px-4 pt-0.5 pb-6"
-          : "px-2 pt-4 pb-0 text-left",
-        className
+          ? "rnx-timeline-content--vertical"
+          : "rnx-timeline-content--horizontal",
+        className,
       )}
       {...props}
     />
   );
 });
-TimelineContent.displayName = "TimelineContent";
+TimelineContent.displayName = "Timeline.Content";
+
+export const Timeline = Object.assign(TimelineRoot, {
+  Item: TimelineItem,
+  Separator: TimelineSeparator,
+  Dot: TimelineDot,
+  Connector: TimelineConnector,
+  Content: TimelineContent,
+});

@@ -18,32 +18,32 @@ interface KanbanContextValue {
   dropPosition: "before" | "after" | null;
   handleDragStart: (
     e: React.DragEvent<HTMLElement>,
-    itemId: UniqueIdentifier
+    itemId: UniqueIdentifier,
   ) => void;
   handleDragOverItem: (
     e: React.DragEvent<HTMLElement>,
     itemId: UniqueIdentifier,
-    colId: UniqueIdentifier
+    colId: UniqueIdentifier,
   ) => void;
   handleDragLeaveItem: (
     e: React.DragEvent<HTMLElement>,
-    itemId: UniqueIdentifier
+    itemId: UniqueIdentifier,
   ) => void;
   handleDragOverColumn: (
     e: React.DragEvent<HTMLElement>,
-    colId: UniqueIdentifier
+    colId: UniqueIdentifier,
   ) => void;
   handleDragLeaveColumn: (
     e: React.DragEvent<HTMLElement>,
-    colId: UniqueIdentifier
+    colId: UniqueIdentifier,
   ) => void;
   handleDropItem: (
     e: React.DragEvent<HTMLElement>,
-    targetItemId: UniqueIdentifier
+    targetItemId: UniqueIdentifier,
   ) => void;
   handleDropColumn: (
     e: React.DragEvent<HTMLElement>,
-    targetColId: UniqueIdentifier
+    targetColId: UniqueIdentifier,
   ) => void;
   handleDragEnd: () => void;
 }
@@ -68,6 +68,9 @@ function useKanbanColumn() {
   return context;
 }
 
+/**
+ * Props for the Kanban component.
+ */
 export interface KanbanProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
   "onDrop"
@@ -76,21 +79,21 @@ export interface KanbanProps extends Omit<
     activeId: UniqueIdentifier,
     overId: UniqueIdentifier | null,
     overColId: UniqueIdentifier | null,
-    position: "before" | "after" | null
+    position: "before" | "after" | null,
   ) => void;
 }
 
-export const Kanban = React.forwardRef<HTMLDivElement, KanbanProps>(
+const KanbanRoot = React.forwardRef<HTMLDivElement, KanbanProps>(
   ({ children, className, onCardMove, ...props }, ref) => {
     const [draggedItemId, setDraggedItemId] = useState<UniqueIdentifier | null>(
-      null
+      null,
     );
     const [dragOverItemId, setDragOverItemId] =
       useState<UniqueIdentifier | null>(null);
     const [dragOverColumnId, setDragOverColumnId] =
       useState<UniqueIdentifier | null>(null);
     const [dropPosition, setDropPosition] = useState<"before" | "after" | null>(
-      null
+      null,
     );
 
     const resetDragState = () => {
@@ -102,7 +105,7 @@ export const Kanban = React.forwardRef<HTMLDivElement, KanbanProps>(
 
     const handleDragStart = (
       e: React.DragEvent<HTMLElement>,
-      itemId: UniqueIdentifier
+      itemId: UniqueIdentifier,
     ) => {
       setDraggedItemId(itemId);
       e.dataTransfer.effectAllowed = "move";
@@ -112,7 +115,7 @@ export const Kanban = React.forwardRef<HTMLDivElement, KanbanProps>(
     const handleDragOverItem = (
       e: React.DragEvent<HTMLElement>,
       itemId: UniqueIdentifier,
-      colId: UniqueIdentifier
+      colId: UniqueIdentifier,
     ) => {
       e.preventDefault();
       e.stopPropagation();
@@ -130,7 +133,7 @@ export const Kanban = React.forwardRef<HTMLDivElement, KanbanProps>(
 
     const handleDragLeaveItem = (
       e: React.DragEvent<HTMLElement>,
-      itemId: UniqueIdentifier
+      itemId: UniqueIdentifier,
     ) => {
       if (dragOverItemId === itemId) {
         setDragOverItemId(null);
@@ -140,7 +143,7 @@ export const Kanban = React.forwardRef<HTMLDivElement, KanbanProps>(
 
     const handleDragOverColumn = (
       e: React.DragEvent<HTMLElement>,
-      colId: UniqueIdentifier
+      colId: UniqueIdentifier,
     ) => {
       e.preventDefault();
       e.dataTransfer.dropEffect = "move";
@@ -152,7 +155,7 @@ export const Kanban = React.forwardRef<HTMLDivElement, KanbanProps>(
 
     const handleDragLeaveColumn = (
       e: React.DragEvent<HTMLElement>,
-      colId: UniqueIdentifier
+      colId: UniqueIdentifier,
     ) => {
       if (dragOverColumnId === colId && !dragOverItemId) {
         setDragOverColumnId(null);
@@ -161,7 +164,7 @@ export const Kanban = React.forwardRef<HTMLDivElement, KanbanProps>(
 
     const handleDropItem = (
       e: React.DragEvent<HTMLElement>,
-      targetItemId: UniqueIdentifier
+      targetItemId: UniqueIdentifier,
     ) => {
       e.preventDefault();
       e.stopPropagation();
@@ -177,7 +180,7 @@ export const Kanban = React.forwardRef<HTMLDivElement, KanbanProps>(
 
     const handleDropColumn = (
       e: React.DragEvent<HTMLElement>,
-      targetColId: UniqueIdentifier
+      targetColId: UniqueIdentifier,
     ) => {
       e.preventDefault();
 
@@ -253,7 +256,7 @@ export const Kanban = React.forwardRef<HTMLDivElement, KanbanProps>(
               "rnx-kanban-scroll-button absolute top-1/2 left-2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center",
               !canScrollLeft
                 ? "rnx-kanban-scroll-button--hidden"
-                : "rnx-kanban-scroll-button--visible"
+                : "rnx-kanban-scroll-button--visible",
             )}
             aria-label="Scroll left"
           >
@@ -268,7 +271,7 @@ export const Kanban = React.forwardRef<HTMLDivElement, KanbanProps>(
               "rnx-kanban-scroll-button absolute top-1/2 right-2 z-10 flex h-10 w-10 -translate-y-1/2 items-center justify-center",
               !canScrollRight
                 ? "rnx-kanban-scroll-button--hidden"
-                : "rnx-kanban-scroll-button--visible"
+                : "rnx-kanban-scroll-button--visible",
             )}
             aria-label="Scroll right"
           >
@@ -280,7 +283,7 @@ export const Kanban = React.forwardRef<HTMLDivElement, KanbanProps>(
             onScroll={checkScroll}
             gap="lg"
             justify="start"
-            className="scrollbar-hide h-full min-h-96 w-full overflow-x-auto py-4 py-12"
+            className="scrollbar-hide h-full min-h-96 w-full overflow-x-auto py-12"
           >
             <Box className="w-8 shrink-0" />
             {children}
@@ -289,9 +292,9 @@ export const Kanban = React.forwardRef<HTMLDivElement, KanbanProps>(
         </Box>
       </KanbanContext.Provider>
     );
-  }
+  },
 );
-Kanban.displayName = "Kanban";
+KanbanRoot.displayName = "Kanban";
 
 export interface KanbanColumnProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
@@ -316,6 +319,12 @@ export const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
       <KanbanColumnContext.Provider value={id}>
         <Flex
           ref={ref}
+          role="list"
+          aria-label={
+            typeof props["aria-label"] === "string"
+              ? props["aria-label"]
+              : `Column ${String(id)}`
+          }
           direction="col"
           gap="sm"
           onDragOver={(e) => handleDragOverColumn(e, id)}
@@ -324,7 +333,7 @@ export const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
           className={cn(
             "rnx-kanban-column w-80 shrink-0 p-4",
             isColumnDragOver && "rnx-kanban-column--drag-over",
-            className
+            className,
           )}
           {...props}
         >
@@ -332,9 +341,9 @@ export const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
         </Flex>
       </KanbanColumnContext.Provider>
     );
-  }
+  },
 );
-KanbanColumn.displayName = "KanbanColumn";
+KanbanColumn.displayName = "Kanban.Column";
 
 export interface KanbanColumnHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
   count?: number;
@@ -363,7 +372,7 @@ export const KanbanColumnHeader = React.forwardRef<
     </Flex>
   );
 });
-KanbanColumnHeader.displayName = "KanbanColumnHeader";
+KanbanColumnHeader.displayName = "Kanban.ColumnHeader";
 
 export interface KanbanCardProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
@@ -400,6 +409,9 @@ export const KanbanCard = React.forwardRef<HTMLDivElement, KanbanCardProps>(
     return (
       <Box
         ref={ref}
+        role="listitem"
+        tabIndex={0}
+        aria-roledescription="draggable card"
         draggable
         onDragStart={(e) => handleDragStart(e, id)}
         onDragOver={(e) => handleDragOverItem(e, id, columnId)}
@@ -412,13 +424,22 @@ export const KanbanCard = React.forwardRef<HTMLDivElement, KanbanCardProps>(
             ? "rnx-kanban-card--dragging"
             : "rnx-kanban-card--draggable",
           indicatorStyles,
-          className
+          className,
         )}
         {...props}
       >
         {children}
       </Box>
     );
-  }
+  },
 );
-KanbanCard.displayName = "KanbanCard";
+KanbanRoot.displayName = "Kanban";
+KanbanColumn.displayName = "Kanban.Column";
+KanbanColumnHeader.displayName = "Kanban.ColumnHeader";
+KanbanCard.displayName = "Kanban.Card";
+
+export const Kanban = Object.assign(KanbanRoot, {
+  Column: KanbanColumn,
+  ColumnHeader: KanbanColumnHeader,
+  Card: KanbanCard,
+});

@@ -2,12 +2,12 @@
   .rnx-input-container {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-1-5, 0.375rem);
+    gap: var(--space-1-5);
     width: 100%;
   }
 
   .rnx-input-label {
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     font-weight: 500;
     line-height: 1;
     color: var(--foreground);
@@ -17,9 +17,14 @@
     display: flex;
     width: 100%;
     border: 1px solid var(--border);
+    border-radius: var(--radius);
     background-color: var(--input);
     color: var(--foreground);
-    transition: colors 0.2s;
+    transition:
+      color 200ms ease,
+      background-color 200ms ease,
+      border-color 200ms ease,
+      box-shadow 200ms ease;
   }
 
   .rnx-input::file-selector-button {
@@ -39,27 +44,82 @@
       0 0 0 4px var(--ring);
   }
 
-  .rnx-input:disabled {
+  .rnx-input:hover:not(:disabled):not(:focus-visible):not(.rnx-input--error) {
+    border-color: var(--ring);
+  }
+
+  .rnx-input:hover:not(:disabled):not(:focus-visible) {
+    border-color: color-mix(in srgb, var(--border) 60%, var(--foreground));
+  }
+
+  .rnx-input:active:not(:disabled) {
+    border-color: var(--ring);
+  }
+
+  .rnx-input:disabled,
+  .rnx-input[aria-disabled="true"] {
     cursor: not-allowed;
     opacity: 0.5;
   }
 
+  .rnx-input--loading {
+    opacity: 0.7;
+    cursor: wait;
+    pointer-events: none;
+  }
+
   .rnx-input--size-sm {
-    height: 2rem;
-    padding: 0 0.75rem;
-    font-size: 0.75rem;
+    height: var(--space-8);
+    padding: 0 var(--space-3);
+    font-size: var(--text-xs);
   }
 
   .rnx-input--size-md {
-    height: 2.5rem;
-    padding: 0.5rem 0.75rem;
-    font-size: 0.875rem;
+    height: var(--space-10);
+    padding: var(--space-2) var(--space-3);
+    font-size: var(--text-sm);
   }
 
   .rnx-input--size-lg {
-    height: 3rem;
-    padding: 0.75rem 1rem;
-    font-size: 1rem;
+    height: var(--space-12);
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-base);
+  }
+
+  /* Variants */
+  .rnx-input--variant-outline {
+    border: 1px solid var(--border);
+    background-color: var(--input);
+  }
+
+  .rnx-input--variant-filled {
+    border: 1px solid transparent;
+    background-color: var(--muted);
+  }
+  .rnx-input--variant-filled:hover:not(:disabled):not(:focus-visible) {
+    background-color: color-mix(in srgb, var(--muted) 80%, var(--border));
+  }
+
+  .rnx-input--variant-glass {
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur, 16px));
+    border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
+  }
+
+  .rnx-input--variant-flushed {
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    background-color: transparent;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .rnx-input--variant-flushed:focus-visible {
+    border-bottom-color: var(--ring);
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
   }
 
   .rnx-input--error {
@@ -72,10 +132,56 @@
   }
 
   .rnx-input-error-msg {
-    font-size: 0.8rem;
+    font-size: var(--text-xs);
     font-weight: 500;
     color: var(--destructive);
-    margin-top: 0.25rem;
+    margin-top: var(--space-1);
+  }
+
+  .rnx-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+  }
+
+  .rnx-input-prefix {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    display: flex;
+    align-items: center;
+    padding-inline-start: var(--space-3);
+    pointer-events: none;
+    color: var(--muted-foreground);
+  }
+
+  .rnx-input-suffix {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    display: flex;
+    align-items: center;
+    padding-inline-end: var(--space-3);
+    pointer-events: none;
+    color: var(--muted-foreground);
+  }
+
+  .rnx-input-clear-btn {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    display: flex;
+    align-items: center;
+    padding-inline-end: var(--space-3);
+    color: var(--muted-foreground);
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    transition: color 150ms ease;
+  }
+  .rnx-input-clear-btn:hover {
+    color: var(--foreground);
   }
 
   input[type="time"]::-webkit-calendar-picker-indicator {
@@ -88,6 +194,7 @@
     align-items: stretch;
     width: 100%;
     position: relative;
+    border-radius: var(--radius);
   }
 
   /* Allow input to grow inside group */
@@ -119,7 +226,7 @@
   /* Ensure focused element overlaps others to preserve active border rings */
   .rnx-input-group > *:focus-visible,
   .rnx-input-group > *:focus-within {
-    z-index: 1;
+    z-index: var(--z-raised);
   }
 
   /* Addons */
@@ -127,11 +234,11 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 0.75rem;
+    padding: 0 var(--space-3);
     background-color: var(--card);
     border: 1px solid var(--border);
     color: var(--muted-foreground);
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     white-space: nowrap;
   }
 
@@ -140,7 +247,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0 0.75rem;
+    padding: 0 var(--space-3);
     background-color: var(--input);
     border: 1px solid var(--border);
     color: var(--muted-foreground);

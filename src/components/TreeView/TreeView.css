@@ -1,35 +1,90 @@
-@layer components {
+﻿@layer components {
+  .rnx-treeview {
+    border-radius: var(--radius);
+    overflow: hidden;
+    width: 100%;
+  }
+
   .rnx-treeview-node {
-    transition-property:
-      color, background-color, border-color, text-decoration-color, fill, stroke;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 150ms;
+    position: relative;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    border-radius: calc(var(--radius) - 4px);
+    padding: var(--space-1-5) var(--space-2);
+    font-size: var(--text-sm);
+    outline: none;
+    user-select: none;
+    transition:
+      color 150ms ease,
+      background-color 150ms ease;
     color: color-mix(in srgb, var(--foreground) 80%, transparent);
   }
 
-  .rnx-treeview-node:hover {
+  .rnx-treeview-node:hover,
+  .rnx-treeview-node:focus-visible {
     background-color: color-mix(in srgb, var(--accent) 50%, transparent);
     color: var(--foreground);
   }
 
   .rnx-treeview-node--selected,
-  .rnx-treeview-node--selected:hover {
+  .rnx-treeview-node--selected:hover,
+  .rnx-treeview-node--selected:focus-visible {
     background-color: var(--accent);
     color: var(--accent-foreground);
   }
 
   .rnx-treeview-chevron {
+    margin-right: var(--space-1);
+    height: var(--icon-md);
+    width: var(--icon-md);
+    flex-shrink: 0;
     color: var(--muted-foreground);
-    transition-property: transform;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 200ms;
+    transition: transform 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .rnx-treeview-chevron--expanded {
+    transform: rotate(90deg);
+  }
+
+  .rnx-treeview-spacer {
+    margin-right: var(--space-1);
+    width: 1.25rem;
+    flex-shrink: 0;
   }
 
   .rnx-treeview-icon {
+    margin-right: var(--space-2);
     color: var(--muted-foreground);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .rnx-treeview-collapse {
+    display: grid;
+    transition: all 200ms ease-in-out;
+  }
+  .rnx-treeview-collapse--expanded {
+    grid-template-rows: 1fr;
+    opacity: 1;
+  }
+  .rnx-treeview-collapse--collapsed {
+    grid-template-rows: 0fr;
+    opacity: 0;
+  }
+
+  .rnx-treeview-collapse-inner {
+    overflow: hidden;
   }
 
   .rnx-treeview-content {
-    border-color: color-mix(in srgb, var(--border) 50%, transparent);
+    margin-top: var(--space-1);
+    margin-left: var(--space-4);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    border-left: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
+    padding-left: var(--space-2);
   }
 }

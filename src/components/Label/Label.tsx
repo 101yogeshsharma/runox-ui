@@ -3,22 +3,52 @@
 import React, { forwardRef } from "react";
 import { cn } from "../../utils/cn";
 import "./Label.css";
+import { withLoading } from "../../utils/withLoading";
 
-export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {}
 
-export const Label = forwardRef<HTMLLabelElement, LabelProps>(
-  ({ className, ...props }, ref) => (
+/**
+ * Props for the Label component.
+ */
+export interface LabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
+  size?: "sm" | "md" | "lg";
+  disabled?: boolean;
+  requiredIndicator?: boolean;
+  optionalText?: string;
+  subLabel?: string;
+}
+
+const LabelBase = forwardRef<HTMLLabelElement, LabelProps>(
+  (
+    {
+      className,
+      size = "md",
+      disabled = false,
+      requiredIndicator = false,
+      optionalText,
+      subLabel,
+      children,
+      ...props
+    },
+    ref
+  ) => (
     <label
       ref={ref}
       className={cn(
         "rnx-label",
-        // When used with peer inputs, we still rely on CSS peer-disabled from parent or handle disabled state via prop if needed
-        // For standard HTML labels, peer-disabled is typically handled by standard CSS.
-        // We will keep a helper class if someone wants to pass disabled state explicitly.
+        `rnx-label--size-${size}`,
+        disabled && "rnx-label--disabled",
         className
       )}
       {...props}
-    />
+    >
+      <span>
+        {children}
+        {requiredIndicator && <span className="rnx-label-required" aria-hidden="true">*</span>}
+        {optionalText && <span className="rnx-label-optional">({optionalText})</span>}
+        {subLabel && <span className="rnx-label-subtext">{subLabel}</span>}
+      </span>
+    </label>
   )
 );
-Label.displayName = "Label";
+LabelBase.displayName = "Label";
+export const Label = withLoading(LabelBase);

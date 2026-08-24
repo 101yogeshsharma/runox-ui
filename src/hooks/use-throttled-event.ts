@@ -1,5 +1,17 @@
 import { useEffect, useRef } from "react";
 
+/**
+ * Adds a throttled event listener to a DOM element.
+ *
+ * @param eventName - The name of the event to listen for.
+ * @param handler - The event handler callback function.
+ * @param element - The target element or RefObject. Defaults to window.
+ * @param delay - The throttle delay in milliseconds. Defaults to 200.
+ * @returns void
+ *
+ * @example
+ * useThrottledEvent("scroll", (e) => console.log("Scrolled!", e), window, 300);
+ */
 export function useThrottledEvent(
   eventName: string,
   handler: (event: Event) => void,

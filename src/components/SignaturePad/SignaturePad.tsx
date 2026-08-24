@@ -13,8 +13,14 @@ import { Eraser } from "lucide-react";
 import { cn } from "../../utils/cn";
 import { Button } from "../Button";
 import "./SignaturePad.css";
+import { withLoading } from "../../utils/withLoading";
+import { rnx } from "../../utils/rnx";
+
 // Uses: Button
 
+/**
+ * Props for the SignaturePad component.
+ */
 export interface SignaturePadProps extends Omit<
   React.CanvasHTMLAttributes<HTMLCanvasElement>,
   "onEnded"
@@ -26,6 +32,8 @@ export interface SignaturePadProps extends Omit<
   onEnd?: (dataUrl: string) => void;
   showClearButton?: boolean;
   height?: number;
+  typedFallback?: boolean;
+  onTypedChange?: (value: string) => void;
 }
 
 export interface SignaturePadRef {
@@ -34,7 +42,7 @@ export interface SignaturePadRef {
   toDataURL: (type?: string, encoderOptions?: number) => string | null;
 }
 
-export const SignaturePad = forwardRef<SignaturePadRef, SignaturePadProps>(
+const SignaturePadBase = forwardRef<SignaturePadRef, SignaturePadProps>(
   (
     {
       className,
@@ -44,9 +52,11 @@ export const SignaturePad = forwardRef<SignaturePadRef, SignaturePadProps>(
       onEnd,
       showClearButton = true,
       height = 200,
+      typedFallback = false,
+      onTypedChange,
       ...props
     },
-    ref
+    ref,
   ) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -197,16 +207,18 @@ export const SignaturePad = forwardRef<SignaturePadRef, SignaturePadProps>(
 
     return (
       <Box
+        {...rnx({ component: "SignaturePad" })}
         ref={containerRef}
-        className={cn("rnx-signature-pad relative w-full", className)}
+        className={cn("rnx-signature-pad", className)}
       >
-        <Box className="absolute top-2 right-2 z-10 flex gap-2">
+        <Box className="rnx-signature-pad__controls">
           {showClearButton && (
             <Button
               variant="outline"
               size="icon"
-              className="rnx-signature-pad__clear-button h-8 w-8"
+              className="rnx-signature-pad__clear-button"
               onClick={handleClear}
+              aria-label="Clear signature"
               title="Clear Signature"
             >
               <Eraser className="h-4 w-4" />
@@ -215,34 +227,53 @@ export const SignaturePad = forwardRef<SignaturePadRef, SignaturePadProps>(
         </Box>
 
         <Box
-          className="rnx-signature-pad__canvas-container relative w-full"
+          className="rnx-signature-pad__canvas-container"
           style={{ height: `${height}px` }}
         >
           <canvas
             ref={canvasRef}
             width={canvasWidth}
             height={height}
+            role="img"
+            aria-label={
+              props["aria-label"] ||
+              "Signature drawing area — use mouse or touch to sign"
+            }
+            tabIndex={0}
             onPointerDown={startDrawing}
             onPointerMove={draw}
             onPointerUp={stopDrawing}
             onPointerCancel={stopDrawing}
-            className={cn(
-              "rnx-signature-pad__canvas h-full w-full touch-none",
-              canvasClassName
-            )}
-            style={{ touchAction: "none" }}
+            className={cn("rnx-signature-pad__canvas", canvasClassName)}
             {...props}
           />
-          <Box className="rnx-signature-pad__guide-line pointer-events-none absolute right-8 bottom-1/4 left-8 h-px" />
-          <Box
-            as="span"
-            className="rnx-signature-pad__guide-label pointer-events-none absolute bottom-1/4 left-8 translate-y-4 px-1 text-xs"
-          >
+          <Box className="rnx-signature-pad__guide-line" />
+          <Box as="span" className="rnx-signature-pad__guide-label">
             Sign here
           </Box>
         </Box>
+
+        {typedFallback && (
+          <Box className="rnx-signature-pad__fallback mt-3">
+            <label
+              htmlFor={`${props.id || "rnx-signature"}-fallback`}
+              className="text-xs text-muted-foreground mb-1 block"
+            >
+              Keyboard alternative: Type your full name
+            </label>
+            <input
+              id={`${props.id || "rnx-signature"}-fallback`}
+              type="text"
+              placeholder="Type your name to sign"
+              aria-label="Typed signature alternative"
+              className="rnx-input w-full px-3 py-1.5 text-sm border rounded bg-transparent"
+              onChange={(e) => onTypedChange?.(e.target.value)}
+            />
+          </Box>
+        )}
       </Box>
     );
-  }
+  },
 );
-SignaturePad.displayName = "SignaturePad";
+SignaturePadBase.displayName = "SignaturePad";
+export const SignaturePad = withLoading(SignaturePadBase);

@@ -22,7 +22,13 @@ import {
 } from "recharts";
 import { cn } from "../../utils/cn";
 import { Text } from "../../atoms/Text";
+import { rnx } from "../../utils/rnx";
 
+import "./Chart.css";
+
+/**
+ * Props for the Chart component.
+ */
 export interface ChartProps {
   data: Record<string, unknown>[];
   index: string;
@@ -53,12 +59,8 @@ const CustomTooltip = ({
 }) => {
   if (active && payload && payload.length) {
     return (
-      <Box className="bg-background/80 rounded-lg border p-3 shadow-xl backdrop-blur-md">
-        <Text
-          as="p"
-          variant="body"
-          className="text-foreground mb-2 font-medium"
-        >
+      <Box className="rnx-chart-tooltip">
+        <Text as="p" variant="body" className="rnx-chart-tooltip-title">
           {label}
         </Text>
         {payload.map((p, i: number) => (
@@ -92,7 +94,10 @@ export const LineChart = ({
   valueFormatter,
 }: ChartProps) => {
   return (
-    <Box className={cn("h-72 w-full", className)}>
+    <Box
+      {...rnx({ component: "Chart" })}
+      className={cn("h-72 w-full", className)}
+    >
       <ResponsiveContainer width="100%" height="100%">
         <RechartsLineChart
           data={data}
@@ -146,7 +151,10 @@ export const BarChart = ({
   valueFormatter,
 }: ChartProps) => {
   return (
-    <Box className={cn("h-72 w-full", className)}>
+    <Box
+      {...rnx({ component: "Chart" })}
+      className={cn("h-72 w-full", className)}
+    >
       <ResponsiveContainer width="100%" height="100%">
         <RechartsBarChart
           data={data}
@@ -199,7 +207,10 @@ export const AreaChart = ({
 }: ChartProps) => {
   const chartId = React.useId().replace(/:/g, "");
   return (
-    <Box className={cn("h-72 w-full", className)}>
+    <Box
+      {...rnx({ component: "Chart" })}
+      className={cn("h-72 w-full", className)}
+    >
       <ResponsiveContainer width="100%" height="100%">
         <RechartsAreaChart
           data={data}
@@ -288,7 +299,7 @@ const CustomPieTooltip = ({
   if (active && payload && payload.length) {
     const entry = payload[0];
     return (
-      <Box className="bg-background/80 rounded-lg border p-3 shadow-xl backdrop-blur-md">
+      <Box className="rnx-chart-tooltip">
         <Flex align="center" gap="sm" className="text-sm">
           <Box
             className="h-2 w-2 flex-shrink-0 rounded-full"
@@ -316,7 +327,10 @@ export const PieChart = ({
   innerRadius = 0,
 }: PieChartProps) => {
   return (
-    <Box className={cn("h-72 w-full", className)}>
+    <Box
+      {...rnx({ component: "Chart" })}
+      className={cn("h-72 w-full", className)}
+    >
       <ResponsiveContainer width="100%" height="100%">
         <RechartsPieChart>
           <Pie
@@ -343,7 +357,7 @@ export const PieChart = ({
             <Legend
               iconType="circle"
               iconSize={8}
-              formatter={(value) => (
+              formatter={(value: any) => (
                 <Box as="span" className="text-muted-foreground text-xs">
                   {value}
                 </Box>
@@ -354,4 +368,11 @@ export const PieChart = ({
       </ResponsiveContainer>
     </Box>
   );
+};
+
+export const Chart = {
+  Line: LineChart,
+  Bar: BarChart,
+  Area: AreaChart,
+  Pie: PieChart,
 };

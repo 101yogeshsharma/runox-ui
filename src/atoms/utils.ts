@@ -4,7 +4,7 @@ export type ResponsiveProp<T> = T | Partial<Record<Breakpoint, T>>;
 
 export function resolveResponsive<T>(
   prop: ResponsiveProp<T> | undefined,
-  activeBreakpoint: Breakpoint
+  activeBreakpoint: Breakpoint,
 ): T | undefined {
   if (prop === undefined) return undefined;
   if (typeof prop !== "object" || prop === null) return prop as T;
@@ -27,7 +27,7 @@ export function resolveResponsive<T>(
 export function generateResponsiveVars<T>(
   prefix: string,
   prop: ResponsiveProp<T> | undefined,
-  formatter: (val: T) => string | undefined = (val) => String(val)
+  formatter: (val: T) => string | undefined = (val) => String(val),
 ): Record<string, string | undefined> {
   if (prop === undefined) return {};
 
@@ -59,9 +59,9 @@ export function generateResponsiveVars<T>(
 
 export const gapMap: Record<string, string> = {
   none: "0px",
-  xs: "var(--spacing-1, 4px)",
-  sm: "var(--spacing-2, 8px)",
-  md: "var(--spacing-4, 16px)",
-  lg: "var(--spacing-6, 24px)",
-  xl: "var(--spacing-8, 32px)",
+  xs: "calc(0.25rem * var(--rnx-space-scale, 1))",
+  sm: "calc(0.5rem * var(--rnx-space-scale, 1))",
+  md: "calc(1rem * var(--rnx-space-scale, 1))",
+  lg: "calc(1.5rem * var(--rnx-space-scale, 1))",
+  xl: "calc(2rem * var(--rnx-space-scale, 1))",
 };

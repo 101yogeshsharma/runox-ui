@@ -11,28 +11,36 @@ import { cn } from "../../utils/cn";
 import { mergeProps } from "../../utils/mergeProps";
 import { Label } from "../Label/Label";
 import "./Radio.css";
+import { rnx } from "../../utils/rnx";
+import { withLoading } from "../../utils/withLoading";
+
+import { RnxColor } from "../../types";
 
 interface RadioGroupContextValue {
   name: string;
   value?: string;
   onValueChange: (value: string) => void;
+  color?: RnxColor;
 }
 
 const RadioGroupContext = createContext<RadioGroupContextValue | undefined>(
-  undefined
+  undefined,
 );
 
 export interface RadioGroupProps extends Omit<
   React.FieldsetHTMLAttributes<HTMLFieldSetElement>,
-  "onChange"
+  "onChange" | "color"
 > {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
   name?: string;
+  variant?: "list" | "cards" | "buttons" | "pills";
+  color?: RnxColor;
+  error?: string;
 }
 
-export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
+const RadioGroupComponent = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
   (
     {
       className,
@@ -40,9 +48,13 @@ export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
       defaultValue,
       onValueChange,
       name: customName,
+      variant = "list",
+      color,
+      error,
+      children,
       ...props
     },
-    ref
+    ref,
   ) => {
     const generatedName = useId();
     const name = customName || generatedName;
@@ -58,7 +70,7 @@ export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
         }
         onValueChange?.(newValue);
       },
-      [isControlled, onValueChange]
+      [isControlled, onValueChange],
     );
 
     const contextValue = React.useMemo(
@@ -66,45 +78,63 @@ export const RadioGroup = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
         name,
         value: currentValue,
         onValueChange: handleValueChange,
+        color,
       }),
-      [name, currentValue, handleValueChange]
+      [name, currentValue, handleValueChange, color],
     );
 
-    const { style: consumerStyle, ...rest } = props;
     return (
       <RadioGroupContext.Provider value={contextValue}>
         <Box
           as="fieldset"
           ref={ref}
-          style={consumerStyle}
-          className={cn("rnx-radio-group m-0 border-none p-0", className)}
-          {...rest}
-        />
+          className={cn(
+            "rnx-radio-group",
+            variant && `rnx-radio-group--variant-${variant}`,
+            className,
+          )}
+          {...rnx({ component: "RadioGroup" })}
+          {...props}
+        >
+          {children}
+        </Box>
+        {error && (
+          <Box as="span" className="rnx-radio-error-text">
+            {error}
+          </Box>
+        )}
       </RadioGroupContext.Provider>
     );
-  }
+  },
 );
-RadioGroup.displayName = "RadioGroup";
+RadioGroupComponent.displayName = "Radio.Group";
 
+/**
+ * A group of mutually exclusive options where only one option can be selected.
+ */
 export interface RadioProps extends Omit<
   React.InputHTMLAttributes<HTMLInputElement>,
   "size" | "color" | "value"
 > {
   value: string; // value is required for Radio
+  variant?: "default" | "card" | "pill" | "subtle" | "bordered";
   label?: string;
+  description?: string;
   error?: string;
   size?: "sm" | "md" | "lg";
-  color?: "primary" | "success" | "warning" | "danger";
+  color?: RnxColor;
 }
 
-export const Radio = forwardRef<HTMLInputElement, RadioProps>(
+const RadioBase = forwardRef<HTMLInputElement, RadioProps>(
   (
     {
       className,
+      variant = "default",
       label,
+      description,
       error,
       size = "md",
-      color = "primary",
+      color,
       id: customId,
       value,
       onChange,
@@ -113,11 +143,12 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
       name: _name,
       ...props
     },
-    ref
+    ref,
   ) => {
     const context = useContext(RadioGroupContext);
     const generatedId = useId();
     const id = customId || generatedId;
+    const effectiveColor = color || context?.color || "primary";
 
     const name = context?.name || _name;
     const isChecked = context ? context.value === value : _checked;
@@ -129,8 +160,34 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
       }
     };
 
+    let radioState = "default";
+    if (props.disabled) {
+      radioState = "disabled";
+    } else if (error) {
+      radioState = "error";
+    } else if (isChecked) {
+      radioState = "checked";
+    }
+
+    let ariaDescribedBy: string | undefined;
+    if (error) {
+      ariaDescribedBy = `${id}-error`;
+    } else if (description) {
+      ariaDescribedBy = `${id}-desc`;
+    }
+
     return (
-      <Box className={cn("rnx-radio-wrapper", className)}>
+      <Box
+        className={cn(
+          "rnx-radio-wrapper",
+          `rnx-radio-wrapper--variant-${variant}`,
+          className,
+        )}
+        {...rnx({
+          component: "Radio",
+          state: radioState,
+        })}
+      >
         <Box className="rnx-radio-container">
           <input
             ref={ref}
@@ -144,28 +201,37 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
                 onChange: handleChange,
                 className: "rnx-radio-input",
                 "aria-invalid": !!error,
-                "aria-describedby": error ? `${id}-error` : undefined,
+                "aria-describedby": ariaDescribedBy,
               },
-              props
+              props,
             )}
           />
           <Box
             className={cn(
               "rnx-radio-box",
               `rnx-radio-box--${size}`,
-              `rnx-radio-box--${color}`,
-              error && "rnx-radio-box--error"
+              `rnx-radio-box--${effectiveColor}`,
+              error && "rnx-radio-box--error",
             )}
           >
             <Box className="rnx-radio-indicator" />
           </Box>
         </Box>
-        {(label || children || error) && (
+        {(label || children || description || error) && (
           <Box className="rnx-radio-content">
             {(label || children) && (
               <Label htmlFor={id} className="rnx-radio-label">
                 {label || children}
               </Label>
+            )}
+            {description && (
+              <Box
+                as="span"
+                id={`${id}-desc`}
+                className="rnx-radio-description"
+              >
+                {description}
+              </Box>
             )}
             {error && (
               <Box
@@ -180,7 +246,11 @@ export const Radio = forwardRef<HTMLInputElement, RadioProps>(
         )}
       </Box>
     );
-  }
+  },
 );
 
-Radio.displayName = "Radio";
+RadioBase.displayName = "Radio";
+const RadioWithLoading = withLoading(RadioBase);
+export const Radio = Object.assign(RadioWithLoading, {
+  Group: RadioGroupComponent,
+});

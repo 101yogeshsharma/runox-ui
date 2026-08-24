@@ -31,8 +31,26 @@ jobs:
       - name: Install Dependencies
         run: npm ci --legacy-peer-deps
 
+      - name: Run Typecheck
+        run: npm run typecheck
+
+      - name: Run Lint
+        run: npm run lint
+
+      - name: Check Style Conventions
+        run: npm run test:conventions
+
+      - name: Run Tests With Coverage
+        run: npm run test:coverage
+
       - name: Build Library
         run: npm run build
+
+      - name: Verify Package Exports
+        run: npm run test:exports
+
+      - name: Verify Packed Package
+        run: npm run test:package
 
       - name: Create Release Pull Request or Publish
         id: changesets

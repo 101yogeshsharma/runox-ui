@@ -8,6 +8,24 @@
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 24px;
+  --radius-full: 9999px;
+
+  /*
+    Z-index scale — stacking contract, lowest to highest:
+    base < raised < content < component < sticky < overlay < sidebar < modal < popover < toast < tooltip
+    Never use raw numeric z-index in component CSS; always consume these tokens.
+  */
+  --z-base: 0;
+  --z-raised: 1;
+  --z-content: 2;
+  --z-component: 10;
+  --z-sticky: 20;
+  --z-overlay: 30;
+  --z-sidebar: 40;
+  --z-modal: 50;
+  --z-popover: 60;
+  --z-toast: 70;
+  --z-tooltip: 80;
 }
 
 @utility auto-rows-bento {
@@ -23,15 +41,71 @@
   .rnx-box {
     box-sizing: border-box;
   }
+  .rnx-box--surface-default {
+    background-color: var(--background);
+    color: var(--foreground);
+  }
+  .rnx-box--surface-card {
+    background-color: var(--card);
+    color: var(--card-foreground);
+    border: 1px solid var(--border);
+  }
+  .rnx-box--surface-muted {
+    background-color: var(--muted);
+    color: var(--muted-foreground);
+  }
+  .rnx-box--surface-popover {
+    background-color: var(--popover);
+    color: var(--popover-foreground);
+    border: 1px solid var(--border);
+  }
+  .rnx-box--surface-transparent {
+    background-color: transparent;
+  }
+  .rnx-box--radius-none {
+    border-radius: 0;
+  }
+  .rnx-box--radius-sm {
+    border-radius: calc(var(--radius) - 4px);
+  }
+  .rnx-box--radius-md {
+    border-radius: var(--radius);
+  }
+  .rnx-box--radius-lg {
+    border-radius: calc(var(--radius) + 4px);
+  }
+  .rnx-box--radius-full {
+    border-radius: var(--radius-full);
+  }
+  .rnx-box--shadow-none {
+    box-shadow: none;
+  }
+  .rnx-box--shadow-sm {
+    box-shadow: var(--shadow-sm);
+  }
+  .rnx-box--shadow-md {
+    box-shadow: var(--shadow-md);
+  }
+  .rnx-box--shadow-lg {
+    box-shadow: var(--shadow-lg);
+  }
+  .rnx-box--shadow-xl {
+    box-shadow: var(--shadow-xl);
+  }
 
   /* Flex */
   .rnx-flex {
-    display: flex;
+    display: var(--rnx-flex-display, flex);
     flex-direction: var(--rnx-flex-dir-base, row);
     justify-content: var(--rnx-flex-justify, flex-start);
     align-items: var(--rnx-flex-align, stretch);
     flex-wrap: var(--rnx-flex-wrap, nowrap);
     gap: var(--rnx-flex-gap-base, 0);
+    padding: var(--rnx-flex-p-base, 0);
+    padding-left: var(--rnx-flex-px-base, var(--rnx-flex-p-base, 0));
+    padding-right: var(--rnx-flex-px-base, var(--rnx-flex-p-base, 0));
+    padding-top: var(--rnx-flex-py-base, var(--rnx-flex-p-base, 0));
+    padding-bottom: var(--rnx-flex-py-base, var(--rnx-flex-p-base, 0));
   }
 
   /* Grid */
@@ -39,7 +113,9 @@
     display: grid;
     grid-template-columns: var(--rnx-grid-cols-base, none);
     grid-template-rows: var(--rnx-grid-rows-base, none);
+    grid-auto-flow: var(--rnx-grid-auto-flow, row);
     gap: var(--rnx-grid-gap-base, 0);
+    padding: var(--rnx-grid-p-base, 0);
     align-items: var(--rnx-grid-align, stretch);
     justify-content: var(--rnx-grid-justify, stretch);
   }
@@ -247,7 +323,7 @@
     justify-content: center;
     border-radius: var(--radius);
     background-color: var(--card);
-    padding: 0.25rem;
+    padding: calc(0.25rem * var(--rnx-space-scale, 1));
     color: var(--muted-foreground);
     border: 1px solid var(--border);
     overflow-x: auto;
@@ -260,8 +336,11 @@
 
   .rnx-tabs-indicator {
     position: absolute;
-    transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 0;
+    transition:
+      transform 300ms cubic-bezier(0.4, 0, 0.2, 1),
+      width 300ms cubic-bezier(0.4, 0, 0.2, 1),
+      opacity 200ms ease;
+    z-index: var(--z-base);
     pointer-events: none;
   }
   .rnx-tabs-indicator--default {
@@ -288,8 +367,12 @@
     border-radius: calc(var(--radius) - 4px);
     border-radius: inherit;
     font-weight: 500;
-    transition: colors 200ms;
-    z-index: 10;
+    transition:
+      color 200ms ease,
+      background-color 200ms ease,
+      border-color 200ms ease,
+      box-shadow 200ms ease;
+    z-index: var(--z-component);
     border: none;
     background: transparent;
     color: inherit;
@@ -310,20 +393,23 @@
     color: var(--foreground);
   }
   .rnx-tabs-trigger--sm {
-    padding: 0.375rem 0.75rem;
-    font-size: 0.75rem;
+    padding: calc(0.375rem * var(--rnx-space-scale, 1))
+      calc(0.75rem * var(--rnx-space-scale, 1));
+    font-size: calc(0.75rem * var(--rnx-text-scale, 1));
   }
   .rnx-tabs-trigger--md {
-    padding: 0.5rem 1.25rem;
-    font-size: 0.875rem;
+    padding: calc(0.5rem * var(--rnx-space-scale, 1))
+      calc(1.25rem * var(--rnx-space-scale, 1));
+    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
   }
   .rnx-tabs-trigger--lg {
-    padding: 0.75rem 1.75rem;
-    font-size: 1rem;
+    padding: calc(0.75rem * var(--rnx-space-scale, 1))
+      calc(1.75rem * var(--rnx-space-scale, 1));
+    font-size: calc(1rem * var(--rnx-text-scale, 1));
   }
 
   .rnx-tabs-content {
-    margin-top: 1rem;
+    margin-top: calc(1rem * var(--rnx-space-scale, 1));
     outline: none;
   }
   .rnx-tabs-content:focus-visible {
@@ -350,13 +436,13 @@
   .rnx-modal-overlay {
     position: fixed;
     inset: 0;
-    z-index: 50;
-    background-color: rgba(0, 0, 0, 0.6);
+    z-index: var(--z-modal);
+    background-color: var(--rnx-modal-overlay-bg, rgba(0, 0, 0, 0.6));
     backdrop-filter: blur(4px);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 1rem;
+    padding: calc(1rem * var(--rnx-space-scale, 1));
     animation: rnx-fade-in 200ms ease-out forwards;
   }
   .rnx-modal-overlay[data-state="closed"] {
@@ -365,10 +451,10 @@
 
   .rnx-modal-content {
     position: relative;
-    z-index: 50;
+    z-index: var(--z-modal);
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: calc(1rem * var(--rnx-space-scale, 1));
     background-color: var(--popover);
     border: 1px solid var(--border);
     box-shadow: var(--shadow-lg);
@@ -378,31 +464,6 @@
   }
   .rnx-modal-content[data-state="closed"] {
     animation: rnx-modal-out 200ms ease-in forwards;
-  }
-
-  /* Dropdown */
-  .rnx-dropdown-content {
-    position: absolute;
-    z-index: 50;
-    min-width: 220px;
-    overflow: hidden;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background-color: color-mix(in srgb, var(--popover) 80%, transparent);
-    backdrop-filter: blur(12px);
-    padding: 0.25rem;
-    color: var(--popover-foreground);
-    box-shadow: var(--shadow-lg);
-    display: flex;
-    flex-direction: column;
-    gap: 0.125rem;
-    transform-origin: top;
-  }
-  .rnx-dropdown-content[data-state="open"] {
-    animation: rnx-dropdown-in 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
-  .rnx-dropdown-content[data-state="closed"] {
-    animation: rnx-dropdown-out 150ms ease-in forwards;
   }
 
   .rnx-dropdown-item {
@@ -415,7 +476,11 @@
     padding: 0.5rem 0.75rem;
     font-size: 0.875rem;
     outline: none;
-    transition: colors 150ms;
+    transition:
+      color 200ms ease,
+      background-color 200ms ease,
+      border-color 200ms ease,
+      box-shadow 200ms ease;
     background: transparent;
     border: none;
     color: inherit;
@@ -427,9 +492,12 @@
     background-color: var(--accent);
     color: var(--accent-foreground);
   }
-  .rnx-dropdown-item:disabled {
+  .rnx-dropdown-item:disabled,
+  .rnx-dropdown-item[data-disabled="true"],
+  .rnx-dropdown-item[aria-disabled="true"] {
     pointer-events: none;
     opacity: 0.5;
+    cursor: not-allowed;
   }
   .rnx-dropdown-item[data-selected="true"] {
     background-color: color-mix(in srgb, var(--primary) 10%, transparent);
@@ -509,7 +577,7 @@
     height: 1rem;
     width: 1rem;
     flex-shrink: 0;
-    transition: transform 200ms;
+    transition: transform 300ms cubic-bezier(0.87, 0, 0.13, 1);
   }
   .rnx-accordion-trigger[data-state="open"] .rnx-accordion-icon {
     transform: rotate(180deg);
@@ -536,15 +604,15 @@
   /* Popover */
   .rnx-popover-content {
     position: absolute;
-    z-index: 50;
+    z-index: var(--z-modal);
     min-width: 18rem;
     width: max-content;
     max-width: calc(100vw - 2rem);
     border-radius: var(--radius);
     border: 1px solid var(--border);
-    background-color: color-mix(in srgb, var(--popover) 80%, transparent);
+    background-color: var(--glass-bg-overlay);
     backdrop-filter: blur(12px);
-    padding: 1rem;
+    padding: calc(1rem * var(--rnx-space-scale, 1));
     color: var(--popover-foreground);
     box-shadow: var(--shadow-md);
     outline: none;
@@ -573,11 +641,12 @@
   /* Tooltip */
   .rnx-tooltip-content {
     position: absolute;
-    z-index: 50;
+    z-index: var(--z-modal);
     border-radius: calc(var(--radius) - 4px);
     border: 1px solid var(--border);
     background-color: var(--popover);
-    padding: 0.375rem 0.75rem;
+    padding: calc(0.375rem * var(--rnx-space-scale, 1))
+      calc(0.75rem * var(--rnx-space-scale, 1));
     color: var(--popover-foreground);
     font-size: 0.75rem;
     box-shadow: var(--shadow-md);
@@ -596,13 +665,13 @@
   /* ContextMenu */
   .rnx-context-menu-content {
     position: fixed;
-    z-index: 50;
+    z-index: var(--z-modal);
     min-width: 12rem;
     overflow: hidden;
     border-radius: var(--radius);
     border: 1px solid var(--border);
     background-color: var(--popover);
-    padding: 0.25rem;
+    padding: calc(0.25rem * var(--rnx-space-scale, 1));
     color: var(--popover-foreground);
     box-shadow: var(--shadow-lg);
     outline: none;
@@ -643,9 +712,10 @@
   }
 
   .rnx-modal-close {
-    position: absolute !important;
-    right: 1rem !important;
-    top: 1rem !important;
+    position: absolute;
+    right: calc(1rem * var(--rnx-space-scale, 1));
+    top: calc(1rem * var(--rnx-space-scale, 1));
+    /* radius-exception: fixed micro-radius for a 1rem icon button */
     border-radius: 0.125rem;
     opacity: 0.7;
     transition: opacity 200ms;
@@ -665,13 +735,14 @@
   .rnx-modal-header {
     display: flex;
     flex-direction: column;
-    gap: 0.375rem;
+    gap: calc(0.375rem * var(--rnx-space-scale, 1));
     text-align: left;
-    padding: 1.25rem 1.5rem;
+    padding: calc(1.25rem * var(--rnx-space-scale, 1))
+      calc(1.5rem * var(--rnx-space-scale, 1));
     border-bottom: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
   }
   .rnx-modal-body {
-    padding: 1.5rem;
+    padding: calc(1.5rem * var(--rnx-space-scale, 1));
     overflow-y: auto;
     max-height: 60vh;
   }
@@ -679,10 +750,27 @@
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
-    gap: 0.5rem;
-    padding: 1rem 1.5rem;
+    gap: calc(0.5rem * var(--rnx-space-scale, 1));
+    padding: calc(1rem * var(--rnx-space-scale, 1))
+      calc(1.5rem * var(--rnx-space-scale, 1));
     background-color: color-mix(in srgb, var(--secondary) 30%, transparent);
     border-top: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
+  }
+
+  @media (max-width: 767px) {
+    .rnx-modal-content--bottom-sheet {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      max-width: 100%;
+      /* radius-exception: sheet shape with square bottom edge, independent of theme radius */
+      border-radius: 1rem 1rem 0 0;
+      margin: 0;
+      max-height: 90dvh;
+      overflow-y: auto;
+    }
   }
 
   @keyframes rnx-fade-in {
@@ -732,7 +820,7 @@
     border-radius: var(--radius);
   }
   .rnx-skeleton-circular {
-    border-radius: 9999px;
+    border-radius: var(--radius-full);
   }
   .rnx-skeleton-rectangular {
     border-radius: 0;
@@ -750,10 +838,512 @@
       opacity: 0.5;
     }
   }
+
+  /* Universal Shimmer Overlay for HOC */
+  .rnx-is-loading {
+    color: transparent !important;
+    pointer-events: none !important;
+    user-select: none !important;
+    position: relative !important;
+    overflow: hidden !important;
+    background-color: var(--muted) !important;
+    border-color: transparent !important;
+  }
+  .rnx-is-loading > * {
+    visibility: hidden !important;
+  }
+  .rnx-is-loading::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      color-mix(in srgb, var(--foreground) 8%, transparent),
+      transparent
+    );
+    animation: rnx-shimmer 1.5s infinite linear;
+    transform: translateX(-100%);
+  }
+  @keyframes rnx-shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+
+  /* ─── Motion Components (replaces framer-motion) ─────────────────────── */
+  @keyframes rnx-motion-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes rnx-motion-scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.98);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @keyframes rnx-motion-slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(var(--rnx-slide-distance, 20px));
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes rnx-motion-slide-down {
+    from {
+      opacity: 0;
+      transform: translateY(calc(var(--rnx-slide-distance, 20px) * -1));
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes rnx-motion-slide-left {
+    from {
+      opacity: 0;
+      transform: translateX(var(--rnx-slide-distance, 20px));
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes rnx-motion-slide-right {
+    from {
+      opacity: 0;
+      transform: translateX(calc(var(--rnx-slide-distance, 20px) * -1));
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  .rnx-motion-fade-in {
+    animation-name: rnx-motion-fade-in;
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .rnx-motion-scale-in {
+    animation-name: rnx-motion-scale-in;
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .rnx-motion-slide-up {
+    animation-name: rnx-motion-slide-up;
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .rnx-motion-slide-down {
+    animation-name: rnx-motion-slide-down;
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .rnx-motion-slide-left {
+    animation-name: rnx-motion-slide-left;
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .rnx-motion-slide-right {
+    animation-name: rnx-motion-slide-right;
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  /* ─── New Motion Components ─────────────────────── */
+  @keyframes rnx-motion-zoom-in {
+    from {
+      opacity: 0;
+      transform: scale(var(--rnx-zoom-from, 0.5));
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  .rnx-motion-zoom-in {
+    animation-name: rnx-motion-zoom-in;
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes rnx-motion-flip-x {
+    from {
+      opacity: 0;
+      transform: perspective(400px) rotateX(90deg);
+    }
+    to {
+      opacity: 1;
+      transform: perspective(400px) rotateX(0deg);
+    }
+  }
+  .rnx-motion-flip-x {
+    animation-name: rnx-motion-flip-x;
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    backface-visibility: hidden;
+  }
+
+  @keyframes rnx-motion-flip-y {
+    from {
+      opacity: 0;
+      transform: perspective(400px) rotateY(90deg);
+    }
+    to {
+      opacity: 1;
+      transform: perspective(400px) rotateY(0deg);
+    }
+  }
+  .rnx-motion-flip-y {
+    animation-name: rnx-motion-flip-y;
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    backface-visibility: hidden;
+  }
+
+  @keyframes rnx-motion-bounce-up {
+    0% {
+      opacity: 0;
+      transform: translateY(var(--rnx-slide-distance, 30px));
+    }
+    30% {
+      opacity: 0.5;
+      transform: translateY(calc(var(--rnx-slide-distance, 30px) * 0.5));
+    }
+    60% {
+      opacity: 1;
+      transform: translateY(-8px);
+    }
+    70% {
+      transform: translateY(-2px);
+    }
+    80% {
+      transform: translateY(4px);
+    }
+    90% {
+      transform: translateY(1px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+  .rnx-motion-bounce-up {
+    animation-name: rnx-motion-bounce-up;
+    animation-fill-mode: both;
+    animation-timing-function: ease-out;
+  }
+
+  @keyframes rnx-motion-bounce-down {
+    0% {
+      opacity: 0;
+      transform: translateY(calc(var(--rnx-slide-distance, 30px) * -1));
+    }
+    30% {
+      opacity: 0.5;
+      transform: translateY(calc(var(--rnx-slide-distance, 30px) * -0.5));
+    }
+    60% {
+      opacity: 1;
+      transform: translateY(8px);
+    }
+    70% {
+      transform: translateY(2px);
+    }
+    80% {
+      transform: translateY(-4px);
+    }
+    90% {
+      transform: translateY(-1px);
+    }
+    100% {
+      transform: translateY(0);
+    }
+  }
+  .rnx-motion-bounce-down {
+    animation-name: rnx-motion-bounce-down;
+    animation-fill-mode: both;
+    animation-timing-function: ease-out;
+  }
+
+  @keyframes rnx-motion-bounce-left {
+    0% {
+      opacity: 0;
+      transform: translateX(var(--rnx-slide-distance, 30px));
+    }
+    30% {
+      opacity: 0.5;
+      transform: translateX(calc(var(--rnx-slide-distance, 30px) * 0.5));
+    }
+    60% {
+      opacity: 1;
+      transform: translateX(-8px);
+    }
+    70% {
+      transform: translateX(-2px);
+    }
+    80% {
+      transform: translateX(4px);
+    }
+    90% {
+      transform: translateX(1px);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+  .rnx-motion-bounce-left {
+    animation-name: rnx-motion-bounce-left;
+    animation-fill-mode: both;
+    animation-timing-function: ease-out;
+  }
+
+  @keyframes rnx-motion-bounce-right {
+    0% {
+      opacity: 0;
+      transform: translateX(calc(var(--rnx-slide-distance, 30px) * -1));
+    }
+    30% {
+      opacity: 0.5;
+      transform: translateX(calc(var(--rnx-slide-distance, 30px) * -0.5));
+    }
+    60% {
+      opacity: 1;
+      transform: translateX(8px);
+    }
+    70% {
+      transform: translateX(2px);
+    }
+    80% {
+      transform: translateX(-4px);
+    }
+    90% {
+      transform: translateX(-1px);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
+  .rnx-motion-bounce-right {
+    animation-name: rnx-motion-bounce-right;
+    animation-fill-mode: both;
+    animation-timing-function: ease-out;
+  }
+
+  @keyframes rnx-motion-shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    15% {
+      transform: translateX(calc(var(--rnx-shake-intensity, 8px) * -1));
+    }
+    30% {
+      transform: translateX(var(--rnx-shake-intensity, 8px));
+    }
+    45% {
+      transform: translateX(calc(var(--rnx-shake-intensity, 8px) * -0.75));
+    }
+    60% {
+      transform: translateX(calc(var(--rnx-shake-intensity, 8px) * 0.5));
+    }
+    75% {
+      transform: translateX(calc(var(--rnx-shake-intensity, 8px) * -0.25));
+    }
+  }
+  .rnx-motion-shake {
+    animation-name: rnx-motion-shake;
+    animation-fill-mode: both;
+    animation-timing-function: ease-in-out;
+  }
+
+  @keyframes rnx-motion-reveal-left {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+    to {
+      clip-path: inset(0 0% 0 0);
+    }
+  }
+  .rnx-motion-reveal-left {
+    animation-name: rnx-motion-reveal-left;
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: clip-path;
+  }
+
+  @keyframes rnx-motion-reveal-right {
+    from {
+      clip-path: inset(0 0 0 100%);
+    }
+    to {
+      clip-path: inset(0 0 0 0%);
+    }
+  }
+  .rnx-motion-reveal-right {
+    animation-name: rnx-motion-reveal-right;
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: clip-path;
+  }
+
+  @keyframes rnx-motion-reveal-up {
+    from {
+      clip-path: inset(100% 0 0 0);
+    }
+    to {
+      clip-path: inset(0% 0 0 0);
+    }
+  }
+  .rnx-motion-reveal-up {
+    animation-name: rnx-motion-reveal-up;
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: clip-path;
+  }
+
+  @keyframes rnx-motion-reveal-down {
+    from {
+      clip-path: inset(0 0 100% 0);
+    }
+    to {
+      clip-path: inset(0 0 0% 0);
+    }
+  }
+  .rnx-motion-reveal-down {
+    animation-name: rnx-motion-reveal-down;
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+    will-change: clip-path;
+  }
+
+  @keyframes rnx-motion-rotate-in {
+    from {
+      opacity: 0;
+      transform: rotate(var(--rnx-rotate-from, -90deg));
+    }
+    to {
+      opacity: 1;
+      transform: rotate(0deg);
+    }
+  }
+  .rnx-motion-rotate-in {
+    animation-name: rnx-motion-rotate-in;
+    animation-fill-mode: both;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .rnx-motion-fade-in,
+    .rnx-motion-scale-in,
+    .rnx-motion-slide-up,
+    .rnx-motion-slide-down,
+    .rnx-motion-slide-left,
+    .rnx-motion-slide-right,
+    .rnx-motion-zoom-in,
+    .rnx-motion-flip-x,
+    .rnx-motion-flip-y,
+    .rnx-motion-bounce-up,
+    .rnx-motion-bounce-down,
+    .rnx-motion-bounce-left,
+    .rnx-motion-bounce-right,
+    .rnx-motion-shake,
+    .rnx-motion-reveal-left,
+    .rnx-motion-reveal-right,
+    .rnx-motion-reveal-up,
+    .rnx-motion-reveal-down,
+    .rnx-motion-rotate-in {
+      animation: none;
+    }
+  }
 }
 
 @layer base {
   :root {
+    /* Density Scales */
+    --rnx-space-scale: 1;
+    --rnx-text-scale: 1;
+
+    /* Spacing scale (4px base) */
+    --space-px: 1px;
+    --space-0: 0;
+    --space-0-5: calc(0.125rem * var(--rnx-space-scale, 1));
+    --space-1: calc(0.25rem * var(--rnx-space-scale, 1));
+    --space-1-5: calc(0.375rem * var(--rnx-space-scale, 1));
+    --space-2: calc(0.5rem * var(--rnx-space-scale, 1));
+    --space-2-5: calc(0.625rem * var(--rnx-space-scale, 1));
+    --space-3: calc(0.75rem * var(--rnx-space-scale, 1));
+    --space-3-5: calc(0.875rem * var(--rnx-space-scale, 1));
+    --space-4: calc(1rem * var(--rnx-space-scale, 1));
+    --space-4-5: calc(1.125rem * var(--rnx-space-scale, 1));
+    --space-5: calc(1.25rem * var(--rnx-space-scale, 1));
+    --space-6: calc(1.5rem * var(--rnx-space-scale, 1));
+    --space-7: calc(1.75rem * var(--rnx-space-scale, 1));
+    --space-8: calc(2rem * var(--rnx-space-scale, 1));
+    --space-9: calc(2.25rem * var(--rnx-space-scale, 1));
+    --space-10: calc(2.5rem * var(--rnx-space-scale, 1));
+    --space-12: calc(3rem * var(--rnx-space-scale, 1));
+    --space-14: calc(3.5rem * var(--rnx-space-scale, 1));
+    --space-16: calc(4rem * var(--rnx-space-scale, 1));
+
+    /* Icon sizes */
+    --icon-xs: 0.75rem;
+    --icon-sm: 0.875rem;
+    --icon-md: 1rem;
+    --icon-lg: 1.25rem;
+    --icon-xl: 1.5rem;
+    --icon-2xl: 2rem;
+
+    /* Arrow & decoration sizes */
+    --arrow-sm: 6px;
+    --arrow-md: 8px;
+
+    /* Scrollbar sizes */
+    --scrollbar-width: 10px;
+    --scrollbar-min-length: 12px;
+
+    /* Typography scale */
+    --text-xs: calc(0.75rem * var(--rnx-text-scale, 1));
+    --text-sm: calc(0.875rem * var(--rnx-text-scale, 1));
+    --text-base: calc(1rem * var(--rnx-text-scale, 1));
+    --text-lg: calc(1.125rem * var(--rnx-text-scale, 1));
+    --text-xl: calc(1.25rem * var(--rnx-text-scale, 1));
+    --text-2xl: calc(1.5rem * var(--rnx-text-scale, 1));
+    --text-3xl: calc(1.875rem * var(--rnx-text-scale, 1));
+
+    /* Line height scale */
+    --leading-tight: 1.25;
+    --leading-snug: 1.375;
+    --leading-normal: 1.5;
+    --leading-relaxed: 1.625;
+
+    /* Font weight scale */
+    --font-normal: 400;
+    --font-medium: 500;
+    --font-semibold: 600;
+    --font-bold: 700;
+
     /* Z-index layers */
     --z-dropdown: 50;
     --z-sticky: 100;
@@ -762,6 +1352,10 @@
     --z-modal: 400;
     --z-toast: 500;
     --z-tooltip: 600;
+    /* Core variables */
+    /* Focus Rings */
+    --rnx-focus-ring: 0 0 0 2px var(--background), 0 0 0 4px var(--primary);
+    --rnx-focus-ring-inset: inset 0 0 0 2px var(--primary);
 
     --background: #09090b;
     --foreground: #fafafa;
@@ -787,7 +1381,7 @@
     --destructive: #7f1d1d;
     --destructive-foreground: #fca5a5;
 
-    --success: #22c55e;
+    --success: #16a34a;
     --success-foreground: #ffffff;
 
     --warning: #f59e0b;
@@ -806,6 +1400,8 @@
     --ring: #d4d4d8;
 
     --radius: var(--radius-md);
+    --overlay: rgba(0, 0, 0, 0.6);
+    --rnx-modal-overlay-bg: rgba(0, 0, 0, 0.6);
 
     /* Legacy compatibility - explicitly mapped to theme variables so they flip in light mode */
     --bg-base: var(--background);
@@ -823,14 +1419,49 @@
     --brand-success: var(--success);
     --brand-danger: var(--destructive);
     --brand-warning: var(--warning);
+    /* Glassmorphism tokens — single source of truth for all glass variants. */
+    --glass-bg: color-mix(in srgb, var(--card) 60%, transparent);
+    --glass-bg-overlay: color-mix(in srgb, var(--popover) 70%, transparent);
+    --glass-blur: 16px;
     --glass-highlight: rgba(255, 255, 255, 0.05);
     --glass-highlight-hover: rgba(255, 255, 255, 0.1);
     --glass-highlight-active: rgba(255, 255, 255, 0.15);
-    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-border: color-mix(in srgb, var(--border) 60%, transparent);
 
     --font-sans:
       "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
       sans-serif;
+    --font-heading:
+      "Outfit", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+      system-ui, sans-serif;
+    --font-mono:
+      ui-monospace, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono",
+      monospace;
+
+    /* Typography scale tokens (consumed by the Text atom variants) */
+    --fontSize-2xs-0: 0.625rem;
+    --fontSize-2xs-1-lineHeight: 0.875rem;
+    --fontSize-xs-0: 0.75rem;
+    --fontSize-xs-1-lineHeight: 1rem;
+    --fontSize-sm-0: 0.875rem;
+    --fontSize-sm-1-lineHeight: 1.25rem;
+    --fontSize-base-0: 1rem;
+    --fontSize-base-1-lineHeight: 1.6rem;
+    --fontSize-md-0: 1rem;
+    --fontSize-md-1-lineHeight: 1.5rem;
+    --fontSize-lg-0: 1.125rem;
+    --fontSize-lg-1-lineHeight: 1.75rem;
+    --fontSize-2xl-0: 1.5rem;
+    --fontSize-2xl-1-lineHeight: 2rem;
+    --fontSize-4xl-0: 2.25rem;
+    --fontSize-4xl-1-lineHeight: 2.5rem;
+    --fontWeight-normal: 400;
+    --fontWeight-medium: 500;
+    --fontWeight-semibold: 600;
+    --fontWeight-bold: 700;
+    --letterSpacing-tight: -0.02em;
+    --letterSpacing-normal: 0em;
+    --letterSpacing-widest: 0.15em;
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --spring: cubic-bezier(0.175, 0.885, 0.32, 1.15);
 
@@ -842,7 +1473,44 @@
       color-mix(in srgb, var(--foreground) 10%, transparent);
   }
 
-  .light {
+  [data-density="compact"] {
+    --rnx-space-scale: 0.75;
+    --rnx-text-scale: 0.95;
+  }
+
+  [data-density="spacious"] {
+    --rnx-space-scale: 1.25;
+    --rnx-text-scale: 1.05;
+  }
+
+  [data-shadow="none"] {
+    --shadow-intensity: 0;
+  }
+  [data-shadow="sm"] {
+    --shadow-intensity: 0.05;
+  }
+  [data-shadow="md"] {
+    --shadow-intensity: 0.1;
+  }
+  [data-shadow="lg"] {
+    --shadow-intensity: 0.2;
+  }
+
+  [data-glass-blur="none"] {
+    --glass-blur: 0px;
+  }
+  [data-glass-blur="sm"] {
+    --glass-blur: 6px;
+  }
+  [data-glass-blur="md"] {
+    --glass-blur: 16px;
+  }
+  [data-glass-blur="lg"] {
+    --glass-blur: 36px;
+  }
+
+  .light,
+  [data-theme="light"] {
     --background: #ffffff;
     --foreground: #09090b;
 
@@ -859,7 +1527,7 @@
     --secondary-foreground: #18181b;
 
     --muted: #f4f4f5;
-    --muted-foreground: #71717a;
+    --muted-foreground: #52525b;
 
     --accent: #f4f4f5;
     --accent-foreground: #18181b;
@@ -867,7 +1535,7 @@
     --destructive: #ef4444;
     --destructive-foreground: #fafafa;
 
-    --success: #22c55e;
+    --success: #16a34a;
     --success-foreground: #ffffff;
 
     --warning: #f59e0b;
@@ -888,7 +1556,48 @@
     --glass-highlight: rgba(0, 0, 0, 0.03);
     --glass-highlight-hover: rgba(0, 0, 0, 0.06);
     --glass-highlight-active: rgba(0, 0, 0, 0.09);
-    --glass-border: rgba(0, 0, 0, 0.1);
+    --glass-border: color-mix(in srgb, var(--border) 60%, transparent);
+    --glass-bg: color-mix(in srgb, var(--card) 60%, transparent);
+    --glass-bg-overlay: color-mix(in srgb, var(--popover) 70%, transparent);
+    --overlay: rgba(0, 0, 0, 0.5);
+    --rnx-modal-overlay-bg: rgba(0, 0, 0, 0.5);
+  }
+
+  /*
+   * Named color themes — resolved via the data-color attribute that
+   * ThemeProvider sets when primaryColor is a named color instead of a hex.
+   * Declared AFTER the .light/[data-theme] block so they win the cascade
+   * when both attributes sit on the same element (documentElement).
+   * Foregrounds follow the library's YIQ contrast rule
+   * (see src/utils/contrast.ts).
+   */
+  [data-color="blue"] {
+    --primary: #3b82f6;
+    --primary-foreground: #fafafa;
+  }
+  [data-color="red"] {
+    --primary: #ef4444;
+    --primary-foreground: #fafafa;
+  }
+  [data-color="green"] {
+    --primary: #10b981;
+    --primary-foreground: #09090b;
+  }
+  [data-color="orange"] {
+    --primary: #f97316;
+    --primary-foreground: #09090b;
+  }
+  [data-color="violet"] {
+    --primary: #8b5cf6;
+    --primary-foreground: #fafafa;
+  }
+  [data-color="white"] {
+    --primary: #fafafa;
+    --primary-foreground: #09090b;
+  }
+  [data-color="zinc"] {
+    --primary: #18181b;
+    --primary-foreground: #fafafa;
   }
 
   /* Base Resets */
@@ -898,6 +1607,43 @@
     box-sizing: border-box;
   }
 
+  /* Global themed scrollbar — applies to all scrollable elements by default */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(
+        in srgb,
+        var(--muted-foreground) 40%,
+        transparent
+      )
+      transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: color-mix(
+      in srgb,
+      var(--muted-foreground) 35%,
+      transparent
+    );
+    border-radius: var(--radius-full);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: color-mix(
+      in srgb,
+      var(--muted-foreground) 55%,
+      transparent
+    );
+  }
+  *::-webkit-scrollbar-corner {
+    background: transparent;
+  }
   body {
     margin: 0;
     font-family: var(--font-sans);
@@ -934,7 +1680,7 @@
   .rnx-checkbox-wrapper {
     display: inline-flex;
     align-items: flex-start;
-    gap: 0.5rem;
+    gap: calc(0.5rem * var(--rnx-space-scale, 1));
   }
   .rnx-checkbox-container {
     display: flex;
@@ -949,7 +1695,7 @@
     height: 100%;
     cursor: pointer;
     margin: 0;
-    z-index: 10;
+    z-index: var(--z-component);
   }
   .rnx-checkbox-box {
     display: flex;
@@ -1037,7 +1783,7 @@
   .rnx-switch-wrapper {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: var(--space-2);
   }
   .rnx-switch-container {
     position: relative;
@@ -1046,7 +1792,7 @@
     align-items: center;
     cursor: pointer;
     transition: background-color 150ms ease;
-    border-radius: 9999px;
+    border-radius: var(--radius-full);
     border: 2px solid transparent;
     background-color: var(--input);
   }
@@ -1057,7 +1803,7 @@
     height: 100%;
     cursor: inherit;
     margin: 0;
-    z-index: 10;
+    z-index: var(--z-component);
   }
   .rnx-switch-thumb {
     display: block;
@@ -1136,7 +1882,7 @@
   .rnx-radio-group {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: var(--space-2);
   }
   .rnx-radio-group--horizontal {
     flex-direction: row;
@@ -1145,7 +1891,7 @@
   .rnx-radio-wrapper {
     display: inline-flex;
     align-items: flex-start;
-    gap: 0.5rem;
+    gap: var(--space-2);
   }
   .rnx-radio-container {
     display: flex;
@@ -1160,7 +1906,7 @@
     height: 100%;
     cursor: pointer;
     margin: 0;
-    z-index: 10;
+    z-index: var(--z-component);
   }
   .rnx-radio-box {
     display: flex;
@@ -1251,6 +1997,10 @@
 }
 
 @layer utilities {
+  .scrollbar-hide {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
@@ -1258,5 +2008,47 @@
   .spin-button-hide::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
+  }
+}
+
+/* ─────────────────────────────────────────────
+   Reduced Motion — Accessibility
+   ───────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .rnx-skeleton,
+  .rnx-is-loading::after {
+    animation: none !important;
+  }
+
+  .rnx-modal-overlay,
+  .rnx-modal-content,
+  .rnx-drawer-content,
+  .rnx-dropdown-content,
+  .rnx-tooltip-content,
+  .rnx-popover-content {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .rnx-accordion-content {
+    transition: none !important;
+  }
+
+  .rnx-tabs-indicator {
+    transition: none !important;
+  }
+
+  .rnx-motion-fade-in,
+  .rnx-motion-slide-in,
+  .rnx-motion-scale-in,
+  .rnx-motion-zoom-in,
+  .rnx-motion-flip-in,
+  .rnx-motion-rotate-in,
+  .rnx-motion-bounce-in,
+  .rnx-motion-shake,
+  .rnx-motion-reveal {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 }

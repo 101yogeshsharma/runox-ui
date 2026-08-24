@@ -1,0 +1,109 @@
+@layer components {
+  .rnx-breadcrumb-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-1-5);
+    font-size: var(--text-sm);
+    color: var(--muted-foreground);
+    overflow-wrap: break-word;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Sizes */
+  .rnx-breadcrumb-list--sm {
+    font-size: var(--text-xs);
+    gap: var(--space-1);
+  }
+  .rnx-breadcrumb-list--md {
+    font-size: var(--text-sm);
+    gap: var(--space-1-5);
+  }
+  .rnx-breadcrumb-list--lg {
+    font-size: var(--text-base);
+    gap: var(--space-2);
+  }
+
+  /* Variants */
+  .rnx-breadcrumb-list--variant-pills .rnx-breadcrumb-link,
+  .rnx-breadcrumb-list--variant-pills .rnx-breadcrumb-page {
+    padding: var(--space-1) var(--space-2-5);
+    border-radius: var(--radius-full);
+    background-color: var(--muted);
+  }
+  .rnx-breadcrumb-list--variant-pills .rnx-breadcrumb-page {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  .rnx-breadcrumb-list--variant-glass {
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur, 16px));
+    border-radius: var(--radius);
+    padding: var(--space-1-5) var(--space-3);
+  }
+
+  @media (min-width: 640px) {
+    .rnx-breadcrumb-list:not(.rnx-breadcrumb-list--sm):not(
+        .rnx-breadcrumb-list--lg
+      ) {
+      gap: var(--space-2-5);
+    }
+  }
+
+  .rnx-breadcrumb-item {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1-5);
+  }
+
+  .rnx-breadcrumb-link {
+    color: inherit;
+    text-decoration: none;
+    transition:
+      color 150ms ease,
+      box-shadow 150ms ease;
+  }
+
+  .rnx-breadcrumb-link:hover {
+    color: var(--foreground);
+  }
+
+  .rnx-breadcrumb-link:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px var(--ring);
+    border-radius: calc(var(--radius) - 4px);
+  }
+
+  .rnx-breadcrumb-link:disabled,
+  .rnx-breadcrumb-link[aria-disabled="true"] {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+  }
+
+  .rnx-breadcrumb-link--active {
+    color: var(--foreground);
+    font-weight: 400;
+  }
+
+  .rnx-breadcrumb-page {
+    color: var(--foreground);
+    font-weight: 400;
+  }
+
+  .rnx-breadcrumb-separator {
+    display: inline-flex;
+    align-items: center;
+    color: var(--muted-foreground);
+  }
+
+  .rnx-breadcrumb-separator-icon {
+    height: var(--space-3-5);
+    width: var(--space-3-5);
+  }
+}

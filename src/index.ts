@@ -4,9 +4,16 @@
 import "./styles/globals.css";
 
 // Tokens & Utils
+export * from "./types";
 export * from "./tokens";
 export * from "./hooks";
 export * from "./utils/cn";
+export * from "./utils/defineTheme";
+export * from "./utils/applyTheme";
+export * from "./utils/generateCSSVariables";
+export { rnx } from "./utils/rnx";
+export type { RnxAttributesOptions } from "./utils/rnx";
+export { mergeProps } from "./utils/mergeProps";
 
 // Primitives
 export * from "./atoms/Box";
@@ -49,8 +56,15 @@ export * from "./components/Form/Form";
 
 // Data Display
 export * from "./components/Table";
-export * from "./components/List";
+export * from "./components/Sidebar/Sidebar";
 export * from "./components/Chart/Chart";
+export * from "./components/AgentContext/AgentContextProvider";
+
+// Hooks
+export * from "./hooks/useMergeRefs";
+export * from "./hooks/useAgentContext";
+
+export * from "./components/List";
 export * from "./components/TreeView/TreeView";
 // export * from "./components/KanbanBoard/KanbanBoard"; // Deprecated
 export * from "./components/Kanban/Kanban";
@@ -65,11 +79,11 @@ export * from "./components/Breadcrumb";
 export * from "./components/Pagination";
 export * from "./components/Stepper";
 export * from "./components/NavigationMenu/NavigationMenu";
-export * from "./components/Sidebar/Sidebar";
 
 // Disclosure & Selection
 export * from "./components/Accordion";
 export * from "./components/Dropdown";
+export * from "./components/Select/Select";
 
 export * from "./components/Command/Command";
 export * from "./components/ContextMenu/ContextMenu";
@@ -94,10 +108,9 @@ export * from "./components/ImageCropper/ImageCropper";
 export * from "./components/SignaturePad/SignaturePad";
 export * from "./components/SyntaxHighlighter/SyntaxHighlighter";
 export * from "./components/MarkdownViewer/MarkdownViewer";
+export * from "./components/GlassFilters/GlassFilters";
 // AI
-export * from "./components/AI/ChatBubble";
-export * from "./components/AI/StreamingText";
-export * from "./components/AI/AIInput";
+export * from "./components/AI";
 
 // System
 export * from "./components/ThemeProvider";

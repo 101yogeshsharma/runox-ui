@@ -16,7 +16,7 @@ import { cn } from "../../utils/cn";
 import { Label } from "../Label/Label";
 import { Text } from "../../atoms/Text";
 
-const Form = FormProvider;
+import "./Form.css";
 
 type FormFieldContextValue<
   TFieldValues extends FieldValues = FieldValues,
@@ -26,7 +26,7 @@ type FormFieldContextValue<
 };
 
 const FormFieldContext = React.createContext<FormFieldContextValue>(
-  {} as FormFieldContextValue
+  {} as FormFieldContextValue,
 );
 
 const FormField = <
@@ -61,31 +61,64 @@ const useFormField = () => {
     formItemId: `${id}-form-item`,
     formDescriptionId: `${id}-form-item-description`,
     formMessageId: `${id}-form-item-message`,
+    hasDescription: itemContext.hasDescription,
+    hasMessage: itemContext.hasMessage,
+    registerDescription: itemContext.registerDescription,
+    registerMessage: itemContext.registerMessage,
     ...fieldState,
   };
 };
 
 type FormItemContextValue = {
   id: string;
+  hasDescription: boolean;
+  hasMessage: boolean;
+  registerDescription: () => () => void;
+  registerMessage: () => () => void;
 };
 
-const FormItemContext = React.createContext<FormItemContextValue>(
-  {} as FormItemContextValue
-);
+const FormItemContext = React.createContext<FormItemContextValue>({
+  id: "",
+  hasDescription: false,
+  hasMessage: false,
+  registerDescription: () => () => {},
+  registerMessage: () => () => {},
+});
 
 const FormItem = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => {
   const id = React.useId();
+  const [hasDescription, setHasDescription] = React.useState(false);
+  const [hasMessage, setHasMessage] = React.useState(false);
+  const registerDescription = React.useCallback(() => {
+    setHasDescription(true);
+    return () => setHasDescription(false);
+  }, []);
+  const registerMessage = React.useCallback(() => {
+    setHasMessage(true);
+    return () => setHasMessage(false);
+  }, []);
+
+  const contextValue = React.useMemo(
+    () => ({
+      id,
+      hasDescription,
+      hasMessage,
+      registerDescription,
+      registerMessage,
+    }),
+    [id, hasDescription, hasMessage, registerDescription, registerMessage],
+  );
 
   return (
-    <FormItemContext.Provider value={{ id }}>
-      <Box ref={ref} className={cn("space-y-2", className)} {...props} />
+    <FormItemContext.Provider value={contextValue}>
+      <Box ref={ref} className={cn("rnx-form-item", className)} {...props} />
     </FormItemContext.Provider>
   );
 });
-FormItem.displayName = "FormItem";
+FormItem.displayName = "Form.Item";
 
 const FormLabel = React.forwardRef<
   HTMLLabelElement,
@@ -97,45 +130,56 @@ const FormLabel = React.forwardRef<
     <Label
       ref={ref}
       className={cn(
-        "text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70",
-        error && "text-destructive",
-        className
+        "rnx-form-label",
+        error && "rnx-form-label--error",
+        className,
       )}
       htmlFor={formItemId}
       {...props}
     />
   );
 });
-FormLabel.displayName = "FormLabel";
+FormLabel.displayName = "Form.Label";
 
 const FormControl = React.forwardRef<
   React.ElementRef<typeof Slot>,
   React.ComponentPropsWithoutRef<typeof Slot>
->(({ ...props }, ref) => {
-  const { error, formItemId, formDescriptionId, formMessageId } =
-    useFormField();
+>(({ "aria-describedby": ariaDescribedBy, ...props }, ref) => {
+  const {
+    error,
+    formItemId,
+    formDescriptionId,
+    formMessageId,
+    hasDescription,
+    hasMessage,
+  } = useFormField();
+  const describedBy = [
+    hasDescription ? formDescriptionId : undefined,
+    error && hasMessage ? formMessageId : undefined,
+    ariaDescribedBy,
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   return (
     <Slot
       ref={ref}
       id={formItemId}
-      aria-describedby={
-        !error
-          ? `${formDescriptionId}`
-          : `${formDescriptionId} ${formMessageId}`
-      }
+      aria-describedby={describedBy || undefined}
       aria-invalid={!!error}
       {...props}
     />
   );
 });
-FormControl.displayName = "FormControl";
+FormControl.displayName = "Form.Control";
 
 const FormDescription = React.forwardRef<
   HTMLParagraphElement,
   Omit<React.HTMLAttributes<HTMLParagraphElement>, "color">
 >(({ className, ...props }, ref) => {
-  const { formDescriptionId } = useFormField();
+  const { formDescriptionId, registerDescription } = useFormField();
+
+  React.useEffect(() => registerDescription(), [registerDescription]);
 
   return (
     <Text
@@ -143,19 +187,24 @@ const FormDescription = React.forwardRef<
       variant="body"
       ref={ref}
       id={formDescriptionId}
-      className={cn("text-muted-foreground text-[0.8rem]", className)}
+      className={cn("rnx-form-description", className)}
       {...props}
     />
   );
 });
-FormDescription.displayName = "FormDescription";
+FormDescription.displayName = "Form.Description";
 
 const FormMessage = React.forwardRef<
   HTMLParagraphElement,
   Omit<React.HTMLAttributes<HTMLParagraphElement>, "color">
 >(({ className, children, ...props }, ref) => {
-  const { error, formMessageId } = useFormField();
+  const { error, formMessageId, registerMessage } = useFormField();
   const body = error ? String(error?.message ?? "") : children;
+
+  React.useEffect(() => {
+    if (!body) return;
+    return registerMessage();
+  }, [body, registerMessage]);
 
   if (!body) {
     return null;
@@ -167,14 +216,24 @@ const FormMessage = React.forwardRef<
       variant="body"
       ref={ref}
       id={formMessageId}
-      className={cn("text-destructive text-[0.8rem] font-medium", className)}
+      aria-live={error ? "polite" : undefined}
+      className={cn("rnx-form-message", className)}
       {...props}
     >
       {body}
     </Text>
   );
 });
-FormMessage.displayName = "FormMessage";
+FormMessage.displayName = "Form.Message";
+
+const Form = Object.assign(FormProvider, {
+  Item: FormItem,
+  Label: FormLabel,
+  Control: FormControl,
+  Description: FormDescription,
+  Message: FormMessage,
+  Field: FormField,
+});
 
 export {
   useFormField,

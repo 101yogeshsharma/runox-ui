@@ -2,18 +2,54 @@
   .rnx-popover-content {
     position: absolute;
     z-index: var(--z-popover);
-    min-width: 18rem;
-    width: max-content;
-    max-width: calc(100vw - 2rem);
     border: 1px solid var(--border);
-    background-color: color-mix(in srgb, var(--popover) 80%, transparent);
-    backdrop-filter: blur(24px);
-    padding: 1rem;
+    border-radius: var(--radius);
     color: var(--popover-foreground);
-    box-shadow:
-      0 10px 15px -3px rgba(0, 0, 0, 0.1),
-      0 4px 6px -4px rgba(0, 0, 0, 0.1);
+    box-shadow: var(--shadow-lg);
     outline: none;
+  }
+
+  /* Sizes */
+  .rnx-popover-content--sm {
+    min-width: var(--overlay-width-sm, 14rem);
+    padding: var(--space-3);
+    font-size: var(--text-xs);
+  }
+  .rnx-popover-content--md {
+    min-width: var(--overlay-width-md, 18rem);
+    padding: var(--space-4);
+    font-size: var(--text-sm);
+  }
+  .rnx-popover-content--lg {
+    min-width: var(--overlay-width-lg, 22rem);
+    padding: var(--space-5);
+    font-size: var(--text-base);
+  }
+
+  /* Variants */
+  .rnx-popover-content--variant-solid {
+    background-color: var(--popover);
+    border-color: var(--border);
+  }
+  .rnx-popover-content--variant-glass {
+    background-color: var(--glass-bg-overlay);
+    backdrop-filter: blur(var(--glass-blur, 16px));
+    border-color: var(--glass-border);
+  }
+  .rnx-popover-content--variant-tooltip {
+    background-color: var(--foreground);
+    color: var(--background);
+    border-color: transparent;
+  }
+
+  /* Arrow */
+  .rnx-popover-arrow {
+    position: absolute;
+    width: var(--arrow-md);
+    height: var(--arrow-md);
+    background-color: inherit;
+    border: inherit;
+    transform: rotate(45deg);
   }
 
   .rnx-popover-content[data-state="open"] {

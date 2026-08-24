@@ -1,4 +1,4 @@
-@layer components {
+﻿@layer components {
   .rnx-toast-viewport {
     position: fixed;
     z-index: var(--z-toast);
@@ -6,14 +6,14 @@
     width: 100%;
     max-height: 100vh;
     flex-direction: column;
-    gap: 0.5rem; /* space-y-2 */
-    padding: 1rem; /* p-4 */
+    gap: var(--space-2);
+    padding: var(--space-4);
     pointer-events: none;
   }
 
   @media (min-width: 768px) {
     .rnx-toast-viewport {
-      max-width: 420px;
+      max-width: calc(420px * var(--rnx-space-scale, 1));
     }
   }
 
@@ -54,19 +54,18 @@
     width: 100%;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
+    gap: var(--space-4);
     overflow: hidden;
     border: 1px solid var(--border);
-    box-shadow:
-      0 10px 15px -3px rgb(0 0 0 / 0.1),
-      0 4px 6px -4px rgb(0 0 0 / 0.1); /* shadow-lg */
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-lg); /* shadow-lg */
     will-change: transform, opacity;
   }
 
   .rnx-toast-content {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: var(--space-1);
   }
 
   .rnx-toast-title {
@@ -79,9 +78,9 @@
 
   .rnx-toast-close {
     position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    padding: 0.25rem;
+    top: var(--space-2);
+    right: var(--space-2);
+    padding: var(--space-1);
     opacity: 0;
     transition: opacity 0.2s;
     color: inherit;
@@ -100,36 +99,36 @@
 
   /* Sizes */
   .rnx-toast--sm {
-    padding: 0.75rem;
-    padding-right: 2rem;
+    padding: var(--space-3);
+    padding-right: var(--space-8);
   }
   .rnx-toast--sm .rnx-toast-title {
-    font-size: 0.75rem;
+    font-size: var(--text-xs);
   }
   .rnx-toast--sm .rnx-toast-description {
-    font-size: 0.625rem;
+    font-size: var(--text-xs);
   }
 
   .rnx-toast--md {
-    padding: 1rem;
-    padding-right: 2.5rem;
+    padding: var(--space-4);
+    padding-right: var(--space-10);
   }
   .rnx-toast--md .rnx-toast-title {
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
   }
   .rnx-toast--md .rnx-toast-description {
-    font-size: 0.75rem;
+    font-size: var(--text-xs);
   }
 
   .rnx-toast--lg {
-    padding: 1.5rem;
-    padding-right: 3rem;
+    padding: var(--space-6);
+    padding-right: var(--space-12);
   }
   .rnx-toast--lg .rnx-toast-title {
-    font-size: 1rem;
+    font-size: var(--text-base);
   }
   .rnx-toast--lg .rnx-toast-description {
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
   }
 
   /* Colors */

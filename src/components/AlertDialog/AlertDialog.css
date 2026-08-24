@@ -6,9 +6,12 @@
     display: grid;
     place-items: center;
     overflow-y: auto;
-    background-color: rgb(0 0 0 / 0.8);
-    backdrop-filter: blur(4px);
-    padding: 1rem;
+    background-color: var(
+      --overlay,
+      var(--rnx-modal-overlay-bg, rgba(0, 0, 0, 0.6))
+    );
+    backdrop-filter: blur(calc(4px * var(--rnx-space-scale, 1)));
+    padding: var(--space-4);
   }
 
   .rnx-alert-dialog-overlay[data-state="open"] {
@@ -23,14 +26,41 @@
     z-index: var(--z-modal);
     display: grid;
     width: 100%;
-    max-width: 32rem; /* max-w-lg */
-    gap: 1rem;
+    max-width: var(--modal-width-lg, 32rem); /* max-w-lg */
+    gap: var(--space-4);
     border: 1px solid var(--border);
+    border-radius: var(--radius);
     background-color: var(--background);
-    padding: 1.5rem; /* p-6 */
-    box-shadow:
-      0 10px 15px -3px rgb(0 0 0 / 0.1),
-      0 4px 6px -4px rgb(0 0 0 / 0.1); /* shadow-lg */
+    padding: var(--space-6);
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* Sizes */
+  .rnx-alert-dialog-content--sm {
+    max-width: var(--modal-width-sm, 24rem);
+    padding: var(--space-4);
+  }
+  .rnx-alert-dialog-content--md {
+    max-width: var(--modal-width-lg, 32rem);
+    padding: var(--space-6);
+  }
+  .rnx-alert-dialog-content--lg {
+    max-width: var(--modal-width-xl, 40rem);
+    padding: var(--space-8);
+  }
+
+  /* Variants */
+  .rnx-alert-dialog-content--variant-solid {
+    background-color: var(--background);
+  }
+  .rnx-alert-dialog-content--variant-glass {
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur, 16px));
+    border-color: color-mix(in srgb, var(--border) 50%, transparent);
+  }
+  .rnx-alert-dialog-content--variant-destructive {
+    border-color: var(--destructive);
+    box-shadow: 0 0 16px color-mix(in srgb, var(--destructive) 20%, transparent);
   }
 
   .rnx-alert-dialog-content[data-state="open"] {
@@ -43,7 +73,7 @@
   .rnx-alert-dialog-header {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem; /* space-y-2 */
+    gap: var(--space-2);
     text-align: center;
   }
 
@@ -62,22 +92,22 @@
     .rnx-alert-dialog-footer {
       flex-direction: row;
       justify-content: flex-end;
-      gap: 0.5rem; /* sm:space-x-2 */
+      gap: var(--space-2);
     }
   }
 
   .rnx-alert-dialog-title {
-    font-size: 1.125rem; /* text-lg */
+    font-size: var(--text-lg);
     font-weight: 600; /* font-semibold */
   }
 
   .rnx-alert-dialog-description {
-    font-size: 0.875rem; /* text-sm */
+    font-size: var(--text-sm);
     color: var(--muted-foreground);
   }
 
   .rnx-alert-dialog-cancel {
-    margin-top: 0.5rem;
+    margin-top: var(--space-2);
   }
 
   @media (min-width: 640px) {

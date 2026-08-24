@@ -3,10 +3,18 @@ import { Box } from "../../atoms/Box";
 import React, { useState, forwardRef } from "react";
 import { Star } from "lucide-react";
 import { cn } from "../../utils/cn";
+import { withLoading } from "../../utils/withLoading";
+import { rnx } from "../../utils/rnx";
 
+
+import { RnxColor } from "../../types";
+
+/**
+ * Props for the Rating component.
+ */
 export interface RatingProps extends Omit<
   React.HTMLAttributes<HTMLDivElement>,
-  "onChange"
+  "onChange" | "color"
 > {
   max?: number;
   value?: number;
@@ -14,12 +22,14 @@ export interface RatingProps extends Omit<
   onChange?: (value: number) => void;
   readOnly?: boolean;
   size?: "sm" | "md" | "lg";
-  color?: "primary" | "success" | "warning" | "danger" | "custom";
+  color?: RnxColor | "custom";
   icon?: React.ElementType;
   iconClassName?: string;
 }
 
-export const Rating = forwardRef<HTMLDivElement, RatingProps>(
+import "./Rating.css";
+
+const RatingBase = forwardRef<HTMLDivElement, RatingProps>(
   (
     {
       max = 5,
@@ -87,26 +97,18 @@ export const Rating = forwardRef<HTMLDivElement, RatingProps>(
       }
     };
 
-    const iconSizes = {
-      sm: "h-4 w-4",
-      md: "h-6 w-6",
-      lg: "h-8 w-8",
-    };
-
-    const textColors = {
-      primary: "text-primary",
-      success: "text-success",
-      warning: "text-warning",
-      danger: "text-danger",
-      custom: "text-current",
-    };
-
     return (
       <Box
+        {...rnx({ component: 'Rating', state: readOnly ? 'disabled' : 'active' })}
         ref={ref}
         role="radiogroup"
         aria-label="Rating"
-        className={cn("inline-flex items-center gap-1", className)}
+        className={cn(
+          "rnx-rating",
+          `rnx-rating--size-${size}`,
+          `rnx-rating--${color}`,
+          className
+        )}
         onMouseLeave={handleMouseLeave}
         {...props}
       >
@@ -122,11 +124,8 @@ export const Rating = forwardRef<HTMLDivElement, RatingProps>(
               aria-checked={isActive}
               disabled={readOnly}
               className={cn(
-                "m-0 flex items-center justify-center border-none bg-transparent p-0.5 transition-all duration-150 ease-out outline-none",
-                readOnly
-                  ? "cursor-default"
-                  : "focus-visible:ring-ring cursor-pointer rounded-full hover:scale-125 focus-visible:ring-2 focus-visible:ring-offset-2",
-                isActive ? textColors[color] : "text-muted"
+                "rnx-rating__item",
+                !isActive && "rnx-rating__item--inactive"
               )}
               tabIndex={
                 readOnly
@@ -143,8 +142,7 @@ export const Rating = forwardRef<HTMLDivElement, RatingProps>(
             >
               <Icon
                 className={cn(
-                  iconSizes[size],
-                  "transition-all duration-150 ease-out",
+                  "rnx-rating__icon",
                   isActive && "fill-current",
                   iconClassName
                 )}
@@ -158,4 +156,5 @@ export const Rating = forwardRef<HTMLDivElement, RatingProps>(
   }
 );
 
-Rating.displayName = "Rating";
+RatingBase.displayName = "Rating";
+export const Rating = withLoading(RatingBase);

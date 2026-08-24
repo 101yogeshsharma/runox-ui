@@ -2,7 +2,7 @@
   .rnx-kanban-scroll-button {
     background-color: var(--background);
     border: 1px solid var(--border);
-    border-radius: 9999px;
+    border-radius: var(--radius-full);
     box-shadow: var(--shadow-md);
     transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -26,14 +26,14 @@
 
   .rnx-kanban-scroll-icon {
     color: var(--foreground);
-    width: 1.25rem;
-    height: 1.25rem;
+    width: var(--space-5);
+    height: var(--space-5);
   }
 
   .rnx-kanban-column {
     background-color: color-mix(in srgb, var(--muted) 30%, transparent);
     border: 1px solid var(--border);
-    border-radius: 0.75rem;
+    border-radius: var(--radius);
     box-shadow: var(--shadow-sm);
     transition:
       background-color 150ms,
@@ -47,7 +47,7 @@
   }
 
   .rnx-kanban-column-title {
-    font-size: 0.875rem;
+    font-size: var(--text-sm);
     font-weight: 600;
   }
 
@@ -55,14 +55,14 @@
     background-color: var(--card);
     border: 1px solid var(--border);
     color: var(--muted-foreground);
-    border-radius: 0.375rem;
-    font-size: 0.75rem;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
     font-weight: 500;
     box-shadow: var(--shadow-sm);
   }
 
   .rnx-kanban-card {
-    border-radius: 0.5rem;
+    border-radius: calc(var(--radius-sm) + 2px);
   }
   .rnx-kanban-card:focus {
     outline: none;

@@ -7,7 +7,6 @@ import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { cn } from "../../utils/cn";
 import { Input, InputGroup, InputIcon } from "../Input";
 import "./Calendar.css";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
 
 export type CalendarProps = Omit<
   React.HTMLAttributes<HTMLDivElement>,
@@ -17,7 +16,7 @@ export type CalendarProps = Omit<
   value?: Date | Date[] | { from?: Date; to?: Date }; // Date | Date[] | { from?: Date; to?: Date }
   defaultValue?: Date | Date[] | { from?: Date; to?: Date };
   onValueChange?: (
-    date: Date | Date[] | { from?: Date; to?: Date } | undefined
+    date: Date | Date[] | { from?: Date; to?: Date } | undefined,
   ) => void;
   showOutsideDays?: boolean;
 
@@ -33,7 +32,7 @@ const getFirstDayOfMonth = (year: number, month: number) =>
 
 const isSameDay = (
   date1: Date | undefined | null,
-  date2: Date | undefined | null
+  date2: Date | undefined | null,
 ) => {
   if (!date1 || !date2) return false;
   return (
@@ -84,9 +83,8 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
       components: _components,
       ...props
     },
-    ref
+    ref,
   ) => {
-    const { config } = useTheme();
     const [value, setValue] = useControllableState<
       Date | Date[] | { from?: Date; to?: Date } | undefined
     >({
@@ -124,6 +122,38 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
       setCurrentMonth(new Date(year, month + 1, 1));
     };
 
+    const handleDayKeyDown = (event: React.KeyboardEvent, date: Date) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        handleDateClick(date);
+        return;
+      }
+
+      const offset = {
+        ArrowLeft: -1,
+        ArrowRight: 1,
+        ArrowUp: -7,
+        ArrowDown: 7,
+      }[event.key as "ArrowLeft" | "ArrowRight" | "ArrowUp" | "ArrowDown"];
+      if (offset === undefined) return;
+
+      event.preventDefault();
+      const nextDate = new Date(date);
+      nextDate.setDate(nextDate.getDate() + offset);
+      if (nextDate.getMonth() !== month || nextDate.getFullYear() !== year) {
+        setCurrentMonth(
+          new Date(nextDate.getFullYear(), nextDate.getMonth(), 1),
+        );
+      }
+
+      requestAnimationFrame(() => {
+        const key = `${nextDate.getFullYear()}-${nextDate.getMonth()}-${nextDate.getDate()}`;
+        document
+          .querySelector<HTMLButtonElement>(`[data-date-key="${key}"]`)
+          ?.focus();
+      });
+    };
+
     const handleDateClick = (date: Date) => {
       if (mode === "single") {
         if (showTimePicker && value instanceof Date) {
@@ -137,7 +167,7 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
       } else if (mode === "multiple") {
         const selectedDates = Array.isArray(value) ? [...value] : [];
         const existingIndex = selectedDates.findIndex((d) =>
-          isSameDay(d, date)
+          isSameDay(d, date),
         );
         if (existingIndex >= 0) {
           selectedDates.splice(existingIndex, 1);
@@ -174,9 +204,12 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
       setValue(currentDate);
     };
 
-    const handleMouseEnter = React.useCallback((date: Date) => {
-      if (mode === "range") setHoverDate(date);
-    }, [mode]);
+    const handleMouseEnter = React.useCallback(
+      (date: Date) => {
+        if (mode === "range") setHoverDate(date);
+      },
+      [mode],
+    );
 
     const handleMouseLeave = React.useCallback(() => {
       if (mode === "range") setHoverDate(null);
@@ -209,7 +242,7 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
         weeks.push(
           <tr key={i} className={"mt-2 flex w-full"}>
             {days.slice(i, i + 7)}
-          </tr>
+          </tr>,
         );
       }
 
@@ -258,6 +291,7 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
           onClick={handleDateClick}
+          onKeyDown={handleDayKeyDown}
         />
       );
     };
@@ -266,9 +300,9 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
       <Box
         ref={ref}
         className={cn(
+          "rnx-calendar",
           mode !== "time" && "w-fit p-3",
-          `rounded-${config.radius}`,
-          className
+          className,
         )}
         {...props}
       >
@@ -286,8 +320,9 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
                     onClick={handlePrevMonth}
                     className={cn(
                       "rnx-calendar__nav_button inline-flex items-center justify-center",
-                      "h-7 w-7 p-0"
+                      "h-7 w-7 p-0",
                     )}
+                    aria-label="Previous month"
                   >
                     <ChevronLeft className="h-4 w-4" />
                   </button>
@@ -296,8 +331,9 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
                     onClick={handleNextMonth}
                     className={cn(
                       "rnx-calendar__nav_button inline-flex items-center justify-center",
-                      "h-7 w-7 p-0"
+                      "h-7 w-7 p-0",
                     )}
+                    aria-label="Next month"
                   >
                     <ChevronRight className="h-4 w-4" />
                   </button>
@@ -307,7 +343,11 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
                 </Box>
               </Box>
 
-              <table className={"w-full border-collapse space-y-1"}>
+              <table
+                role="grid"
+                aria-label={`${MONTHS[month]} ${year}`}
+                className={"w-full border-collapse space-y-1"}
+              >
                 <thead>
                   <tr className={"flex"}>
                     {WEEKDAYS.map((day) => (
@@ -326,7 +366,7 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
             <Box
               className={cn(
                 "flex items-center gap-3",
-                mode !== "time" && "rnx-calendar__time_picker mt-3 pt-3"
+                mode !== "time" && "rnx-calendar__time_picker mt-3 pt-3",
               )}
             >
               {mode !== "time" && (
@@ -346,7 +386,7 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
                     "w-full",
                     mode === "time"
                       ? "h-full justify-start text-left font-normal"
-                      : "text-center font-mono tracking-widest"
+                      : "text-center font-mono tracking-widest",
                   )}
                   step={showSeconds ? "1" : "60"}
                   value={
@@ -362,41 +402,83 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
         </Box>
       </Box>
     );
-  }
+  },
 );
 
-const DayCell = React.memo(({ date, isOutside, showOutsideDays, isSelected, isRangeStart, isRangeEnd, isRangeMiddle, isToday, onMouseEnter, onMouseLeave, onClick }: any) => {
-  if (isOutside && !showOutsideDays) {
-    return <td className="h-9 w-9 p-0" />;
-  }
+interface DayCellProps {
+  date: Date;
+  isOutside: boolean;
+  showOutsideDays: boolean;
+  isSelected: boolean;
+  isRangeStart: boolean;
+  isRangeEnd: boolean;
+  isRangeMiddle: boolean;
+  isToday: boolean;
+  onMouseEnter: (date: Date) => void;
+  onMouseLeave: (date: Date) => void;
+  onClick: (date: Date) => void;
+  onKeyDown: (event: React.KeyboardEvent, date: Date) => void;
+}
 
-  const cellClass = cn(
-    "rnx-calendar__day inline-flex items-center justify-center whitespace-nowrap",
-    "h-9 w-9 p-0 relative focus-within:relative focus-within:z-20",
-    isOutside && "rnx-calendar__day--outside",
-    isRangeMiddle && "rnx-calendar__day--range-middle",
-    isRangeStart && "rnx-calendar__day--range-start",
-    isRangeEnd && "rnx-calendar__day--range-end",
-    isSelected && "rnx-calendar__day--selected",
-    !isSelected && isToday && "rnx-calendar__day--today"
-  );
+const DayCell = React.memo(
+  ({
+    date,
+    isOutside,
+    showOutsideDays,
+    isSelected,
+    isRangeStart,
+    isRangeEnd,
+    isRangeMiddle,
+    isToday,
+    onMouseEnter,
+    onMouseLeave,
+    onClick,
+    onKeyDown,
+  }: DayCellProps) => {
+    if (isOutside && !showOutsideDays) {
+      return <td className="h-9 w-9 p-0" />;
+    }
 
-  return (
-    <td
-      className="relative p-0"
-      onMouseEnter={() => onMouseEnter(date)}
-      onMouseLeave={() => onMouseLeave(date)}
-    >
-      <button
-        type="button"
-        className={cellClass}
-        onClick={() => onClick(date)}
+    const cellClass = cn(
+      "rnx-calendar__day inline-flex items-center justify-center whitespace-nowrap",
+      "h-9 w-9 p-0 relative focus-within:relative focus-within:z-20",
+      isOutside && "rnx-calendar__day--outside",
+      isRangeMiddle && "rnx-calendar__day--range-middle",
+      isRangeStart && "rnx-calendar__day--range-start",
+      isRangeEnd && "rnx-calendar__day--range-end",
+      isSelected && "rnx-calendar__day--selected",
+      !isSelected && isToday && "rnx-calendar__day--today",
+    );
+
+    return (
+      <td
+        className="relative p-0"
+        role="gridcell"
+        aria-selected={isSelected}
+        onMouseEnter={() => onMouseEnter(date)}
+        onMouseLeave={() => onMouseLeave(date)}
       >
-        {date.getDate()}
-      </button>
-    </td>
-  );
-});
+        <button
+          type="button"
+          className={cellClass}
+          onClick={() => onClick(date)}
+          onKeyDown={(event) => onKeyDown(event, date)}
+          aria-label={date.toLocaleDateString(undefined, {
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+            year: "numeric",
+          })}
+          aria-selected={isSelected}
+          aria-current={isToday ? "date" : undefined}
+          data-date-key={`${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`}
+        >
+          {date.getDate()}
+        </button>
+      </td>
+    );
+  },
+);
 DayCell.displayName = "DayCell";
 
 Calendar.displayName = "Calendar";

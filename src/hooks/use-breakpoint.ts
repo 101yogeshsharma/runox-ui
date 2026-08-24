@@ -5,6 +5,17 @@ export type { Breakpoint };
 
 export type ResponsiveProp<T> = T | Partial<Record<Breakpoint, T>>;
 
+/**
+ * Returns the current responsive breakpoint based on the window width.
+ *
+ * @returns The active Breakpoint string (e.g. 'xs', 'sm', 'md', 'lg', 'xl', '2xl').
+ *
+ * @example
+ * const breakpoint = useBreakpoint();
+ * if (breakpoint === 'md') {
+ *   // do something specific for medium screens
+ * }
+ */
 export function useBreakpoint(): Breakpoint {
   const is2Xl = useMediaQuery(`(min-width: ${breakpoints["2xl"]}px)`);
   const isXl = useMediaQuery(`(min-width: ${breakpoints.xl}px)`);

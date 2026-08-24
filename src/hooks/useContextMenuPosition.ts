@@ -1,11 +1,29 @@
 import { useState, useEffect, RefObject } from "react";
 
+/**
+ * Represents the position and placement of the context menu.
+ *
+ * @property top - The top coordinate in pixels.
+ * @property left - The left coordinate in pixels.
+ * @property placed - The placement direction relative to the cursor.
+ */
 interface Position {
   top: number;
   left: number;
   placed: "bottom-start" | "bottom-end" | "top-start" | "top-end";
 }
 
+/**
+ * Calculates the position for a context menu, adjusted to avoid viewport overflow.
+ *
+ * @param mousePos - The current mouse position coordinates, or null.
+ * @param floatingRef - A React RefObject pointing to the floating menu element.
+ * @param isOpen - Whether the context menu is currently open.
+ * @returns The calculated Position object, or null if the menu is closed or unpositioned.
+ *
+ * @example
+ * const position = useContextMenuPosition({ x: 100, y: 200 }, menuRef, true);
+ */
 export function useContextMenuPosition(
   mousePos: { x: number; y: number } | null,
   floatingRef: RefObject<HTMLElement | null>,

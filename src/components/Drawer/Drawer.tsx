@@ -13,17 +13,21 @@ import { X } from "lucide-react";
 import { Button } from "../Button";
 import { Text } from "../../atoms/Text";
 import { Box } from "../../atoms/Box";
+import { rnx } from "../../utils/rnx";
 import { useFocusTrap } from "../../hooks/useFocusTrap";
 import { useScrollLock } from "../../hooks/useScrollLock";
 import { useMergeRefs } from "../../hooks/useMergeRefs";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
 import "./Drawer.css";
 
 const DrawerTitleContext = createContext<string | undefined>(undefined);
 
+/**
+ * A panel that slides in from the edge of the screen.
+ */
 export interface DrawerProps {
   isOpen: boolean;
   onClose: () => void;
+  variant?: "solid" | "glass" | "blur";
   position?: "left" | "right" | "top" | "bottom";
   size?: "sm" | "md" | "lg" | "full";
   children: React.ReactNode;
@@ -40,6 +44,7 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
     {
       isOpen,
       onClose,
+      variant = "glass",
       position = "right",
       size = "md",
       children,
@@ -50,9 +55,8 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
       setActiveSnapPoint,
       isDraggable = true,
     },
-    ref
+    ref,
   ) => {
-    const { config } = useTheme();
     const [mounted, setMounted] = useState(false);
     const [renderState, setRenderState] = useState<"closed" | "open">("closed");
     const [shouldRender, setShouldRender] = useState(false);
@@ -67,7 +71,7 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
     const [dragging, setDragging] = useState(false);
     const [internalExpanded, setInternalExpanded] = useState(false);
 
-    useFocusTrap(contentRef, isOpen);
+    useFocusTrap(contentRef, isOpen && shouldRender);
     useScrollLock(isOpen);
 
     useEffect(() => {
@@ -80,6 +84,7 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
         requestAnimationFrame(() => setRenderState("open"));
       } else {
         setRenderState("closed");
+        setInternalExpanded(false);
         const timer = setTimeout(() => {
           setShouldRender(false);
         }, 300);
@@ -99,7 +104,7 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
       if (!isDraggable) return;
       if (
         (e.target as HTMLElement).closest(
-          "button, input, textarea, a, select, [role='button']"
+          "button, input, textarea, a, select, [role='button']",
         )
       )
         return;
@@ -211,6 +216,51 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
       transition:
         "height 0.3s cubic-bezier(0.32, 0.72, 0, 1), transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)",
     };
+    let collapseButtonNode: React.ReactNode = null;
+    if (
+      isDraggable &&
+      isVertical &&
+      snapPoints &&
+      activeSnapPoint !== undefined &&
+      setActiveSnapPoint
+    ) {
+      collapseButtonNode = (
+        <Box className="rnx-drawer-collapse-btn-wrapper">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="rnx-drawer-collapse-btn"
+            onClick={() => {
+              const idx = snapPoints.indexOf(
+                activeSnapPoint as string | number,
+              );
+              if (idx === snapPoints.length - 1) {
+                setActiveSnapPoint(snapPoints[0]);
+              } else {
+                setActiveSnapPoint(snapPoints[snapPoints.length - 1]);
+              }
+            }}
+          >
+            {activeSnapPoint === snapPoints[snapPoints.length - 1]
+              ? "Collapse"
+              : "Expand"}
+          </Button>
+        </Box>
+      );
+    } else if (isDraggable && position === "bottom") {
+      collapseButtonNode = (
+        <Box className="rnx-drawer-collapse-btn-wrapper">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="rnx-drawer-collapse-btn"
+            onClick={() => setInternalExpanded(!internalExpanded)}
+          >
+            {internalExpanded ? "Collapse" : "Expand"}
+          </Button>
+        </Box>
+      );
+    }
 
     return createPortal(
       <DrawerTitleContext.Provider value={titleId}>
@@ -223,6 +273,7 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
 
           <Box
             ref={mergedRef}
+            tabIndex={-1}
             role="dialog"
             aria-modal="true"
             aria-labelledby={titleId}
@@ -236,78 +287,41 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
             style={dynamicStyle}
             className={cn(
               "rnx-drawer-content",
+              `rnx-drawer-content--variant-${variant}`,
               `rnx-drawer--${position}`,
               `rnx-drawer--${position}-${size}`,
-              `rounded-${config.radius}`,
               internalExpanded
                 ? "!h-screen !w-screen !rounded-none border-none"
                 : "",
-              className
+              className,
             )}
+            {...rnx({ component: "Drawer", state: isOpen ? "open" : "closed" })}
           >
-            {isDraggable &&
-            isVertical &&
-            snapPoints &&
-            activeSnapPoint !== undefined &&
-            setActiveSnapPoint ? (
-              <Box className={"mt-3 mb-1 flex justify-center"}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="bg-foreground/5 hover:bg-foreground/10 text-foreground h-6 rounded-full px-4 py-0 text-xs"
-                  onClick={() => {
-                    const idx = snapPoints.indexOf(
-                      activeSnapPoint as string | number
-                    );
-                    if (idx === snapPoints.length - 1) {
-                      setActiveSnapPoint(snapPoints[0]);
-                    } else {
-                      setActiveSnapPoint(snapPoints[snapPoints.length - 1]);
-                    }
-                  }}
-                >
-                  {activeSnapPoint === snapPoints[snapPoints.length - 1]
-                    ? "Collapse"
-                    : "Expand"}
-                </Button>
-              </Box>
-            ) : isDraggable && isVertical ? (
-              <Box className={"mt-3 mb-1 flex justify-center"}>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="bg-foreground/5 hover:bg-foreground/10 text-foreground h-6 rounded-full px-4 py-0 text-xs"
-                  onClick={() => setInternalExpanded(!internalExpanded)}
-                >
-                  {internalExpanded ? "Collapse" : "Expand"}
-                </Button>
-              </Box>
-            ) : null}
+            {collapseButtonNode}
             {!hideCloseButton && (
-              <Box className={"rnx-drawer-close-btn"}>
+              <Box className="rnx-drawer-close-btn">
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={onClose}
-                  className="bg-foreground/[0.04] hover:bg-foreground/10 text-foreground h-8 w-8 rounded-full p-0"
+                  className="rnx-drawer-close-icon-btn"
                 >
                   <X size={16} />
                 </Button>
               </Box>
             )}
             <Box
-              className={"rnx-drawer-scroll-area"}
+              className={"rnx-drawer-scroll-area touch-auto"}
               onPointerDown={(e) => e.stopPropagation()}
-              style={{ touchAction: "auto" }}
             >
               {children}
             </Box>
           </Box>
         </Box>
       </DrawerTitleContext.Provider>,
-      document.body
+      document.body,
     );
-  }
+  },
 );
 
 DrawerComponent.displayName = "Drawer";

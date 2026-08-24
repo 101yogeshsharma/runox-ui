@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect, useRef } from "react";
 import Cropper, { Point, Area } from "react-easy-crop";
 import { Slider } from "../Slider";
 import { Button } from "../Button";
@@ -8,10 +8,13 @@ import { Box } from "../../atoms/Box";
 import { Flex } from "../../atoms/Flex";
 import { Text } from "../../atoms/Text";
 import { cn } from "../../utils/cn";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
+import { rnx } from "../../utils/rnx";
 import "./ImageCropper.css";
 // Uses: Button, Slider
 
+/**
+ * Props for the ImageCropper component.
+ */
 export interface ImageCropperProps {
   image: string;
   onCropComplete: (croppedImageUrl: string) => void;
@@ -29,43 +32,62 @@ export function ImageCropper({
   cropShape = "round",
   className,
 }: ImageCropperProps) {
-  const { config } = useTheme();
   const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
   const [isCropping, setIsCropping] = useState(false);
+  const isMounted = useRef(true);
+  const cropOperation = useRef(0);
+
+  useEffect(() => {
+    isMounted.current = true;
+    return () => {
+      isMounted.current = false;
+    };
+  }, []);
 
   const handleCropComplete = useCallback(
     (croppedArea: Area, croppedAreaPixels: Area) => {
       setCroppedAreaPixels(croppedAreaPixels);
     },
-    []
+    [],
   );
 
   const handleSave = useCallback(async () => {
     if (!croppedAreaPixels) return;
+    const operation = ++cropOperation.current;
     setIsCropping(true);
     try {
       const croppedImage = await getCroppedImg(image, croppedAreaPixels);
-      onCropComplete(croppedImage);
+      if (isMounted.current && cropOperation.current === operation) {
+        onCropComplete(croppedImage);
+      }
     } catch (e) {
       console.error(e);
     } finally {
-      setIsCropping(false);
+      if (isMounted.current && cropOperation.current === operation) {
+        setIsCropping(false);
+      }
     }
   }, [croppedAreaPixels, image, onCropComplete]);
 
+  const handleCancel = useCallback(() => {
+    cropOperation.current += 1;
+    onCancel?.();
+  }, [onCancel]);
+
   return (
     <Flex
+      {...rnx({ component: "ImageCropper" })}
       direction="col"
       gap="md"
-      className={cn(
-        "rnx-image-cropper w-full",
-        `rounded-${config.radius}`,
-        className
-      )}
+      className={cn("rnx-image-cropper w-full", className)}
     >
-      <Box className="rnx-image-cropper-canvas relative h-80 w-full overflow-hidden sm:h-96">
+      <Box
+        role="region"
+        aria-label="Image crop area"
+        className="rnx-image-cropper-canvas relative h-80 w-full overflow-hidden sm:h-96"
+      >
         <Cropper
           image={image}
           crop={crop}
@@ -86,13 +108,14 @@ export function ImageCropper({
           min={1}
           max={3}
           step={0.1}
+          aria-label="Zoom level"
           onValueChange={(val) => setZoom(val)}
           className="flex-1"
         />
       </Flex>
       <Flex justify="end" gap="sm" className="rnx-image-cropper-actions mt-2">
         {onCancel && (
-          <Button variant="outline" onClick={onCancel}>
+          <Button variant="outline" onClick={handleCancel}>
             Cancel
           </Button>
         )}
@@ -118,11 +141,13 @@ function getRadianAngle(degreeValue: number) {
   return (degreeValue * Math.PI) / 180;
 }
 
+const DEFAULT_FLIP = { horizontal: false, vertical: false };
+
 export async function getCroppedImg(
   imageSrc: string,
   pixelCrop: Area,
   rotation = 0,
-  flip = { horizontal: false, vertical: false }
+  flip = DEFAULT_FLIP,
 ): Promise<string> {
   const image = await createImage(imageSrc);
   const canvas = document.createElement("canvas");
@@ -166,7 +191,7 @@ export async function getCroppedImg(
     0,
     0,
     pixelCrop.width,
-    pixelCrop.height
+    pixelCrop.height,
   );
 
   // As Base64 string

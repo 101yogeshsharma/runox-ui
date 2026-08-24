@@ -1,5 +1,83 @@
 @layer components {
+  .rnx-syntax-highlighter {
+    width: 100%;
+    overflow: hidden;
+    border-radius: var(--radius);
+    border: 1px solid color-mix(in srgb, var(--border) 20%, transparent);
+    background-color: var(--code-block-bg, var(--card));
+    color: var(--foreground);
+  }
+
+  .rnx-syntax-highlighter-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: color-mix(in srgb, var(--card) 40%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--border) 20%, transparent);
+    padding: var(--space-2-5) var(--space-6);
+  }
+
+  .rnx-syntax-highlighter-controls {
+    display: flex;
+    width: 33.333%;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .rnx-syntax-highlighter-dot {
+    height: var(--icon-xs);
+    width: var(--icon-xs);
+    border-radius: var(--radius-full);
+  }
+  .rnx-syntax-highlighter-dot--destructive {
+    background-color: var(--destructive);
+  }
+  .rnx-syntax-highlighter-dot--warning {
+    background-color: var(--warning);
+  }
+  .rnx-syntax-highlighter-dot--success {
+    background-color: var(--success);
+  }
+
+  .rnx-syntax-highlighter-lang-wrapper {
+    display: flex;
+    width: 33.333%;
+    justify-content: center;
+  }
+
+  .rnx-syntax-highlighter-lang {
+    font-family: monospace;
+    font-size: var(--text-xs);
+    color: var(--muted-foreground);
+  }
+
+  .rnx-syntax-highlighter-btn-wrapper {
+    display: flex;
+    width: 33.333%;
+    justify-content: flex-end;
+  }
+
+  .rnx-syntax-highlighter-copy-btn {
+    position: absolute;
+    top: var(--space-2);
+    right: var(--space-2);
+  }
+
+  .rnx-syntax-highlighter-pre {
+    margin: 0;
+    overflow-x: auto;
+    background-color: transparent !important;
+    padding: var(--space-4);
+    font-family: monospace;
+    font-size: var(--text-sm);
+    line-height: 1.625;
+  }
+
   .rnx-syntax-highlighter__line-number {
     width: 1%;
+    padding-right: var(--space-4);
+    text-align: right;
+    opacity: 0.5;
+    user-select: none;
   }
 }

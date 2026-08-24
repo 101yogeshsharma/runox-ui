@@ -14,3 +14,8 @@ export { useIntersectionObserver } from "./useIntersectionObserver";
 export { useScrollLock } from "./useScrollLock";
 export { useMergeRefs } from "./useMergeRefs";
 export { useThrottledEvent } from "./use-throttled-event";
+export * from "./useThrottle";
+export * from "./useAgentContext";
+export type { Breakpoint, ResponsiveProp } from "./use-breakpoint";
+export type { UseClipboardOptions } from "./useClipboard";
+export type { FloatingPosition } from "./useFloatingPosition";

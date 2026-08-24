@@ -5,20 +5,27 @@ import { Box } from "../../atoms/Box";
 import React, { forwardRef, useRef } from "react";
 import { cn } from "../../utils/cn";
 import { CornerDownLeft, Paperclip, Mic } from "lucide-react";
+import { withLoading } from "../../utils/withLoading";
 
+
+/**
+ * Props for the AIInput component.
+ */
 export interface AIInputProps extends Omit<
   React.TextareaHTMLAttributes<HTMLTextAreaElement>,
   "onSubmit"
 > {
+  variant?: "solid" | "glass" | "filled";
   onValueSubmit?: (value: string) => void;
   onAttach?: () => void;
   onMic?: () => void;
 }
 
-export const AIInput = forwardRef<HTMLTextAreaElement, AIInputProps>(
+const AIInputBase = forwardRef<HTMLTextAreaElement, AIInputProps>(
   (
     {
       className,
+      variant = "solid",
       onValueSubmit,
       onAttach,
       onMic,
@@ -68,7 +75,8 @@ export const AIInput = forwardRef<HTMLTextAreaElement, AIInputProps>(
     return (
       <Box
         className={cn(
-          "bg-background focus-within:ring-primary relative flex w-full flex-col overflow-hidden rounded-xl border shadow-sm focus-within:ring-1",
+          "rnx-ai-input",
+          variant && variant !== "solid" && `rnx-ai-input--variant-${variant}`,
           className
         )}
       >
@@ -81,7 +89,7 @@ export const AIInput = forwardRef<HTMLTextAreaElement, AIInputProps>(
               ref.current = node;
             }
           }}
-          className="placeholder:text-muted-foreground rnx-ai-input__textarea w-full resize-none bg-transparent px-4 py-4 pe-12 text-sm focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+          className="rnx-ai-input__textarea"
           placeholder={placeholder}
           onChange={handleInput}
           onKeyDown={handleKeyDown}
@@ -89,30 +97,30 @@ export const AIInput = forwardRef<HTMLTextAreaElement, AIInputProps>(
           rows={1}
           {...props}
         />
-        <Box className="flex items-center justify-between p-2">
-          <Box className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={onAttach}
-              disabled={disabled}
-              className="text-muted-foreground hover:bg-muted hover:text-foreground inline-flex h-8 w-8 items-center justify-center rounded-md transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
-            >
-              <Paperclip className="h-4 w-4" />
-              <Box as="span" className="sr-only">
-                Attach file
-              </Box>
-            </button>
-            <button
-              type="button"
-              onClick={onMic}
-              disabled={disabled}
-              className="text-muted-foreground hover:bg-muted hover:text-foreground inline-flex h-8 w-8 items-center justify-center rounded-md transition-colors focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
-            >
-              <Mic className="h-4 w-4" />
-              <Box as="span" className="sr-only">
-                Use microphone
-              </Box>
-            </button>
+        <Box className="rnx-ai-input-toolbar">
+          <Box className="rnx-ai-input-actions">
+            {onAttach && (
+              <button
+                type="button"
+                onClick={onAttach}
+                disabled={disabled}
+                className="rnx-ai-input-action-btn"
+                aria-label="Attach file"
+              >
+                <Paperclip className="h-4 w-4" />
+              </button>
+            )}
+            {onMic && (
+              <button
+                type="button"
+                onClick={onMic}
+                disabled={disabled}
+                className="rnx-ai-input-action-btn"
+                aria-label="Use microphone"
+              >
+                <Mic className="h-4 w-4" />
+              </button>
+            )}
           </Box>
           <button
             type="button"
@@ -123,16 +131,15 @@ export const AIInput = forwardRef<HTMLTextAreaElement, AIInputProps>(
                 onValueSubmit(val);
               }
             }}
-            className="bg-primary text-primary-foreground hover:bg-primary/90 focus-visible:ring-ring inline-flex h-8 w-8 items-center justify-center rounded-md shadow transition-colors focus-visible:ring-1 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+            className="rnx-ai-input-submit-btn"
+            aria-label="Submit"
           >
             <CornerDownLeft className="h-4 w-4" />
-            <Box as="span" className="sr-only">
-              Submit
-            </Box>
           </button>
         </Box>
       </Box>
     );
   }
 );
-AIInput.displayName = "AIInput";
+AIInputBase.displayName = "AIInput";
+export const AIInput = withLoading(AIInputBase);

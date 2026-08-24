@@ -13,12 +13,8 @@ import { createPortal } from "react-dom";
 import { Check, ChevronDown, Circle } from "lucide-react";
 import { cva } from "class-variance-authority";
 import { cn } from "../../utils/cn";
-import { useTheme } from "../ThemeProvider/ThemeProvider";
-import {
-  useFloatingPosition,
-  useClickOutside,
-  useFocusTrap,
-} from "../../hooks";
+import { useFloatingPosition, useClickOutside } from "../../hooks";
+import { rnx } from "../../utils/rnx";
 
 type NavigationMenuVariant = "navigation" | "menubar";
 
@@ -46,16 +42,19 @@ const NavigationMenuItemContext = createContext<NavigationMenuItemContextValue>(
     value: "",
     triggerRef: { current: null },
     setTriggerRef: () => {},
-  }
+  },
 );
 
+/**
+ * Props for the NavigationMenu component.
+ */
 export interface NavigationMenuProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: NavigationMenuVariant;
+  label?: string;
 }
 
 const NavigationMenu = React.forwardRef<HTMLDivElement, NavigationMenuProps>(
-  ({ className, variant = "navigation", children, ...props }, ref) => {
-    const { config } = useTheme();
+  ({ className, variant = "navigation", label, children, ...props }, ref) => {
     const [activeValue, setActiveValue] = useState<string | null>(null);
     const menuId = React.useId().replace(/:/g, "");
     const containerRef = useRef<HTMLDivElement>(null);
@@ -88,22 +87,24 @@ const NavigationMenu = React.forwardRef<HTMLDivElement, NavigationMenuProps>(
     };
 
     const isMenubar = variant === "menubar";
-    const _Tag = isMenubar ? "div" : "nav";
 
     return (
       <NavigationMenuContext.Provider
         value={{ activeValue, setActiveValue, variant, menuId }}
       >
         <Box
+          {...rnx({ component: "NavigationMenu" })}
           as={isMenubar ? "div" : "nav"}
           ref={mergedRef}
           role={isMenubar ? "menubar" : "navigation"}
+          aria-label={
+            label ||
+            props["aria-label"] ||
+            (isMenubar ? "Menu bar" : "Main navigation")
+          }
           className={cn(
-            `rounded-${config.radius}`,
-            isMenubar
-              ? "border-border/40 bg-background/70 flex h-12 items-center space-x-1 border px-2 py-1.5 shadow-sm backdrop-blur-xl transition-all duration-300"
-              : "relative z-10 flex max-w-max flex-1 items-center justify-center",
-            className
+            isMenubar ? "rnx-navigation-menu--menubar" : "rnx-navigation-menu",
+            className,
           )}
           onMouseLeave={handleMouseLeave}
           onMouseEnter={handleMouseEnter}
@@ -113,7 +114,7 @@ const NavigationMenu = React.forwardRef<HTMLDivElement, NavigationMenuProps>(
         </Box>
       </NavigationMenuContext.Provider>
     );
-  }
+  },
 );
 NavigationMenu.displayName = "NavigationMenu";
 
@@ -123,18 +124,12 @@ const NavigationMenuList = React.forwardRef<
 >(({ className, ...props }, ref) => {
   const { variant } = useContext(NavigationMenuContext);
   const isMenubar = variant === "menubar";
-  const _Tag = isMenubar ? "div" : "ul";
 
   return (
     <Box
       as={isMenubar ? "div" : "ul"}
       ref={ref}
-      className={cn(
-        !isMenubar &&
-          "group relative flex flex-1 list-none items-center justify-center space-x-1",
-        isMenubar && "flex items-center space-x-1",
-        className
-      )}
+      className={cn("rnx-navigation-menu-list", className)}
       {...props}
     />
   );
@@ -149,7 +144,6 @@ const NavigationMenuItem = React.forwardRef<
   const itemValue = value || id;
   const { variant } = useContext(NavigationMenuContext);
   const isMenubar = variant === "menubar";
-  const _Tag = isMenubar ? "div" : "li";
   const triggerRef = useRef<HTMLElement | null>(null);
   const setTriggerRef = (node: HTMLElement | null) => {
     triggerRef.current = node;
@@ -162,7 +156,7 @@ const NavigationMenuItem = React.forwardRef<
       <Box
         as={isMenubar ? "div" : "li"}
         ref={ref}
-        className={cn(!isMenubar && "relative", className)}
+        className={cn("rnx-navigation-menu-item", className)}
         {...props}
       >
         {children}
@@ -172,76 +166,95 @@ const NavigationMenuItem = React.forwardRef<
 });
 NavigationMenuItem.displayName = "NavigationMenuItem";
 
-const navigationMenuTriggerStyle = cva(
-  "group inline-flex h-10 w-max items-center justify-center rounded-lg bg-transparent px-4 py-2 text-sm font-medium transition-all duration-200 hover:bg-accent/80 hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-accent/50 data-[state=open]:bg-accent data-[state=open]:shadow-sm"
-);
+const navigationMenuTriggerStyle = cva("rnx-navigation-menu-trigger");
 
 const NavigationMenuTrigger = React.forwardRef<
   HTMLButtonElement,
   React.ButtonHTMLAttributes<HTMLButtonElement>
->(({ className, children, onClick, onMouseEnter, ...props }, ref) => {
-  const { activeValue, setActiveValue, variant } = useContext(
-    NavigationMenuContext
-  );
-  const { value, setTriggerRef } = useContext(NavigationMenuItemContext);
-  const isOpen = activeValue === value;
-  const isMenubar = variant === "menubar";
+>(
+  (
+    { className, children, onClick, onMouseEnter, onKeyDown, ...props },
+    ref,
+  ) => {
+    const { activeValue, setActiveValue, variant, menuId } = useContext(
+      NavigationMenuContext,
+    );
+    const { value, setTriggerRef } = useContext(NavigationMenuItemContext);
+    const isOpen = activeValue === value;
+    const isMenubar = variant === "menubar";
+    const contentId = `rnx-navigation-menu-content-${menuId}-${value}`;
 
-  return (
-    <button
-      ref={(node) => {
-        setTriggerRef(node);
-        if (typeof ref === "function") ref(node);
-        else if (ref) ref.current = node;
-      }}
-      type="button"
-      role="menuitem"
-      aria-haspopup="menu"
-      aria-expanded={isOpen}
-      data-state={isOpen ? "open" : "closed"}
-      className={cn(
-        isMenubar
-          ? "focus:bg-accent focus:text-accent-foreground hover:bg-accent/80 hover:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground flex cursor-pointer items-center rounded-lg px-3.5 py-1.5 text-sm font-medium transition-all duration-200 outline-none select-none data-[state=open]:shadow-sm"
-          : navigationMenuTriggerStyle(),
-        !isMenubar && "group",
-        className
-      )}
-      onClick={(e) => {
-        setActiveValue(isOpen ? null : value);
-        onClick?.(e);
-      }}
-      onMouseEnter={(e) => {
-        if (isMenubar) {
-          if (activeValue !== null && activeValue !== value) {
+    return (
+      <button
+        ref={(node) => {
+          setTriggerRef(node);
+          if (typeof ref === "function") ref(node);
+          else if (ref) ref.current = node;
+        }}
+        type="button"
+        id={`rnx-navigation-menu-trigger-${menuId}-${value}`}
+        role={isMenubar ? "menuitem" : undefined}
+        aria-haspopup={isMenubar ? "menu" : undefined}
+        aria-expanded={isOpen}
+        aria-controls={contentId}
+        data-state={isOpen ? "open" : "closed"}
+        className={cn(
+          "rnx-navigation-menu-trigger",
+          isMenubar && "rnx-navigation-menu-trigger--menubar",
+          className,
+        )}
+        onClick={(e) => {
+          setActiveValue(isOpen ? null : value);
+          onClick?.(e);
+        }}
+        onMouseEnter={(e) => {
+          if (isMenubar) {
+            if (activeValue !== null && activeValue !== value) {
+              setActiveValue(value);
+            }
+          } else {
             setActiveValue(value);
           }
-        } else {
-          setActiveValue(value);
-        }
-        onMouseEnter?.(e);
-      }}
-      {...props}
-    >
-      {children}
-      {!isMenubar && (
-        <ChevronDown
-          className="rnx-nav-menu__chevron relative ms-1 h-3.5 w-3.5 opacity-70 transition duration-300 group-hover:opacity-100"
-          aria-hidden="true"
-        />
-      )}
-    </button>
-  );
-});
+          onMouseEnter?.(e);
+        }}
+        onKeyDown={(e) => {
+          onKeyDown?.(e);
+          if (e.defaultPrevented) return;
+          if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setActiveValue(isOpen ? null : value);
+          }
+          if (e.key === "Escape" && isOpen) {
+            e.preventDefault();
+            setActiveValue(null);
+          }
+        }}
+        {...props}
+      >
+        {children}
+        {!isMenubar && (
+          <ChevronDown
+            className="rnx-navigation-menu__chevron"
+            aria-hidden="true"
+          />
+        )}
+      </button>
+    );
+  },
+);
 NavigationMenuTrigger.displayName = "NavigationMenuTrigger";
 
 const NavigationMenuContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & { align?: "start" | "center" | "end" }
->(({ className, align = "start", children, ...props }, ref) => {
-  const { activeValue, variant } = useContext(NavigationMenuContext);
+>(({ className, align = "start", children, onKeyDown, ...props }, ref) => {
+  const { activeValue, setActiveValue, variant, menuId } = useContext(
+    NavigationMenuContext,
+  );
   const { value, triggerRef } = useContext(NavigationMenuItemContext);
   const isOpen = activeValue === value;
   const isMenubar = variant === "menubar";
+  const contentId = `rnx-navigation-menu-content-${menuId}-${value}`;
 
   const contentRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = useState(false);
@@ -262,10 +275,8 @@ const NavigationMenuContent = React.forwardRef<
     isMenubar ? 4 : 8,
     mounted,
     "bottom",
-    align
+    align,
   );
-
-  useFocusTrap(contentRef, isOpen);
 
   const mergedRef = (node: HTMLDivElement) => {
     contentRef.current = node;
@@ -278,13 +289,11 @@ const NavigationMenuContent = React.forwardRef<
   return createPortal(
     <Box
       ref={mergedRef}
+      id={contentId}
       role="menu"
       data-state={isOpen ? "open" : "closed"}
       data-rnx-overlay="true"
-      className={cn(
-        "rnx-dropdown-content border-border/50 bg-background/95 text-popover-foreground animate-in fade-in zoom-in-95 data-[state=closed]:animate-out data-[state=closed]:fade-out data-[state=closed]:zoom-out-95 z-[var(--z-dropdown)] min-w-56 origin-top overflow-hidden rounded-xl border p-1.5 shadow-xl backdrop-blur-xl",
-        className
-      )}
+      className={cn("rnx-navigation-menu-content", className)}
       style={{
         top: position?.top ?? -9999,
         left: position?.left ?? -9999,
@@ -292,12 +301,18 @@ const NavigationMenuContent = React.forwardRef<
         position: "absolute",
       }}
       onKeyDown={(e) => {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          setActiveValue(null);
+          triggerRef.current?.focus();
+          return;
+        }
         if (e.key === "ArrowDown" || e.key === "ArrowUp") {
           e.preventDefault();
           const items = Array.from(
             e.currentTarget.querySelectorAll(
-              '[role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]'
-            )
+              '[role="menuitem"], [role="menuitemcheckbox"], [role="menuitemradio"]',
+            ),
           ).filter((el) => !el.hasAttribute("disabled"));
           if (!items.length) return;
           const idx = items.indexOf(document.activeElement as Element);
@@ -312,13 +327,14 @@ const NavigationMenuContent = React.forwardRef<
           }
           (next as HTMLElement)?.focus();
         }
-        props.onKeyDown?.(e);
+        onKeyDown?.(e);
       }}
+      aria-labelledby={`rnx-navigation-menu-trigger-${menuId}-${value}`}
       {...props}
     >
       {children}
     </Box>,
-    document.body
+    document.body,
   );
 });
 NavigationMenuContent.displayName = "NavigationMenuContent";
@@ -330,10 +346,7 @@ const NavigationMenuLink = React.forwardRef<
   <a
     ref={ref}
     data-active={active ? "" : undefined}
-    className={cn(
-      "hover:bg-accent/80 hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground block space-y-1 rounded-xl p-3 leading-none no-underline transition-all duration-200 outline-none select-none",
-      className
-    )}
+    className={cn("rnx-navigation-menu-link", className)}
     {...props}
   />
 ));
@@ -349,9 +362,9 @@ const NavigationMenuDropdownItem = React.forwardRef<
       ref={ref}
       role="menuitem"
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground hover:bg-accent hover:text-accent-foreground relative flex w-full cursor-pointer items-center rounded-lg px-3 py-2 text-sm transition-colors outline-none select-none disabled:pointer-events-none disabled:opacity-50",
-        inset && "ps-8",
-        className
+        "rnx-navigation-menu-dropdown-item",
+        inset && "rnx-navigation-menu-dropdown-item--inset",
+        className,
       )}
       onClick={(e) => {
         setActiveValue(null);
@@ -372,19 +385,13 @@ const NavigationMenuCheckboxItem = React.forwardRef<
       ref={ref}
       role="menuitemcheckbox"
       aria-checked={checked}
-      className={cn(
-        "focus:bg-accent focus:text-accent-foreground hover:bg-accent hover:text-accent-foreground relative flex w-full cursor-pointer items-center rounded-lg py-2 ps-9 pe-3 text-sm transition-colors outline-none select-none disabled:pointer-events-none disabled:opacity-50",
-        className
-      )}
+      className={cn("rnx-navigation-menu-checkbox-item", className)}
       onClick={(e) => {
         onClick?.(e);
       }}
       {...props}
     >
-      <Box
-        as="span"
-        className="absolute start-3 flex h-4 w-4 items-center justify-center"
-      >
+      <Box as="span" className="rnx-navigation-menu-indicator-icon">
         {checked && <Check className="h-4 w-4" />}
       </Box>
       {children}
@@ -416,19 +423,13 @@ const NavigationMenuRadioItem = React.forwardRef<
       ref={ref}
       role="menuitemradio"
       aria-checked={checked}
-      className={cn(
-        "focus:bg-accent focus:text-accent-foreground hover:bg-accent hover:text-accent-foreground relative flex w-full cursor-pointer items-center rounded-lg py-2 ps-9 pe-3 text-sm transition-colors outline-none select-none disabled:pointer-events-none disabled:opacity-50",
-        className
-      )}
+      className={cn("rnx-navigation-menu-radio-item", className)}
       onClick={(e) => {
         onClick?.(e);
       }}
       {...props}
     >
-      <Box
-        as="span"
-        className="absolute start-2 flex h-3.5 w-3.5 items-center justify-center"
-      >
+      <Box as="span" className="rnx-navigation-menu-indicator-icon">
         {checked && <Circle className="h-2 w-2 fill-current" />}
       </Box>
       {children}
@@ -444,9 +445,9 @@ const NavigationMenuLabel = React.forwardRef<
   <Box
     ref={ref}
     className={cn(
-      "px-2 py-1.5 text-sm font-semibold",
-      inset && "ps-8",
-      className
+      "rnx-navigation-menu-label",
+      inset && "rnx-navigation-menu-label--inset",
+      className,
     )}
     {...props}
   />
@@ -460,7 +461,7 @@ const NavigationMenuSeparator = React.forwardRef<
   <Box
     ref={ref}
     role="separator"
-    className={cn("bg-muted -mx-1 my-1 h-px", className)}
+    className={cn("rnx-navigation-menu-separator", className)}
     {...props}
   />
 ));
@@ -473,31 +474,126 @@ const NavigationMenuShortcut = ({
   return (
     <Box
       as="span"
-      className={cn(
-        "text-muted-foreground ms-auto text-xs tracking-widest",
-        className
-      )}
+      className={cn("rnx-navigation-menu-shortcut", className)}
       {...props}
     />
   );
 };
 NavigationMenuShortcut.displayName = "NavigationMenuShortcut";
 
-const NavigationMenuViewport = () => null;
-const NavigationMenuIndicator = () => null;
+const NavigationMenuViewport = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => {
+  const { activeValue } = useContext(NavigationMenuContext);
+  return (
+    <Box
+      ref={ref}
+      className={cn(
+        "rnx-navigation-menu__viewport relative origin-top-center overflow-hidden transition-all duration-200",
+        activeValue && "rnx-navigation-menu__viewport--open",
+        className,
+      )}
+      {...props}
+    />
+  );
+});
+NavigationMenuViewport.displayName = "NavigationMenuViewport";
+
+const NavigationMenuIndicator = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => {
+  const { activeValue } = useContext(NavigationMenuContext);
+  if (!activeValue) return null;
+  return (
+    <Box
+      ref={ref}
+      className={cn(
+        "rnx-navigation-menu__indicator top-full z-[1] flex h-1.5 items-end justify-center overflow-hidden transition-all duration-200",
+        className,
+      )}
+      {...props}
+    >
+      <Box className="relative top-[60%] h-2 w-2 rotate-45 rounded-tl-sm bg-border shadow-md" />
+    </Box>
+  );
+});
+NavigationMenuIndicator.displayName = "NavigationMenuIndicator";
+
 const NavigationMenuSub = ({ children }: { children: React.ReactNode }) => (
-  <>{children}</>
+  <Box className="rnx-navigation-menu__sub relative">{children}</Box>
 );
 const NavigationMenuSubTrigger = NavigationMenuDropdownItem;
 const NavigationMenuSubContent = NavigationMenuContent;
 const NavigationMenuGroup = NavigationMenuRadioGroup;
-const NavigationMenuPortal = ({ children }: { children: React.ReactNode }) => (
-  <>{children}</>
+const NavigationMenuPortal = ({ children }: { children: React.ReactNode }) => {
+  if (typeof document === "undefined") return null;
+  return createPortal(children, document.body);
+};
+
+const NavigationMenuNamespace = Object.assign(NavigationMenu, {
+  List: NavigationMenuList,
+  Item: NavigationMenuItem,
+  Content: NavigationMenuContent,
+  Trigger: NavigationMenuTrigger,
+  Link: NavigationMenuLink,
+  Indicator: NavigationMenuIndicator,
+  Viewport: NavigationMenuViewport,
+  DropdownItem: NavigationMenuDropdownItem,
+  CheckboxItem: NavigationMenuCheckboxItem,
+  RadioGroup: NavigationMenuRadioGroup,
+  RadioItem: NavigationMenuRadioItem,
+  Label: NavigationMenuLabel,
+  Separator: NavigationMenuSeparator,
+  Shortcut: NavigationMenuShortcut,
+  Sub: NavigationMenuSub,
+  SubTrigger: NavigationMenuSubTrigger,
+  SubContent: NavigationMenuSubContent,
+  Group: NavigationMenuGroup,
+  Portal: NavigationMenuPortal,
+});
+
+export const MenubarRoot = (props: Omit<NavigationMenuProps, "variant">) => (
+  <NavigationMenu variant="menubar" {...props} />
 );
+export const MenubarMenu = NavigationMenuItem;
+export const MenubarTrigger = NavigationMenuTrigger;
+export const MenubarContent = NavigationMenuContent;
+export const MenubarItem = NavigationMenuDropdownItem;
+export const MenubarSeparator = NavigationMenuSeparator;
+export const MenubarLabel = NavigationMenuLabel;
+export const MenubarCheckboxItem = NavigationMenuCheckboxItem;
+export const MenubarRadioGroup = NavigationMenuRadioGroup;
+export const MenubarRadioItem = NavigationMenuRadioItem;
+export const MenubarPortal = NavigationMenuPortal;
+export const MenubarSubContent = NavigationMenuSubContent;
+export const MenubarSubTrigger = NavigationMenuSubTrigger;
+export const MenubarGroup = NavigationMenuGroup;
+export const MenubarSub = NavigationMenuSub;
+export const MenubarShortcut = NavigationMenuShortcut;
+
+export const Menubar = Object.assign(MenubarRoot, {
+  Menu: MenubarMenu,
+  Trigger: MenubarTrigger,
+  Content: MenubarContent,
+  Item: MenubarItem,
+  Separator: MenubarSeparator,
+  Label: MenubarLabel,
+  CheckboxItem: MenubarCheckboxItem,
+  RadioGroup: MenubarRadioGroup,
+  RadioItem: MenubarRadioItem,
+  Portal: MenubarPortal,
+  SubContent: MenubarSubContent,
+  SubTrigger: MenubarSubTrigger,
+  Group: MenubarGroup,
+  Sub: MenubarSub,
+  Shortcut: MenubarShortcut,
+});
 
 export {
   navigationMenuTriggerStyle,
-  NavigationMenu,
+  NavigationMenuNamespace as NavigationMenu,
   NavigationMenuList,
   NavigationMenuItem,
   NavigationMenuContent,
@@ -518,22 +614,3 @@ export {
   NavigationMenuGroup,
   NavigationMenuPortal,
 };
-
-export const Menubar = (props: Omit<NavigationMenuProps, "variant">) => (
-  <NavigationMenu variant="menubar" {...props} />
-);
-export const MenubarMenu = NavigationMenuItem;
-export const MenubarTrigger = NavigationMenuTrigger;
-export const MenubarContent = NavigationMenuContent;
-export const MenubarItem = NavigationMenuDropdownItem;
-export const MenubarSeparator = NavigationMenuSeparator;
-export const MenubarLabel = NavigationMenuLabel;
-export const MenubarCheckboxItem = NavigationMenuCheckboxItem;
-export const MenubarRadioGroup = NavigationMenuRadioGroup;
-export const MenubarRadioItem = NavigationMenuRadioItem;
-export const MenubarPortal = NavigationMenuPortal;
-export const MenubarSubContent = NavigationMenuSubContent;
-export const MenubarSubTrigger = NavigationMenuSubTrigger;
-export const MenubarGroup = NavigationMenuGroup;
-export const MenubarSub = NavigationMenuSub;
-export const MenubarShortcut = NavigationMenuShortcut;

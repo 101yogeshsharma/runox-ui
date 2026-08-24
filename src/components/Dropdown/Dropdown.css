@@ -4,13 +4,13 @@
   }
 
   .rnx-dropdown-badge {
-    border-radius: 0.125rem;
+    border-radius: calc(var(--radius) - 10px);
     font-weight: 400;
   }
 
   .rnx-dropdown-badge-remove-btn {
     cursor: pointer;
-    border-radius: 9999px;
+    border-radius: var(--radius-full);
     outline: none;
   }
 
@@ -35,19 +35,34 @@
   .rnx-dropdown-content {
     border: 1px solid var(--border);
     background-color: var(--card);
-    border-radius: 16px;
-    z-index: 50;
+    border-radius: var(--radius);
+    z-index: var(--z-modal);
     overflow: hidden;
   }
 
   .rnx-dropdown-trigger {
     border: 1px solid var(--border);
+    border-radius: var(--radius);
     background-color: var(--card);
     color: var(--foreground);
   }
 
   .rnx-dropdown-trigger:hover {
     background-color: color-mix(in srgb, var(--foreground) 4%, transparent);
+  }
+
+  .rnx-dropdown-trigger:focus-visible {
+    outline: none;
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px var(--ring);
+  }
+
+  .rnx-dropdown-trigger:disabled,
+  .rnx-dropdown-trigger[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
   }
 
   .rnx-dropdown-trigger-empty {
@@ -70,5 +85,12 @@
   [cmdk-item]:hover {
     background-color: color-mix(in srgb, var(--foreground) 10%, transparent);
     color: var(--foreground);
+  }
+
+  [cmdk-item][data-disabled="true"],
+  [cmdk-item][aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
   }
 }

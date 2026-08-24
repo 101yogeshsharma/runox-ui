@@ -1,0 +1,77 @@
+@layer components {
+  .rnx-skeleton {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--muted);
+  }
+
+  /* Shimmer */
+  .rnx-skeleton--shimmer::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    background-image: linear-gradient(
+      90deg,
+      transparent 0,
+      color-mix(in srgb, var(--foreground) 10%, transparent) 20%,
+      color-mix(in srgb, var(--foreground) 25%, transparent) 60%,
+      transparent 100%
+    );
+    animation: rnx-shimmer 2s infinite;
+    content: "";
+  }
+
+  /* Pulse */
+  .rnx-skeleton--pulse {
+    animation: rnx-skeleton-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  @keyframes rnx-skeleton-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  /* None */
+  .rnx-skeleton--none::after {
+    display: none;
+  }
+
+  .rnx-skeleton-text {
+    height: 1rem;
+    width: 100%;
+    border-radius: var(--radius);
+  }
+
+  .rnx-skeleton-circular {
+    border-radius: var(--radius-full);
+  }
+
+  .rnx-skeleton-rectangular {
+    border-radius: 0;
+  }
+
+  .rnx-skeleton-rounded {
+    border-radius: var(--radius);
+  }
+
+  /* Colors */
+  .rnx-skeleton--color-primary {
+    background-color: color-mix(in srgb, var(--primary) 15%, transparent);
+  }
+  .rnx-skeleton--color-card {
+    background-color: var(--card);
+  }
+
+  @keyframes rnx-shimmer {
+    100% {
+      transform: translateX(100%);
+    }
+  }
+}

@@ -55,3 +55,5 @@ export function DataTableColumnHeader<TData>({
     </Box>
   );
 }
+
+DataTableColumnHeader.displayName = "Table.DataTableColumnHeader";

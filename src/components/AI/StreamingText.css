@@ -1,0 +1,43 @@
+@layer components {
+  /* StreamingText cursor styles */
+  .rnx-streaming-text {
+    display: inline;
+  }
+
+  .rnx-streaming-text__cursor {
+    display: inline-block;
+    margin-left: 2px;
+    font-weight: 400;
+    line-height: 1;
+    vertical-align: baseline;
+    animation: rnx-cursor-blink 1s step-end infinite;
+  }
+
+  .rnx-streaming-text__cursor--pipe::after {
+    content: "|";
+    color: var(--primary);
+  }
+
+  .rnx-streaming-text__cursor--block::after {
+    content: "█";
+    color: var(--primary);
+    font-size: 0.85em;
+  }
+
+  .rnx-streaming-text__cursor--glow::after {
+    content: "|";
+    color: var(--primary);
+    text-shadow: 0 0 8px var(--primary);
+  }
+
+  @keyframes rnx-cursor-blink {
+    0%,
+    50% {
+      opacity: 1;
+    }
+    51%,
+    100% {
+      opacity: 0;
+    }
+  }
+}

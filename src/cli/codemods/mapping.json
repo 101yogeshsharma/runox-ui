@@ -1,0 +1,83 @@
+{
+  "mui": {
+    "imports": {
+      "@mui/material": "@runox/ui"
+    },
+    "components": {
+      "Typography": "Text",
+      "Stack": "Flex",
+      "TextField": "Input",
+      "CircularProgress": "Spinner"
+    },
+    "props": {
+      "Typography": {
+        "variant": {
+          "h1": "h1",
+          "h2": "h2",
+          "h3": "h3",
+          "body1": "p",
+          "body2": "p"
+        }
+      },
+      "Button": {
+        "variant": {
+          "contained": "solid",
+          "outlined": "outline",
+          "text": "ghost"
+        },
+        "color": {
+          "primary": "primary",
+          "secondary": "secondary",
+          "error": "destructive"
+        }
+      }
+    }
+  },
+  "chakra": {
+    "imports": {
+      "@chakra-ui/react": "@runox/ui"
+    },
+    "components": {
+      "VStack": "Flex",
+      "HStack": "Flex",
+      "Heading": "Text"
+    },
+    "props": {
+      "Button": {
+        "colorScheme": "color",
+        "variant": {
+          "solid": "solid",
+          "outline": "outline",
+          "ghost": "ghost"
+        }
+      }
+    }
+  },
+  "shadcn": {
+    "imports": {
+      "@/components/ui/button": "@runox/ui",
+      "@/components/ui/input": "@runox/ui",
+      "@/components/ui/badge": "@runox/ui",
+      "@/components/ui/card": "@runox/ui"
+    },
+    "components": {
+      "CardHeader": "Flex",
+      "CardContent": "Box",
+      "CardFooter": "Flex",
+      "CardTitle": "Text",
+      "CardDescription": "Text"
+    },
+    "props": {
+      "Button": {
+        "variant": {
+          "default": "solid",
+          "destructive": "solid",
+          "outline": "outline",
+          "secondary": "solid",
+          "ghost": "ghost",
+          "link": "ghost"
+        }
+      }
+    }
+  }
+}

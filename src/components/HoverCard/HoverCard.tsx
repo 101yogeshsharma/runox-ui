@@ -5,11 +5,20 @@ import { cn } from "../../utils/cn";
 import { useFloatingPosition, useControllableState } from "../../hooks";
 import { Box } from "../../atoms/Box";
 import { Card } from "../Card";
+import { rnx } from "../../utils/rnx";
 // Uses: Card
 
+import "./HoverCard.css";
+
+/**
+ * Props for the HoverCard component.
+ */
 export interface HoverCardProps {
   trigger: React.ReactNode;
   children: React.ReactNode;
+  variant?: "solid" | "glass";
+  size?: "sm" | "md" | "lg";
+  showArrow?: boolean;
   align?: "left" | "right" | "center";
   isOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -19,9 +28,12 @@ export interface HoverCardProps {
   closeDelay?: number;
 }
 
-export const HoverCard: React.FC<HoverCardProps> = ({
+const HoverCardComponent: React.FC<HoverCardProps> = ({
   trigger,
   children,
+  variant = "glass",
+  size = "md",
+  showArrow = false,
   align = "center",
   isOpen: isOpenProp,
   onOpenChange,
@@ -55,7 +67,7 @@ export const HoverCard: React.FC<HoverCardProps> = ({
     sideOffset,
     shouldRender,
     "bottom",
-    align === "left" ? "start" : align === "right" ? "end" : "center"
+    align === "left" ? "start" : align === "right" ? "end" : "center",
   );
 
   const handleMouseEnter = () => {
@@ -160,12 +172,18 @@ export const HoverCard: React.FC<HoverCardProps> = ({
 
     return createPortal(
       <Card
+        {...rnx({ component: "HoverCard", state: "open" })}
         id={contentId}
         ref={contentRef}
         role="dialog"
-        variant="glass"
-        size="sm"
-        className={cn("rnx-hover-card-content", className)}
+        variant={variant as any}
+        size={size as any}
+        className={cn(
+          "rnx-hover-card-content",
+          `rnx-hover-card-content--variant-${variant}`,
+          `rnx-hover-card-content--${size}`,
+          className,
+        )}
         data-state={mounted ? "open" : "closed"}
         data-side={position?.placed ?? "bottom"}
         data-rnx-overlay="true"
@@ -173,15 +191,25 @@ export const HoverCard: React.FC<HoverCardProps> = ({
         onMouseLeave={handleMouseLeave}
         style={{
           position: "absolute",
-          zIndex: 50,
           top: position?.top ?? -9999,
           left: position?.left ?? -9999,
           visibility: position ? "visible" : "hidden",
         }}
       >
+        {showArrow && (
+          <span
+            className="rnx-hover-card-arrow"
+            style={{
+              top: position?.placed === "bottom" ? -4 : undefined,
+              bottom: position?.placed === "top" ? -4 : undefined,
+              left: position?.placed === "right" ? -4 : "calc(50% - 4px)",
+              right: position?.placed === "left" ? -4 : undefined,
+            }}
+          />
+        )}
         {children}
       </Card>,
-      document.body
+      document.body,
     );
   };
 
@@ -192,3 +220,20 @@ export const HoverCard: React.FC<HoverCardProps> = ({
     </>
   );
 };
+HoverCardComponent.displayName = "HoverCard";
+
+export const HoverCardTrigger: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => <>{children}</>;
+HoverCardTrigger.displayName = "HoverCard.Trigger";
+
+export const HoverCardContent: React.FC<{
+  children: React.ReactNode;
+  className?: string;
+}> = ({ children, className }) => <span className={className}>{children}</span>;
+HoverCardContent.displayName = "HoverCard.Content";
+
+export const HoverCard = Object.assign(HoverCardComponent, {
+  Trigger: HoverCardTrigger,
+  Content: HoverCardContent,
+});

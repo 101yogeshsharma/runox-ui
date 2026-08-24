@@ -1,15 +1,23 @@
 const fs = require("fs");
 const path = require("path");
 const { execSync } = require("child_process");
+const entries = require(path.join(__dirname, "entry-manifest.json"));
 
-const files = ["dist/index.mjs", "dist/index.js"];
-files.forEach((file) => {
-  const filePath = path.join(__dirname, "..", file);
-  if (fs.existsSync(filePath)) {
-    const content = fs.readFileSync(filePath, "utf8");
-    fs.writeFileSync(filePath, '"use client";\n' + content);
-  }
-});
+const clientEntries = Object.keys(entries).filter(
+  (name) => name !== "cli" && !name.startsWith("codemods/"),
+);
+
+clientEntries
+  .flatMap((name) => [`dist/${name}.mjs`, `dist/${name}.js`])
+  .forEach((file) => {
+    const filePath = path.join(__dirname, "..", file);
+    if (fs.existsSync(filePath)) {
+      const content = fs.readFileSync(filePath, "utf8");
+      if (!content.startsWith('"use client";')) {
+        fs.writeFileSync(filePath, '"use client";\n' + content);
+      }
+    }
+  });
 
 // Process CSS with Tailwind
 const distDir = path.join(__dirname, "..", "dist");
@@ -40,7 +48,7 @@ if (fs.existsSync(cssFile)) {
       {
         cwd: path.join(__dirname, ".."),
         stdio: "inherit",
-      }
+      },
     );
   } finally {
     if (fs.existsSync(tmpCssFile)) {

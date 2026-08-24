@@ -1,15 +1,29 @@
 import React, { forwardRef } from "react";
 import { cn } from "../../utils/cn";
 import { ResponsiveProp, gapMap, generateResponsiveVars } from "../utils";
+import { withLoading } from "../../utils/withLoading";
 
+export type FlexSpacing = "none" | "xs" | "sm" | "md" | "lg" | "xl";
+export type FlexDirection = "row" | "col" | "row-reverse" | "col-reverse";
+export type FlexJustify =
+  "start" | "center" | "end" | "between" | "around" | "evenly";
+export type FlexAlign = "start" | "center" | "end" | "stretch" | "baseline";
+
+/**
+ * Props for the Flex component.
+ */
 export interface FlexProps extends React.HTMLAttributes<HTMLElement> {
   children?: React.ReactNode;
-  direction?: ResponsiveProp<"row" | "col" | "row-reverse" | "col-reverse">;
-  justify?: "start" | "center" | "end" | "between" | "around" | "evenly";
-  align?: "start" | "center" | "end" | "stretch" | "baseline";
-  gap?: ResponsiveProp<"none" | "xs" | "sm" | "md" | "lg" | "xl">;
+  direction?: ResponsiveProp<FlexDirection>;
+  justify?: FlexJustify;
+  align?: FlexAlign;
+  gap?: ResponsiveProp<FlexSpacing>;
+  p?: ResponsiveProp<FlexSpacing>;
+  px?: ResponsiveProp<FlexSpacing>;
+  py?: ResponsiveProp<FlexSpacing>;
   wrap?: boolean | "reverse";
   fullWidth?: boolean;
+  inline?: boolean;
   as?: React.ElementType;
 }
 
@@ -30,7 +44,7 @@ const alignMap: Record<string, string> = {
   baseline: "baseline",
 };
 
-export const Flex = forwardRef<HTMLElement, FlexProps>(
+const FlexBase = forwardRef<HTMLElement, FlexProps>(
   (
     {
       children,
@@ -38,14 +52,18 @@ export const Flex = forwardRef<HTMLElement, FlexProps>(
       justify,
       align,
       gap,
+      p,
+      px,
+      py,
       wrap = false,
       fullWidth = false,
+      inline = false,
       as: Component = "div",
       style,
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     const dirVars = generateResponsiveVars("rnx-flex-dir", direction, (val) =>
       val === "col"
@@ -54,24 +72,63 @@ export const Flex = forwardRef<HTMLElement, FlexProps>(
           ? "column-reverse"
           : val === "row-reverse"
             ? "row-reverse"
-            : "row"
+            : "row",
     );
     const gapVars = generateResponsiveVars(
       "rnx-flex-gap",
       gap,
-      (val) => gapMap[val] || val
+      (val) => gapMap[val] || val,
+    );
+    const pVars = generateResponsiveVars(
+      "rnx-flex-p",
+      p,
+      (val) => gapMap[val] || val,
+    );
+    const pxVars = generateResponsiveVars(
+      "rnx-flex-px",
+      px,
+      (val) => gapMap[val] || val,
+    );
+    const pyVars = generateResponsiveVars(
+      "rnx-flex-py",
+      py,
+      (val) => gapMap[val] || val,
     );
 
-    const dynamicStyles = {
-      "--rnx-flex-justify": justify ? justifyMap[justify] : undefined,
-      "--rnx-flex-align": align ? alignMap[align] : undefined,
-      "--rnx-flex-wrap":
-        wrap === true ? "wrap" : wrap === "reverse" ? "wrap-reverse" : "nowrap",
-      ...dirVars,
-      ...gapVars,
-      ...(fullWidth ? { width: "100%" } : {}),
-      ...style,
-    } as any as React.CSSProperties;
+    const dynamicStyles = React.useMemo(
+      () =>
+        ({
+          "--rnx-flex-display": inline ? "inline-flex" : "flex",
+          "--rnx-flex-justify": justify ? justifyMap[justify] : undefined,
+          "--rnx-flex-align": align ? alignMap[align] : undefined,
+          "--rnx-flex-wrap":
+            wrap === true
+              ? "wrap"
+              : wrap === "reverse"
+                ? "wrap-reverse"
+                : "nowrap",
+          ...dirVars,
+          ...gapVars,
+          ...pVars,
+          ...pxVars,
+          ...pyVars,
+          ...(fullWidth ? { width: "100%" } : {}),
+          ...style,
+        }) as any as React.CSSProperties,
+      [
+        inline,
+        justify,
+        align,
+        wrap,
+        dirVars,
+        gapVars,
+        pVars,
+        pxVars,
+        pyVars,
+        fullWidth,
+        style,
+      ],
+    );
 
     return (
       <Component
@@ -83,7 +140,8 @@ export const Flex = forwardRef<HTMLElement, FlexProps>(
         {children}
       </Component>
     );
-  }
+  },
 );
 
-Flex.displayName = "Flex";
+FlexBase.displayName = "Flex";
+export const Flex = withLoading(FlexBase);
