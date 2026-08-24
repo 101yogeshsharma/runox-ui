@@ -107,10 +107,6 @@
   }
 
   /* Colors */
-  .rnx-checkbox-wrapper {
-    --rnx-checkbox-color: var(--primary);
-    --rnx-checkbox-color-foreground: var(--primary-foreground);
-  }
   .rnx-checkbox-wrapper--color-primary {
     --rnx-checkbox-color: var(--primary);
     --rnx-checkbox-color-foreground: var(--primary-foreground);

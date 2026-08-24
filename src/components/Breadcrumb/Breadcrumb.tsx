@@ -19,13 +19,25 @@ const BreadcrumbContext = React.createContext<{
 }>({});
 
 export const BreadcrumbRoot = forwardRef<HTMLElement, BreadcrumbProps>(
-  ({ variant = "default", size = "md", children, ...props }, ref) => (
-    <BreadcrumbContext.Provider value={{ variant, size }}>
-      <Box {...rnx({ component: 'Breadcrumb' })} as="nav" ref={ref} aria-label="breadcrumb" {...props}>
-        {children}
-      </Box>
-    </BreadcrumbContext.Provider>
-  )
+  ({ variant = "default", size = "md", children, ...props }, ref) => {
+    const contextValue = React.useMemo(
+      () => ({ variant, size }),
+      [variant, size],
+    );
+    return (
+      <BreadcrumbContext.Provider value={contextValue}>
+        <Box
+          {...rnx({ component: "Breadcrumb" })}
+          as="nav"
+          ref={ref}
+          aria-label="breadcrumb"
+          {...props}
+        >
+          {children}
+        </Box>
+      </BreadcrumbContext.Provider>
+    );
+  },
 );
 BreadcrumbRoot.displayName = "Breadcrumb.Root";
 
@@ -41,8 +53,10 @@ export const BreadcrumbList = forwardRef<
       className={cn(
         "rnx-breadcrumb-list",
         size && `rnx-breadcrumb-list--${size}`,
-        variant && variant !== "default" && `rnx-breadcrumb-list--variant-${variant}`,
-        className
+        variant &&
+          variant !== "default" &&
+          `rnx-breadcrumb-list--variant-${variant}`,
+        className,
       )}
       {...props}
     />
@@ -72,7 +86,7 @@ export const BreadcrumbLink = forwardRef<
     className={cn(
       "rnx-breadcrumb-link",
       active && "rnx-breadcrumb-link--active",
-      className
+      className,
     )}
     aria-current={active ? "page" : undefined}
     {...props}

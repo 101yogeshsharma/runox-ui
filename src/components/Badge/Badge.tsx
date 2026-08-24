@@ -44,20 +44,27 @@ const BadgeBase = forwardRef<HTMLSpanElement, BadgeProps>(
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
+    let variantClass = `rnx-badge--${variant}-${color}`;
+    if (variant === "glass") {
+      variantClass = "rnx-badge--glass";
+    } else if (variant === "gradient") {
+      variantClass = "rnx-badge--gradient";
+    }
+
     return (
       <Box
-        {...rnx({ component: 'Badge', variant: variant || 'subtle' })}
+        {...rnx({ component: "Badge", variant: variant || "subtle" })}
         as="span"
         ref={ref}
         className={cn(
           "rnx-badge",
-          variant === "glass" ? "rnx-badge--glass" : variant === "gradient" ? "rnx-badge--gradient" : `rnx-badge--${variant}-${color}`,
+          variantClass,
           `rnx-badge--size-${size}`,
           `rnx-badge--shape-${shape}`,
           pulse && "rnx-badge--pulse",
-          className
+          className,
         )}
         {...props}
       >
@@ -69,7 +76,7 @@ const BadgeBase = forwardRef<HTMLSpanElement, BadgeProps>(
         {children}
       </Box>
     );
-  }
+  },
 );
 
 BadgeBase.displayName = "Badge";

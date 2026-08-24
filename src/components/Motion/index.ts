@@ -22,21 +22,18 @@ export * from "./Shake";
 export * from "./Reveal";
 export * from "./RotateIn";
 
-export const Motion = Object.assign(
-  {},
-  {
-    FadeIn,
-    ScaleIn,
-    SlideIn,
-    ZoomIn,
-    FlipIn,
-    BounceIn,
-    RotateIn,
-    Shake,
-    Reveal,
-    Stagger: StaggerContainer,
-    StaggerItem,
-    MakeWayProvider,
-    useMakeWay,
-  }
-);
+export const Motion = {
+  FadeIn,
+  ScaleIn,
+  SlideIn,
+  ZoomIn,
+  FlipIn,
+  BounceIn,
+  RotateIn,
+  Shake,
+  Reveal,
+  Stagger: StaggerContainer,
+  StaggerItem,
+  MakeWayProvider,
+  useMakeWay,
+};

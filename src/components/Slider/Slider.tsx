@@ -75,12 +75,19 @@ const SliderBase = forwardRef<HTMLInputElement, SliderProps>(
         : Math.max(0, Math.min(1, (currentValue - min) / (max - min)));
     const displayValue = showValue ?? !!label;
 
+    let sliderState = "default";
+    if (props.disabled) {
+      sliderState = "disabled";
+    } else if (error) {
+      sliderState = "error";
+    }
+
     return (
       <Box
         className={cn("rnx-slider-container", className)}
         {...rnx({
           component: "Slider",
-          state: props.disabled ? "disabled" : error ? "error" : "default",
+          state: sliderState,
         })}
       >
         {(label || displayValue) && (

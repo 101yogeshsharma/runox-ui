@@ -47,6 +47,8 @@ export interface AgentSnapshot {
  * const { snapshot, refresh } = useAgentContext();
  * console.log("Components:", snapshot.components);
  */
+let snapshotCounter = 0;
+
 export function useAgentContext() {
   const [snapshot, setSnapshot] = useState<AgentSnapshot>({
     timestamp: Date.now(),
@@ -59,18 +61,23 @@ export function useAgentContext() {
     const elements = document.querySelectorAll("[data-rnx-component]");
     const components: AgentComponentSnapshot[] = Array.from(elements).map(
       (el) => {
+        const htmlEl = el as HTMLElement;
         const rect = el.getBoundingClientRect();
+        snapshotCounter = (snapshotCounter + 1) % 1000000;
+        const fallbackId = `rnx-${Date.now()}-${snapshotCounter}`;
+        const id =
+          el.id ||
+          (typeof crypto !== "undefined" &&
+          typeof crypto.randomUUID === "function"
+            ? crypto.randomUUID()
+            : fallbackId);
+
         return {
-          id:
-            el.id ||
-            (typeof crypto !== "undefined" &&
-            typeof crypto.randomUUID === "function"
-              ? crypto.randomUUID()
-              : `rnx-${Date.now()}-${Math.floor(Math.random() * 10000)}`),
-          component: el.getAttribute("data-rnx-component") || "",
-          variant: el.getAttribute("data-rnx-variant") || undefined,
-          state: el.getAttribute("data-rnx-state") || undefined,
-          action: el.getAttribute("data-rnx-action") || undefined,
+          id,
+          component: htmlEl.dataset.rnxComponent || "",
+          variant: htmlEl.dataset.rnxVariant || undefined,
+          state: htmlEl.dataset.rnxState || undefined,
+          action: htmlEl.dataset.rnxAction || undefined,
           textContent: (el.textContent || "").slice(0, 100).trim(), // truncate to keep payload small
           bounds: {
             x: rect.x,

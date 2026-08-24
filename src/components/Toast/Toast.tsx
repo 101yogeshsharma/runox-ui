@@ -216,11 +216,8 @@ export const ToastItem: React.FC<{
 ToastProvider.displayName = "Toast.Provider";
 ToastItem.displayName = "Toast.Item";
 
-export const Toast = Object.assign(
-  {},
-  {
-    Provider: ToastProvider,
-    Item: ToastItem,
-    useToast,
-  },
-);
+export const Toast = {
+  Provider: ToastProvider,
+  Item: ToastItem,
+  useToast,
+};

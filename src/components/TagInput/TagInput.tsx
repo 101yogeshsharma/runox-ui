@@ -105,11 +105,18 @@ const TagInputBase = forwardRef<HTMLInputElement, TagInputProps>(
     const generatedId = useId();
     const id = customId || generatedId;
 
+    let tagInputState = "default";
+    if (disabled) {
+      tagInputState = "disabled";
+    } else if (error) {
+      tagInputState = "error";
+    }
+
     return (
       <Box
         {...rnx({
           component: "TagInput",
-          state: disabled ? "disabled" : error ? "error" : "default",
+          state: tagInputState,
         })}
         className={cn("rnx-tag-input-container", className)}
       >

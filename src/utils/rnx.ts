@@ -11,8 +11,8 @@ export interface RnxAttributesOptions {
     | "disabled"
     | "active"
     | "inactive"
-    | string;
-  action?: "submit" | "open" | "close" | "navigate" | "toggle" | string;
+    | (string & {});
+  action?: "submit" | "open" | "close" | "navigate" | "toggle" | (string & {});
 }
 
 /**
