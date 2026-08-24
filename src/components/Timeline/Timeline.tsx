@@ -22,19 +22,19 @@ const TimelineRoot = React.forwardRef<HTMLUListElement, TimelineProps>(
     return (
       <TimelineContext.Provider value={{ orientation }}>
         <Box
-          {...rnx({ component: 'Timeline' })}
+          {...rnx({ component: "Timeline" })}
           as="ul"
           ref={ref}
           className={cn(
             "rnx-timeline",
             orientation === "horizontal" && "rnx-timeline--horizontal",
-            className
+            className,
           )}
           {...props}
         />
       </TimelineContext.Provider>
     );
-  }
+  },
 );
 TimelineRoot.displayName = "Timeline";
 
@@ -55,12 +55,12 @@ export const TimelineItem = React.forwardRef<HTMLLIElement, TimelineItemProps>(
             ? "rnx-timeline-item--vertical"
             : "rnx-timeline-item--horizontal",
           status && `rnx-timeline-item--${status}`,
-          className
+          className,
         )}
         {...props}
       />
     );
-  }
+  },
 );
 TimelineItem.displayName = "Timeline.Item";
 
@@ -79,7 +79,7 @@ export const TimelineSeparator = React.forwardRef<
         orientation === "vertical"
           ? "rnx-timeline-separator--vertical"
           : "rnx-timeline-separator--horizontal",
-        className
+        className,
       )}
       {...props}
     />
@@ -95,16 +95,19 @@ export interface TimelineDotProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export const TimelineDot = React.forwardRef<HTMLDivElement, TimelineDotProps>(
-  ({ className, variant = "default", status, color = "default", ...props }, ref) => {
+  (
+    { className, variant = "default", status, color = "default", ...props },
+    ref,
+  ) => {
     const { orientation } = React.useContext(TimelineContext);
-    const mappedColor =
-      status === "completed"
-        ? "success"
-        : status === "active"
-          ? "primary"
-          : status === "error"
-            ? "destructive"
-            : color;
+    let mappedColor = color;
+    if (status === "completed") {
+      mappedColor = "success";
+    } else if (status === "active") {
+      mappedColor = "primary";
+    } else if (status === "error") {
+      mappedColor = "destructive";
+    }
 
     return (
       <Box
@@ -118,12 +121,12 @@ export const TimelineDot = React.forwardRef<HTMLDivElement, TimelineDotProps>(
             : "rnx-timeline-dot--horizontal",
           status && `rnx-timeline-dot--status-${status}`,
           props.children ? "rnx-timeline-dot--with-children" : undefined,
-          className
+          className,
         )}
         {...props}
       />
     );
-  }
+  },
 );
 TimelineDot.displayName = "Timeline.Dot";
 
@@ -142,7 +145,7 @@ export const TimelineConnector = React.forwardRef<
         orientation === "vertical"
           ? "rnx-timeline-connector--vertical"
           : "rnx-timeline-connector--horizontal",
-        className
+        className,
       )}
       {...props}
     />
@@ -165,7 +168,7 @@ export const TimelineContent = React.forwardRef<
         orientation === "vertical"
           ? "rnx-timeline-content--vertical"
           : "rnx-timeline-content--horizontal",
-        className
+        className,
       )}
       {...props}
     />

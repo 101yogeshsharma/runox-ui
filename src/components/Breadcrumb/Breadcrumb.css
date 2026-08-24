@@ -6,7 +6,7 @@
     gap: var(--space-1-5);
     font-size: var(--text-sm);
     color: var(--muted-foreground);
-    word-break: break-word;
+    overflow-wrap: break-word;
     list-style: none;
     margin: 0;
     padding: 0;

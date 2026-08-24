@@ -67,7 +67,7 @@ const HoverCardComponent: React.FC<HoverCardProps> = ({
     sideOffset,
     shouldRender,
     "bottom",
-    align === "left" ? "start" : align === "right" ? "end" : "center"
+    align === "left" ? "start" : align === "right" ? "end" : "center",
   );
 
   const handleMouseEnter = () => {
@@ -172,7 +172,7 @@ const HoverCardComponent: React.FC<HoverCardProps> = ({
 
     return createPortal(
       <Card
-        {...rnx({ component: 'HoverCard', state: 'open' })}
+        {...rnx({ component: "HoverCard", state: "open" })}
         id={contentId}
         ref={contentRef}
         role="dialog"
@@ -182,7 +182,7 @@ const HoverCardComponent: React.FC<HoverCardProps> = ({
           "rnx-hover-card-content",
           `rnx-hover-card-content--variant-${variant}`,
           `rnx-hover-card-content--${size}`,
-          className
+          className,
         )}
         data-state={mounted ? "open" : "closed"}
         data-side={position?.placed ?? "bottom"}
@@ -209,7 +209,7 @@ const HoverCardComponent: React.FC<HoverCardProps> = ({
         )}
         {children}
       </Card>,
-      document.body
+      document.body,
     );
   };
 
@@ -230,7 +230,7 @@ HoverCardTrigger.displayName = "HoverCard.Trigger";
 export const HoverCardContent: React.FC<{
   children: React.ReactNode;
   className?: string;
-}> = ({ children }) => <>{children}</>;
+}> = ({ children, className }) => <span className={className}>{children}</span>;
 HoverCardContent.displayName = "HoverCard.Content";
 
 export const HoverCard = Object.assign(HoverCardComponent, {

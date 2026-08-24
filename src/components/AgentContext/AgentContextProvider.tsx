@@ -22,9 +22,13 @@ export interface AgentContextProviderProps {
  */
 export function AgentContextProvider({ children }: AgentContextProviderProps) {
   const { snapshot, refresh } = useAgentContext();
+  const contextValue = React.useMemo(
+    () => ({ snapshot, refresh }),
+    [snapshot, refresh],
+  );
 
   return (
-    <AgentContext.Provider value={{ snapshot, refresh }}>
+    <AgentContext.Provider value={contextValue}>
       {children}
     </AgentContext.Provider>
   );
@@ -32,14 +36,14 @@ export function AgentContextProvider({ children }: AgentContextProviderProps) {
 
 /**
  * Consume the current agent snapshot within a React component.
- * If you only need to trigger a refresh or access it outside React, 
+ * If you only need to trigger a refresh or access it outside React,
  * you can use the `useAgentContext` hook directly or read `window.__rnx_agent_context__`.
  */
 export function useAgentSnapshot() {
   const context = useContext(AgentContext);
   if (context === undefined) {
     throw new Error(
-      "useAgentSnapshot must be used within an AgentContextProvider"
+      "useAgentSnapshot must be used within an AgentContextProvider",
     );
   }
   return context;

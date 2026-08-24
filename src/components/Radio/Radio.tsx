@@ -73,15 +73,18 @@ const RadioGroupComponent = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
       [isControlled, onValueChange],
     );
 
+    const contextValue = React.useMemo(
+      () => ({
+        name,
+        value: currentValue,
+        onValueChange: handleValueChange,
+        color,
+      }),
+      [name, currentValue, handleValueChange, color],
+    );
+
     return (
-      <RadioGroupContext.Provider
-        value={{
-          name,
-          value: currentValue,
-          onValueChange: handleValueChange,
-          color,
-        }}
-      >
+      <RadioGroupContext.Provider value={contextValue}>
         <Box
           as="fieldset"
           ref={ref}

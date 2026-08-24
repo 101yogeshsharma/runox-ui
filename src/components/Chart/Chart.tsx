@@ -370,12 +370,9 @@ export const PieChart = ({
   );
 };
 
-export const Chart = Object.assign(
-  {},
-  {
-    Line: LineChart,
-    Bar: BarChart,
-    Area: AreaChart,
-    Pie: PieChart,
-  },
-);
+export const Chart = {
+  Line: LineChart,
+  Bar: BarChart,
+  Area: AreaChart,
+  Pie: PieChart,
+};

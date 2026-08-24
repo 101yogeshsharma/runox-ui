@@ -81,9 +81,6 @@
   }
 
   /* Colors */
-  .rnx-switch-container {
-    --rnx-switch-active-color: var(--primary);
-  }
   .rnx-switch-container:has(.rnx-switch-input:checked) {
     background-color: var(--rnx-switch-active-color);
   }

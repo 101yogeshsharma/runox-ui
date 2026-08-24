@@ -9,31 +9,27 @@ import { Label } from "../Label/Label";
 import { rnx } from "../../utils/rnx";
 import { withLoading } from "../../utils/withLoading";
 
-
 import "./Textarea.css";
 
-export const textareaVariants = cva(
-  "rnx-textarea",
-  {
-    variants: {
-      variant: {
-        outline: "rnx-textarea--variant-outline",
-        filled: "rnx-textarea--variant-filled",
-        glass: "rnx-textarea--variant-glass",
-        flushed: "rnx-textarea--variant-flushed",
-      },
-      size: {
-        sm: "rnx-textarea--size-sm",
-        md: "rnx-textarea--size-md",
-        lg: "rnx-textarea--size-lg",
-      },
+export const textareaVariants = cva("rnx-textarea", {
+  variants: {
+    variant: {
+      outline: "rnx-textarea--variant-outline",
+      filled: "rnx-textarea--variant-filled",
+      glass: "rnx-textarea--variant-glass",
+      flushed: "rnx-textarea--variant-flushed",
     },
-    defaultVariants: {
-      variant: "outline",
-      size: "md",
+    size: {
+      sm: "rnx-textarea--size-sm",
+      md: "rnx-textarea--size-md",
+      lg: "rnx-textarea--size-lg",
     },
-  }
-);
+  },
+  defaultVariants: {
+    variant: "outline",
+    size: "md",
+  },
+});
 
 /**
  * A multi-line text input field. Use in forms for long description fields, comments, or document body inputs.
@@ -63,27 +59,28 @@ const TextareaBase = forwardRef<HTMLTextAreaElement, TextareaProps>(
       style,
       ...props
     },
-    ref
+    ref,
   ) => {
     const generatedId = useId();
     const id = customId || generatedId;
 
+    let textareaState = "default";
+    if (disabled) {
+      textareaState = "disabled";
+    } else if (error) {
+      textareaState = "error";
+    }
+
     return (
       <Box
-        className={cn(
-          "rnx-textarea-container",
-          containerClassName
-        )}
+        className={cn("rnx-textarea-container", containerClassName)}
         {...rnx({
           component: "Textarea",
-          state: disabled ? "disabled" : error ? "error" : "default",
+          state: textareaState,
         })}
       >
         {label && (
-          <Label
-            htmlFor={id}
-            className="rnx-textarea-label"
-          >
+          <Label htmlFor={id} className="rnx-textarea-label">
             {label}
           </Label>
         )}
@@ -98,27 +95,23 @@ const TextareaBase = forwardRef<HTMLTextAreaElement, TextareaProps>(
               className: cn(
                 textareaVariants({ variant, size }),
                 error && "rnx-textarea--error",
-                className
+                className,
               ),
               "aria-invalid": !!error,
               "aria-describedby": error ? `${id}-error` : undefined,
             },
-            props
+            props,
           )}
         />
 
         {error && (
-          <Box
-            as="span"
-            id={`${id}-error`}
-            className="rnx-textarea-error-msg"
-          >
+          <Box as="span" id={`${id}-error`} className="rnx-textarea-error-msg">
             {error}
           </Box>
         )}
       </Box>
     );
-  }
+  },
 );
 
 TextareaBase.displayName = "Textarea";

@@ -7,7 +7,6 @@ import { Label } from "../Label/Label";
 import { rnx } from "../../utils/rnx";
 import { withLoading } from "../../utils/withLoading";
 
-
 import "./Switch.css";
 
 /**
@@ -46,23 +45,29 @@ const SwitchBase = forwardRef<HTMLInputElement, SwitchProps>(
       defaultChecked,
       ...props
     },
-    ref
+    ref,
   ) => {
     const generatedId = useId();
     const id = customId || generatedId;
 
-    const [uncontrolledChecked, setUncontrolledChecked] = useState(!!defaultChecked);
-    const isChecked = controlledChecked !== undefined ? controlledChecked : uncontrolledChecked;
+    const [uncontrolledChecked, setUncontrolledChecked] =
+      useState(!!defaultChecked);
+    const isChecked =
+      controlledChecked !== undefined ? controlledChecked : uncontrolledChecked;
+
+    let switchState = "default";
+    if (props.disabled) {
+      switchState = "disabled";
+    } else if (isChecked) {
+      switchState = "checked";
+    }
 
     return (
       <Box
-        className={cn(
-          "rnx-switch-wrapper",
-          className
-        )}
+        className={cn("rnx-switch-wrapper", className)}
         {...rnx({
           component: "Switch",
-          state: props.disabled ? "disabled" : isChecked ? "checked" : "default",
+          state: switchState,
         })}
       >
         <Box
@@ -70,7 +75,7 @@ const SwitchBase = forwardRef<HTMLInputElement, SwitchProps>(
             "rnx-switch-container",
             `rnx-switch-container--${size}`,
             `rnx-switch-container--variant-${variant}`,
-            color !== "primary" && `rnx-switch-container--color-${color}`
+            color !== "primary" && `rnx-switch-container--color-${color}`,
           )}
         >
           <input
@@ -91,7 +96,7 @@ const SwitchBase = forwardRef<HTMLInputElement, SwitchProps>(
                   onValueChange?.(e.target.checked);
                 },
               },
-              props
+              props,
             )}
           />
           <Box
@@ -108,7 +113,7 @@ const SwitchBase = forwardRef<HTMLInputElement, SwitchProps>(
         )}
       </Box>
     );
-  }
+  },
 );
 
 SwitchBase.displayName = "Switch";

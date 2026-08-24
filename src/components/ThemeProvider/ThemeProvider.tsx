@@ -196,7 +196,7 @@ export function ThemeProvider({
     // Density application — skip when using a custom container,
     // as the container owner manages data-density externally
     if (config.density && !container) {
-      root.setAttribute("data-density", config.density);
+      root.dataset.density = config.density;
     }
 
     // Apply zero-config theming tokens

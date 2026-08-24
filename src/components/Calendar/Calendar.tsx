@@ -453,6 +453,8 @@ const DayCell = React.memo(
     return (
       <td
         className="relative p-0"
+        role="gridcell"
+        aria-selected={isSelected}
         onMouseEnter={() => onMouseEnter(date)}
         onMouseLeave={() => onMouseLeave(date)}
       >

@@ -3,7 +3,10 @@ import type { RunoxTheme } from "./defineTheme";
 /**
  * Applies custom theme tokens to the given DOM element (usually HTML root).
  */
-export function applyTheme(theme: RunoxTheme | undefined, root: HTMLElement): void {
+export function applyTheme(
+  theme: RunoxTheme | undefined,
+  root: HTMLElement,
+): void {
   if (!theme) return;
 
   if (theme.fontFamily) {
@@ -13,14 +16,14 @@ export function applyTheme(theme: RunoxTheme | undefined, root: HTMLElement): vo
   }
 
   if (theme.shadowIntensity) {
-    root.setAttribute("data-shadow", theme.shadowIntensity);
+    root.dataset.shadow = theme.shadowIntensity;
   } else {
-    root.removeAttribute("data-shadow");
+    delete root.dataset.shadow;
   }
 
   if (theme.glassBlurIntensity) {
-    root.setAttribute("data-glass-blur", theme.glassBlurIntensity);
+    root.dataset.glassBlur = theme.glassBlurIntensity;
   } else {
-    root.removeAttribute("data-glass-blur");
+    delete root.dataset.glassBlur;
   }
 }

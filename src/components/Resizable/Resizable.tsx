@@ -254,15 +254,18 @@ const ResizableHandle = React.forwardRef<
     if (direction === "horizontal") {
       if (e.key === "ArrowLeft") delta = -5;
       else if (e.key === "ArrowRight") delta = 5;
-    } else {
-      if (e.key === "ArrowUp") delta = -5;
-      else if (e.key === "ArrowDown") delta = 5;
+    } else if (e.key === "ArrowUp") {
+      delta = -5;
+    } else if (e.key === "ArrowDown") {
+      delta = 5;
     }
 
     if (delta !== 0) {
       e.preventDefault();
-      const prevFlex = parseFloat(getComputedStyle(prevPanel).flexGrow) || 50;
-      const nextFlex = parseFloat(getComputedStyle(nextPanel).flexGrow) || 50;
+      const prevFlex =
+        Number.parseFloat(getComputedStyle(prevPanel).flexGrow) || 50;
+      const nextFlex =
+        Number.parseFloat(getComputedStyle(nextPanel).flexGrow) || 50;
       const totalSize = prevFlex + nextFlex;
       const newPrev = Math.max(0, Math.min(totalSize, prevFlex + delta));
       const newNext = totalSize - newPrev;
