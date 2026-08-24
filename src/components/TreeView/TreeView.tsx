@@ -71,18 +71,16 @@ const TreeRoot = React.forwardRef<HTMLDivElement, TreeProps>(
     const currentSelectedId =
       selectedId !== undefined ? selectedId : internalSelectedId;
 
+    const expandedHash = expandedIds
+      ? JSON.stringify([...expandedIds].sort((a, b) => a.localeCompare(b)))
+      : null;
+
     // Memoize the Set so its reference is stable between renders — without this,
     // `new Set(expandedIds)` on every render would break useMemo/useCallback deps.
     const controlledExpandedSet = useMemo(
       () => (expandedIds !== undefined ? new Set(expandedIds) : null),
-
-      // JSON.stringify gives a stable dep when the array contents haven't changed
       // eslint-disable-next-line react-hooks/exhaustive-deps -- content-hash dep is intentional; the raw array identity changes every render
-      [
-        expandedIds
-          ? JSON.stringify([...expandedIds].sort((a, b) => a.localeCompare(b)))
-          : null,
-      ],
+      [expandedHash],
     );
     const currentExpandedIds = controlledExpandedSet ?? internalExpandedIds;
 

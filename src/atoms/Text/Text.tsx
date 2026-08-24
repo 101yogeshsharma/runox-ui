@@ -230,17 +230,7 @@ const TextBase = React.forwardRef(
             : {}),
           ...style,
         }) as React.CSSProperties,
-      [
-        variant,
-        weight,
-        gradient,
-        muted,
-        color,
-        align,
-        truncate,
-        maxLines,
-        style,
-      ],
+      [variant, weight, textColor, align, truncate, maxLines, style],
     );
 
     return (

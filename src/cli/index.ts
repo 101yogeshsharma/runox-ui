@@ -30,34 +30,38 @@ interface RegistryItem {
 
 type Registry = Record<string, RegistryItem>;
 
-async function fetchRegistry(): Promise<Registry> {
+function httpGet(url: string): Promise<string> {
   return new Promise((resolve, reject) => {
     https
-      .get(REGISTRY_URL, (res) => {
-        let data = "";
-        res.on("data", (chunk) => (data += chunk));
-        res.on("end", () => {
-          try {
-            resolve(JSON.parse(data));
-          } catch (e) {
-            reject(e);
-          }
-        });
-      })
-      .on("error", reject);
-  });
-}
-
-async function fetchFile(filePath: string): Promise<string> {
-  return new Promise((resolve, reject) => {
-    https
-      .get(`${SOURCE_BASE_URL}${filePath}`, (res) => {
+      .get(url, (res) => {
+        const status = res.statusCode ?? 0;
+        if (status >= 300 && status < 400 && res.headers.location) {
+          res.resume();
+          return resolve(
+            httpGet(new URL(res.headers.location, url).toString()),
+          );
+        }
+        if (status < 200 || status >= 300) {
+          res.resume();
+          return reject(
+            new Error(`Request to ${url} failed with status ${status}`),
+          );
+        }
         let data = "";
         res.on("data", (chunk) => (data += chunk));
         res.on("end", () => resolve(data));
       })
       .on("error", reject);
   });
+}
+
+async function fetchRegistry(): Promise<Registry> {
+  const data = await httpGet(REGISTRY_URL);
+  return JSON.parse(data);
+}
+
+async function fetchFile(filePath: string): Promise<string> {
+  return httpGet(`${SOURCE_BASE_URL}${filePath}`);
 }
 
 // Function to resolve dependencies recursively
@@ -107,6 +111,14 @@ async function writeComponentFile(
 ): Promise<void> {
   const relativeFilePath = file.replace(/^src\//, "");
   const finalPath = path.join(targetDir, relativeFilePath);
+  const resolved = path.resolve(finalPath);
+  const resolvedTarget = path.resolve(targetDir);
+  if (
+    resolved !== resolvedTarget &&
+    !resolved.startsWith(resolvedTarget + path.sep)
+  ) {
+    throw new Error(`Refusing to write outside target directory: ${file}`);
+  }
 
   if (options.dryRun) {
     console.log(`[DRY RUN] Would write: ${finalPath}`);
