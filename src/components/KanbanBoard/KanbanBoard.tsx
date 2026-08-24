@@ -12,6 +12,7 @@ import { rnx } from "../../utils/rnx";
 import "./KanbanBoard.css";
 
 export type UniqueIdentifier = string | number;
+export type DropPosition = "before" | "after" | null;
 
 export interface KanbanItemData {
   id: UniqueIdentifier;
@@ -68,9 +69,7 @@ export function KanbanBoard<T extends { id?: UniqueIdentifier }>({
   );
   const [dragOverColumnId, setDragOverColumnId] =
     useState<UniqueIdentifier | null>(null);
-  const [dropPosition, setDropPosition] = useState<"before" | "after" | null>(
-    null,
-  );
+  const [dropPosition, setDropPosition] = useState<DropPosition>(null);
 
   const handleDragStart = useCallback(
     (e: React.DragEvent<HTMLElement>, itemId: UniqueIdentifier) => {

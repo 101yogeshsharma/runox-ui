@@ -61,7 +61,12 @@ export function useAgentContext() {
       (el) => {
         const rect = el.getBoundingClientRect();
         return {
-          id: el.id || Math.random().toString(36).substring(2, 9),
+          id:
+            el.id ||
+            (typeof crypto !== "undefined" &&
+            typeof crypto.randomUUID === "function"
+              ? crypto.randomUUID()
+              : `rnx-${Date.now()}-${Math.floor(Math.random() * 10000)}`),
           component: el.getAttribute("data-rnx-component") || "",
           variant: el.getAttribute("data-rnx-variant") || undefined,
           state: el.getAttribute("data-rnx-state") || undefined,
@@ -74,7 +79,7 @@ export function useAgentContext() {
             height: rect.height,
           },
         };
-      }
+      },
     );
 
     const newSnapshot = {
@@ -100,7 +105,7 @@ export function useAgentContext() {
     const observer = new MutationObserver((mutations) => {
       const isRelevantChange = mutations.some(
         (m) =>
-          m.type === "attributes" && m.attributeName?.startsWith("data-rnx-")
+          m.type === "attributes" && m.attributeName?.startsWith("data-rnx-"),
       );
 
       if (isRelevantChange || mutations.some((m) => m.type === "childList")) {

@@ -17,6 +17,29 @@ interface MergeProps {
  * );
  * // merged.onClick calls both handlers; merged.className is 'base custom'
  */
+function mergeSingleKey(key: string, internal: any, consumer: any): any {
+  if (
+    typeof internal === "function" &&
+    typeof consumer === "function" &&
+    key.startsWith("on")
+  ) {
+    return (...fnArgs: any[]) => {
+      internal(...fnArgs);
+      consumer(...fnArgs);
+    };
+  }
+  if (key === "className") {
+    return cn(internal, consumer);
+  }
+  if (key === "style") {
+    return { ...internal, ...consumer };
+  }
+  if (key === "aria-describedby" || key === "aria-labelledby") {
+    return [internal, consumer].filter(Boolean).join(" ") || undefined;
+  }
+  return consumer !== undefined ? consumer : internal;
+}
+
 export const mergeProps: MergeProps = (...args: AnyProps[]): AnyProps => {
   const merged: AnyProps = {};
 
@@ -24,29 +47,7 @@ export const mergeProps: MergeProps = (...args: AnyProps[]): AnyProps => {
     if (!props) continue;
 
     for (const key of Object.keys(props)) {
-      const internal = merged[key];
-      const consumer = props[key];
-
-      if (
-        typeof internal === "function" &&
-        typeof consumer === "function" &&
-        key.startsWith("on")
-      ) {
-        // Chain event handlers
-        merged[key] = (...fnArgs: any[]) => {
-          internal(...fnArgs);
-          consumer(...fnArgs);
-        };
-      } else if (key === "className") {
-        merged[key] = cn(internal, consumer);
-      } else if (key === "style") {
-        merged[key] = { ...internal, ...consumer };
-      } else if (key === "aria-describedby" || key === "aria-labelledby") {
-        merged[key] =
-          [internal, consumer].filter(Boolean).join(" ") || undefined;
-      } else {
-        merged[key] = consumer !== undefined ? consumer : internal;
-      }
+      merged[key] = mergeSingleKey(key, merged[key], props[key]);
     }
   }
 

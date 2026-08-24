@@ -69,16 +69,16 @@
   }
 
   .rnx-progress--variant-indeterminate .rnx-progress-indicator {
-    width: 50% !important;
+    width: 50%;
     animation: rnx-progress-indeterminate 1.5s
       cubic-bezier(0.65, 0.815, 0.735, 0.395) infinite;
   }
   @keyframes rnx-progress-indeterminate {
     0% {
-      transform: translateX(-100%) !important;
+      transform: translateX(-100%);
     }
     100% {
-      transform: translateX(200%) !important;
+      transform: translateX(200%);
     }
   }
 

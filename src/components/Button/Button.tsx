@@ -126,9 +126,20 @@ const ButtonBase = forwardRef(
     const Tag =
       "href" in rest && rest.href && Component === "button" ? "a" : Component;
 
-    // Adjust size automatically for icon/fab variants if not explicitly set
-    const finalSize =
-      size || (variant === "icon" ? "icon" : variant === "fab" ? "fab" : "md");
+    let defaultVariantSize = "md";
+    if (variant === "icon") {
+      defaultVariantSize = "icon";
+    } else if (variant === "fab") {
+      defaultVariantSize = "fab";
+    }
+    const finalSize = size || defaultVariantSize;
+
+    let buttonState: string | undefined;
+    if (isButtonLoading) {
+      buttonState = "loading";
+    } else if (disabled) {
+      buttonState = "disabled";
+    }
 
     return (
       <Tag
@@ -136,11 +147,7 @@ const ButtonBase = forwardRef(
         {...rnx({
           component: "Button",
           variant: variant,
-          state: isButtonLoading
-            ? "loading"
-            : disabled
-              ? "disabled"
-              : undefined,
+          state: buttonState,
           action:
             "type" in rest && rest.type === "submit" ? "submit" : undefined,
         })}

@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 
 // In production (when installed globally or locally via npm), the registry.json
 // will be at dist/registry.json. We can resolve it relative to __dirname.
@@ -20,7 +20,7 @@ export function getRegistryData() {
 export function searchComponents(query: string) {
   const data = getRegistryData();
   if (!data) return [];
-  
+
   const results = [];
   for (const [name, info] of Object.entries(data)) {
     if (name.toLowerCase().includes(query.toLowerCase())) {

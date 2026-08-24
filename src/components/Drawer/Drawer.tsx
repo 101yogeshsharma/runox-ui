@@ -216,6 +216,51 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
       transition:
         "height 0.3s cubic-bezier(0.32, 0.72, 0, 1), transform 0.3s cubic-bezier(0.32, 0.72, 0, 1)",
     };
+    let collapseButtonNode: React.ReactNode = null;
+    if (
+      isDraggable &&
+      isVertical &&
+      snapPoints &&
+      activeSnapPoint !== undefined &&
+      setActiveSnapPoint
+    ) {
+      collapseButtonNode = (
+        <Box className="rnx-drawer-collapse-btn-wrapper">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="rnx-drawer-collapse-btn"
+            onClick={() => {
+              const idx = snapPoints.indexOf(
+                activeSnapPoint as string | number,
+              );
+              if (idx === snapPoints.length - 1) {
+                setActiveSnapPoint(snapPoints[0]);
+              } else {
+                setActiveSnapPoint(snapPoints[snapPoints.length - 1]);
+              }
+            }}
+          >
+            {activeSnapPoint === snapPoints[snapPoints.length - 1]
+              ? "Collapse"
+              : "Expand"}
+          </Button>
+        </Box>
+      );
+    } else if (isDraggable && position === "bottom") {
+      collapseButtonNode = (
+        <Box className="rnx-drawer-collapse-btn-wrapper">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="rnx-drawer-collapse-btn"
+            onClick={() => setInternalExpanded(!internalExpanded)}
+          >
+            {internalExpanded ? "Collapse" : "Expand"}
+          </Button>
+        </Box>
+      );
+    }
 
     return createPortal(
       <DrawerTitleContext.Provider value={titleId}>
@@ -252,44 +297,7 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
             )}
             {...rnx({ component: "Drawer", state: isOpen ? "open" : "closed" })}
           >
-            {isDraggable &&
-            isVertical &&
-            snapPoints &&
-            activeSnapPoint !== undefined &&
-            setActiveSnapPoint ? (
-              <Box className="rnx-drawer-collapse-btn-wrapper">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="rnx-drawer-collapse-btn"
-                  onClick={() => {
-                    const idx = snapPoints.indexOf(
-                      activeSnapPoint as string | number,
-                    );
-                    if (idx === snapPoints.length - 1) {
-                      setActiveSnapPoint(snapPoints[0]);
-                    } else {
-                      setActiveSnapPoint(snapPoints[snapPoints.length - 1]);
-                    }
-                  }}
-                >
-                  {activeSnapPoint === snapPoints[snapPoints.length - 1]
-                    ? "Collapse"
-                    : "Expand"}
-                </Button>
-              </Box>
-            ) : isDraggable && position === "bottom" ? (
-              <Box className="rnx-drawer-collapse-btn-wrapper">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="rnx-drawer-collapse-btn"
-                  onClick={() => setInternalExpanded(!internalExpanded)}
-                >
-                  {internalExpanded ? "Collapse" : "Expand"}
-                </Button>
-              </Box>
-            ) : null}
+            {collapseButtonNode}
             {!hideCloseButton && (
               <Box className="rnx-drawer-close-btn">
                 <Button

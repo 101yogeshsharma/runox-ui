@@ -24,6 +24,33 @@ export interface StepperProps extends React.HTMLAttributes<HTMLDivElement> {
   orientation?: "horizontal" | "vertical";
 }
 
+function getIndicatorModifier(
+  isError?: boolean,
+  isCompleted?: boolean,
+  isActive?: boolean,
+): string {
+  if (isError) return "rnx-stepper-indicator--error";
+  if (isCompleted) return "rnx-stepper-indicator--completed";
+  if (isActive) return "rnx-stepper-indicator--active";
+  return "rnx-stepper-indicator--inactive";
+}
+
+function renderIndicatorContent(
+  isError?: boolean,
+  isCompleted?: boolean,
+  isDots?: boolean,
+  stepNumber?: number,
+): React.ReactNode {
+  if (isError) {
+    return <XIcon className="rnx-stepper-indicator-icon" strokeWidth={3} />;
+  }
+  if (isCompleted) {
+    return <Check className="rnx-stepper-indicator-icon" strokeWidth={3} />;
+  }
+  if (isDots) return null;
+  return <Box as="span">{stepNumber}</Box>;
+}
+
 const StepperBase = forwardRef<HTMLDivElement, StepperProps>(
   (
     {
@@ -63,6 +90,24 @@ const StepperBase = forwardRef<HTMLDivElement, StepperProps>(
             ? step.status === "active"
             : index === currentStep;
           const isLast = index === steps.length - 1;
+          const indicatorModifier = getIndicatorModifier(
+            isError,
+            isCompleted,
+            isActive,
+          );
+          const indicatorContent = renderIndicatorContent(
+            isError,
+            isCompleted,
+            variant === "dots",
+            index + 1,
+          );
+          const fillDimensionClass = isVertical
+            ? isCompleted
+              ? "h-full"
+              : "h-0"
+            : isCompleted
+              ? "w-full"
+              : "w-0";
 
           return (
             <Box
@@ -74,7 +119,6 @@ const StepperBase = forwardRef<HTMLDivElement, StepperProps>(
                 isVertical ? "flex-row" : "flex-1 flex-col items-center",
               )}
             >
-              {/* Indicator column: circle + connecting line */}
               <Box
                 className={cn(
                   "relative z-10 flex",
@@ -83,31 +127,8 @@ const StepperBase = forwardRef<HTMLDivElement, StepperProps>(
                     : "flex-row items-center w-full",
                 )}
               >
-                <Box
-                  className={cn(
-                    "rnx-stepper-indicator",
-                    isError
-                      ? "rnx-stepper-indicator--error"
-                      : isCompleted
-                        ? "rnx-stepper-indicator--completed"
-                        : isActive
-                          ? "rnx-stepper-indicator--active"
-                          : "rnx-stepper-indicator--inactive",
-                  )}
-                >
-                  {isError ? (
-                    <XIcon
-                      className="rnx-stepper-indicator-icon"
-                      strokeWidth={3}
-                    />
-                  ) : isCompleted ? (
-                    <Check
-                      className="rnx-stepper-indicator-icon"
-                      strokeWidth={3}
-                    />
-                  ) : variant === "dots" ? null : (
-                    <Box as="span">{index + 1}</Box>
-                  )}
+                <Box className={cn("rnx-stepper-indicator", indicatorModifier)}>
+                  {indicatorContent}
                 </Box>
                 {!isLast && (
                   <Box
@@ -124,13 +145,7 @@ const StepperBase = forwardRef<HTMLDivElement, StepperProps>(
                         isVertical
                           ? "rnx-stepper-separator-fill--vertical"
                           : "rnx-stepper-separator-fill--horizontal",
-                        isVertical
-                          ? isCompleted
-                            ? "h-full"
-                            : "h-0"
-                          : isCompleted
-                            ? "w-full"
-                            : "w-0",
+                        fillDimensionClass,
                       )}
                     />
                   </Box>

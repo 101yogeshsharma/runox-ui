@@ -2,9 +2,9 @@
 
 import { Command } from "commander";
 import prompts from "prompts";
-import fs from "fs";
-import path from "path";
-import https from "https";
+import fs from "node:fs";
+import path from "node:path";
+import https from "node:https";
 import { runMigrate } from "./migrate";
 import { runMcpServer } from "./mcp";
 
@@ -32,32 +32,40 @@ type Registry = Record<string, RegistryItem>;
 
 async function fetchRegistry(): Promise<Registry> {
   return new Promise((resolve, reject) => {
-    https.get(REGISTRY_URL, (res) => {
-      let data = "";
-      res.on("data", (chunk) => (data += chunk));
-      res.on("end", () => {
-        try {
-          resolve(JSON.parse(data));
-        } catch (e) {
-          reject(e);
-        }
-      });
-    }).on("error", reject);
+    https
+      .get(REGISTRY_URL, (res) => {
+        let data = "";
+        res.on("data", (chunk) => (data += chunk));
+        res.on("end", () => {
+          try {
+            resolve(JSON.parse(data));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      })
+      .on("error", reject);
   });
 }
 
 async function fetchFile(filePath: string): Promise<string> {
   return new Promise((resolve, reject) => {
-    https.get(`${SOURCE_BASE_URL}${filePath}`, (res) => {
-      let data = "";
-      res.on("data", (chunk) => (data += chunk));
-      res.on("end", () => resolve(data));
-    }).on("error", reject);
+    https
+      .get(`${SOURCE_BASE_URL}${filePath}`, (res) => {
+        let data = "";
+        res.on("data", (chunk) => (data += chunk));
+        res.on("end", () => resolve(data));
+      })
+      .on("error", reject);
   });
 }
 
 // Function to resolve dependencies recursively
-function resolveDependencies(components: string[], registry: Registry, resolved = new Set<string>()): string[] {
+function resolveDependencies(
+  components: string[],
+  registry: Registry,
+  resolved = new Set<string>(),
+): string[] {
   components.forEach((comp) => {
     if (!registry[comp]) {
       console.warn(`Warning: Component ${comp} not found in registry.`);
@@ -65,10 +73,65 @@ function resolveDependencies(components: string[], registry: Registry, resolved 
     }
     if (!resolved.has(comp)) {
       resolved.add(comp);
-      resolveDependencies(registry[comp].registryDependencies || [], registry, resolved);
+      resolveDependencies(
+        registry[comp].registryDependencies || [],
+        registry,
+        resolved,
+      );
     }
   });
   return Array.from(resolved);
+}
+
+async function selectComponents(
+  components: string[] | undefined,
+  registry: Registry,
+): Promise<string[]> {
+  if (components && components.length > 0) return components;
+  const response = await prompts({
+    type: "multiselect",
+    name: "components",
+    message: "Which components would you like to add?",
+    choices: Object.values(registry).map((c: any) => ({
+      title: c.name,
+      value: c.name,
+    })),
+  });
+  return response.components || [];
+}
+
+async function writeComponentFile(
+  file: string,
+  targetDir: string,
+  options: { dryRun?: boolean; yes?: boolean },
+): Promise<void> {
+  const relativeFilePath = file.replace(/^src\//, "");
+  const finalPath = path.join(targetDir, relativeFilePath);
+
+  if (options.dryRun) {
+    console.log(`[DRY RUN] Would write: ${finalPath}`);
+    return;
+  }
+
+  console.log(`Fetching ${file}...`);
+  const content = await fetchFile(file);
+
+  if (fs.existsSync(finalPath) && !options.yes) {
+    const { overwrite } = await prompts({
+      type: "confirm",
+      name: "overwrite",
+      message: `File ${finalPath} already exists. Overwrite?`,
+      initial: false,
+    });
+    if (!overwrite) {
+      console.log(`Skipped ${finalPath}`);
+      return;
+    }
+  }
+
+  fs.mkdirSync(path.dirname(finalPath), { recursive: true });
+  fs.writeFileSync(finalPath, content, "utf8");
+  console.log(`Written ${finalPath}`);
 }
 
 program
@@ -76,32 +139,31 @@ program
   .description("Add components to your project")
   .option("-y, --yes", "Skip confirmation prompt")
   .option("-d, --dry-run", "Preview changes without modifying files")
-  .option("-p, --path <path>", "Path to add components to", "src/components/runox")
+  .option(
+    "-p, --path <path>",
+    "Path to add components to",
+    "src/components/runox",
+  )
   .action(async (components: string[], options: any) => {
     console.log("Fetching registry...");
     let registry: Registry;
     try {
       registry = await fetchRegistry();
     } catch (e: any) {
-      console.error("Failed to fetch registry. Are you offline or is the version unpublished?", e.message);
+      console.error(
+        "Failed to fetch registry. Are you offline or is the version unpublished?",
+        e.message,
+      );
       process.exit(1);
     }
 
-    let targetComponents = components;
-    if (!targetComponents || targetComponents.length === 0) {
-      const response = await prompts({
-        type: "multiselect",
-        name: "components",
-        message: "Which components would you like to add?",
-        choices: Object.values(registry).map((c: any) => ({ title: c.name, value: c.name })),
-      });
-      targetComponents = response.components;
-      if (!targetComponents || targetComponents.length === 0) process.exit(0);
-    }
+    const targetComponents = await selectComponents(components, registry);
+    if (!targetComponents.length) process.exit(0);
 
     const resolvedDeps = resolveDependencies(targetComponents, registry);
-    
-    console.log(`\nResolving dependencies... Found ${resolvedDeps.length} components to install:`);
+    console.log(
+      `\nResolving dependencies... Found ${resolvedDeps.length} components to install:`,
+    );
     resolvedDeps.forEach((d) => console.log(`- ${d}`));
 
     if (!options.yes && !options.dryRun) {
@@ -121,34 +183,7 @@ program
       if (!comp) continue;
 
       for (const file of comp.files) {
-        // Use the original dir structure inside src/components/runox
-        const relativeFilePath = file.replace(/^src\//, ""); // Removes 'src/' prefix
-        const finalPath = path.join(targetDir, relativeFilePath);
-        
-        if (options.dryRun) {
-          console.log(`[DRY RUN] Would write: ${finalPath}`);
-          continue;
-        }
-
-        console.log(`Fetching ${file}...`);
-        const content = await fetchFile(file);
-        
-        if (fs.existsSync(finalPath) && !options.yes && !options.dryRun) {
-          const { overwrite } = await prompts({
-            type: "confirm",
-            name: "overwrite",
-            message: `File ${finalPath} already exists. Overwrite?`,
-            initial: false,
-          });
-          if (!overwrite) {
-            console.log(`Skipped ${finalPath}`);
-            continue;
-          }
-        }
-        
-        fs.mkdirSync(path.dirname(finalPath), { recursive: true });
-        fs.writeFileSync(finalPath, content, "utf8");
-        console.log(`Written ${finalPath}`);
+        await writeComponentFile(file, targetDir, options);
       }
     }
 
@@ -158,16 +193,29 @@ program
 program
   .command("migrate")
   .description("Migrate from another UI library to Runox UI")
-  .requiredOption("--from <library>", "The library you are migrating from (e.g. mui, chakra, shadcn)")
-  .option("-p, --path <path>", "Path to the directory containing files to migrate", "src")
-  .option("-d, --dry", "Run without modifying files (jscodeshift dry run)", false)
+  .requiredOption(
+    "--from <library>",
+    "The library you are migrating from (e.g. mui, chakra, shadcn)",
+  )
+  .option(
+    "-p, --path <path>",
+    "Path to the directory containing files to migrate",
+    "src",
+  )
+  .option(
+    "-d, --dry",
+    "Run without modifying files (jscodeshift dry run)",
+    false,
+  )
   .action((options: any) => {
     runMigrate(options);
   });
 
 program
   .command("mcp")
-  .description("Start the Runox UI Model Context Protocol (MCP) server for AI assistants")
+  .description(
+    "Start the Runox UI Model Context Protocol (MCP) server for AI assistants",
+  )
   .action(() => {
     runMcpServer();
   });

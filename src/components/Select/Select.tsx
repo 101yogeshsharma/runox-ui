@@ -81,21 +81,36 @@ const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(
       },
     });
     const rawId = React.useId();
-    const contentId = `rnx-select-content-${rawId.replace(/:/g, "")}`;
+    const contentId = `rnx-select-content-${rawId.replaceAll(":", "")}`;
 
-    const contextValue: SelectContextValue = {
-      value,
-      onValueChange: setValue,
-      isOpen,
-      setIsOpen,
-      triggerRef,
-      disabled,
-      variant,
-      size,
-      selectedLabel,
-      setSelectedLabel,
-      contentId,
-    };
+    const contextValue: SelectContextValue = React.useMemo(
+      () => ({
+        value,
+        onValueChange: setValue,
+        isOpen,
+        setIsOpen,
+        triggerRef,
+        disabled,
+        variant,
+        size,
+        selectedLabel,
+        setSelectedLabel,
+        contentId,
+      }),
+      [
+        value,
+        setValue,
+        isOpen,
+        setIsOpen,
+        triggerRef,
+        disabled,
+        variant,
+        size,
+        selectedLabel,
+        setSelectedLabel,
+        contentId,
+      ],
+    );
 
     return (
       <SelectContext.Provider value={contextValue}>
@@ -238,20 +253,17 @@ export const SelectContent = React.forwardRef<
           '[role="option"]:not([aria-disabled="true"])',
         ) || [],
       );
-      if (!items.length) return;
+      const currentIndex = items.indexOf(document.activeElement as HTMLElement);
 
-      const currentIndex = items.findIndex(
-        (item) => item === document.activeElement,
-      );
-
-      const nextIndex =
-        e.key === "ArrowDown"
-          ? currentIndex < items.length - 1
+      let nextIndex = 0;
+      if (e.key === "ArrowDown") {
+        nextIndex =
+          currentIndex >= 0 && currentIndex < items.length - 1
             ? currentIndex + 1
-            : 0
-          : currentIndex > 0
-            ? currentIndex - 1
-            : items.length - 1;
+            : 0;
+      } else {
+        nextIndex = currentIndex > 0 ? currentIndex - 1 : items.length - 1;
+      }
 
       items[nextIndex]?.focus();
     };

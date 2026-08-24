@@ -255,10 +255,14 @@ const SignaturePadBase = forwardRef<SignaturePadRef, SignaturePadProps>(
 
         {typedFallback && (
           <Box className="rnx-signature-pad__fallback mt-3">
-            <label className="text-xs text-muted-foreground mb-1 block">
+            <label
+              htmlFor={`${props.id || "rnx-signature"}-fallback`}
+              className="text-xs text-muted-foreground mb-1 block"
+            >
               Keyboard alternative: Type your full name
             </label>
             <input
+              id={`${props.id || "rnx-signature"}-fallback`}
               type="text"
               placeholder="Type your name to sign"
               aria-label="Typed signature alternative"

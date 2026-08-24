@@ -101,16 +101,19 @@ const FormItem = React.forwardRef<
     return () => setHasMessage(false);
   }, []);
 
+  const contextValue = React.useMemo(
+    () => ({
+      id,
+      hasDescription,
+      hasMessage,
+      registerDescription,
+      registerMessage,
+    }),
+    [id, hasDescription, hasMessage, registerDescription, registerMessage],
+  );
+
   return (
-    <FormItemContext.Provider
-      value={{
-        id,
-        hasDescription,
-        hasMessage,
-        registerDescription,
-        registerMessage,
-      }}
-    >
+    <FormItemContext.Provider value={contextValue}>
       <Box ref={ref} className={cn("rnx-form-item", className)} {...props} />
     </FormItemContext.Provider>
   );

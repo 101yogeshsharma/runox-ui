@@ -75,7 +75,7 @@ const OtpInputBase = forwardRef<HTMLDivElement, OtpInputProps>(
     const [internalValue, setInternalValue] = useState<string[]>(
       Array(length)
         .fill("")
-        .map((_, i) => (value && value[i] ? value[i] : "")),
+        .map((_, i) => value?.[i] ?? ""),
     );
 
     const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
@@ -88,7 +88,7 @@ const OtpInputBase = forwardRef<HTMLDivElement, OtpInputProps>(
         setInternalValue(
           Array(length)
             .fill("")
-            .map((_, i) => (value && value[i] ? value[i] : "")),
+            .map((_, i) => value?.[i] ?? ""),
         );
       }
     }, [value, length]);

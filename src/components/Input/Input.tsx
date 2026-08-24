@@ -45,7 +45,7 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>(
       onChange,
       ...props
     },
-    ref
+    ref,
   ) => {
     const generatedId = useId();
     const id = customId || generatedId;
@@ -54,12 +54,18 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>(
       if (!label && !props["aria-label"] && !props["aria-labelledby"]) {
         warnInvalidProps(
           "Input",
-          "An Input component was rendered without a `label`, `aria-label`, or `aria-labelledby` prop. This severely impacts accessibility."
+          "An Input component was rendered without a `label`, `aria-label`, or `aria-labelledby` prop. This severely impacts accessibility.",
         );
       }
     }
 
-    const showClear = clearable && !disabled && value !== undefined && String(value).length > 0;
+    const ariaLabel =
+      !label && !props["aria-label"] && !props["aria-labelledby"]
+        ? "Input field"
+        : props["aria-label"];
+
+    const showClear =
+      clearable && !disabled && value !== undefined && String(value).length > 0;
 
     const inputNode = (
       <input
@@ -81,44 +87,46 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>(
               error ? "rnx-input--error" : undefined,
               prefix ? "ps-9" : undefined,
               suffix || showClear ? "pe-9" : undefined,
-              className
+              className,
             ),
             "aria-invalid": !!error,
             "aria-describedby": error ? `${id}-error` : undefined,
-            "aria-label": !label && !props["aria-label"] && !props["aria-labelledby"] ? "Input field" : props["aria-label"],
+            "aria-label": ariaLabel,
           },
-          props
+          props,
         )}
       />
     );
 
-    const wrappedInput = (prefix || suffix || showClear) ? (
+    let endAdornment: React.ReactNode = null;
+    if (showClear) {
+      endAdornment = (
+        <button
+          type="button"
+          aria-label="Clear input"
+          onClick={(e) => {
+            e.preventDefault();
+            onClear?.();
+          }}
+          className="rnx-input-clear-btn"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      );
+    } else if (suffix) {
+      endAdornment = <Box className="rnx-input-suffix">{suffix}</Box>;
+    }
+
+    const hasAdornments = prefix || suffix || showClear;
+    const wrappedInput = hasAdornments ? (
       <Box className="rnx-input-wrapper">
-        {prefix && (
-          <Box className="rnx-input-prefix">
-            {prefix}
-          </Box>
-        )}
+        {prefix && <Box className="rnx-input-prefix">{prefix}</Box>}
         {inputNode}
-        {showClear ? (
-          <button
-            type="button"
-            aria-label="Clear input"
-            onClick={(e) => {
-              e.preventDefault();
-              onClear?.();
-            }}
-            className="rnx-input-clear-btn"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        ) : suffix ? (
-          <Box className="rnx-input-suffix">
-            {suffix}
-          </Box>
-        ) : null}
+        {endAdornment}
       </Box>
-    ) : inputNode;
+    ) : (
+      inputNode
+    );
 
     if (!label && !error) {
       return wrappedInput;
@@ -139,7 +147,7 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>(
         )}
       </Box>
     );
-  }
+  },
 );
 
 InputComponent.displayName = "Input";
