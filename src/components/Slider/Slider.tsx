@@ -9,7 +9,6 @@ import "./Slider.css";
 import { rnx } from "../../utils/rnx";
 import { withLoading } from "../../utils/withLoading";
 
-
 import { RnxColor } from "../../types";
 
 /**
@@ -54,7 +53,7 @@ const SliderBase = forwardRef<HTMLInputElement, SliderProps>(
       formatLabel,
       ...props
     },
-    ref
+    ref,
   ) => {
     const generatedId = useId();
     const id = customId || generatedId;
@@ -78,10 +77,7 @@ const SliderBase = forwardRef<HTMLInputElement, SliderProps>(
 
     return (
       <Box
-        className={cn(
-          "rnx-slider-container",
-          className
-        )}
+        className={cn("rnx-slider-container", className)}
         {...rnx({
           component: "Slider",
           state: props.disabled ? "disabled" : error ? "error" : "default",
@@ -109,7 +105,7 @@ const SliderBase = forwardRef<HTMLInputElement, SliderProps>(
             `rnx-slider--${size}`,
             `rnx-slider--color-${color}`,
             variant && variant !== "solid" && `rnx-slider--variant-${variant}`,
-            error && "rnx-slider--error"
+            error && "rnx-slider--error",
           )}
           style={{ "--slider-ratio": ratio } as React.CSSProperties}
         >
@@ -127,8 +123,15 @@ const SliderBase = forwardRef<HTMLInputElement, SliderProps>(
                 onChange: handleChange,
                 className: "rnx-slider-input",
                 "aria-invalid": !!error,
+                "aria-label":
+                  typeof label === "string"
+                    ? label
+                    : props["aria-label"] || "Slider",
+                "aria-valuenow": currentValue,
+                "aria-valuemin": min,
+                "aria-valuemax": max,
               },
-              props
+              props,
             )}
           />
 
@@ -148,7 +151,7 @@ const SliderBase = forwardRef<HTMLInputElement, SliderProps>(
         )}
       </Box>
     );
-  }
+  },
 );
 
 SliderBase.displayName = "Slider";

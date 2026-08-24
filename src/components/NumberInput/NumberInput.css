@@ -1,8 +1,8 @@
-﻿@layer components {
+@layer components {
   .rnx-number-input-container {
     display: grid;
     width: 100%;
-    gap: calc(0.375rem * var(--rnx-space-scale, 1));
+    gap: var(--space-1-5);
   }
 
   .rnx-number-input-wrapper {
@@ -26,16 +26,28 @@
   }
 
   .rnx-number-input--sm {
-    padding-left: calc(2rem * var(--rnx-space-scale, 1));
-    padding-right: calc(2rem * var(--rnx-space-scale, 1));
+    padding-left: var(--space-8);
+    padding-right: var(--space-8);
   }
   .rnx-number-input--md {
-    padding-left: calc(2.5rem * var(--rnx-space-scale, 1));
-    padding-right: calc(2.5rem * var(--rnx-space-scale, 1));
+    padding-left: var(--space-10);
+    padding-right: var(--space-10);
   }
-  .rnx-number-input--lg {
-    padding-left: calc(3rem * var(--rnx-space-scale, 1));
-    padding-right: calc(3rem * var(--rnx-space-scale, 1));
+  .rnx-number-input:hover:not(:disabled):not(:focus-visible) {
+    border-color: color-mix(in srgb, var(--border) 60%, var(--foreground));
+  }
+  .rnx-number-input:active:not(:disabled) {
+    border-color: var(--ring);
+  }
+  .rnx-number-input:disabled,
+  .rnx-number-input[aria-disabled="true"] {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+  .rnx-number-input--loading {
+    opacity: 0.7;
+    cursor: wait;
+    pointer-events: none;
   }
 
   .rnx-number-input--error {
@@ -48,23 +60,23 @@
   }
 
   .rnx-number-input-error-msg {
-    font-size: calc(0.8rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-xs);
     font-weight: 500;
     color: var(--destructive);
-    margin-top: calc(0.25rem * var(--rnx-space-scale, 1));
+    margin-top: var(--space-1);
   }
 
   .rnx-number-input-btn-wrapper {
     position: absolute;
-    inset-block: calc(0.25rem * var(--rnx-space-scale, 1));
+    inset-block: var(--space-1);
     display: flex;
     align-items: center;
   }
   .rnx-number-input-btn-wrapper--start {
-    inset-inline-start: calc(0.25rem * var(--rnx-space-scale, 1));
+    inset-inline-start: var(--space-1);
   }
   .rnx-number-input-btn-wrapper--end {
-    inset-inline-end: calc(0.25rem * var(--rnx-space-scale, 1));
+    inset-inline-end: var(--space-1);
   }
 
   .rnx-number-input-btn {
@@ -74,16 +86,16 @@
     justify-content: center;
   }
   .rnx-number-input-btn--sm {
-    height: calc(1.5rem * var(--rnx-space-scale, 1));
-    width: calc(1.5rem * var(--rnx-space-scale, 1));
+    height: var(--space-6);
+    width: var(--space-6);
   }
   .rnx-number-input-btn--md {
-    height: calc(2rem * var(--rnx-space-scale, 1));
-    width: calc(2rem * var(--rnx-space-scale, 1));
+    height: var(--space-8);
+    width: var(--space-8);
   }
   .rnx-number-input-btn--lg {
-    height: calc(2.5rem * var(--rnx-space-scale, 1));
-    width: calc(2.5rem * var(--rnx-space-scale, 1));
+    height: var(--space-10);
+    width: var(--space-10);
   }
 
   .rnx-number-input-icon--sm {

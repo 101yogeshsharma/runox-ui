@@ -5,25 +5,27 @@
     border: 1px solid var(--border);
     color: var(--popover-foreground);
     box-shadow: var(--shadow-md);
-    transition: opacity 150ms ease, transform 150ms ease;
+    transition:
+      opacity 150ms ease,
+      transform 150ms ease;
     outline: none;
   }
 
   /* Sizes */
   .rnx-hover-card-content--sm {
-    min-width: calc(14rem * var(--rnx-space-scale, 1));
-    padding: calc(0.75rem * var(--rnx-space-scale, 1));
-    font-size: calc(0.75rem * var(--rnx-text-scale, 1));
+    min-width: var(--overlay-width-sm, 14rem);
+    padding: var(--space-3);
+    font-size: var(--text-xs);
   }
   .rnx-hover-card-content--md {
-    min-width: calc(18rem * var(--rnx-space-scale, 1));
-    padding: calc(1rem * var(--rnx-space-scale, 1));
-    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+    min-width: var(--overlay-width-md, 18rem);
+    padding: var(--space-4);
+    font-size: var(--text-sm);
   }
   .rnx-hover-card-content--lg {
-    min-width: calc(22rem * var(--rnx-space-scale, 1));
-    padding: calc(1.25rem * var(--rnx-space-scale, 1));
-    font-size: calc(1rem * var(--rnx-text-scale, 1));
+    min-width: var(--overlay-width-lg, 22rem);
+    padding: var(--space-5);
+    font-size: var(--text-base);
   }
 
   /* Variants */
@@ -31,16 +33,15 @@
     background-color: var(--popover);
   }
   .rnx-hover-card-content--variant-glass {
-    background-color: color-mix(in srgb, var(--popover) 80%, transparent);
-    backdrop-filter: blur(calc(24px * var(--rnx-space-scale, 1)));
-    -webkit-backdrop-filter: blur(calc(24px * var(--rnx-space-scale, 1)));
+    background-color: var(--glass-bg-overlay);
+    backdrop-filter: blur(var(--glass-blur, 16px));
   }
 
   /* Arrow */
   .rnx-hover-card-arrow {
     position: absolute;
-    width: 8px;
-    height: 8px;
+    width: var(--arrow-md);
+    height: var(--arrow-md);
     background-color: inherit;
     border: inherit;
     transform: rotate(45deg);
@@ -56,4 +57,3 @@
     transform: scale(0.95);
   }
 }
-

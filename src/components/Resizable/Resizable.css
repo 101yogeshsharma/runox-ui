@@ -1,4 +1,10 @@
 @layer components {
+  .rnx-resizable-panel {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background-color: var(--card);
+  }
+
   .rnx-resizable-handle {
     position: relative;
     display: flex;
@@ -8,6 +14,10 @@
     touch-action: none;
     outline: none;
     transition: background-color 150ms ease;
+  }
+
+  .rnx-resizable-handle:hover {
+    background-color: var(--primary);
   }
 
   .rnx-resizable-handle:focus-visible {

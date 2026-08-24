@@ -26,8 +26,8 @@
 
   .rnx-kanban-scroll-icon {
     color: var(--foreground);
-    width: calc(1.25rem * var(--rnx-space-scale, 1));
-    height: calc(1.25rem * var(--rnx-space-scale, 1));
+    width: var(--space-5);
+    height: var(--space-5);
   }
 
   .rnx-kanban-column {
@@ -47,7 +47,7 @@
   }
 
   .rnx-kanban-column-title {
-    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-sm);
     font-weight: 600;
   }
 
@@ -56,13 +56,17 @@
     border: 1px solid var(--border);
     color: var(--muted-foreground);
     border-radius: var(--radius-sm);
-    font-size: calc(0.75rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-xs);
     font-weight: 500;
     box-shadow: var(--shadow-sm);
   }
 
   .rnx-kanban-card {
     border-radius: calc(var(--radius-sm) + 2px);
+    border: 1px solid var(--border);
+    background-color: var(--card);
+    color: var(--card-foreground);
+    box-shadow: var(--shadow-sm);
   }
   .rnx-kanban-card:focus {
     outline: none;

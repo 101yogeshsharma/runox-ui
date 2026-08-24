@@ -1,5 +1,6 @@
 @layer components {
   .rnx-file-uploader-dropzone {
+    background-color: var(--card);
     border-width: 2px;
     border-style: dashed;
     border-color: var(--border);
@@ -12,7 +13,7 @@
 
   .rnx-file-uploader-dropzone:hover {
     border-color: var(--primary);
-    background-color: var(--muted);
+    background-color: color-mix(in srgb, var(--primary) 5%, var(--card));
   }
 
   .rnx-file-uploader-dropzone:focus-visible {

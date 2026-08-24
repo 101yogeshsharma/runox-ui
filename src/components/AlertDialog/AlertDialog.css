@@ -1,4 +1,4 @@
-﻿@layer components {
+@layer components {
   .rnx-alert-dialog-overlay {
     position: fixed;
     inset: 0;
@@ -6,9 +6,12 @@
     display: grid;
     place-items: center;
     overflow-y: auto;
-    background-color: var(--overlay, color-mix(in srgb, var(--foreground) 80%, transparent));
+    background-color: var(
+      --overlay,
+      var(--rnx-modal-overlay-bg, rgba(0, 0, 0, 0.6))
+    );
     backdrop-filter: blur(calc(4px * var(--rnx-space-scale, 1)));
-    padding: calc(1rem * var(--rnx-space-scale, 1));
+    padding: var(--space-4);
   }
 
   .rnx-alert-dialog-overlay[data-state="open"] {
@@ -23,27 +26,27 @@
     z-index: var(--z-modal);
     display: grid;
     width: 100%;
-    max-width: calc(32rem * var(--rnx-space-scale, 1)); /* max-w-lg */
-    gap: calc(1rem * var(--rnx-space-scale, 1));
+    max-width: var(--modal-width-lg, 32rem); /* max-w-lg */
+    gap: var(--space-4);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     background-color: var(--background);
-    padding: calc(1.5rem * var(--rnx-space-scale, 1));
+    padding: var(--space-6);
     box-shadow: var(--shadow-lg);
   }
 
   /* Sizes */
   .rnx-alert-dialog-content--sm {
-    max-width: calc(24rem * var(--rnx-space-scale, 1));
-    padding: calc(1rem * var(--rnx-space-scale, 1));
+    max-width: var(--modal-width-sm, 24rem);
+    padding: var(--space-4);
   }
   .rnx-alert-dialog-content--md {
-    max-width: calc(32rem * var(--rnx-space-scale, 1));
-    padding: calc(1.5rem * var(--rnx-space-scale, 1));
+    max-width: var(--modal-width-lg, 32rem);
+    padding: var(--space-6);
   }
   .rnx-alert-dialog-content--lg {
-    max-width: calc(40rem * var(--rnx-space-scale, 1));
-    padding: calc(2rem * var(--rnx-space-scale, 1));
+    max-width: var(--modal-width-xl, 40rem);
+    padding: var(--space-8);
   }
 
   /* Variants */
@@ -51,9 +54,8 @@
     background-color: var(--background);
   }
   .rnx-alert-dialog-content--variant-glass {
-    background-color: color-mix(in srgb, var(--background) 70%, transparent);
-    backdrop-filter: blur(calc(16px * var(--rnx-space-scale, 1)));
-    -webkit-backdrop-filter: blur(calc(16px * var(--rnx-space-scale, 1)));
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur, 16px));
     border-color: color-mix(in srgb, var(--border) 50%, transparent);
   }
   .rnx-alert-dialog-content--variant-destructive {
@@ -71,7 +73,7 @@
   .rnx-alert-dialog-header {
     display: flex;
     flex-direction: column;
-    gap: calc(0.5rem * var(--rnx-space-scale, 1));
+    gap: var(--space-2);
     text-align: center;
   }
 
@@ -90,22 +92,22 @@
     .rnx-alert-dialog-footer {
       flex-direction: row;
       justify-content: flex-end;
-      gap: calc(0.5rem * var(--rnx-space-scale, 1));
+      gap: var(--space-2);
     }
   }
 
   .rnx-alert-dialog-title {
-    font-size: calc(1.125rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-lg);
     font-weight: 600; /* font-semibold */
   }
 
   .rnx-alert-dialog-description {
-    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-sm);
     color: var(--muted-foreground);
   }
 
   .rnx-alert-dialog-cancel {
-    margin-top: calc(0.5rem * var(--rnx-space-scale, 1));
+    margin-top: var(--space-2);
   }
 
   @media (min-width: 640px) {
@@ -154,4 +156,3 @@
     }
   }
 }
-

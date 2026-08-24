@@ -6,7 +6,10 @@ import { ChevronDown } from "lucide-react";
 import { cn } from "../../utils/cn";
 import { useControllableState } from "../../hooks";
 import { AccordionItemProps, AccordionProps } from "./Accordion.interface";
-import { AccordionContextItemType, AccordionContextType } from "./Accordion.types";
+import {
+  AccordionContextItemType,
+  AccordionContextType,
+} from "./Accordion.types";
 import "./Accordion.css";
 
 const AccordionContext = createContext<AccordionContextType | null>(null);
@@ -57,24 +60,27 @@ const AccordionComponent = forwardRef<HTMLDivElement, AccordionProps>(
     });
     const accordionId = useId().replace(/:/g, "");
 
-    const handleValueChange = React.useCallback((itemValue: string) => {
-      if (type === "multiple") {
-        const currentValues = Array.isArray(value) ? value : [];
-        const nextValues = currentValues.includes(itemValue)
-          ? currentValues.filter((v) => v !== itemValue)
-          : [...currentValues, itemValue];
-        setValue(nextValues);
-      } else {
-        const currentValue = typeof value === "string" ? value : "";
-        if (currentValue === itemValue) {
-          if (collapsible) {
-            setValue("");
-          }
+    const handleValueChange = React.useCallback(
+      (itemValue: string) => {
+        if (type === "multiple") {
+          const currentValues = Array.isArray(value) ? value : [];
+          const nextValues = currentValues.includes(itemValue)
+            ? currentValues.filter((v) => v !== itemValue)
+            : [...currentValues, itemValue];
+          setValue(nextValues);
         } else {
-          setValue(itemValue);
+          const currentValue = typeof value === "string" ? value : "";
+          if (currentValue === itemValue) {
+            if (collapsible) {
+              setValue("");
+            }
+          } else {
+            setValue(itemValue);
+          }
         }
-      }
-    }, [type, value, collapsible, setValue]);
+      },
+      [type, value, collapsible, setValue],
+    );
 
     return (
       <AccordionContext.Provider
@@ -85,12 +91,14 @@ const AccordionComponent = forwardRef<HTMLDivElement, AccordionProps>(
         }}
       >
         <Box
-          {...rnx({ component: 'Accordion' })}
+          {...rnx({ component: "Accordion" })}
           ref={ref}
           className={cn(
             "rnx-accordion",
-            variant && variant !== "default" && `rnx-accordion--variant-${variant}`,
-            className
+            variant &&
+              variant !== "default" &&
+              `rnx-accordion--variant-${variant}`,
+            className,
           )}
           {...props}
         />
@@ -197,7 +205,7 @@ export const AccordionContent = forwardRef<
       role="region"
       aria-labelledby={triggerId}
       aria-hidden={!isOpen}
-      inert={(!isOpen ? "" : undefined) as any}
+      inert={!isOpen ? true : undefined}
       data-state={isOpen ? "open" : "closed"}
       className={cn("rnx-accordion-content", className)}
       {...props}

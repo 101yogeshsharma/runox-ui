@@ -168,6 +168,8 @@ export function FileUploader({
     e.target.value = "";
   };
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const removeFile = (index: number) => {
     if (disabled) return;
     setFiles((prev) => {
@@ -191,13 +193,23 @@ export function FileUploader({
           "rnx-file-uploader-dropzone relative flex w-full cursor-pointer flex-col items-center justify-center p-6",
           isDragActive && "rnx-file-uploader-dropzone--active",
         )}
+        role="button"
+        aria-label="Upload files"
         aria-disabled={disabled || undefined}
         tabIndex={disabled ? -1 : 0}
+        onKeyDown={(e) => {
+          if (disabled) return;
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            inputRef.current?.click();
+          }
+        }}
         onDragOver={onDragOver}
         onDragLeave={onDragLeave}
         onDrop={onDrop}
       >
         <input
+          ref={inputRef}
           type="file"
           className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
           multiple={multiple}

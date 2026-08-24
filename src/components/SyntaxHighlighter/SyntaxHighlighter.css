@@ -14,20 +14,19 @@
     justify-content: space-between;
     background-color: color-mix(in srgb, var(--card) 40%, transparent);
     border-bottom: 1px solid color-mix(in srgb, var(--border) 20%, transparent);
-    padding: calc(0.5rem * var(--rnx-space-scale, 1))
-      calc(1rem * var(--rnx-space-scale, 1));
+    padding: var(--space-2-5) var(--space-6);
   }
 
   .rnx-syntax-highlighter-controls {
     display: flex;
     width: 33.333%;
     align-items: center;
-    gap: calc(0.5rem * var(--rnx-space-scale, 1));
+    gap: var(--space-2);
   }
 
   .rnx-syntax-highlighter-dot {
-    height: 0.75rem;
-    width: 0.75rem;
+    height: var(--icon-xs);
+    width: var(--icon-xs);
     border-radius: var(--radius-full);
   }
   .rnx-syntax-highlighter-dot--destructive {
@@ -48,7 +47,7 @@
 
   .rnx-syntax-highlighter-lang {
     font-family: monospace;
-    font-size: calc(0.75rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-xs);
     color: var(--muted-foreground);
   }
 
@@ -60,23 +59,23 @@
 
   .rnx-syntax-highlighter-copy-btn {
     position: absolute;
-    top: calc(0.5rem * var(--rnx-space-scale, 1));
-    right: calc(0.5rem * var(--rnx-space-scale, 1));
+    top: var(--space-2);
+    right: var(--space-2);
   }
 
   .rnx-syntax-highlighter-pre {
     margin: 0;
     overflow-x: auto;
     background-color: transparent !important;
-    padding: calc(1rem * var(--rnx-space-scale, 1));
+    padding: var(--space-4);
     font-family: monospace;
-    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-sm);
     line-height: 1.625;
   }
 
   .rnx-syntax-highlighter__line-number {
     width: 1%;
-    padding-right: calc(1rem * var(--rnx-space-scale, 1));
+    padding-right: var(--space-4);
     text-align: right;
     opacity: 0.5;
     user-select: none;

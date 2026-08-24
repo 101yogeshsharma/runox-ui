@@ -2,7 +2,7 @@
   .rnx-switch-wrapper {
     display: inline-flex;
     align-items: center;
-    gap: calc(0.5rem * var(--rnx-space-scale, 1));
+    gap: var(--space-2);
   }
   .rnx-switch-container {
     position: relative;
@@ -38,42 +38,46 @@
   }
 
   .rnx-switch-container--sm {
-    width: calc(1.75rem * var(--rnx-space-scale, 1));
-    height: calc(1rem * var(--rnx-space-scale, 1));
+    width: var(--space-7);
+    height: var(--space-4);
   }
   .rnx-switch-thumb--sm {
-    width: calc(0.75rem * var(--rnx-space-scale, 1));
-    height: calc(0.75rem * var(--rnx-space-scale, 1));
+    width: var(--space-3);
+    height: var(--space-3);
     transform: translateX(0);
   }
   .rnx-switch-input:checked + .rnx-switch-thumb--sm {
-    transform: translateX(calc(0.75rem * var(--rnx-space-scale, 1)));
+    transform: translateX(var(--space-3));
   }
 
   .rnx-switch-container--md {
-    width: calc(2.25rem * var(--rnx-space-scale, 1));
-    height: calc(1.25rem * var(--rnx-space-scale, 1));
+    width: var(--space-9);
+    height: var(--space-5);
   }
   .rnx-switch-thumb--md {
-    width: calc(1rem * var(--rnx-space-scale, 1));
-    height: calc(1rem * var(--rnx-space-scale, 1));
+    width: var(--space-4);
+    height: var(--space-4);
     transform: translateX(0);
   }
   .rnx-switch-input:checked + .rnx-switch-thumb--md {
-    transform: translateX(calc(1rem * var(--rnx-space-scale, 1)));
+    transform: translateX(var(--space-4));
+  }
+
+  .rnx-switch-container:hover:not(.rnx-switch-container--disabled) {
+    opacity: 0.9;
   }
 
   .rnx-switch-container--lg {
-    width: calc(2.75rem * var(--rnx-space-scale, 1));
-    height: calc(1.5rem * var(--rnx-space-scale, 1));
+    width: var(--space-12);
+    height: var(--space-6);
   }
   .rnx-switch-thumb--lg {
-    width: calc(1.25rem * var(--rnx-space-scale, 1));
-    height: calc(1.25rem * var(--rnx-space-scale, 1));
+    width: var(--space-5);
+    height: var(--space-5);
     transform: translateX(0);
   }
   .rnx-switch-input:checked + .rnx-switch-thumb--lg {
-    transform: translateX(calc(1.25rem * var(--rnx-space-scale, 1)));
+    transform: translateX(var(--space-5));
   }
 
   /* Colors */
@@ -109,8 +113,8 @@
       color-mix(in srgb, var(--rnx-switch-active-color) 60%, transparent);
   }
   .rnx-switch-container--variant-glass {
-    background-color: color-mix(in srgb, var(--background) 50%, transparent);
-    backdrop-filter: blur(8px);
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur, 16px));
     border-color: color-mix(in srgb, var(--border) 40%, transparent);
   }
 
@@ -126,8 +130,20 @@
   .rnx-switch-container:has(.rnx-switch-input:disabled:not(:checked)) {
     background-color: var(--muted-foreground);
   }
+  .rnx-switch-container:active:not(:has(.rnx-switch-input:disabled))
+    .rnx-switch-thumb {
+    width: calc(var(--space-4) + 2px);
+  }
+  .rnx-switch-container--error {
+    border-color: var(--destructive);
+  }
+  .rnx-switch-wrapper--loading {
+    opacity: 0.6;
+    cursor: wait;
+    pointer-events: none;
+  }
   .rnx-switch-label {
-    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-sm);
     font-weight: 500;
     cursor: pointer;
     color: var(--foreground);

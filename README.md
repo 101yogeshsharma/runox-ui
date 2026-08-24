@@ -89,6 +89,14 @@ The documentation and interactive examples for this component library are mainta
 
 For detailed component APIs, usage examples, and design system guidelines, please visit our official documentation site.
 
+## Deprecation Policy
+
+Runox UI follows [Semantic Versioning (SemVer)](https://semver.org/). To ensure predictable and smooth upgrades:
+
+1. **Notice Period**: Deprecated props and components will remain functional and emit development-time `console.warn` warnings and JSDoc `@deprecated` tags for at least one minor release cycle prior to removal.
+2. **Breaking Changes**: Removals and non-backward-compatible API changes are reserved exclusively for **MAJOR** version bumps (`v1.0.0`, `v2.0.0`).
+3. **Migration Guidance**: Every deprecated API will include migration alternatives directly in the deprecation message and CHANGELOG.
+
 ## Development
 
 ### Commands

@@ -73,7 +73,10 @@ function SortableItemInner<T>({
     if (e.key === "ArrowUp" || (!isVertical && e.key === "ArrowLeft")) {
       e.preventDefault();
       onMoveItem(id, "prev");
-    } else if (e.key === "ArrowDown" || (!isVertical && e.key === "ArrowRight")) {
+    } else if (
+      e.key === "ArrowDown" ||
+      (!isVertical && e.key === "ArrowRight")
+    ) {
       e.preventDefault();
       onMoveItem(id, "next");
     }
@@ -94,7 +97,7 @@ function SortableItemInner<T>({
         className={cn(
           "rnx-sortable-item relative touch-none",
           isDragging ? "rnx-sortable-item--dragging" : "z-0",
-          indicatorStyles
+          indicatorStyles,
         )}
       >
         {renderItem(item, isDragging)}
@@ -117,78 +120,90 @@ function SortableList<T>({
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [dragOverId, setDragOverId] = useState<string | null>(null);
   const [dropPosition, setDropPosition] = useState<"before" | "after" | null>(
-    null
+    null,
   );
 
   const isVertical = direction === "vertical";
 
-  const handleDragStart = React.useCallback((e: React.DragEvent<HTMLElement>, id: string) => {
-    setDraggedId(id);
-    e.dataTransfer.effectAllowed = "move";
-    e.dataTransfer.setData("text/plain", id);
-  }, []);
+  const handleDragStart = React.useCallback(
+    (e: React.DragEvent<HTMLElement>, id: string) => {
+      setDraggedId(id);
+      e.dataTransfer.effectAllowed = "move";
+      e.dataTransfer.setData("text/plain", id);
+    },
+    [],
+  );
 
-  const handleDragOver = React.useCallback((e: React.DragEvent<HTMLElement>, id: string) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = "move";
+  const handleDragOver = React.useCallback(
+    (e: React.DragEvent<HTMLElement>, id: string) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
 
-    if (draggedId === id) return;
+      if (draggedId === id) return;
 
-    setDragOverId(id);
+      setDragOverId(id);
 
-    const rect = e.currentTarget.getBoundingClientRect();
-    if (isVertical) {
-      const midY = rect.top + rect.height / 2;
-      setDropPosition(e.clientY < midY ? "before" : "after");
-    } else {
-      const midX = rect.left + rect.width / 2;
-      setDropPosition(e.clientX < midX ? "before" : "after");
-    }
-  }, [draggedId, isVertical]);
+      const rect = e.currentTarget.getBoundingClientRect();
+      if (isVertical) {
+        const midY = rect.top + rect.height / 2;
+        setDropPosition(e.clientY < midY ? "before" : "after");
+      } else {
+        const midX = rect.left + rect.width / 2;
+        setDropPosition(e.clientX < midX ? "before" : "after");
+      }
+    },
+    [draggedId, isVertical],
+  );
 
-  const handleDragLeave = React.useCallback((e: React.DragEvent<HTMLElement>, id: string) => {
-    if (dragOverId === id) {
-      setDragOverId(null);
-      setDropPosition(null);
-    }
-  }, [dragOverId]);
+  const handleDragLeave = React.useCallback(
+    (e: React.DragEvent<HTMLElement>, id: string) => {
+      if (dragOverId === id) {
+        setDragOverId(null);
+        setDropPosition(null);
+      }
+    },
+    [dragOverId],
+  );
 
-  const handleDrop = React.useCallback((e: React.DragEvent<HTMLElement>, id: string) => {
-    e.preventDefault();
-    if (!draggedId || draggedId === id) {
-      setDragOverId(null);
-      setDropPosition(null);
-      return;
-    }
+  const handleDrop = React.useCallback(
+    (e: React.DragEvent<HTMLElement>, id: string) => {
+      e.preventDefault();
+      if (!draggedId || draggedId === id) {
+        setDragOverId(null);
+        setDropPosition(null);
+        return;
+      }
 
-    const oldIndex = items.findIndex(
-      (item) => keyExtractor(item) === draggedId
-    );
-
-    if (oldIndex !== -1) {
-      const newItems = [...items];
-      const [movedItem] = newItems.splice(oldIndex, 1);
-
-      const targetIndex = newItems.findIndex(
-        (item) => keyExtractor(item) === id
+      const oldIndex = items.findIndex(
+        (item) => keyExtractor(item) === draggedId,
       );
 
-      if (targetIndex !== -1) {
-        let newIndex = targetIndex;
-        if (dropPosition === "after") {
-          newIndex = targetIndex + 1;
-        }
-        newItems.splice(newIndex, 0, movedItem);
-        onSortEnd(newItems);
-      } else {
-        newItems.splice(oldIndex, 0, movedItem);
-      }
-    }
+      if (oldIndex !== -1) {
+        const newItems = [...items];
+        const [movedItem] = newItems.splice(oldIndex, 1);
 
-    setDraggedId(null);
-    setDragOverId(null);
-    setDropPosition(null);
-  }, [draggedId, dropPosition, items, keyExtractor, onSortEnd]);
+        const targetIndex = newItems.findIndex(
+          (item) => keyExtractor(item) === id,
+        );
+
+        if (targetIndex !== -1) {
+          let newIndex = targetIndex;
+          if (dropPosition === "after") {
+            newIndex = targetIndex + 1;
+          }
+          newItems.splice(newIndex, 0, movedItem);
+          onSortEnd(newItems);
+        } else {
+          newItems.splice(oldIndex, 0, movedItem);
+        }
+      }
+
+      setDraggedId(null);
+      setDragOverId(null);
+      setDropPosition(null);
+    },
+    [draggedId, dropPosition, items, keyExtractor, onSortEnd],
+  );
 
   const handleDragEnd = React.useCallback(() => {
     setDraggedId(null);
@@ -210,12 +225,12 @@ function SortableList<T>({
       newItems.splice(targetIndex, 0, movedItem);
       onSortEnd(newItems);
     },
-    [items, keyExtractor, onSortEnd]
+    [items, keyExtractor, onSortEnd],
   );
 
   return (
     <Flex
-      {...rnx({ component: 'SortableList' })}
+      {...rnx({ component: "SortableList" })}
       role="list"
       aria-label="Sortable list"
       gap="sm"
@@ -257,7 +272,7 @@ function SortableDragHandle({
   const context = React.useContext(SortableItemContext);
   if (!context) {
     throw new Error(
-      "SortableDragHandle must be used within a SortableList item render function"
+      "SortableDragHandle must be used within a SortableList item render function",
     );
   }
 
@@ -267,7 +282,10 @@ function SortableDragHandle({
       tabIndex={0}
       aria-label="Drag handle"
       aria-roledescription="sortable"
-      className={cn("rnx-sortable-drag-handle cursor-grab active:cursor-grabbing", className)}
+      className={cn(
+        "rnx-sortable-drag-handle cursor-grab active:cursor-grabbing",
+        className,
+      )}
       {...props}
     >
       <GripVertical className="h-4 w-4" />
@@ -282,3 +300,4 @@ export type SortableListWithDragHandle = typeof SortableList & {
 (SortableList as SortableListWithDragHandle).DragHandle = SortableDragHandle;
 
 export { SortableList };
+export { SortableDragHandle as SortableListDragHandle };

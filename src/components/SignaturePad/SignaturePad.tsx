@@ -32,6 +32,8 @@ export interface SignaturePadProps extends Omit<
   onEnd?: (dataUrl: string) => void;
   showClearButton?: boolean;
   height?: number;
+  typedFallback?: boolean;
+  onTypedChange?: (value: string) => void;
 }
 
 export interface SignaturePadRef {
@@ -50,9 +52,11 @@ const SignaturePadBase = forwardRef<SignaturePadRef, SignaturePadProps>(
       onEnd,
       showClearButton = true,
       height = 200,
+      typedFallback = false,
+      onTypedChange,
       ...props
     },
-    ref
+    ref,
   ) => {
     const canvasRef = useRef<HTMLCanvasElement>(null);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -203,7 +207,7 @@ const SignaturePadBase = forwardRef<SignaturePadRef, SignaturePadProps>(
 
     return (
       <Box
-        {...rnx({ component: 'SignaturePad' })}
+        {...rnx({ component: "SignaturePad" })}
         ref={containerRef}
         className={cn("rnx-signature-pad", className)}
       >
@@ -230,28 +234,42 @@ const SignaturePadBase = forwardRef<SignaturePadRef, SignaturePadProps>(
             ref={canvasRef}
             width={canvasWidth}
             height={height}
-            aria-label={props["aria-label"] || "Signature drawing area"}
+            role="img"
+            aria-label={
+              props["aria-label"] ||
+              "Signature drawing area — use mouse or touch to sign"
+            }
+            tabIndex={0}
             onPointerDown={startDrawing}
             onPointerMove={draw}
             onPointerUp={stopDrawing}
             onPointerCancel={stopDrawing}
-            className={cn(
-              "rnx-signature-pad__canvas",
-              canvasClassName
-            )}
+            className={cn("rnx-signature-pad__canvas", canvasClassName)}
             {...props}
           />
           <Box className="rnx-signature-pad__guide-line" />
-          <Box
-            as="span"
-            className="rnx-signature-pad__guide-label"
-          >
+          <Box as="span" className="rnx-signature-pad__guide-label">
             Sign here
           </Box>
         </Box>
+
+        {typedFallback && (
+          <Box className="rnx-signature-pad__fallback mt-3">
+            <label className="text-xs text-muted-foreground mb-1 block">
+              Keyboard alternative: Type your full name
+            </label>
+            <input
+              type="text"
+              placeholder="Type your name to sign"
+              aria-label="Typed signature alternative"
+              className="rnx-input w-full px-3 py-1.5 text-sm border rounded bg-transparent"
+              onChange={(e) => onTypedChange?.(e.target.value)}
+            />
+          </Box>
+        )}
       </Box>
     );
-  }
+  },
 );
 SignaturePadBase.displayName = "SignaturePad";
 export const SignaturePad = withLoading(SignaturePadBase);

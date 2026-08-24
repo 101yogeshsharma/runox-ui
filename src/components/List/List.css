@@ -7,19 +7,19 @@
   .rnx-list--bullet {
     list-style-type: disc;
     list-style-position: outside;
-    padding-left: calc(1.5rem * var(--rnx-space-scale, 1));
+    padding-left: var(--space-6);
     display: flex;
     flex-direction: column;
-    gap: calc(0.5rem * var(--rnx-space-scale, 1));
+    gap: var(--space-2);
   }
 
   .rnx-list--number {
     list-style-type: decimal;
     list-style-position: outside;
-    padding-left: calc(1.5rem * var(--rnx-space-scale, 1));
+    padding-left: var(--space-6);
     display: flex;
     flex-direction: column;
-    gap: calc(0.5rem * var(--rnx-space-scale, 1));
+    gap: var(--space-2);
   }
 
   .rnx-list--icon {
@@ -27,7 +27,7 @@
     padding-left: 0;
     display: flex;
     flex-direction: column;
-    gap: calc(0.75rem * var(--rnx-space-scale, 1));
+    gap: var(--space-3);
   }
 
   .rnx-list--none {
@@ -35,34 +35,34 @@
     padding-left: 0;
     display: flex;
     flex-direction: column;
-    gap: calc(0.25rem * var(--rnx-space-scale, 1));
+    gap: var(--space-1);
   }
 
   .rnx-list--sm {
-    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-sm);
   }
   .rnx-list--md {
-    font-size: calc(1rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-base);
   }
   .rnx-list--lg {
-    font-size: calc(1.125rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-lg);
   }
 
   .rnx-list-item {
     display: flex;
     align-items: flex-start;
-    gap: calc(0.75rem * var(--rnx-space-scale, 1));
+    gap: var(--space-3);
   }
 
   .rnx-list-item-icon-wrapper {
-    margin-top: 0.125rem;
+    margin-top: var(--space-0-5);
     flex-shrink: 0;
   }
 
   .rnx-list-item-collapsible {
     list-style-type: none;
-    margin-top: calc(0.5rem * var(--rnx-space-scale, 1));
-    margin-bottom: calc(0.5rem * var(--rnx-space-scale, 1));
+    margin-top: var(--space-2);
+    margin-bottom: var(--space-2);
     overflow: hidden;
     border-radius: var(--radius);
     border: 1px solid var(--border);
@@ -76,7 +76,7 @@
     width: 100%;
     align-items: center;
     justify-content: space-between;
-    padding: calc(0.75rem * var(--rnx-space-scale, 1)) calc(1rem * var(--rnx-space-scale, 1));
+    padding: var(--space-3) var(--space-4);
     text-align: left;
     background: transparent;
     border: none;
@@ -102,8 +102,8 @@
   }
 
   .rnx-list-item-collapsible-icon {
-    height: 1rem;
-    width: 1rem;
+    height: var(--icon-md);
+    width: var(--icon-md);
     color: var(--muted-foreground);
     transition: transform 200ms ease;
   }
@@ -111,7 +111,7 @@
   .rnx-list-item-collapsible-content {
     border-top: 1px solid var(--border);
     background-color: color-mix(in srgb, var(--muted) 10%, transparent);
-    padding: calc(0.75rem * var(--rnx-space-scale, 1)) calc(1rem * var(--rnx-space-scale, 1));
+    padding: var(--space-3) var(--space-4);
   }
 
   .rnx-list-item-number {

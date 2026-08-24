@@ -610,7 +610,7 @@
     max-width: calc(100vw - 2rem);
     border-radius: var(--radius);
     border: 1px solid var(--border);
-    background-color: color-mix(in srgb, var(--popover) 80%, transparent);
+    background-color: var(--glass-bg-overlay);
     backdrop-filter: blur(12px);
     padding: calc(1rem * var(--rnx-space-scale, 1));
     color: var(--popover-foreground);
@@ -1285,6 +1285,65 @@
     --rnx-space-scale: 1;
     --rnx-text-scale: 1;
 
+    /* Spacing scale (4px base) */
+    --space-px: 1px;
+    --space-0: 0;
+    --space-0-5: calc(0.125rem * var(--rnx-space-scale, 1));
+    --space-1: calc(0.25rem * var(--rnx-space-scale, 1));
+    --space-1-5: calc(0.375rem * var(--rnx-space-scale, 1));
+    --space-2: calc(0.5rem * var(--rnx-space-scale, 1));
+    --space-2-5: calc(0.625rem * var(--rnx-space-scale, 1));
+    --space-3: calc(0.75rem * var(--rnx-space-scale, 1));
+    --space-3-5: calc(0.875rem * var(--rnx-space-scale, 1));
+    --space-4: calc(1rem * var(--rnx-space-scale, 1));
+    --space-4-5: calc(1.125rem * var(--rnx-space-scale, 1));
+    --space-5: calc(1.25rem * var(--rnx-space-scale, 1));
+    --space-6: calc(1.5rem * var(--rnx-space-scale, 1));
+    --space-7: calc(1.75rem * var(--rnx-space-scale, 1));
+    --space-8: calc(2rem * var(--rnx-space-scale, 1));
+    --space-9: calc(2.25rem * var(--rnx-space-scale, 1));
+    --space-10: calc(2.5rem * var(--rnx-space-scale, 1));
+    --space-12: calc(3rem * var(--rnx-space-scale, 1));
+    --space-14: calc(3.5rem * var(--rnx-space-scale, 1));
+    --space-16: calc(4rem * var(--rnx-space-scale, 1));
+
+    /* Icon sizes */
+    --icon-xs: 0.75rem;
+    --icon-sm: 0.875rem;
+    --icon-md: 1rem;
+    --icon-lg: 1.25rem;
+    --icon-xl: 1.5rem;
+    --icon-2xl: 2rem;
+
+    /* Arrow & decoration sizes */
+    --arrow-sm: 6px;
+    --arrow-md: 8px;
+
+    /* Scrollbar sizes */
+    --scrollbar-width: 10px;
+    --scrollbar-min-length: 12px;
+
+    /* Typography scale */
+    --text-xs: calc(0.75rem * var(--rnx-text-scale, 1));
+    --text-sm: calc(0.875rem * var(--rnx-text-scale, 1));
+    --text-base: calc(1rem * var(--rnx-text-scale, 1));
+    --text-lg: calc(1.125rem * var(--rnx-text-scale, 1));
+    --text-xl: calc(1.25rem * var(--rnx-text-scale, 1));
+    --text-2xl: calc(1.5rem * var(--rnx-text-scale, 1));
+    --text-3xl: calc(1.875rem * var(--rnx-text-scale, 1));
+
+    /* Line height scale */
+    --leading-tight: 1.25;
+    --leading-snug: 1.375;
+    --leading-normal: 1.5;
+    --leading-relaxed: 1.625;
+
+    /* Font weight scale */
+    --font-normal: 400;
+    --font-medium: 500;
+    --font-semibold: 600;
+    --font-bold: 700;
+
     /* Z-index layers */
     --z-dropdown: 50;
     --z-sticky: 100;
@@ -1322,7 +1381,7 @@
     --destructive: #7f1d1d;
     --destructive-foreground: #fca5a5;
 
-    --success: #22c55e;
+    --success: #16a34a;
     --success-foreground: #ffffff;
 
     --warning: #f59e0b;
@@ -1341,6 +1400,7 @@
     --ring: #d4d4d8;
 
     --radius: var(--radius-md);
+    --overlay: rgba(0, 0, 0, 0.6);
     --rnx-modal-overlay-bg: rgba(0, 0, 0, 0.6);
 
     /* Legacy compatibility - explicitly mapped to theme variables so they flip in light mode */
@@ -1359,10 +1419,14 @@
     --brand-success: var(--success);
     --brand-danger: var(--destructive);
     --brand-warning: var(--warning);
+    /* Glassmorphism tokens — single source of truth for all glass variants. */
+    --glass-bg: color-mix(in srgb, var(--card) 60%, transparent);
+    --glass-bg-overlay: color-mix(in srgb, var(--popover) 70%, transparent);
+    --glass-blur: 16px;
     --glass-highlight: rgba(255, 255, 255, 0.05);
     --glass-highlight-hover: rgba(255, 255, 255, 0.1);
     --glass-highlight-active: rgba(255, 255, 255, 0.15);
-    --glass-border: rgba(255, 255, 255, 0.1);
+    --glass-border: color-mix(in srgb, var(--border) 60%, transparent);
 
     --font-sans:
       "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui,
@@ -1373,6 +1437,31 @@
     --font-mono:
       ui-monospace, "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono",
       monospace;
+
+    /* Typography scale tokens (consumed by the Text atom variants) */
+    --fontSize-2xs-0: 0.625rem;
+    --fontSize-2xs-1-lineHeight: 0.875rem;
+    --fontSize-xs-0: 0.75rem;
+    --fontSize-xs-1-lineHeight: 1rem;
+    --fontSize-sm-0: 0.875rem;
+    --fontSize-sm-1-lineHeight: 1.25rem;
+    --fontSize-base-0: 1rem;
+    --fontSize-base-1-lineHeight: 1.6rem;
+    --fontSize-md-0: 1rem;
+    --fontSize-md-1-lineHeight: 1.5rem;
+    --fontSize-lg-0: 1.125rem;
+    --fontSize-lg-1-lineHeight: 1.75rem;
+    --fontSize-2xl-0: 1.5rem;
+    --fontSize-2xl-1-lineHeight: 2rem;
+    --fontSize-4xl-0: 2.25rem;
+    --fontSize-4xl-1-lineHeight: 2.5rem;
+    --fontWeight-normal: 400;
+    --fontWeight-medium: 500;
+    --fontWeight-semibold: 600;
+    --fontWeight-bold: 700;
+    --letterSpacing-tight: -0.02em;
+    --letterSpacing-normal: 0em;
+    --letterSpacing-widest: 0.15em;
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --spring: cubic-bezier(0.175, 0.885, 0.32, 1.15);
 
@@ -1438,7 +1527,7 @@
     --secondary-foreground: #18181b;
 
     --muted: #f4f4f5;
-    --muted-foreground: #71717a;
+    --muted-foreground: #52525b;
 
     --accent: #f4f4f5;
     --accent-foreground: #18181b;
@@ -1446,7 +1535,7 @@
     --destructive: #ef4444;
     --destructive-foreground: #fafafa;
 
-    --success: #22c55e;
+    --success: #16a34a;
     --success-foreground: #ffffff;
 
     --warning: #f59e0b;
@@ -1467,7 +1556,48 @@
     --glass-highlight: rgba(0, 0, 0, 0.03);
     --glass-highlight-hover: rgba(0, 0, 0, 0.06);
     --glass-highlight-active: rgba(0, 0, 0, 0.09);
-    --glass-border: rgba(0, 0, 0, 0.1);
+    --glass-border: color-mix(in srgb, var(--border) 60%, transparent);
+    --glass-bg: color-mix(in srgb, var(--card) 60%, transparent);
+    --glass-bg-overlay: color-mix(in srgb, var(--popover) 70%, transparent);
+    --overlay: rgba(0, 0, 0, 0.5);
+    --rnx-modal-overlay-bg: rgba(0, 0, 0, 0.5);
+  }
+
+  /*
+   * Named color themes — resolved via the data-color attribute that
+   * ThemeProvider sets when primaryColor is a named color instead of a hex.
+   * Declared AFTER the .light/[data-theme] block so they win the cascade
+   * when both attributes sit on the same element (documentElement).
+   * Foregrounds follow the library's YIQ contrast rule
+   * (see src/utils/contrast.ts).
+   */
+  [data-color="blue"] {
+    --primary: #3b82f6;
+    --primary-foreground: #fafafa;
+  }
+  [data-color="red"] {
+    --primary: #ef4444;
+    --primary-foreground: #fafafa;
+  }
+  [data-color="green"] {
+    --primary: #10b981;
+    --primary-foreground: #09090b;
+  }
+  [data-color="orange"] {
+    --primary: #f97316;
+    --primary-foreground: #09090b;
+  }
+  [data-color="violet"] {
+    --primary: #8b5cf6;
+    --primary-foreground: #fafafa;
+  }
+  [data-color="white"] {
+    --primary: #fafafa;
+    --primary-foreground: #09090b;
+  }
+  [data-color="zinc"] {
+    --primary: #18181b;
+    --primary-foreground: #fafafa;
   }
 
   /* Base Resets */
@@ -1477,6 +1607,43 @@
     box-sizing: border-box;
   }
 
+  /* Global themed scrollbar — applies to all scrollable elements by default */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: color-mix(
+        in srgb,
+        var(--muted-foreground) 40%,
+        transparent
+      )
+      transparent;
+  }
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  *::-webkit-scrollbar-thumb {
+    background-color: color-mix(
+      in srgb,
+      var(--muted-foreground) 35%,
+      transparent
+    );
+    border-radius: var(--radius-full);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: color-mix(
+      in srgb,
+      var(--muted-foreground) 55%,
+      transparent
+    );
+  }
+  *::-webkit-scrollbar-corner {
+    background: transparent;
+  }
   body {
     margin: 0;
     font-family: var(--font-sans);
@@ -1616,7 +1783,7 @@
   .rnx-switch-wrapper {
     display: inline-flex;
     align-items: center;
-    gap: calc(0.5rem * var(--rnx-space-scale, 1));
+    gap: var(--space-2);
   }
   .rnx-switch-container {
     position: relative;
@@ -1715,7 +1882,7 @@
   .rnx-radio-group {
     display: flex;
     flex-direction: column;
-    gap: calc(0.5rem * var(--rnx-space-scale, 1));
+    gap: var(--space-2);
   }
   .rnx-radio-group--horizontal {
     flex-direction: row;
@@ -1724,7 +1891,7 @@
   .rnx-radio-wrapper {
     display: inline-flex;
     align-items: flex-start;
-    gap: calc(0.5rem * var(--rnx-space-scale, 1));
+    gap: var(--space-2);
   }
   .rnx-radio-container {
     display: flex;

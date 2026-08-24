@@ -2,21 +2,21 @@
   .rnx-label {
     display: inline-flex;
     align-items: baseline;
-    gap: calc(0.25rem * var(--rnx-space-scale, 1));
-    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+    gap: var(--space-1);
+    font-size: var(--text-sm);
     font-weight: 500;
     line-height: 1;
     color: var(--foreground);
   }
 
   .rnx-label--size-sm {
-    font-size: calc(0.75rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-xs);
   }
   .rnx-label--size-md {
-    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-sm);
   }
   .rnx-label--size-lg {
-    font-size: calc(1rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-base);
   }
 
   .rnx-label--disabled {
@@ -26,14 +26,14 @@
 
   .rnx-label-required {
     color: var(--destructive);
-    margin-left: calc(0.125rem * var(--rnx-space-scale, 1));
+    margin-left: var(--space-0-5);
   }
 
   .rnx-label-optional {
     font-size: 0.8em;
     color: var(--muted-foreground);
     font-weight: 400;
-    margin-left: calc(0.25rem * var(--rnx-space-scale, 1));
+    margin-left: var(--space-1);
   }
 
   .rnx-label-subtext {
@@ -41,7 +41,6 @@
     font-size: 0.8em;
     color: var(--muted-foreground);
     font-weight: 400;
-    margin-top: calc(0.125rem * var(--rnx-space-scale, 1));
+    margin-top: var(--space-0-5);
   }
 }
-

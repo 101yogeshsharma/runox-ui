@@ -50,10 +50,11 @@ const NavigationMenuItemContext = createContext<NavigationMenuItemContextValue>(
  */
 export interface NavigationMenuProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: NavigationMenuVariant;
+  label?: string;
 }
 
 const NavigationMenu = React.forwardRef<HTMLDivElement, NavigationMenuProps>(
-  ({ className, variant = "navigation", children, ...props }, ref) => {
+  ({ className, variant = "navigation", label, children, ...props }, ref) => {
     const [activeValue, setActiveValue] = useState<string | null>(null);
     const menuId = React.useId().replace(/:/g, "");
     const containerRef = useRef<HTMLDivElement>(null);
@@ -96,6 +97,11 @@ const NavigationMenu = React.forwardRef<HTMLDivElement, NavigationMenuProps>(
           as={isMenubar ? "div" : "nav"}
           ref={mergedRef}
           role={isMenubar ? "menubar" : "navigation"}
+          aria-label={
+            label ||
+            props["aria-label"] ||
+            (isMenubar ? "Menu bar" : "Main navigation")
+          }
           className={cn(
             isMenubar ? "rnx-navigation-menu--menubar" : "rnx-navigation-menu",
             className,

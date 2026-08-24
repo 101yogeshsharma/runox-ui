@@ -1,9 +1,9 @@
 @layer components {
   .rnx-avatar {
     position: relative;
-    display: flex;
+    display: inline-flex;
     flex-shrink: 0;
-    overflow: hidden;
+    overflow: visible;
     border: 1px solid var(--border);
     background-color: var(--background);
   }
@@ -13,6 +13,8 @@
     height: 100%;
     width: 100%;
     object-fit: cover;
+    border-radius: inherit;
+    overflow: hidden;
   }
 
   .rnx-avatar-fallback {
@@ -24,28 +26,30 @@
     background-color: var(--muted);
     font-weight: 500;
     color: var(--muted-foreground);
+    border-radius: inherit;
+    overflow: hidden;
   }
 
   /* Sizes */
   .rnx-avatar--sm {
-    height: calc(2rem * var(--rnx-space-scale, 1));
-    width: calc(2rem * var(--rnx-space-scale, 1));
-    font-size: calc(0.75rem * var(--rnx-text-scale, 1));
+    height: var(--space-8);
+    width: var(--space-8);
+    font-size: var(--text-xs);
   }
   .rnx-avatar--md {
-    height: calc(2.5rem * var(--rnx-space-scale, 1));
-    width: calc(2.5rem * var(--rnx-space-scale, 1));
-    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+    height: var(--space-10);
+    width: var(--space-10);
+    font-size: var(--text-sm);
   }
   .rnx-avatar--lg {
-    height: calc(3.5rem * var(--rnx-space-scale, 1));
-    width: calc(3.5rem * var(--rnx-space-scale, 1));
-    font-size: calc(1.125rem * var(--rnx-text-scale, 1));
+    height: var(--space-14);
+    width: var(--space-14);
+    font-size: var(--text-lg);
   }
   .rnx-avatar--xl {
-    height: calc(5rem * var(--rnx-space-scale, 1));
-    width: calc(5rem * var(--rnx-space-scale, 1));
-    font-size: calc(1.5rem * var(--rnx-text-scale, 1));
+    height: var(--space-20, 5rem);
+    width: var(--space-20, 5rem);
+    font-size: var(--text-2xl);
   }
 
   /* Shapes */
@@ -67,32 +71,32 @@
   }
 
   .rnx-avatar--variant-glass {
-    background-color: color-mix(in srgb, var(--card) 60%, transparent);
-    backdrop-filter: blur(calc(12px * var(--rnx-space-scale, 1)));
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur, 16px));
     border-color: color-mix(in srgb, var(--border) 40%, transparent);
   }
 
   /* Status Indicator */
   .rnx-avatar-status {
     position: absolute;
-    bottom: 0;
-    right: 0;
+    bottom: -1px;
+    right: -1px;
     border-radius: var(--radius-full);
     border: 2px solid var(--background);
     z-index: var(--z-component);
   }
   .rnx-avatar-status--sm {
-    width: calc(0.625rem * var(--rnx-space-scale, 1));
-    height: calc(0.625rem * var(--rnx-space-scale, 1));
+    width: var(--space-2-5);
+    height: var(--space-2-5);
   }
   .rnx-avatar-status--md {
-    width: calc(0.75rem * var(--rnx-space-scale, 1));
-    height: calc(0.75rem * var(--rnx-space-scale, 1));
+    width: var(--space-3);
+    height: var(--space-3);
   }
   .rnx-avatar-status--lg,
   .rnx-avatar-status--xl {
-    width: calc(0.875rem * var(--rnx-space-scale, 1));
-    height: calc(0.875rem * var(--rnx-space-scale, 1));
+    width: var(--space-3-5);
+    height: var(--space-3-5);
   }
   .rnx-avatar-status--online {
     background-color: var(--success);

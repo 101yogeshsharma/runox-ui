@@ -298,6 +298,7 @@ export const DropdownContent = React.forwardRef<
     return createPortal(
       <Box
         ref={mergedRef}
+        role="menu"
         className={cn("rnx-dropdown-content z-50", className)}
         data-state={isOpen && position ? "open" : "closed"}
         data-side={position?.placed || "bottom"}
@@ -368,6 +369,7 @@ export const DropdownItem = React.forwardRef<HTMLDivElement, DropdownItemProps>(
     return (
       <CommandItem
         ref={ref}
+        role="menuitem"
         value={
           itemValue ||
           (typeof children === "string" ? children.toLowerCase() : undefined)

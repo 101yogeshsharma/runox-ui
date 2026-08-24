@@ -35,7 +35,7 @@ export const SyntaxHighlighter = React.forwardRef<
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [isCopied, setIsCopied] = useState(false);
     const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
@@ -61,30 +61,49 @@ export const SyntaxHighlighter = React.forwardRef<
       }
     };
 
+    const [isDark, setIsDark] = useState(true);
+
+    React.useEffect(() => {
+      if (typeof window === "undefined") return;
+      const checkTheme = () => {
+        const root = document.documentElement;
+        const hasDarkClass = root.classList.contains("dark");
+        const hasDarkTheme = root.getAttribute("data-theme") === "dark";
+        const hasLightClass = root.classList.contains("light");
+        const hasLightTheme = root.getAttribute("data-theme") === "light";
+        if (hasDarkClass || hasDarkTheme) {
+          setIsDark(true);
+        } else if (hasLightClass || hasLightTheme) {
+          setIsDark(false);
+        } else {
+          setIsDark(window.matchMedia("(prefers-color-scheme: dark)").matches);
+        }
+      };
+      checkTheme();
+      const observer = new MutationObserver(checkTheme);
+      observer.observe(document.documentElement, {
+        attributes: true,
+        attributeFilter: ["class", "data-theme"],
+      });
+      return () => observer.disconnect();
+    }, []);
+
     return (
       <Box
-        {...rnx({ component: 'SyntaxHighlighter' })}
-        className={cn(
-          "rnx-syntax-highlighter",
-          className
-        )}
+        {...rnx({ component: "SyntaxHighlighter" })}
+        className={cn("rnx-syntax-highlighter", className)}
         ref={ref}
         {...props}
       >
         {withHeader && (
-          <Flex
-            align="center"
-            className="rnx-syntax-highlighter-header"
-          >
+          <Flex align="center" className="rnx-syntax-highlighter-header">
             <Box className="rnx-syntax-highlighter-controls">
               <Box className="rnx-syntax-highlighter-dot rnx-syntax-highlighter-dot--destructive" />
               <Box className="rnx-syntax-highlighter-dot rnx-syntax-highlighter-dot--warning" />
               <Box className="rnx-syntax-highlighter-dot rnx-syntax-highlighter-dot--success" />
             </Box>
             <Box className="rnx-syntax-highlighter-lang-wrapper">
-              <Text className="rnx-syntax-highlighter-lang">
-                {language}
-              </Text>
+              <Text className="rnx-syntax-highlighter-lang">{language}</Text>
             </Box>
             <Box className="rnx-syntax-highlighter-btn-wrapper">
               <Button
@@ -123,16 +142,19 @@ export const SyntaxHighlighter = React.forwardRef<
           )}
 
           <Highlight
-            theme={themes.vsDark}
+            theme={isDark ? themes.vsDark : themes.vsLight}
             code={code.trim()}
             language={language}
           >
-            {({ className: highlightClass, style, tokens, getLineProps, getTokenProps }) => (
+            {({
+              className: highlightClass,
+              style,
+              tokens,
+              getLineProps,
+              getTokenProps,
+            }) => (
               <pre
-                className={cn(
-                  highlightClass,
-                  "rnx-syntax-highlighter-pre"
-                )}
+                className={cn(highlightClass, "rnx-syntax-highlighter-pre")}
                 style={style}
               >
                 {tokens.map((line, i) => {
@@ -179,6 +201,6 @@ export const SyntaxHighlighter = React.forwardRef<
         </Box>
       </Box>
     );
-  }
+  },
 );
 SyntaxHighlighter.displayName = "SyntaxHighlighter";

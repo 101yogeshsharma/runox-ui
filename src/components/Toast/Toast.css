@@ -6,8 +6,8 @@
     width: 100%;
     max-height: 100vh;
     flex-direction: column;
-    gap: calc(0.5rem * var(--rnx-space-scale, 1));
-    padding: calc(1rem * var(--rnx-space-scale, 1));
+    gap: var(--space-2);
+    padding: var(--space-4);
     pointer-events: none;
   }
 
@@ -54,19 +54,18 @@
     width: 100%;
     align-items: center;
     justify-content: space-between;
-    gap: calc(1rem * var(--rnx-space-scale, 1));
+    gap: var(--space-4);
     overflow: hidden;
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    box-shadow:
-      var(--shadow-lg); /* shadow-lg */
+    box-shadow: var(--shadow-lg); /* shadow-lg */
     will-change: transform, opacity;
   }
 
   .rnx-toast-content {
     display: flex;
     flex-direction: column;
-    gap: calc(0.25rem * var(--rnx-space-scale, 1));
+    gap: var(--space-1);
   }
 
   .rnx-toast-title {
@@ -79,9 +78,9 @@
 
   .rnx-toast-close {
     position: absolute;
-    top: calc(0.5rem * var(--rnx-space-scale, 1));
-    right: calc(0.5rem * var(--rnx-space-scale, 1));
-    padding: calc(0.25rem * var(--rnx-space-scale, 1));
+    top: var(--space-2);
+    right: var(--space-2);
+    padding: var(--space-1);
     opacity: 0;
     transition: opacity 0.2s;
     color: inherit;
@@ -100,36 +99,36 @@
 
   /* Sizes */
   .rnx-toast--sm {
-    padding: calc(0.75rem * var(--rnx-space-scale, 1));
-    padding-right: calc(2rem * var(--rnx-space-scale, 1));
+    padding: var(--space-3);
+    padding-right: var(--space-8);
   }
   .rnx-toast--sm .rnx-toast-title {
-    font-size: calc(0.75rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-xs);
   }
   .rnx-toast--sm .rnx-toast-description {
-    font-size: calc(0.625rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-xs);
   }
 
   .rnx-toast--md {
-    padding: calc(1rem * var(--rnx-space-scale, 1));
-    padding-right: calc(2.5rem * var(--rnx-space-scale, 1));
+    padding: var(--space-4);
+    padding-right: var(--space-10);
   }
   .rnx-toast--md .rnx-toast-title {
-    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-sm);
   }
   .rnx-toast--md .rnx-toast-description {
-    font-size: calc(0.75rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-xs);
   }
 
   .rnx-toast--lg {
-    padding: calc(1.5rem * var(--rnx-space-scale, 1));
-    padding-right: calc(3rem * var(--rnx-space-scale, 1));
+    padding: var(--space-6);
+    padding-right: var(--space-12);
   }
   .rnx-toast--lg .rnx-toast-title {
-    font-size: calc(1rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-base);
   }
   .rnx-toast--lg .rnx-toast-description {
-    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-sm);
   }
 
   /* Colors */
@@ -221,4 +220,3 @@
     }
   }
 }
-

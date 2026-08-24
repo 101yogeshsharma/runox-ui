@@ -1,4 +1,4 @@
-﻿@layer components {
+@layer components {
   .rnx-popover-content {
     position: absolute;
     z-index: var(--z-popover);
@@ -11,29 +11,30 @@
 
   /* Sizes */
   .rnx-popover-content--sm {
-    min-width: calc(14rem * var(--rnx-space-scale, 1));
-    padding: calc(0.75rem * var(--rnx-space-scale, 1));
-    font-size: calc(0.75rem * var(--rnx-text-scale, 1));
+    min-width: var(--overlay-width-sm, 14rem);
+    padding: var(--space-3);
+    font-size: var(--text-xs);
   }
   .rnx-popover-content--md {
-    min-width: calc(18rem * var(--rnx-space-scale, 1));
-    padding: calc(1rem * var(--rnx-space-scale, 1));
-    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+    min-width: var(--overlay-width-md, 18rem);
+    padding: var(--space-4);
+    font-size: var(--text-sm);
   }
   .rnx-popover-content--lg {
-    min-width: calc(22rem * var(--rnx-space-scale, 1));
-    padding: calc(1.25rem * var(--rnx-space-scale, 1));
-    font-size: calc(1rem * var(--rnx-text-scale, 1));
+    min-width: var(--overlay-width-lg, 22rem);
+    padding: var(--space-5);
+    font-size: var(--text-base);
   }
 
   /* Variants */
   .rnx-popover-content--variant-solid {
     background-color: var(--popover);
+    border-color: var(--border);
   }
   .rnx-popover-content--variant-glass {
-    background-color: color-mix(in srgb, var(--popover) 80%, transparent);
-    backdrop-filter: blur(calc(24px * var(--rnx-space-scale, 1)));
-    -webkit-backdrop-filter: blur(calc(24px * var(--rnx-space-scale, 1)));
+    background-color: var(--glass-bg-overlay);
+    backdrop-filter: blur(var(--glass-blur, 16px));
+    border-color: var(--glass-border);
   }
   .rnx-popover-content--variant-tooltip {
     background-color: var(--foreground);
@@ -44,8 +45,8 @@
   /* Arrow */
   .rnx-popover-arrow {
     position: absolute;
-    width: 8px;
-    height: 8px;
+    width: var(--arrow-md);
+    height: var(--arrow-md);
     background-color: inherit;
     border: inherit;
     transform: rotate(45deg);
@@ -81,4 +82,3 @@
     }
   }
 }
-
