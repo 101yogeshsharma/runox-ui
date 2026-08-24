@@ -32,12 +32,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: calc(0.25rem * var(--rnx-space-scale, 1));
+    margin-right: var(--space-1);
   }
 
   .rnx-badge__icon svg {
-    width: calc(0.75rem * var(--rnx-space-scale, 1));
-    height: calc(0.75rem * var(--rnx-space-scale, 1));
+    width: var(--space-3);
+    height: var(--space-3);
   }
 
   /* === Shapes === */
@@ -53,8 +53,7 @@
 
   /* === Glass & Gradient Variants === */
   .rnx-badge--glass {
-    backdrop-filter: blur(calc(12px * var(--rnx-space-scale, 1)));
-    -webkit-backdrop-filter: blur(calc(12px * var(--rnx-space-scale, 1)));
+    backdrop-filter: blur(var(--scrollbar-min-length));
     background-color: color-mix(in srgb, var(--card) 60%, transparent);
     border-color: color-mix(in srgb, var(--border) 40%, transparent);
   }
@@ -67,23 +66,20 @@
 
   /* === Sizes === */
   .rnx-badge--size-sm {
-    padding: calc(0.125rem * var(--rnx-space-scale, 1))
-      calc(0.5rem * var(--rnx-space-scale, 1));
-    font-size: calc(0.625rem * var(--rnx-text-scale, 1));
+    padding: var(--space-0-5) var(--space-2);
+    font-size: var(--text-xs);
   }
   .rnx-badge--size-md {
-    padding: calc(0.125rem * var(--rnx-space-scale, 1))
-      calc(0.625rem * var(--rnx-space-scale, 1));
-    font-size: calc(0.75rem * var(--rnx-text-scale, 1));
+    padding: var(--space-0-5) var(--space-2-5);
+    font-size: var(--text-xs);
   }
   .rnx-badge--size-lg {
-    padding: calc(0.25rem * var(--rnx-space-scale, 1))
-      calc(0.75rem * var(--rnx-space-scale, 1));
-    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--text-sm);
   }
   .rnx-badge--size-lg .rnx-badge__icon svg {
-    width: calc(0.875rem * var(--rnx-space-scale, 1));
-    height: calc(0.875rem * var(--rnx-space-scale, 1));
+    width: var(--space-3-5);
+    height: var(--space-3-5);
   }
 
   /* === Variants (Solid, Subtle, Outline) === */

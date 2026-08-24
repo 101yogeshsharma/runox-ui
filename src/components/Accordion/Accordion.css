@@ -13,7 +13,7 @@
     flex: 1;
     align-items: center;
     justify-content: space-between;
-    padding: calc(1rem * var(--rnx-space-scale, 1)) 0;
+    padding: var(--space-4) 0;
     font-weight: 500;
     transition: all 200ms ease;
     background: transparent;
@@ -39,8 +39,8 @@
     text-decoration: none;
   }
   .rnx-accordion-icon {
-    height: calc(1rem * var(--rnx-space-scale, 1));
-    width: calc(1rem * var(--rnx-space-scale, 1));
+    height: var(--space-4);
+    width: var(--space-4);
     flex-shrink: 0;
     transition: transform 300ms cubic-bezier(0.87, 0, 0.13, 1);
   }
@@ -50,7 +50,7 @@
 
   .rnx-accordion-content {
     display: grid;
-    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-sm);
     transition: grid-template-rows 300ms cubic-bezier(0.87, 0, 0.13, 1);
   }
   .rnx-accordion-content[data-state="closed"] {
@@ -64,7 +64,7 @@
   }
   .rnx-accordion-content-body {
     padding-top: 0;
-    padding-bottom: calc(1rem * var(--rnx-space-scale, 1));
+    padding-bottom: var(--space-4);
     word-break: break-word;
   }
 
@@ -72,18 +72,18 @@
   .rnx-accordion--variant-separated {
     display: flex;
     flex-direction: column;
-    gap: calc(0.5rem * var(--rnx-space-scale, 1));
+    gap: var(--space-2);
   }
   .rnx-accordion--variant-separated .rnx-accordion-item {
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 0 calc(1rem * var(--rnx-space-scale, 1));
+    padding: 0 var(--space-4);
   }
 
   .rnx-accordion--variant-bordered {
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 0 calc(1rem * var(--rnx-space-scale, 1));
+    padding: 0 var(--space-4);
   }
   .rnx-accordion--variant-bordered .rnx-accordion-item:last-child {
     border-bottom: none;
@@ -93,17 +93,16 @@
     background-color: var(--muted);
     border-radius: var(--radius);
     border: none;
-    margin-bottom: calc(0.5rem * var(--rnx-space-scale, 1));
-    padding: 0 calc(1rem * var(--rnx-space-scale, 1));
+    margin-bottom: var(--space-2);
+    padding: 0 var(--space-4);
   }
 
   .rnx-accordion--variant-glass .rnx-accordion-item {
-    background-color: color-mix(in srgb, var(--card) 60%, transparent);
-    backdrop-filter: blur(calc(12px * var(--rnx-space-scale, 1)));
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur, 16px));
     border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
     border-radius: var(--radius);
-    margin-bottom: calc(0.5rem * var(--rnx-space-scale, 1));
-    padding: 0 calc(1rem * var(--rnx-space-scale, 1));
+    margin-bottom: var(--space-2);
+    padding: 0 var(--space-4);
   }
 }
-

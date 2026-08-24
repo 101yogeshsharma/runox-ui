@@ -1,11 +1,16 @@
-﻿@layer components {
+@layer components {
   .rnx-calendar {
+    background-color: var(--card);
+    border: 1px solid var(--border);
     border-radius: var(--radius);
+    color: var(--card-foreground);
+    padding: var(--space-3);
   }
 
   .rnx-calendar__day {
-    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-sm);
     font-weight: 400;
+    border-radius: calc(var(--radius) - 4px);
     transition-property:
       color, background-color, border-color, text-decoration-color, fill, stroke;
     transition-duration: 150ms;
@@ -52,6 +57,7 @@
   .rnx-calendar__day--selected {
     background-color: var(--primary);
     color: var(--primary-foreground);
+    border-radius: calc(var(--radius) - 4px);
     opacity: 1;
   }
 
@@ -69,6 +75,7 @@
   .rnx-calendar__nav_button {
     border: 1px solid var(--input);
     color: var(--foreground);
+    border-radius: calc(var(--radius) - 4px);
     transition-property:
       color, background-color, border-color, text-decoration-color, fill, stroke;
     transition-duration: 150ms;
@@ -83,13 +90,13 @@
   }
 
   .rnx-calendar__caption_label {
-    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-sm);
     font-weight: 500;
   }
 
   .rnx-calendar__weekday {
     color: var(--muted-foreground);
-    font-size: calc(0.8rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-xs);
     font-weight: 400;
   }
 
@@ -101,4 +108,3 @@
     color: var(--muted-foreground);
   }
 }
-

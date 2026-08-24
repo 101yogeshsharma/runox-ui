@@ -7,9 +7,7 @@ import "./Button.css";
 import { rnx } from "../../utils/rnx";
 import { warnInvalidProps } from "../../utils/warn";
 
-import type {
-  PolymorphicComponentPropsWithRef,
-} from "../../utils/types";
+import type { PolymorphicComponentPropsWithRef } from "../../utils/types";
 
 /**
  * The standard interactive button component. Use to trigger actions, submit forms, or handle click events.
@@ -19,7 +17,12 @@ export interface ButtonBaseProps {
   color?: "default" | "primary" | "secondary" | "danger" | "success";
   size?: "sm" | "md" | "lg" | "icon" | "fab";
   fullWidth?: boolean;
+  /** Whether the button displays a loading spinner */
+  loading?: boolean;
+  /** @deprecated Use `loading` instead */
   isLoading?: boolean;
+  /** @deprecated Use standard `disabled` instead */
+  isDisabled?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
   isMagnetic?: boolean;
@@ -29,7 +32,7 @@ export type ButtonProps<C extends React.ElementType> =
   PolymorphicComponentPropsWithRef<C, ButtonBaseProps>;
 
 type ButtonComponent = <C extends React.ElementType = "button">(
-  props: ButtonProps<C>
+  props: ButtonProps<C>,
 ) => React.ReactElement | null;
 
 export function buttonVariants({
@@ -47,7 +50,7 @@ export function buttonVariants({
     `rnx-button--size-${finalSize}`,
     variant === "fab" && "rnx-button--variant-fab",
     fullWidth && "rnx-button--full-width",
-    className
+    className,
   );
 }
 
@@ -59,7 +62,9 @@ const ButtonBase = forwardRef(
       color = "default",
       size,
       fullWidth,
-      isLoading = false,
+      loading,
+      isLoading,
+      isDisabled,
       leftIcon,
       rightIcon,
       isMagnetic = false,
@@ -70,14 +75,18 @@ const ButtonBase = forwardRef(
 
     const Component = as || "button";
     const localRef = useRef<HTMLElement>(null);
-    const disabled = ("disabled" in rest ? !!rest.disabled : false) || isLoading;
+    const isButtonLoading = loading ?? isLoading ?? false;
+    const disabled =
+      ("disabled" in rest ? !!rest.disabled : false) ||
+      isDisabled ||
+      isButtonLoading;
 
     // Dev-mode warning for missing aria-label on icon/fab buttons
     if (process.env.NODE_ENV !== "production") {
       if ((variant === "icon" || variant === "fab") && !rest["aria-label"]) {
         warnInvalidProps(
           "Button",
-          `variant="${variant}" was used without an \`aria-label\`. Icon-only buttons must have an \`aria-label\` for screen readers.`
+          `variant="${variant}" was used without an \`aria-label\`. Icon-only buttons must have an \`aria-label\` for screen readers.`,
         );
       }
     }
@@ -85,7 +94,8 @@ const ButtonBase = forwardRef(
     const mergedRef = useMergeRefs(forwardedRef, localRef);
 
     useEffect(() => {
-      if (!isMagnetic || !localRef.current || disabled || isLoading) return;
+      if (!isMagnetic || !localRef.current || disabled || isButtonLoading)
+        return;
       const el = localRef.current;
       let x = 0,
         y = 0,
@@ -111,7 +121,7 @@ const ButtonBase = forwardRef(
         el.removeEventListener("mouseleave", handleMouseLeave);
         cancelAnimationFrame(reqId);
       };
-    }, [isMagnetic, disabled, isLoading]);
+    }, [isMagnetic, disabled, isButtonLoading]);
 
     const Tag =
       "href" in rest && rest.href && Component === "button" ? "a" : Component;
@@ -126,8 +136,13 @@ const ButtonBase = forwardRef(
         {...rnx({
           component: "Button",
           variant: variant,
-          state: isLoading ? "loading" : disabled ? "disabled" : undefined,
-          action: "type" in rest && rest.type === "submit" ? "submit" : undefined,
+          state: isButtonLoading
+            ? "loading"
+            : disabled
+              ? "disabled"
+              : undefined,
+          action:
+            "type" in rest && rest.type === "submit" ? "submit" : undefined,
         })}
         className={cn(
           "rnx-button",
@@ -135,39 +150,37 @@ const ButtonBase = forwardRef(
           `rnx-button--size-${finalSize}`,
           variant === "fab" && "rnx-button--variant-fab",
           fullWidth && "rnx-button--full-width",
-          isLoading && "rnx-button--loading",
-          className
+          isButtonLoading && "rnx-button--loading",
+          className,
         )}
         {...rest}
         {...(Tag === "button"
           ? {
-              disabled: disabled || isLoading,
+              disabled: disabled,
               type: "type" in rest ? rest.type : "button",
             }
           : {
               // Anchors don't support the `disabled` attribute — use aria + tabIndex instead
-              "aria-disabled": disabled || isLoading || undefined,
-              tabIndex:
-                disabled || isLoading
-                  ? -1
-                  : (rest as React.AnchorHTMLAttributes<HTMLAnchorElement>)
-                      .tabIndex,
-              onClick:
-                disabled || isLoading
-                  ? (e: React.MouseEvent) => {
-                      e.preventDefault();
-                      // Do NOT call user's onClick when disabled
-                    }
-                  : (rest as React.AnchorHTMLAttributes<HTMLAnchorElement>)
-                      .onClick,
+              "aria-disabled": disabled || undefined,
+              tabIndex: disabled
+                ? -1
+                : (rest as React.AnchorHTMLAttributes<HTMLAnchorElement>)
+                    .tabIndex,
+              onClick: disabled
+                ? (e: React.MouseEvent) => {
+                    e.preventDefault();
+                    // Do NOT call user's onClick when disabled
+                  }
+                : (rest as React.AnchorHTMLAttributes<HTMLAnchorElement>)
+                    .onClick,
             })}
       >
-        {isLoading && <Box as="span" className="rnx-button__spinner" />}
+        {isButtonLoading && <Box as="span" className="rnx-button__spinner" />}
         <Box
           as="span"
           className={cn(
             "rnx-button__content",
-            isLoading && "rnx-button__content--hidden"
+            isButtonLoading && "rnx-button__content--hidden",
           )}
         >
           {leftIcon && (
@@ -184,7 +197,7 @@ const ButtonBase = forwardRef(
         </Box>
       </Tag>
     );
-  }
+  },
 );
 
 ButtonBase.displayName = "Button";

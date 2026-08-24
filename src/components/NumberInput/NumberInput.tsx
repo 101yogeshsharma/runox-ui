@@ -20,24 +20,20 @@ import { rnx } from "../../utils/rnx";
 import { cva, type VariantProps } from "class-variance-authority";
 import { withLoading } from "../../utils/withLoading";
 
-
 import "./NumberInput.css";
 
-export const numberInputVariants = cva(
-  "rnx-number-input",
-  {
-    variants: {
-      size: {
-        sm: "rnx-number-input--sm",
-        md: "rnx-number-input--md",
-        lg: "rnx-number-input--lg",
-      },
+export const numberInputVariants = cva("rnx-number-input", {
+  variants: {
+    size: {
+      sm: "rnx-number-input--sm",
+      md: "rnx-number-input--md",
+      lg: "rnx-number-input--lg",
     },
-    defaultVariants: {
-      size: "md",
-    },
-  }
-);
+  },
+  defaultVariants: {
+    size: "md",
+  },
+});
 
 /**
  * Props for the NumberInput component.
@@ -64,6 +60,7 @@ const NumberInputBase = forwardRef<HTMLInputElement, NumberInputProps>(
     {
       className,
       value,
+      defaultValue,
       onChange,
       min = -Infinity,
       max = Infinity,
@@ -75,10 +72,10 @@ const NumberInputBase = forwardRef<HTMLInputElement, NumberInputProps>(
       disabled,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [internalValue, setInternalValue] = useState<string>(
-      String(value ?? 0)
+      String(value ?? defaultValue ?? 0),
     );
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -102,7 +99,7 @@ const NumberInputBase = forwardRef<HTMLInputElement, NumberInputProps>(
         if (value === undefined) setInternalValue(String(clamped));
         onChange?.(clamped);
       },
-      [max, min, onChange, value]
+      [max, min, onChange, value],
     );
 
     const currentValue =
@@ -173,10 +170,7 @@ const NumberInputBase = forwardRef<HTMLInputElement, NumberInputProps>(
 
     return (
       <Box
-        className={cn(
-          "rnx-number-input-container",
-          className
-        )}
+        className={cn("rnx-number-input-container", className)}
         {...rnx({
           component: "NumberInput",
           state: disabled ? "disabled" : "active",
@@ -199,10 +193,10 @@ const NumberInputBase = forwardRef<HTMLInputElement, NumberInputProps>(
                 size: size ?? "md",
                 className: cn(
                   numberInputVariants({ size }),
-                  error && "rnx-number-input--error"
+                  error && "rnx-number-input--error",
                 ),
               },
-              props
+              props,
             )}
           />
           <Box className="rnx-number-input-btn-wrapper rnx-number-input-btn-wrapper--start">
@@ -210,7 +204,10 @@ const NumberInputBase = forwardRef<HTMLInputElement, NumberInputProps>(
               type="button"
               variant="ghost"
               size="icon"
-              className={cn("rnx-number-input-btn", `rnx-number-input-btn--${size || "md"}`)}
+              className={cn(
+                "rnx-number-input-btn",
+                `rnx-number-input-btn--${size || "md"}`,
+              )}
               disabled={disabled || currentValue <= min}
               onMouseDown={() => startContinuous(handleDecrement)}
               onMouseUp={stopContinuous}
@@ -227,7 +224,10 @@ const NumberInputBase = forwardRef<HTMLInputElement, NumberInputProps>(
               type="button"
               variant="ghost"
               size="icon"
-              className={cn("rnx-number-input-btn", `rnx-number-input-btn--${size || "md"}`)}
+              className={cn(
+                "rnx-number-input-btn",
+                `rnx-number-input-btn--${size || "md"}`,
+              )}
               disabled={disabled || currentValue >= max}
               onMouseDown={() => startContinuous(handleIncrement)}
               onMouseUp={stopContinuous}
@@ -247,7 +247,7 @@ const NumberInputBase = forwardRef<HTMLInputElement, NumberInputProps>(
         )}
       </Box>
     );
-  }
+  },
 );
 NumberInputBase.displayName = "NumberInput";
 export const NumberInput = withLoading(NumberInputBase);

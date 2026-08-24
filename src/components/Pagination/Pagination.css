@@ -12,37 +12,37 @@
   }
 
   .rnx-pagination-icon--sm {
-    width: calc(2rem * var(--rnx-space-scale, 1));
-    height: calc(2rem * var(--rnx-space-scale, 1));
+    width: var(--space-8);
+    height: var(--space-8);
     padding: 0;
   }
 
   .rnx-pagination-icon--md {
-    width: calc(2.5rem * var(--rnx-space-scale, 1));
-    height: calc(2.5rem * var(--rnx-space-scale, 1));
+    width: var(--space-10);
+    height: var(--space-10);
     padding: 0;
   }
 
   .rnx-pagination-icon--lg {
-    width: calc(3rem * var(--rnx-space-scale, 1));
-    height: calc(3rem * var(--rnx-space-scale, 1));
+    width: var(--space-12);
+    height: var(--space-12);
     padding: 0;
-    font-size: calc(1.125rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-lg);
   }
 
   .rnx-pagination-ellipsis--sm {
-    height: calc(2rem * var(--rnx-space-scale, 1));
-    width: calc(2rem * var(--rnx-space-scale, 1));
+    height: var(--space-8);
+    width: var(--space-8);
   }
 
   .rnx-pagination-ellipsis--md {
-    height: calc(2.5rem * var(--rnx-space-scale, 1));
-    width: calc(2.5rem * var(--rnx-space-scale, 1));
+    height: var(--space-10);
+    width: var(--space-10);
   }
 
   .rnx-pagination-ellipsis--lg {
-    height: calc(3rem * var(--rnx-space-scale, 1));
-    width: calc(3rem * var(--rnx-space-scale, 1));
+    height: var(--space-12);
+    width: var(--space-12);
   }
 
   /* Variants */
@@ -64,7 +64,7 @@
   .rnx-pagination--variant-bordered {
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: calc(0.25rem * var(--rnx-space-scale, 1));
+    padding: var(--space-1);
     width: fit-content;
     background-color: var(--card);
   }
@@ -73,12 +73,11 @@
   }
 
   .rnx-pagination--variant-glass {
-    background-color: color-mix(in srgb, var(--card) 60%, transparent);
-    backdrop-filter: blur(calc(12px * var(--rnx-space-scale, 1)));
-    -webkit-backdrop-filter: blur(calc(12px * var(--rnx-space-scale, 1)));
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur, 16px));
     border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
     border-radius: var(--radius);
-    padding: calc(0.25rem * var(--rnx-space-scale, 1));
+    padding: var(--space-1);
     width: fit-content;
   }
   .rnx-pagination--variant-glass .rnx-button {

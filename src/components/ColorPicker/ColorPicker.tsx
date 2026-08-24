@@ -14,31 +14,27 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { withLoading } from "../../utils/withLoading";
 import { rnx } from "../../utils/rnx";
 
-
 import "./ColorPicker.css";
 
-export const colorPickerVariants = cva(
-  "rnx-color-picker-trigger",
-  {
-    variants: {
-      variant: {
-        outline: "rnx-color-picker-trigger--variant-outline",
-        filled: "rnx-color-picker-trigger--variant-filled",
-        glass: "rnx-color-picker-trigger--variant-glass",
-        subtle: "rnx-color-picker-trigger--variant-subtle",
-      },
-      size: {
-        sm: "rnx-color-picker-trigger--size-sm",
-        md: "rnx-color-picker-trigger--size-md",
-        lg: "rnx-color-picker-trigger--size-lg",
-      },
+export const colorPickerVariants = cva("rnx-color-picker-trigger", {
+  variants: {
+    variant: {
+      outline: "rnx-color-picker-trigger--variant-outline",
+      filled: "rnx-color-picker-trigger--variant-filled",
+      glass: "rnx-color-picker-trigger--variant-glass",
+      subtle: "rnx-color-picker-trigger--variant-subtle",
     },
-    defaultVariants: {
-      variant: "outline",
-      size: "md",
+    size: {
+      sm: "rnx-color-picker-trigger--size-sm",
+      md: "rnx-color-picker-trigger--size-md",
+      lg: "rnx-color-picker-trigger--size-lg",
     },
-  }
-);
+  },
+  defaultVariants: {
+    variant: "outline",
+    size: "md",
+  },
+});
 
 /**
  * Props for the ColorPicker component.
@@ -93,10 +89,10 @@ const ColorPickerBase = forwardRef<HTMLDivElement, ColorPickerProps>(
       swatches = DEFAULT_SWATCHES,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [internalValue, setInternalValue] = useState<string>(
-      value || "#000000"
+      value || "#000000",
     );
     const [isOpen, setIsOpen] = useState(false);
 
@@ -115,7 +111,10 @@ const ColorPickerBase = forwardRef<HTMLDivElement, ColorPickerProps>(
 
     return (
       <Box
-        {...rnx({ component: 'ColorPicker', state: disabled ? 'disabled' : 'active' })}
+        {...rnx({
+          component: "ColorPicker",
+          state: disabled ? "disabled" : "active",
+        })}
         ref={ref}
         className={cn("rnx-color-picker-container", className)}
         {...props}
@@ -128,38 +127,47 @@ const ColorPickerBase = forwardRef<HTMLDivElement, ColorPickerProps>(
           align="start"
           className="w-64 p-3"
           trigger={
-            <Button
+            <button
               type="button"
-              variant="outline"
               disabled={disabled}
               className={cn(
+                "rnx-color-picker-trigger",
                 colorPickerVariants({ variant, size }),
-                error && "border-destructive focus-visible:ring-destructive"
+                error &&
+                  "rnx-color-picker-trigger--error border-destructive focus-visible:ring-destructive",
+                disabled && "opacity-50 cursor-not-allowed",
               )}
             >
               <Box className="flex items-center gap-2">
                 <Box
                   className={cn(
                     "rnx-color-picker-preview",
-                    `rnx-color-picker-preview--${size || "md"}`
+                    `rnx-color-picker-preview--${size || "md"}`,
                   )}
                   style={{ backgroundColor: displayValue }}
                 />
-                <Box as="span" className="uppercase">
+                <Box
+                  as="span"
+                  className="uppercase font-medium text-xs font-mono"
+                >
                   {displayValue}
                 </Box>
               </Box>
               <Paintbrush
                 className={cn(
                   "text-muted-foreground",
-                  size === "lg" ? "h-5 w-5" : "h-4 w-4"
+                  size === "lg" ? "h-5 w-5" : "h-4 w-4",
                 )}
               />
-            </Button>
+            </button>
           }
         >
           <Box className="flex flex-col gap-3">
-            <Box className="grid grid-cols-7 gap-2" role="group" aria-label="Color swatches">
+            <Box
+              className="grid grid-cols-7 gap-2"
+              role="group"
+              aria-label="Color swatches"
+            >
               {swatches.map((color) => (
                 <Button
                   key={color}
@@ -169,7 +177,7 @@ const ColorPickerBase = forwardRef<HTMLDivElement, ColorPickerProps>(
                   className={cn(
                     "rnx-color-picker-swatch",
                     displayValue.toLowerCase() === color.toLowerCase() &&
-                      "rnx-color-picker-swatch--active"
+                      "rnx-color-picker-swatch--active",
                   )}
                   style={{ backgroundColor: color }}
                   onClick={() => {
@@ -185,7 +193,7 @@ const ColorPickerBase = forwardRef<HTMLDivElement, ColorPickerProps>(
                         // White text on dark colors, dark text on light colors
                         color.toLowerCase() === "#ffffff"
                           ? "text-black"
-                          : "text-white"
+                          : "text-white",
                       )}
                     />
                   )}
@@ -215,7 +223,7 @@ const ColorPickerBase = forwardRef<HTMLDivElement, ColorPickerProps>(
         )}
       </Box>
     );
-  }
+  },
 );
 ColorPickerBase.displayName = "ColorPicker";
 export const ColorPicker = withLoading(ColorPickerBase);

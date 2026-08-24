@@ -14,7 +14,6 @@ import "./Radio.css";
 import { rnx } from "../../utils/rnx";
 import { withLoading } from "../../utils/withLoading";
 
-
 import { RnxColor } from "../../types";
 
 interface RadioGroupContextValue {
@@ -25,7 +24,7 @@ interface RadioGroupContextValue {
 }
 
 const RadioGroupContext = createContext<RadioGroupContextValue | undefined>(
-  undefined
+  undefined,
 );
 
 export interface RadioGroupProps extends Omit<
@@ -55,7 +54,7 @@ const RadioGroupComponent = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
       children,
       ...props
     },
-    ref
+    ref,
   ) => {
     const generatedName = useId();
     const name = customName || generatedName;
@@ -71,7 +70,7 @@ const RadioGroupComponent = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
         }
         onValueChange?.(newValue);
       },
-      [isControlled, onValueChange]
+      [isControlled, onValueChange],
     );
 
     return (
@@ -89,9 +88,9 @@ const RadioGroupComponent = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
           className={cn(
             "rnx-radio-group",
             variant && `rnx-radio-group--variant-${variant}`,
-            className
+            className,
           )}
-          {...rnx({ component: 'RadioGroup' })}
+          {...rnx({ component: "RadioGroup" })}
           {...props}
         >
           {children}
@@ -103,7 +102,7 @@ const RadioGroupComponent = forwardRef<HTMLFieldSetElement, RadioGroupProps>(
         )}
       </RadioGroupContext.Provider>
     );
-  }
+  },
 );
 RadioGroupComponent.displayName = "Radio.Group";
 
@@ -141,7 +140,7 @@ const RadioBase = forwardRef<HTMLInputElement, RadioProps>(
       name: _name,
       ...props
     },
-    ref
+    ref,
   ) => {
     const context = useContext(RadioGroupContext);
     const generatedId = useId();
@@ -163,11 +162,17 @@ const RadioBase = forwardRef<HTMLInputElement, RadioProps>(
         className={cn(
           "rnx-radio-wrapper",
           `rnx-radio-wrapper--variant-${variant}`,
-          className
+          className,
         )}
         {...rnx({
           component: "Radio",
-          state: props.disabled ? "disabled" : error ? "error" : isChecked ? "checked" : "default",
+          state: props.disabled
+            ? "disabled"
+            : error
+              ? "error"
+              : isChecked
+                ? "checked"
+                : "default",
         })}
       >
         <Box className="rnx-radio-container">
@@ -183,9 +188,13 @@ const RadioBase = forwardRef<HTMLInputElement, RadioProps>(
                 onChange: handleChange,
                 className: "rnx-radio-input",
                 "aria-invalid": !!error,
-                "aria-describedby": error ? `${id}-error` : undefined,
+                "aria-describedby": error
+                  ? `${id}-error`
+                  : description
+                    ? `${id}-desc`
+                    : undefined,
               },
-              props
+              props,
             )}
           />
           <Box
@@ -193,7 +202,7 @@ const RadioBase = forwardRef<HTMLInputElement, RadioProps>(
               "rnx-radio-box",
               `rnx-radio-box--${size}`,
               `rnx-radio-box--${effectiveColor}`,
-              error && "rnx-radio-box--error"
+              error && "rnx-radio-box--error",
             )}
           >
             <Box className="rnx-radio-indicator" />
@@ -207,7 +216,11 @@ const RadioBase = forwardRef<HTMLInputElement, RadioProps>(
               </Label>
             )}
             {description && (
-              <Box as="span" id={`${id}-desc`} className="rnx-radio-description">
+              <Box
+                as="span"
+                id={`${id}-desc`}
+                className="rnx-radio-description"
+              >
                 {description}
               </Box>
             )}
@@ -224,7 +237,7 @@ const RadioBase = forwardRef<HTMLInputElement, RadioProps>(
         )}
       </Box>
     );
-  }
+  },
 );
 
 RadioBase.displayName = "Radio";

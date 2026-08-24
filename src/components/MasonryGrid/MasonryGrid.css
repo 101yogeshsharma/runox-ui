@@ -22,16 +22,16 @@
   }
 
   .rnx-masonry-grid--gap-sm {
-    column-gap: calc(0.5rem * var(--rnx-space-scale, 1));
+    column-gap: var(--space-2);
   }
   .rnx-masonry-grid--gap-md {
-    column-gap: calc(1rem * var(--rnx-space-scale, 1));
+    column-gap: var(--space-4);
   }
   .rnx-masonry-grid--gap-lg {
-    column-gap: calc(1.5rem * var(--rnx-space-scale, 1));
+    column-gap: var(--space-6);
   }
   .rnx-masonry-grid--gap-xl {
-    column-gap: calc(2rem * var(--rnx-space-scale, 1));
+    column-gap: var(--space-8);
   }
 
   .rnx-masonry-item {
@@ -39,16 +39,15 @@
   }
 
   .rnx-masonry-grid--gap-sm .rnx-masonry-item {
-    margin-bottom: calc(0.5rem * var(--rnx-space-scale, 1));
+    margin-bottom: var(--space-2);
   }
   .rnx-masonry-grid--gap-md .rnx-masonry-item {
-    margin-bottom: calc(1rem * var(--rnx-space-scale, 1));
+    margin-bottom: var(--space-4);
   }
   .rnx-masonry-grid--gap-lg .rnx-masonry-item {
-    margin-bottom: calc(1.5rem * var(--rnx-space-scale, 1));
+    margin-bottom: var(--space-6);
   }
   .rnx-masonry-grid--gap-xl .rnx-masonry-item {
-    margin-bottom: calc(2rem * var(--rnx-space-scale, 1));
+    margin-bottom: var(--space-8);
   }
 }
-

@@ -28,7 +28,7 @@ const ResizablePanelGroup = React.forwardRef<
         className={cn(
           "flex h-full w-full",
           direction === "vertical" ? "flex-col" : "flex-row",
-          className
+          className,
         )}
         data-panel-group-direction={direction}
         {...props}
@@ -48,12 +48,15 @@ const ResizablePanel = React.forwardRef<
 >(
   (
     { className, defaultSize, minSize = 0, maxSize = 100, style, ...props },
-    ref
+    ref,
   ) => {
     return (
       <Box
         ref={ref}
-        className={cn("relative flex", className)}
+        className={cn(
+          "relative flex overflow-hidden rounded-[var(--radius)] border border-border bg-card",
+          className,
+        )}
         style={
           {
             flexGrow: `var(--panel-flex-grow, ${defaultSize !== undefined ? defaultSize : 1})`,
@@ -71,7 +74,7 @@ const ResizablePanel = React.forwardRef<
         {...props}
       />
     );
-  }
+  },
 );
 ResizablePanel.displayName = "ResizablePanel";
 
@@ -91,7 +94,7 @@ const ResizableHandle = React.forwardRef<
         (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
       }
     },
-    [ref]
+    [ref],
   );
 
   useEffect(() => {
@@ -171,12 +174,12 @@ const ResizableHandle = React.forwardRef<
 
       const group = handle.parentElement;
       const allPanels = Array.from(
-        group?.querySelectorAll("[data-resizable-panel]") || []
+        group?.querySelectorAll("[data-resizable-panel]") || [],
       );
       const totalGroupFlex = allPanels.reduce(
         (sum, p) =>
           sum + (parseFloat(getComputedStyle(p as HTMLElement).flexGrow) || 0),
-        0
+        0,
       );
 
       const prevMin =
@@ -278,10 +281,7 @@ const ResizableHandle = React.forwardRef<
       aria-valuemin={0}
       aria-valuemax={100}
       onKeyDown={handleKeyDown}
-      className={cn(
-        "rnx-resizable-handle",
-        className
-      )}
+      className={cn("rnx-resizable-handle", className)}
       data-panel-group-direction={direction}
       {...props}
     >

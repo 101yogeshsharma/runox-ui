@@ -15,23 +15,59 @@
   }
 
   .rnx-sortable-item--indicator-top {
-    border-top-width: 2px;
-    border-top-color: var(--primary);
+    border-top: 2px solid var(--primary);
   }
 
   .rnx-sortable-item--indicator-bottom {
-    border-bottom-width: 2px;
-    border-bottom-color: var(--primary);
+    border-bottom: 2px solid var(--primary);
   }
 
   .rnx-sortable-item--indicator-left {
-    border-left-width: 2px;
-    border-left-color: var(--primary);
+    border-left: 2px solid var(--primary);
   }
 
   .rnx-sortable-item--indicator-right {
-    border-right-width: 2px;
-    border-right-color: var(--primary);
+    border-right: 2px solid var(--primary);
+  }
+
+  .rnx-sortable-item--indicator-top::before,
+  .rnx-sortable-item--indicator-bottom::before {
+    content: "";
+    position: absolute;
+    left: -4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--primary);
+    z-index: var(--z-component);
+  }
+
+  .rnx-sortable-item--indicator-top::before {
+    top: -5px;
+  }
+
+  .rnx-sortable-item--indicator-bottom::before {
+    bottom: -5px;
+  }
+
+  .rnx-sortable-item--indicator-left::before,
+  .rnx-sortable-item--indicator-right::before {
+    content: "";
+    position: absolute;
+    top: -4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--primary);
+    z-index: var(--z-component);
+  }
+
+  .rnx-sortable-item--indicator-left::before {
+    left: -5px;
+  }
+
+  .rnx-sortable-item--indicator-right::before {
+    right: -5px;
   }
 
   .rnx-sortable-drag-handle {

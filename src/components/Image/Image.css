@@ -31,14 +31,16 @@
     background-color: var(--muted);
     color: var(--muted-foreground);
     text-align: center;
-    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-sm);
   }
 
   .rnx-image {
     height: 100%;
     width: 100%;
     object-fit: cover;
-    transition: opacity 300ms ease, transform 300ms ease;
+    transition:
+      opacity 300ms ease,
+      transform 300ms ease;
   }
 
   /* Zoom hover effect */
@@ -49,4 +51,3 @@
     transform: scale(1.05);
   }
 }
-

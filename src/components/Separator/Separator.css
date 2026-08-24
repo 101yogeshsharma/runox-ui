@@ -47,4 +47,20 @@
   .rnx-separator--color-muted {
     background-color: var(--muted);
   }
+  .rnx-separator--color-default {
+    background-color: var(--muted-foreground);
+  }
+  .rnx-separator--color-destructive,
+  .rnx-separator--color-danger {
+    background-color: var(--destructive);
+  }
+  .rnx-separator--color-success {
+    background-color: var(--success);
+  }
+  .rnx-separator--color-warning {
+    background-color: var(--warning);
+  }
+  .rnx-separator--color-info {
+    background-color: var(--info);
+  }
 }

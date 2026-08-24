@@ -67,9 +67,8 @@
 
   /* Glass */
   .rnx-card--variant-glass {
-    background-color: color-mix(in srgb, var(--card) 40%, transparent);
+    background-color: var(--glass-bg);
     backdrop-filter: blur(var(--glass-blur, 24px));
-    -webkit-backdrop-filter: blur(var(--glass-blur, 24px));
     border-color: var(--border);
     box-shadow: var(--shadow-md);
   }
@@ -83,13 +82,13 @@
 
   /* === Sizes === */
   .rnx-card--size-sm {
-    padding: calc(1rem * var(--rnx-space-scale, 1));
+    padding: var(--space-4);
   }
   .rnx-card--size-md {
-    padding: calc(1.5rem * var(--rnx-space-scale, 1));
+    padding: var(--space-6);
   }
   .rnx-card--size-lg {
-    padding: calc(2rem * var(--rnx-space-scale, 1));
+    padding: var(--space-8);
   }
 
   /* === Shapes === */
@@ -115,8 +114,8 @@
     z-index: var(--z-component);
     display: flex;
     flex-direction: column;
-    gap: calc(0.5rem * var(--rnx-space-scale, 1));
-    margin-bottom: calc(1rem * var(--rnx-space-scale, 1));
+    gap: var(--space-2);
+    margin-bottom: var(--space-4);
     border-top-left-radius: inherit;
     border-top-right-radius: inherit;
   }
@@ -127,14 +126,14 @@
     flex: 1 1 0%;
     display: flex;
     flex-direction: column;
-    gap: calc(1rem * var(--rnx-space-scale, 1));
+    gap: var(--space-4);
   }
 
   .rnx-card-footer {
     position: relative;
     z-index: var(--z-component);
-    margin-top: calc(1.5rem * var(--rnx-space-scale, 1));
-    padding-top: calc(1.5rem * var(--rnx-space-scale, 1));
+    margin-top: var(--space-6);
+    padding-top: var(--space-6);
     border-top: 1px solid var(--border);
     display: flex;
     align-items: center;
@@ -143,7 +142,7 @@
   }
 
   .rnx-card-title {
-    font-size: calc(1.125rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-lg);
     font-weight: 600;
     line-height: 1;
     letter-spacing: -0.015em;
@@ -151,7 +150,7 @@
   }
 
   .rnx-card-description {
-    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+    font-size: var(--text-sm);
     color: var(--muted-foreground);
     line-height: 1.5;
   }
@@ -162,7 +161,7 @@
     flex: 1 1 0%;
     display: flex;
     flex-direction: column;
-    gap: calc(1rem * var(--rnx-space-scale, 1));
+    gap: var(--space-4);
     padding-top: 0;
   }
 }

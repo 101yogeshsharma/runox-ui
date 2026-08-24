@@ -25,16 +25,9 @@ export type TextWeight = "normal" | "medium" | "semibold" | "bold";
 export type TextAlign = "left" | "center" | "right";
 
 export type TextTracking =
-  | "tighter"
-  | "tight"
-  | "normal"
-  | "wide"
-  | "wider"
-  | "widest";
+  "tighter" | "tight" | "normal" | "wide" | "wider" | "widest";
 
-import type {
-  PolymorphicComponentPropsWithRef,
-} from "../../utils/types";
+import type { PolymorphicComponentPropsWithRef } from "../../utils/types";
 
 /**
  * Props for the Text component.
@@ -60,70 +53,81 @@ export type TextProps<C extends React.ElementType> =
   PolymorphicComponentPropsWithRef<C, TextBaseProps>;
 
 type TextComponent = <C extends React.ElementType = "p">(
-  props: TextProps<C>
+  props: TextProps<C>,
 ) => React.ReactElement | null;
 
 const variantStyles: Record<TextVariant, React.CSSProperties> = {
   h1: {
-    fontSize: "var(--fontSize-4xl-0, 2.25rem)",
-    lineHeight: "var(--fontSize-4xl-1-lineHeight, 2.5rem)",
+    fontSize: "calc(var(--fontSize-4xl-0, 2.25rem) * var(--rnx-text-scale, 1))",
+    lineHeight:
+      "calc(var(--fontSize-4xl-1-lineHeight, 2.5rem) * var(--rnx-text-scale, 1))",
     fontFamily: "var(--font-heading)",
     fontWeight: "var(--fontWeight-medium, 500)",
     letterSpacing: "var(--letterSpacing-tight, -0.02em)",
   },
   h2: {
-    fontSize: "var(--fontSize-2xl-0, 1.5rem)",
-    lineHeight: "var(--fontSize-2xl-1-lineHeight, 2rem)",
+    fontSize: "calc(var(--fontSize-2xl-0, 1.5rem) * var(--rnx-text-scale, 1))",
+    lineHeight:
+      "calc(var(--fontSize-2xl-1-lineHeight, 2rem) * var(--rnx-text-scale, 1))",
     fontFamily: "var(--font-heading)",
     fontWeight: "var(--fontWeight-medium, 500)",
     letterSpacing: "var(--letterSpacing-tight, -0.02em)",
   },
   h3: {
-    fontSize: "var(--fontSize-lg-0, 1.1rem)",
-    lineHeight: "var(--fontSize-lg-1-lineHeight, 1.75rem)",
+    fontSize: "calc(var(--fontSize-lg-0, 1.125rem) * var(--rnx-text-scale, 1))",
+    lineHeight:
+      "calc(var(--fontSize-lg-1-lineHeight, 1.75rem) * var(--rnx-text-scale, 1))",
     fontFamily: "var(--font-heading)",
     fontWeight: "var(--fontWeight-medium, 500)",
     letterSpacing: "var(--letterSpacing-normal, 0em)",
   },
   h4: {
-    fontSize: "var(--fontSize-md-0, 1rem)",
-    lineHeight: "var(--fontSize-md-1-lineHeight, 1.5rem)",
+    fontSize: "calc(var(--fontSize-md-0, 1rem) * var(--rnx-text-scale, 1))",
+    lineHeight:
+      "calc(var(--fontSize-md-1-lineHeight, 1.5rem) * var(--rnx-text-scale, 1))",
     fontFamily: "var(--font-heading)",
     fontWeight: "var(--fontWeight-medium, 500)",
     letterSpacing: "var(--letterSpacing-normal, 0em)",
   },
   body: {
-    fontSize: "var(--fontSize-base-0, 0.95rem)",
-    lineHeight: "var(--fontSize-base-1-lineHeight, 1.6rem)",
+    fontSize: "calc(var(--fontSize-base-0, 1rem) * var(--rnx-text-scale, 1))",
+    lineHeight:
+      "calc(var(--fontSize-base-1-lineHeight, 1.6rem) * var(--rnx-text-scale, 1))",
     fontFamily: "var(--font-sans)",
     fontWeight: "var(--fontWeight-normal, 400)",
     letterSpacing: "var(--letterSpacing-normal, 0em)",
   },
   "body-sm": {
-    fontSize: "var(--fontSize-sm-0, 0.85rem)",
-    lineHeight: "var(--fontSize-sm-1-lineHeight, 1.25rem)",
+    fontSize: "calc(var(--fontSize-sm-0, 0.875rem) * var(--rnx-text-scale, 1))",
+    lineHeight:
+      "calc(var(--fontSize-sm-1-lineHeight, 1.25rem) * var(--rnx-text-scale, 1))",
     fontFamily: "var(--font-sans)",
     fontWeight: "var(--fontWeight-normal, 400)",
     letterSpacing: "var(--letterSpacing-normal, 0em)",
   },
   caption: {
-    fontSize: "var(--fontSize-xs-0, 0.75rem)",
-    lineHeight: "var(--fontSize-xs-1-lineHeight, 1rem)",
+    fontSize: "calc(var(--fontSize-xs-0, 0.75rem) * var(--rnx-text-scale, 1))",
+    lineHeight:
+      "calc(var(--fontSize-xs-1-lineHeight, 1rem) * var(--rnx-text-scale, 1))",
     fontFamily: "var(--font-sans)",
     fontWeight: "var(--fontWeight-normal, 400)",
     letterSpacing: "var(--letterSpacing-normal, 0em)",
   },
   overline: {
-    fontSize: "var(--fontSize-2xs-0, 0.625rem)",
-    lineHeight: "var(--fontSize-2xs-1-lineHeight, 0.875rem)",
+    fontSize:
+      "calc(var(--fontSize-2xs-0, 0.625rem) * var(--rnx-text-scale, 1))",
+    lineHeight:
+      "calc(var(--fontSize-2xs-1-lineHeight, 0.875rem) * var(--rnx-text-scale, 1))",
     fontFamily: "var(--font-sans)",
     fontWeight: "var(--fontWeight-bold, 700)",
     letterSpacing: "var(--letterSpacing-widest, 0.15em)",
     textTransform: "uppercase",
   },
   code: {
-    fontSize: "var(--fontSize-sm-0, 0.8125rem)",
-    lineHeight: "var(--fontSize-sm-1-lineHeight, 1.25rem)",
+    fontSize:
+      "calc(var(--fontSize-sm-0, 0.8125rem) * var(--rnx-text-scale, 1))",
+    lineHeight:
+      "calc(var(--fontSize-sm-1-lineHeight, 1.25rem) * var(--rnx-text-scale, 1))",
     fontFamily: "var(--font-mono)",
     fontWeight: "var(--fontWeight-normal, 400)",
     letterSpacing: "var(--letterSpacing-normal, 0em)",
@@ -189,34 +193,52 @@ const TextBase = React.forwardRef(
     const variant = explicitVariant || inferVariant(as);
     const Component = as || defaultElement[variant];
 
-    const combinedStyles = React.useMemo(() => ({
-      "--rnx-text-fs": variantStyles[variant].fontSize,
-      "--rnx-text-lh": variantStyles[variant].lineHeight,
-      "--rnx-text-ff": variantStyles[variant].fontFamily,
-      "--rnx-text-fw": weight
-        ? `var(--fontWeight-${weight})`
-        : variantStyles[variant].fontWeight,
-      "--rnx-text-ls": variantStyles[variant].letterSpacing,
-      "--rnx-text-tt": variantStyles[variant].textTransform,
-      "--rnx-text-color": gradient ? "transparent" : muted ? "var(--muted-foreground)" : colorMap[color],
-      "--rnx-text-align": align || "inherit",
-      ...(truncate
-        ? {
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: maxLines ? "normal" : "nowrap",
-          }
-        : {}),
-      ...(maxLines
-        ? {
-            display: "-webkit-box",
-            WebkitLineClamp: maxLines,
-            WebkitBoxOrient: "vertical",
-            overflow: "hidden",
-          }
-        : {}),
-      ...style,
-    } as React.CSSProperties), [variant, weight, gradient, muted, color, align, truncate, maxLines, style]);
+    const combinedStyles = React.useMemo(
+      () =>
+        ({
+          "--rnx-text-fs": variantStyles[variant].fontSize,
+          "--rnx-text-lh": variantStyles[variant].lineHeight,
+          "--rnx-text-ff": variantStyles[variant].fontFamily,
+          "--rnx-text-fw": weight
+            ? `var(--fontWeight-${weight})`
+            : variantStyles[variant].fontWeight,
+          "--rnx-text-ls": variantStyles[variant].letterSpacing,
+          "--rnx-text-tt": variantStyles[variant].textTransform,
+          "--rnx-text-color": gradient
+            ? "transparent"
+            : muted
+              ? "var(--muted-foreground)"
+              : colorMap[color],
+          "--rnx-text-align": align || "inherit",
+          ...(truncate
+            ? {
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: maxLines ? "normal" : "nowrap",
+              }
+            : {}),
+          ...(maxLines
+            ? {
+                display: "-webkit-box",
+                WebkitLineClamp: maxLines,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
+              }
+            : {}),
+          ...style,
+        }) as React.CSSProperties,
+      [
+        variant,
+        weight,
+        gradient,
+        muted,
+        color,
+        align,
+        truncate,
+        maxLines,
+        style,
+      ],
+    );
 
     return (
       <Component
@@ -231,7 +253,7 @@ const TextBase = React.forwardRef(
           italic && "rnx-text--italic",
           underline && "rnx-text--underline",
           strikethrough && "rnx-text--strikethrough",
-          className
+          className,
         )}
         style={combinedStyles}
         {...rest}
@@ -239,7 +261,7 @@ const TextBase = React.forwardRef(
         {children}
       </Component>
     );
-  }
+  },
 );
 
 TextBase.displayName = "Text";

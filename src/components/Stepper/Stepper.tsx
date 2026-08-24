@@ -7,7 +7,6 @@ import "./Stepper.css";
 import { withLoading } from "../../utils/withLoading";
 import { rnx } from "../../utils/rnx";
 
-
 export interface Step {
   title: string;
   description?: string;
@@ -36,7 +35,7 @@ const StepperBase = forwardRef<HTMLDivElement, StepperProps>(
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     const isVertical = orientation === "vertical";
 
@@ -50,32 +49,38 @@ const StepperBase = forwardRef<HTMLDivElement, StepperProps>(
           isVertical ? "rnx-stepper--vertical" : "rnx-stepper--horizontal",
           `rnx-stepper--size-${size}`,
           variant && variant !== "circles" && `rnx-stepper--variant-${variant}`,
-          className
+          className,
         )}
-        {...rnx({ component: 'Stepper' })}
+        {...rnx({ component: "Stepper" })}
         {...props}
       >
         {steps.map((step, index) => {
           const isError = step.status === "error";
-          const isCompleted = step.status ? step.status === "completed" : index < currentStep;
-          const isActive = step.status ? step.status === "active" : index === currentStep;
+          const isCompleted = step.status
+            ? step.status === "completed"
+            : index < currentStep;
+          const isActive = step.status
+            ? step.status === "active"
+            : index === currentStep;
           const isLast = index === steps.length - 1;
 
           return (
             <Box
               key={index}
               role="listitem"
-              aria-current={isActive ? 'step' : undefined}
+              aria-current={isActive ? "step" : undefined}
               className={cn(
                 "relative flex",
-                isVertical ? "flex-row" : "flex-1 flex-col items-center"
+                isVertical ? "flex-row" : "flex-1 flex-col items-center",
               )}
             >
               {/* Indicator column: circle + connecting line */}
               <Box
                 className={cn(
                   "relative z-10 flex",
-                  isVertical ? "flex-col items-center" : "flex-row items-center w-full"
+                  isVertical
+                    ? "flex-col items-center"
+                    : "flex-row items-center w-full",
                 )}
               >
                 <Box
@@ -87,14 +92,20 @@ const StepperBase = forwardRef<HTMLDivElement, StepperProps>(
                         ? "rnx-stepper-indicator--completed"
                         : isActive
                           ? "rnx-stepper-indicator--active"
-                          : "rnx-stepper-indicator--inactive"
+                          : "rnx-stepper-indicator--inactive",
                   )}
                 >
                   {isError ? (
-                    <XIcon className="rnx-stepper-indicator-icon" strokeWidth={3} />
+                    <XIcon
+                      className="rnx-stepper-indicator-icon"
+                      strokeWidth={3}
+                    />
                   ) : isCompleted ? (
-                    <Check className="rnx-stepper-indicator-icon" strokeWidth={3} />
-                  ) : (
+                    <Check
+                      className="rnx-stepper-indicator-icon"
+                      strokeWidth={3}
+                    />
+                  ) : variant === "dots" ? null : (
                     <Box as="span">{index + 1}</Box>
                   )}
                 </Box>
@@ -104,7 +115,7 @@ const StepperBase = forwardRef<HTMLDivElement, StepperProps>(
                       "rnx-stepper-separator",
                       isVertical
                         ? "rnx-stepper-separator--vertical"
-                        : "rnx-stepper-separator--horizontal"
+                        : "rnx-stepper-separator--horizontal",
                     )}
                   >
                     <Box
@@ -114,8 +125,12 @@ const StepperBase = forwardRef<HTMLDivElement, StepperProps>(
                           ? "rnx-stepper-separator-fill--vertical"
                           : "rnx-stepper-separator-fill--horizontal",
                         isVertical
-                          ? (isCompleted ? "h-full" : "h-0")
-                          : (isCompleted ? "w-full" : "w-0")
+                          ? isCompleted
+                            ? "h-full"
+                            : "h-0"
+                          : isCompleted
+                            ? "w-full"
+                            : "w-0",
                       )}
                     />
                   </Box>
@@ -130,33 +145,29 @@ const StepperBase = forwardRef<HTMLDivElement, StepperProps>(
                       "rnx-stepper-title",
                       isActive || isCompleted
                         ? "rnx-stepper-title--active"
-                        : "rnx-stepper-title--inactive"
+                        : "rnx-stepper-title--inactive",
                     )}
                   >
                     {step.title}
                   </Box>
                   {step.description && (
-                    <Box className="rnx-stepper-desc">
-                      {step.description}
-                    </Box>
+                    <Box className="rnx-stepper-desc">{step.description}</Box>
                   )}
                 </Box>
               ) : (
-                <Box className="mt-2 flex flex-col items-center text-center">
+                <Box className="w-full mt-2 flex flex-col items-center text-center">
                   <Box
                     className={cn(
                       "rnx-stepper-title",
                       isActive || isCompleted
                         ? "rnx-stepper-title--active"
-                        : "rnx-stepper-title--inactive"
+                        : "rnx-stepper-title--inactive",
                     )}
                   >
                     {step.title}
                   </Box>
                   {step.description && (
-                    <Box className="rnx-stepper-desc">
-                      {step.description}
-                    </Box>
+                    <Box className="rnx-stepper-desc">{step.description}</Box>
                   )}
                 </Box>
               )}
@@ -165,7 +176,7 @@ const StepperBase = forwardRef<HTMLDivElement, StepperProps>(
         })}
       </Box>
     );
-  }
+  },
 );
 
 StepperBase.displayName = "Stepper";

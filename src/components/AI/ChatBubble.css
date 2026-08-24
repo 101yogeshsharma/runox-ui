@@ -1,10 +1,10 @@
-﻿@layer components {
+@layer components {
   .rnx-chat-bubble {
     display: flex;
     width: 100%;
-    gap: calc(1rem * var(--rnx-space-scale, 1));
-    padding-top: calc(1rem * var(--rnx-space-scale, 1));
-    padding-bottom: calc(1rem * var(--rnx-space-scale, 1));
+    gap: var(--space-4);
+    padding-top: var(--space-4);
+    padding-bottom: var(--space-4);
   }
 
   .rnx-chat-bubble--user {
@@ -34,10 +34,10 @@
     display: flex;
     max-width: 80%;
     flex-direction: column;
-    gap: calc(0.5rem * var(--rnx-space-scale, 1));
+    gap: var(--space-2);
     border-radius: var(--radius);
-    padding: calc(0.75rem * var(--rnx-space-scale, 1)) calc(1rem * var(--rnx-space-scale, 1));
-    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
+    padding: var(--space-3) var(--space-4);
+    font-size: var(--text-sm);
   }
 
   .rnx-chat-bubble__content--user {
@@ -53,13 +53,13 @@
 
   /* Variants */
   .rnx-chat-bubble--variant-glass .rnx-chat-bubble__content {
-    background-color: color-mix(in srgb, var(--card) 60%, transparent);
-    backdrop-filter: blur(calc(12px * var(--rnx-space-scale, 1)));
+    background-color: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur, 16px));
     border: 1px solid color-mix(in srgb, var(--border) 40%, transparent);
   }
-  .rnx-chat-bubble--variant-glass.rnx-chat-bubble--user .rnx-chat-bubble__content {
+  .rnx-chat-bubble--variant-glass.rnx-chat-bubble--user
+    .rnx-chat-bubble__content {
     background-color: color-mix(in srgb, var(--primary) 70%, transparent);
     color: var(--primary-foreground);
   }
 }
-

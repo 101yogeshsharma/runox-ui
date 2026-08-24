@@ -12,8 +12,8 @@
 
   /* WebKit (Chrome, Edge, Safari) */
   .rnx-scroll-area::-webkit-scrollbar {
-    width: calc(12px * var(--rnx-space-scale, 1));
-    height: calc(12px * var(--rnx-space-scale, 1));
+    width: var(--scrollbar-min-length);
+    height: var(--scrollbar-min-length);
   }
 
   .rnx-scroll-area::-webkit-scrollbar-track {
@@ -38,6 +38,8 @@
   }
 
   .rnx-scroll-area-container {
+    background-color: var(--card);
+    border: 1px solid var(--border);
     border-radius: var(--radius);
   }
 

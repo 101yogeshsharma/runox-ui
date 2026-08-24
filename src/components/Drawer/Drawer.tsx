@@ -84,6 +84,7 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
         requestAnimationFrame(() => setRenderState("open"));
       } else {
         setRenderState("closed");
+        setInternalExpanded(false);
         const timer = setTimeout(() => {
           setShouldRender(false);
         }, 300);
@@ -277,7 +278,7 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
                     : "Expand"}
                 </Button>
               </Box>
-            ) : isDraggable && isVertical ? (
+            ) : isDraggable && position === "bottom" ? (
               <Box className="rnx-drawer-collapse-btn-wrapper">
                 <Button
                   variant="ghost"
