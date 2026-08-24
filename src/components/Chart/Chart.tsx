@@ -60,11 +60,7 @@ const CustomTooltip = ({
   if (active && payload && payload.length) {
     return (
       <Box className="rnx-chart-tooltip">
-        <Text
-          as="p"
-          variant="body"
-          className="rnx-chart-tooltip-title"
-        >
+        <Text as="p" variant="body" className="rnx-chart-tooltip-title">
           {label}
         </Text>
         {payload.map((p, i: number) => (
@@ -98,7 +94,10 @@ export const LineChart = ({
   valueFormatter,
 }: ChartProps) => {
   return (
-    <Box {...rnx({ component: 'Chart' })} className={cn("h-72 w-full", className)}>
+    <Box
+      {...rnx({ component: "Chart" })}
+      className={cn("h-72 w-full", className)}
+    >
       <ResponsiveContainer width="100%" height="100%">
         <RechartsLineChart
           data={data}
@@ -152,7 +151,10 @@ export const BarChart = ({
   valueFormatter,
 }: ChartProps) => {
   return (
-    <Box {...rnx({ component: 'Chart' })} className={cn("h-72 w-full", className)}>
+    <Box
+      {...rnx({ component: "Chart" })}
+      className={cn("h-72 w-full", className)}
+    >
       <ResponsiveContainer width="100%" height="100%">
         <RechartsBarChart
           data={data}
@@ -205,7 +207,10 @@ export const AreaChart = ({
 }: ChartProps) => {
   const chartId = React.useId().replace(/:/g, "");
   return (
-    <Box {...rnx({ component: 'Chart' })} className={cn("h-72 w-full", className)}>
+    <Box
+      {...rnx({ component: "Chart" })}
+      className={cn("h-72 w-full", className)}
+    >
       <ResponsiveContainer width="100%" height="100%">
         <RechartsAreaChart
           data={data}
@@ -322,7 +327,10 @@ export const PieChart = ({
   innerRadius = 0,
 }: PieChartProps) => {
   return (
-    <Box {...rnx({ component: 'Chart' })} className={cn("h-72 w-full", className)}>
+    <Box
+      {...rnx({ component: "Chart" })}
+      className={cn("h-72 w-full", className)}
+    >
       <ResponsiveContainer width="100%" height="100%">
         <RechartsPieChart>
           <Pie
@@ -349,7 +357,7 @@ export const PieChart = ({
             <Legend
               iconType="circle"
               iconSize={8}
-              formatter={(value) => (
+              formatter={(value: any) => (
                 <Box as="span" className="text-muted-foreground text-xs">
                   {value}
                 </Box>
@@ -369,5 +377,5 @@ export const Chart = Object.assign(
     Bar: BarChart,
     Area: AreaChart,
     Pie: PieChart,
-  }
+  },
 );

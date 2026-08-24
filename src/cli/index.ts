@@ -30,15 +30,21 @@ interface RegistryItem {
 
 type Registry = Record<string, RegistryItem>;
 
-function httpGet(url: string): Promise<string> {
+function httpGet(url: string, maxRedirects = 5): Promise<string> {
   return new Promise((resolve, reject) => {
+    if (maxRedirects < 0) {
+      return reject(new Error(`Too many redirects when requesting ${url}`));
+    }
     https
       .get(url, (res) => {
         const status = res.statusCode ?? 0;
         if (status >= 300 && status < 400 && res.headers.location) {
           res.resume();
           return resolve(
-            httpGet(new URL(res.headers.location, url).toString()),
+            httpGet(
+              new URL(res.headers.location, url).toString(),
+              maxRedirects - 1,
+            ),
           );
         }
         if (status < 200 || status >= 300) {

@@ -32,22 +32,19 @@ function parseInline(text: string): React.ReactNode[] {
       parts.push(
         <strong key={match.index} className="rnx-markdown-viewer__strong">
           {match[2]}
-        </strong>
+        </strong>,
       );
     } else if (match[3]) {
       parts.push(
         <em key={match.index} className="rnx-markdown-viewer__em">
           {match[4]}
-        </em>
+        </em>,
       );
     } else if (match[5]) {
       parts.push(
-        <code
-          key={match.index}
-          className="rnx-markdown-viewer__inline-code"
-        >
+        <code key={match.index} className="rnx-markdown-viewer__inline-code">
           {match[6]}
-        </code>
+        </code>,
       );
     } else if (match[7]) {
       let href = match[9];
@@ -63,7 +60,7 @@ function parseInline(text: string): React.ReactNode[] {
           rel="noopener noreferrer"
         >
           {match[8]}
-        </a>
+        </a>,
       );
     }
     lastIndex = regex.lastIndex;
@@ -96,24 +93,24 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
       i++; // skip closing ```
       const code = codeLines.join("\n");
       nodes.push(
-        <Box
-          key={i}
-          className="rnx-markdown-viewer__code-block"
-        >
+        <Box key={i} className="rnx-markdown-viewer__code-block">
           <Highlight
             theme={themes.vsDark}
             code={code.trim()}
             language={lang as Language}
           >
-            {({ className, style, tokens, getLineProps, getTokenProps }) => (
+            {({
+              className,
+              style,
+              tokens,
+              getLineProps,
+              getTokenProps,
+            }: any) => (
               <pre
-                className={cn(
-                  className,
-                  "rnx-markdown-viewer__pre"
-                )}
+                className={cn(className, "rnx-markdown-viewer__pre")}
                 style={style}
               >
-                {tokens.map((lineTokens, li) => {
+                {tokens.map((lineTokens: any, li: number) => {
                   const { key: lineKey, ...lineProps } = getLineProps({
                     line: lineTokens,
                     key: li,
@@ -123,7 +120,7 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
                       key={(lineKey as string | number) ?? li}
                       {...lineProps}
                     >
-                      {lineTokens.map((token, ti) => {
+                      {lineTokens.map((token: any, ti: number) => {
                         const { key: tokenKey, ...tokenProps } = getTokenProps({
                           token,
                           key: ti,
@@ -142,7 +139,7 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
               </pre>
             )}
           </Highlight>
-        </Box>
+        </Box>,
       );
       continue;
     }
@@ -157,64 +154,45 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
 
     if (h1) {
       nodes.push(
-        <Text
-          as="h1"
-          key={i}
-          className="rnx-markdown-viewer__h1"
-        >
+        <Text as="h1" key={i} className="rnx-markdown-viewer__h1">
           {parseInline(h1[1])}
-        </Text>
+        </Text>,
       );
       i++;
       continue;
     }
     if (h2) {
       nodes.push(
-        <Text
-          as="h2"
-          key={i}
-          className="rnx-markdown-viewer__h2"
-        >
+        <Text as="h2" key={i} className="rnx-markdown-viewer__h2">
           {parseInline(h2[1])}
-        </Text>
+        </Text>,
       );
       i++;
       continue;
     }
     if (h3) {
       nodes.push(
-        <Text
-          as="h3"
-          key={i}
-          className="rnx-markdown-viewer__h3"
-        >
+        <Text as="h3" key={i} className="rnx-markdown-viewer__h3">
           {parseInline(h3[1])}
-        </Text>
+        </Text>,
       );
       i++;
       continue;
     }
     if (h4) {
       nodes.push(
-        <Text
-          as="h4"
-          key={i}
-          className="rnx-markdown-viewer__h4"
-        >
+        <Text as="h4" key={i} className="rnx-markdown-viewer__h4">
           {parseInline(h4[1])}
-        </Text>
+        </Text>,
       );
       i++;
       continue;
     }
     if (h5) {
       nodes.push(
-        <h5
-          key={i}
-          className="rnx-markdown-viewer__h5"
-        >
+        <h5 key={i} className="rnx-markdown-viewer__h5">
           {parseInline(h5[1])}
-        </h5>
+        </h5>,
       );
       i++;
       continue;
@@ -223,7 +201,7 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
       nodes.push(
         <h6 key={i} className="rnx-markdown-viewer__h6">
           {parseInline(h6[1])}
-        </h6>
+        </h6>,
       );
       i++;
       continue;
@@ -240,12 +218,9 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
     if (line.startsWith("> ")) {
       const content = line.slice(2);
       nodes.push(
-        <blockquote
-          key={i}
-          className="rnx-markdown-viewer__blockquote"
-        >
+        <blockquote key={i} className="rnx-markdown-viewer__blockquote">
           {parseInline(content)}
-        </blockquote>
+        </blockquote>,
       );
       i++;
       continue;
@@ -259,17 +234,13 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
         i++;
       }
       nodes.push(
-        <Box
-          as="ul"
-          key={i}
-          className="rnx-markdown-viewer__ul"
-        >
+        <Box as="ul" key={i} className="rnx-markdown-viewer__ul">
           {items.map((item, idx) => (
             <Box as="li" key={idx} className="leading-relaxed">
               {parseInline(item)}
             </Box>
           ))}
-        </Box>
+        </Box>,
       );
       continue;
     }
@@ -282,16 +253,13 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
         i++;
       }
       nodes.push(
-        <ol
-          key={i}
-          className="rnx-markdown-viewer__ol"
-        >
+        <ol key={i} className="rnx-markdown-viewer__ol">
           {items.map((item, idx) => (
             <Box as="li" key={idx} className="leading-relaxed">
               {parseInline(item)}
             </Box>
           ))}
-        </ol>
+        </ol>,
       );
       continue;
     }
@@ -309,42 +277,31 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
           lines[i]
             .split("|")
             .map((c) => c.trim())
-            .filter(Boolean)
+            .filter(Boolean),
         );
         i++;
       }
       nodes.push(
-        <Box
-          key={i}
-          className="rnx-markdown-viewer__table-container"
-        >
+        <Box key={i} className="rnx-markdown-viewer__table-container">
           <table className="rnx-markdown-viewer__table">
             <thead>
               <tr>
                 {headerCells.map((cell, ci) => (
-                  <th
-                    key={ci}
-                  >
-                    {parseInline(cell)}
-                  </th>
+                  <th key={ci}>{parseInline(cell)}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {rows.map((row, ri) => (
-                <tr
-                  key={ri}
-                >
+                <tr key={ri}>
                   {row.map((cell, ci) => (
-                    <td key={ci}>
-                      {parseInline(cell)}
-                    </td>
+                    <td key={ci}>{parseInline(cell)}</td>
                   ))}
                 </tr>
               ))}
             </tbody>
           </table>
-        </Box>
+        </Box>,
       );
       continue;
     }
@@ -375,7 +332,7 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
       nodes.push(
         <Text key={i} className="rnx-markdown-viewer__paragraph">
           {parseInline(paraLines.join(" "))}
-        </Text>
+        </Text>,
       );
     } else {
       i++;
@@ -387,7 +344,10 @@ function renderMarkdown(markdown: string): React.ReactNode[] {
 
 export function MarkdownViewer({ children, className }: MarkdownViewerProps) {
   return (
-    <Box {...rnx({ component: 'MarkdownViewer' })} className={cn("rnx-markdown-viewer", className)}>
+    <Box
+      {...rnx({ component: "MarkdownViewer" })}
+      className={cn("rnx-markdown-viewer", className)}
+    >
       {renderMarkdown(children)}
     </Box>
   );
