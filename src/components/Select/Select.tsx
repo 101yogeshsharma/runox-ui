@@ -231,8 +231,7 @@ export const SelectContent = React.forwardRef<
   useEffect(() => {
     if (!isOpen) return;
     const handleNavigation = (e: KeyboardEvent) => {
-      if (e.key !== "ArrowDown" && e.key !== "ArrowUp" && e.key !== "Enter")
-        return;
+      if (e.key !== "ArrowDown" && e.key !== "ArrowUp") return;
       e.preventDefault();
       const items = Array.from(
         contentRef.current?.querySelectorAll<HTMLElement>(
@@ -244,10 +243,6 @@ export const SelectContent = React.forwardRef<
       const currentIndex = items.findIndex(
         (item) => item === document.activeElement,
       );
-      if (e.key === "Enter") {
-        if (currentIndex !== -1) items[currentIndex].click();
-        return;
-      }
 
       const nextIndex =
         e.key === "ArrowDown"
@@ -257,7 +252,8 @@ export const SelectContent = React.forwardRef<
           : currentIndex > 0
             ? currentIndex - 1
             : items.length - 1;
-      items[nextIndex].focus();
+
+      items[nextIndex]?.focus();
     };
 
     document.addEventListener("keydown", handleNavigation);

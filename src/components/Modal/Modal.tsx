@@ -87,6 +87,9 @@ const ModalComponent = React.forwardRef<HTMLDivElement, ModalProps>(
         };
       } else {
         setMounted(false);
+        // Fallback in case the animationend event never fires
+        const timer = setTimeout(() => setShouldRender(false), 250);
+        return () => clearTimeout(timer);
       }
     }, [isOpen, registerModal, unregisterModal, modalId]);
 
