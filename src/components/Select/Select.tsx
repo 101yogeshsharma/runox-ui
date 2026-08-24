@@ -75,8 +75,8 @@ const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps>(
       prop: controlledValue,
       defaultProp: defaultValue,
       onChange: (val) => {
-        if (val !== undefined && onValueChange) {
-          onValueChange(val);
+        if (onValueChange) {
+          onValueChange(val ?? "");
         }
       },
     });
