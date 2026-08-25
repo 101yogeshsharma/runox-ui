@@ -10,13 +10,10 @@ import React, {
 } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "../../utils/cn";
+import { rnx } from "../../utils/rnx";
 import { Button, buttonVariants } from "../Button/Button";
 // Uses: Button
-import {
-  useClickOutside,
-  useFocusTrap,
-  useControllableState,
-} from "../../hooks";
+import { useFocusTrap, useControllableState } from "../../hooks";
 import { useScrollLock } from "../../hooks/useScrollLock";
 import { Text } from "../../atoms/Text";
 import { Box } from "../../atoms/Box";
@@ -27,11 +24,14 @@ const AlertDialogContext = createContext<{
   setIsOpen: (open: boolean) => void;
   titleId: string;
   descriptionId: string;
+  dismissible: boolean;
+  container?: HTMLElement;
 }>({
   isOpen: false,
   setIsOpen: () => {},
   titleId: "",
   descriptionId: "",
+  dismissible: false,
 });
 
 /**
@@ -42,33 +42,56 @@ export interface AlertDialogProps {
   defaultOpen?: boolean;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  /**
+   * Element to portal into. Defaults to document.body.
+   */
+  container?: HTMLElement;
+  /**
+   * Allow closing via Escape. Defaults to false per the WAI-ARIA alertdialog
+   * pattern (dismissal requires an explicit action).
+   */
+  dismissible?: boolean;
 }
 
-const AlertDialogComponent: React.FC<AlertDialogProps> = ({
-  children,
-  defaultOpen,
-  open,
-  onOpenChange,
-}) => {
-  const [isOpen, setIsOpen] = useControllableState({
-    prop: open,
-    defaultProp: defaultOpen || false,
-    onChange: onOpenChange,
-  });
+const AlertDialogComponent = React.forwardRef<HTMLDivElement, AlertDialogProps>(
+  (
+    {
+      children,
+      defaultOpen,
+      open,
+      onOpenChange,
+      dismissible = false,
+      container,
+    },
+    ref,
+  ) => {
+    const [isOpen, setIsOpen] = useControllableState({
+      prop: open,
+      defaultProp: defaultOpen || false,
+      onChange: onOpenChange,
+    });
 
-  const rawId = React.useId();
-  const idPrefix = `alert-${rawId.replace(/:/g, "")}`;
-  const titleId = `${idPrefix}-title`;
-  const descriptionId = `${idPrefix}-desc`;
+    const rawId = React.useId();
+    const idPrefix = `alert-${rawId.replace(/:/g, "")}`;
+    const titleId = `${idPrefix}-title`;
+    const descriptionId = `${idPrefix}-desc`;
 
-  return (
-    <AlertDialogContext.Provider
-      value={{ isOpen: !!isOpen, setIsOpen, titleId, descriptionId }}
-    >
-      {children}
-    </AlertDialogContext.Provider>
-  );
-};
+    return (
+      <AlertDialogContext.Provider
+        value={{
+          isOpen: !!isOpen,
+          setIsOpen,
+          titleId,
+          descriptionId,
+          dismissible,
+          container,
+        }}
+      >
+        <Box ref={ref}>{children}</Box>
+      </AlertDialogContext.Provider>
+    );
+  },
+);
 
 AlertDialogComponent.displayName = "AlertDialog";
 
@@ -79,7 +102,7 @@ export interface AlertDialogTriggerProps extends Omit<
   asChild?: boolean;
 }
 
-export const AlertDialogTrigger = forwardRef<
+const AlertDialogTrigger = forwardRef<
   HTMLButtonElement,
   AlertDialogTriggerProps
 >(({ children, onClick, asChild, className, ...props }, ref) => {
@@ -135,94 +158,101 @@ export const AlertDialogTrigger = forwardRef<
 AlertDialogTrigger.displayName = "AlertDialog.Trigger";
 
 export interface AlertDialogContentProps extends React.HTMLAttributes<HTMLDivElement> {
-  variant?: "solid" | "glass" | "destructive";
+  variant?: "solid" | "glass" | "danger";
   size?: "sm" | "md" | "lg";
 }
 
-export const AlertDialogContent = forwardRef<
-  HTMLDivElement,
-  AlertDialogContentProps
->(({ className, variant = "solid", size = "md", children, ...props }, ref) => {
-  const { isOpen, setIsOpen, titleId, descriptionId } =
-    useContext(AlertDialogContext);
-  const [mounted, setMounted] = useState(false);
-  const [shouldRender, setShouldRender] = useState(false);
-  const contentRef = useRef<HTMLDivElement>(null);
+const AlertDialogContent = forwardRef<HTMLDivElement, AlertDialogContentProps>(
+  ({ className, variant = "solid", size = "md", children, ...props }, ref) => {
+    const {
+      isOpen,
+      setIsOpen,
+      titleId,
+      descriptionId,
+      dismissible,
+      container,
+    } = useContext(AlertDialogContext);
+    const [mounted, setMounted] = useState(false);
+    const [shouldRender, setShouldRender] = useState(false);
+    const contentRef = useRef<HTMLDivElement>(null);
 
-  const mergedRef = (node: HTMLDivElement) => {
-    contentRef.current = node;
-    if (typeof ref === "function") ref(node);
-    else if (ref)
-      (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
-  };
+    const mergedRef = (node: HTMLDivElement) => {
+      contentRef.current = node;
+      if (typeof ref === "function") ref(node);
+      else if (ref)
+        (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
+    };
 
-  useClickOutside(contentRef, () => {
-    // AlertDialog should NOT close on outside click by default for accessibility,
-    // but to match Radix we can keep it or let user provide onCancel
-    // Actually, standard alert dialogs force user to click an action. Let's not close on outside click.
-  });
+    useFocusTrap(contentRef, isOpen && shouldRender);
+    useScrollLock(isOpen);
 
-  useFocusTrap(contentRef, isOpen && shouldRender);
-  useScrollLock(isOpen);
+    useEffect(() => {
+      const handleKeyDown = (e: KeyboardEvent) => {
+        // WAI-ARIA alertdialog: dismissal requires an explicit action. Escape
+        // only closes when the consumer explicitly opts in with `dismissible`.
+        if (e.key === "Escape" && dismissible && isOpen) {
+          setIsOpen(false);
+        }
+      };
+      document.addEventListener("keydown", handleKeyDown);
+      return () => document.removeEventListener("keydown", handleKeyDown);
+    }, [isOpen, setIsOpen, dismissible]);
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) {
-        setIsOpen(false);
+    useEffect(() => {
+      let timer: NodeJS.Timeout;
+      if (isOpen) {
+        setMounted(true);
+        setShouldRender(true);
+      } else {
+        setMounted(false);
+        timer = setTimeout(() => {
+          setShouldRender(false);
+        }, 200);
       }
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, setIsOpen]);
+      return () => {
+        if (timer) clearTimeout(timer);
+      };
+    }, [isOpen]);
 
-  useEffect(() => {
-    let timer: NodeJS.Timeout;
-    if (isOpen) {
-      setMounted(true);
-      setShouldRender(true);
-    } else {
-      setMounted(false);
-      timer = setTimeout(() => {
-        setShouldRender(false);
-      }, 200);
-    }
-    return () => {
-      if (timer) clearTimeout(timer);
-    };
-  }, [isOpen]);
+    if (!shouldRender || typeof document === "undefined") return null;
 
-  if (!shouldRender || typeof document === "undefined") return null;
-
-  return createPortal(
-    <Box
-      className="rnx-alert-dialog-overlay"
-      data-state={mounted ? "open" : "closed"}
-      role="alertdialog"
-      aria-modal="true"
-      aria-labelledby={titleId}
-      aria-describedby={descriptionId}
-    >
+    return createPortal(
       <Box
-        ref={mergedRef}
-        tabIndex={-1}
-        className={cn(
-          "rnx-alert-dialog-content",
-          `rnx-alert-dialog-content--variant-${variant}`,
-          `rnx-alert-dialog-content--${size}`,
-          className,
-        )}
+        className="rnx-alert-dialog-overlay"
         data-state={mounted ? "open" : "closed"}
-        {...props}
+        {...rnx({
+          component: "AlertDialog",
+          state: mounted ? "open" : "closed",
+          overlay: true,
+        })}
+        role="alertdialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        aria-describedby={descriptionId}
       >
-        {children}
-      </Box>
-    </Box>,
-    document.body,
-  );
-});
+        <Box
+          ref={mergedRef}
+          tabIndex={-1}
+          {...rnx({ component: "AlertDialogContent", variant })}
+          className={cn(
+            "rnx-alert-dialog-content",
+            `rnx-alert-dialog-content--variant-${variant}`,
+            `rnx-alert-dialog-content--size-${size}`,
+            className,
+          )}
+          data-state={mounted ? "open" : "closed"}
+          {...props}
+        >
+          {children}
+        </Box>
+      </Box>,
+      container ?? document.body,
+    );
+  },
+);
 AlertDialogContent.displayName = "AlertDialog.Content";
 
-export const AlertDialogHeader = ({
+const AlertDialogHeader = ({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
@@ -230,7 +260,7 @@ export const AlertDialogHeader = ({
 );
 AlertDialogHeader.displayName = "AlertDialog.Header";
 
-export const AlertDialogFooter = ({
+const AlertDialogFooter = ({
   className,
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
@@ -238,7 +268,7 @@ export const AlertDialogFooter = ({
 );
 AlertDialogFooter.displayName = "AlertDialog.Footer";
 
-export const AlertDialogTitle = forwardRef<
+const AlertDialogTitle = forwardRef<
   HTMLHeadingElement,
   Omit<React.HTMLAttributes<HTMLHeadingElement>, "color">
 >(({ className, ...props }, ref) => {
@@ -256,7 +286,7 @@ export const AlertDialogTitle = forwardRef<
 });
 AlertDialogTitle.displayName = "AlertDialog.Title";
 
-export const AlertDialogDescription = forwardRef<
+const AlertDialogDescription = forwardRef<
   HTMLParagraphElement,
   Omit<React.HTMLAttributes<HTMLParagraphElement>, "color">
 >(({ className, ...props }, ref) => {
@@ -281,63 +311,62 @@ export interface AlertDialogActionProps extends Omit<
   asChild?: boolean;
 }
 
-export const AlertDialogAction = forwardRef<
-  HTMLButtonElement,
-  AlertDialogActionProps
->(({ className, onClick, asChild, children, ...props }, ref) => {
-  const { setIsOpen } = useContext(AlertDialogContext);
+const AlertDialogAction = forwardRef<HTMLButtonElement, AlertDialogActionProps>(
+  ({ className, onClick, asChild, children, ...props }, ref) => {
+    const { setIsOpen } = useContext(AlertDialogContext);
 
-  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
-    setIsOpen(false);
-    onClick?.(e as React.MouseEvent<HTMLButtonElement>);
+    const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+      setIsOpen(false);
+      onClick?.(e as React.MouseEvent<HTMLButtonElement>);
+      if (asChild && React.isValidElement(children)) {
+        const child = children as React.ReactElement<{
+          onClick?: React.MouseEventHandler<HTMLElement>;
+        }>;
+        if (child.props.onClick) child.props.onClick(e);
+      }
+    };
+
     if (asChild && React.isValidElement(children)) {
       const child = children as React.ReactElement<{
         onClick?: React.MouseEventHandler<HTMLElement>;
+        className?: string;
       }>;
-      if (child.props.onClick) child.props.onClick(e);
+      return React.cloneElement(child, {
+        ...props,
+        className: cn(
+          buttonVariants({ variant: "solid", color: "primary" }),
+          "rnx-alert-dialog-action",
+          className,
+          child.props.className,
+        ),
+        ref: (node: HTMLButtonElement) => {
+          if (typeof ref === "function") ref(node);
+          else if (ref) ref.current = node;
+          const childRef = (
+            child as unknown as { ref: React.Ref<HTMLButtonElement> }
+          ).ref;
+          if (typeof childRef === "function") childRef(node);
+          else if (childRef)
+            (
+              childRef as React.MutableRefObject<HTMLButtonElement | null>
+            ).current = node;
+        },
+        onClick: handleClick,
+      } as React.HTMLAttributes<HTMLElement>);
     }
-  };
 
-  if (asChild && React.isValidElement(children)) {
-    const child = children as React.ReactElement<{
-      onClick?: React.MouseEventHandler<HTMLElement>;
-      className?: string;
-    }>;
-    return React.cloneElement(child, {
-      ...props,
-      className: cn(
-        buttonVariants({ variant: "solid", color: "primary" }),
-        "rnx-alert-dialog-action",
-        className,
-        child.props.className,
-      ),
-      ref: (node: HTMLButtonElement) => {
-        if (typeof ref === "function") ref(node);
-        else if (ref) ref.current = node;
-        const childRef = (
-          child as unknown as { ref: React.Ref<HTMLButtonElement> }
-        ).ref;
-        if (typeof childRef === "function") childRef(node);
-        else if (childRef)
-          (
-            childRef as React.MutableRefObject<HTMLButtonElement | null>
-          ).current = node;
-      },
-      onClick: handleClick,
-    } as React.HTMLAttributes<HTMLElement>);
-  }
-
-  return (
-    <Button
-      ref={ref}
-      onClick={handleClick as React.MouseEventHandler<HTMLButtonElement>}
-      className={cn("rnx-alert-dialog-action", className)}
-      {...props}
-    >
-      {children}
-    </Button>
-  );
-});
+    return (
+      <Button
+        ref={ref}
+        onClick={handleClick as React.MouseEventHandler<HTMLButtonElement>}
+        className={cn("rnx-alert-dialog-action", className)}
+        {...props}
+      >
+        {children}
+      </Button>
+    );
+  },
+);
 AlertDialogAction.displayName = "AlertDialog.Action";
 
 export interface AlertDialogCancelProps extends Omit<
@@ -347,74 +376,71 @@ export interface AlertDialogCancelProps extends Omit<
   asChild?: boolean;
 }
 
-export const AlertDialogCancel = forwardRef<
-  HTMLButtonElement,
-  AlertDialogCancelProps
->(({ className, onClick, asChild, children, ...props }, ref) => {
-  const { setIsOpen } = useContext(AlertDialogContext);
+const AlertDialogCancel = forwardRef<HTMLButtonElement, AlertDialogCancelProps>(
+  ({ className, onClick, asChild, children, ...props }, ref) => {
+    const { setIsOpen } = useContext(AlertDialogContext);
 
-  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
-    setIsOpen(false);
-    onClick?.(e as React.MouseEvent<HTMLButtonElement>);
+    const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+      setIsOpen(false);
+      onClick?.(e as React.MouseEvent<HTMLButtonElement>);
+      if (asChild && React.isValidElement(children)) {
+        const child = children as React.ReactElement<{
+          onClick?: React.MouseEventHandler<HTMLElement>;
+        }>;
+        if (child.props.onClick) child.props.onClick(e);
+      }
+    };
+
     if (asChild && React.isValidElement(children)) {
       const child = children as React.ReactElement<{
         onClick?: React.MouseEventHandler<HTMLElement>;
+        className?: string;
       }>;
-      if (child.props.onClick) child.props.onClick(e);
+      return React.cloneElement(child, {
+        ...props,
+        className: cn(
+          buttonVariants({ variant: "outline", color: "default" }),
+          "rnx-alert-dialog-cancel",
+          className,
+          child.props.className,
+        ),
+        ref: (node: HTMLButtonElement) => {
+          if (typeof ref === "function") ref(node);
+          else if (ref) ref.current = node;
+          const childRef = (
+            child as unknown as { ref: React.Ref<HTMLButtonElement> }
+          ).ref;
+          if (typeof childRef === "function") childRef(node);
+          else if (childRef)
+            (
+              childRef as React.MutableRefObject<HTMLButtonElement | null>
+            ).current = node;
+        },
+        onClick: handleClick,
+      } as React.HTMLAttributes<HTMLElement>);
     }
-  };
 
-  if (asChild && React.isValidElement(children)) {
-    const child = children as React.ReactElement<{
-      onClick?: React.MouseEventHandler<HTMLElement>;
-      className?: string;
-    }>;
-    return React.cloneElement(child, {
-      ...props,
-      className: cn(
-        buttonVariants({ variant: "outline", color: "default" }),
-        "rnx-alert-dialog-cancel",
-        className,
-        child.props.className,
-      ),
-      ref: (node: HTMLButtonElement) => {
-        if (typeof ref === "function") ref(node);
-        else if (ref) ref.current = node;
-        const childRef = (
-          child as unknown as { ref: React.Ref<HTMLButtonElement> }
-        ).ref;
-        if (typeof childRef === "function") childRef(node);
-        else if (childRef)
-          (
-            childRef as React.MutableRefObject<HTMLButtonElement | null>
-          ).current = node;
-      },
-      onClick: handleClick,
-    } as React.HTMLAttributes<HTMLElement>);
-  }
-
-  return (
-    <Button
-      ref={ref}
-      onClick={handleClick as React.MouseEventHandler<HTMLButtonElement>}
-      variant="outline"
-      className={cn("rnx-alert-dialog-cancel", className)}
-      {...props}
-    >
-      {children}
-    </Button>
-  );
-});
+    return (
+      <Button
+        ref={ref}
+        onClick={handleClick as React.MouseEventHandler<HTMLButtonElement>}
+        variant="outline"
+        className={cn("rnx-alert-dialog-cancel", className)}
+        {...props}
+      >
+        {children}
+      </Button>
+    );
+  },
+);
 AlertDialogCancel.displayName = "AlertDialog.Cancel";
 
 // Dummy components to match API
-export const AlertDialogPortal = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => <>{children}</>;
+const AlertDialogPortal = ({ children }: { children: React.ReactNode }) => (
+  <>{children}</>
+);
 AlertDialogPortal.displayName = "AlertDialog.Portal";
-export const AlertDialogOverlay = () => null;
+const AlertDialogOverlay = () => null;
 AlertDialogOverlay.displayName = "AlertDialog.Overlay";
 
 export const AlertDialog = Object.assign(AlertDialogComponent, {

@@ -9,24 +9,15 @@
   --radius-lg: 16px;
   --radius-xl: 24px;
   --radius-full: 9999px;
-
-  /*
-    Z-index scale — stacking contract, lowest to highest:
-    base < raised < content < component < sticky < overlay < sidebar < modal < popover < toast < tooltip
-    Never use raw numeric z-index in component CSS; always consume these tokens.
-  */
-  --z-base: 0;
-  --z-raised: 1;
-  --z-content: 2;
-  --z-component: 10;
-  --z-sticky: 20;
-  --z-overlay: 30;
-  --z-sidebar: 40;
-  --z-modal: 50;
-  --z-popover: 60;
-  --z-toast: 70;
-  --z-tooltip: 80;
 }
+
+/*
+  Z-index scale — stacking contract, lowest to highest:
+  base < raised < content < component < sticky < dropdown < overlay < sidebar < modal < popover < toast < tooltip
+  Never use raw numeric z-index in component CSS; always consume these tokens.
+  Canonical definitions live in the `:root` block below (the former @theme
+  duplicates with conflicting values were removed in Phase 2 consolidation).
+*/
 
 @utility auto-rows-bento {
   grid-auto-rows: 12rem;
@@ -306,537 +297,6 @@
     margin-right: auto;
     padding-left: var(--rnx-container-px, 0);
     padding-right: var(--rnx-container-px, 0);
-  }
-
-  /* Tabs */
-  .rnx-tabs {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .rnx-tabs-list {
-    position: relative;
-    display: flex;
-    width: fit-content;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--radius);
-    background-color: var(--card);
-    padding: calc(0.25rem * var(--rnx-space-scale, 1));
-    color: var(--muted-foreground);
-    border: 1px solid var(--border);
-    overflow-x: auto;
-    -ms-overflow-style: none; /* IE/Edge */
-    scrollbar-width: none; /* Firefox */
-  }
-  .rnx-tabs-list::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
-  }
-
-  .rnx-tabs-indicator {
-    position: absolute;
-    transition:
-      transform 300ms cubic-bezier(0.4, 0, 0.2, 1),
-      width 300ms cubic-bezier(0.4, 0, 0.2, 1),
-      opacity 200ms ease;
-    z-index: var(--z-base);
-    pointer-events: none;
-  }
-  .rnx-tabs-indicator--default {
-    top: 0.25rem;
-    bottom: 0.25rem;
-    border-radius: calc(var(--radius) - 4px);
-    /* Use inherit so that if the parent TabsList has a custom border-radius (e.g. rounded-full), the indicator matches it */
-    border-radius: inherit;
-    background-color: color-mix(in srgb, var(--primary) 10%, transparent);
-    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.1);
-  }
-  .rnx-tabs-indicator--underline {
-    bottom: 0;
-    height: 2px;
-    background-color: var(--primary);
-  }
-
-  .rnx-tabs-trigger {
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    white-space: nowrap;
-    border-radius: calc(var(--radius) - 4px);
-    border-radius: inherit;
-    font-weight: 500;
-    transition:
-      color 200ms ease,
-      background-color 200ms ease,
-      border-color 200ms ease,
-      box-shadow 200ms ease;
-    z-index: var(--z-component);
-    border: none;
-    background: transparent;
-    color: inherit;
-    cursor: pointer;
-    outline: none;
-  }
-  .rnx-tabs-trigger:focus-visible {
-    box-shadow: 0 0 0 2px var(--ring);
-  }
-  .rnx-tabs-trigger:disabled {
-    pointer-events: none;
-    opacity: 0.5;
-  }
-  .rnx-tabs-trigger[data-state="active"] {
-    color: var(--foreground);
-  }
-  .rnx-tabs-trigger[data-state="inactive"]:hover {
-    color: var(--foreground);
-  }
-  .rnx-tabs-trigger--sm {
-    padding: calc(0.375rem * var(--rnx-space-scale, 1))
-      calc(0.75rem * var(--rnx-space-scale, 1));
-    font-size: calc(0.75rem * var(--rnx-text-scale, 1));
-  }
-  .rnx-tabs-trigger--md {
-    padding: calc(0.5rem * var(--rnx-space-scale, 1))
-      calc(1.25rem * var(--rnx-space-scale, 1));
-    font-size: calc(0.875rem * var(--rnx-text-scale, 1));
-  }
-  .rnx-tabs-trigger--lg {
-    padding: calc(0.75rem * var(--rnx-space-scale, 1))
-      calc(1.75rem * var(--rnx-space-scale, 1));
-    font-size: calc(1rem * var(--rnx-text-scale, 1));
-  }
-
-  .rnx-tabs-content {
-    margin-top: calc(1rem * var(--rnx-space-scale, 1));
-    outline: none;
-  }
-  .rnx-tabs-content:focus-visible {
-    box-shadow: 0 0 0 2px var(--ring);
-  }
-  .rnx-tabs-content[data-state="inactive"] {
-    display: none;
-  }
-  .rnx-tabs-content[data-state="active"] {
-    animation: rnx-tabs-fade-in 300ms ease-out;
-  }
-  @keyframes rnx-tabs-fade-in {
-    from {
-      opacity: 0;
-      transform: translateY(8px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  /* Modal */
-  .rnx-modal-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: var(--z-modal);
-    background-color: var(--rnx-modal-overlay-bg, rgba(0, 0, 0, 0.6));
-    backdrop-filter: blur(4px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: calc(1rem * var(--rnx-space-scale, 1));
-    animation: rnx-fade-in 200ms ease-out forwards;
-  }
-  .rnx-modal-overlay[data-state="closed"] {
-    animation: rnx-fade-out 200ms ease-in forwards;
-  }
-
-  .rnx-modal-content {
-    position: relative;
-    z-index: var(--z-modal);
-    display: flex;
-    flex-direction: column;
-    gap: calc(1rem * var(--rnx-space-scale, 1));
-    background-color: var(--popover);
-    border: 1px solid var(--border);
-    box-shadow: var(--shadow-lg);
-    overflow: hidden;
-    animation: rnx-modal-in 300ms cubic-bezier(0.175, 0.885, 0.32, 1.15)
-      forwards;
-  }
-  .rnx-modal-content[data-state="closed"] {
-    animation: rnx-modal-out 200ms ease-in forwards;
-  }
-
-  .rnx-dropdown-item {
-    position: relative;
-    display: flex;
-    cursor: default;
-    user-select: none;
-    align-items: center;
-    border-radius: calc(var(--radius) - 4px);
-    padding: 0.5rem 0.75rem;
-    font-size: 0.875rem;
-    outline: none;
-    transition:
-      color 200ms ease,
-      background-color 200ms ease,
-      border-color 200ms ease,
-      box-shadow 200ms ease;
-    background: transparent;
-    border: none;
-    color: inherit;
-    width: 100%;
-    text-align: left;
-  }
-  .rnx-dropdown-item:focus-visible,
-  .rnx-dropdown-item:hover {
-    background-color: var(--accent);
-    color: var(--accent-foreground);
-  }
-  .rnx-dropdown-item:disabled,
-  .rnx-dropdown-item[data-disabled="true"],
-  .rnx-dropdown-item[aria-disabled="true"] {
-    pointer-events: none;
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-  .rnx-dropdown-item[data-selected="true"] {
-    background-color: color-mix(in srgb, var(--primary) 10%, transparent);
-    color: var(--primary);
-  }
-  .rnx-dropdown-item[data-selected="true"]:hover {
-    background-color: color-mix(in srgb, var(--primary) 20%, transparent);
-  }
-
-  .rnx-dropdown-divider {
-    margin: 0.25rem -0.25rem;
-    height: 1px;
-    background-color: var(--border);
-  }
-  .rnx-dropdown-label {
-    padding: 0.375rem 0.75rem;
-    font-size: 0.75rem;
-    font-weight: 600;
-    color: var(--muted-foreground);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-  }
-
-  @keyframes rnx-dropdown-in {
-    from {
-      opacity: 0;
-      transform: scale(0.95);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-  @keyframes rnx-dropdown-out {
-    from {
-      opacity: 1;
-      transform: scale(1);
-    }
-    to {
-      opacity: 0;
-      transform: scale(0.95);
-    }
-  }
-
-  /* Accordion */
-  .rnx-accordion {
-    width: 100%;
-  }
-  .rnx-accordion-item {
-    border-bottom: 1px solid var(--border);
-  }
-  .rnx-accordion-header {
-    display: flex;
-  }
-  .rnx-accordion-trigger {
-    display: flex;
-    flex: 1;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 0;
-    font-weight: 500;
-    transition: all 200ms;
-    background: transparent;
-    border: none;
-    color: inherit;
-    cursor: pointer;
-    text-align: left;
-  }
-  .rnx-accordion-trigger:hover {
-    text-decoration: underline;
-  }
-  .rnx-accordion-trigger:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 2px var(--ring);
-  }
-  .rnx-accordion-icon {
-    height: 1rem;
-    width: 1rem;
-    flex-shrink: 0;
-    transition: transform 300ms cubic-bezier(0.87, 0, 0.13, 1);
-  }
-  .rnx-accordion-trigger[data-state="open"] .rnx-accordion-icon {
-    transform: rotate(180deg);
-  }
-
-  .rnx-accordion-content {
-    display: grid;
-    font-size: 0.875rem;
-    transition: grid-template-rows 300ms cubic-bezier(0.87, 0, 0.13, 1);
-  }
-  .rnx-accordion-content[data-state="closed"] {
-    grid-template-rows: 0fr;
-  }
-  .rnx-accordion-content[data-state="open"] {
-    grid-template-rows: 1fr;
-  }
-  .rnx-accordion-content-inner {
-    overflow: hidden;
-  }
-  .rnx-accordion-content-inner > div {
-    padding-bottom: 1rem;
-  }
-
-  /* Popover */
-  .rnx-popover-content {
-    position: absolute;
-    z-index: var(--z-modal);
-    min-width: 18rem;
-    width: max-content;
-    max-width: calc(100vw - 2rem);
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background-color: var(--glass-bg-overlay);
-    backdrop-filter: blur(12px);
-    padding: calc(1rem * var(--rnx-space-scale, 1));
-    color: var(--popover-foreground);
-    box-shadow: var(--shadow-md);
-    outline: none;
-    transform-origin: top;
-  }
-  .rnx-popover-content[data-state="open"] {
-    animation: rnx-dropdown-in 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
-  .rnx-popover-content[data-state="closed"] {
-    animation: rnx-dropdown-out 150ms ease-in forwards;
-  }
-
-  /* HoverCard */
-  .rnx-hover-card-content {
-    width: 16rem;
-    outline: none;
-    transform-origin: top;
-  }
-  .rnx-hover-card-content[data-state="open"] {
-    animation: rnx-dropdown-in 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
-  .rnx-hover-card-content[data-state="closed"] {
-    animation: rnx-dropdown-out 150ms ease-in forwards;
-  }
-
-  /* Tooltip */
-  .rnx-tooltip-content {
-    position: absolute;
-    z-index: var(--z-modal);
-    border-radius: calc(var(--radius) - 4px);
-    border: 1px solid var(--border);
-    background-color: var(--popover);
-    padding: calc(0.375rem * var(--rnx-space-scale, 1))
-      calc(0.75rem * var(--rnx-space-scale, 1));
-    color: var(--popover-foreground);
-    font-size: 0.75rem;
-    box-shadow: var(--shadow-md);
-    outline: none;
-    overflow: hidden;
-    pointer-events: none;
-    transform-origin: top;
-  }
-  .rnx-tooltip-content[data-state="open"] {
-    animation: rnx-dropdown-in 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
-  .rnx-tooltip-content[data-state="closed"] {
-    animation: rnx-dropdown-out 150ms ease-in forwards;
-  }
-
-  /* ContextMenu */
-  .rnx-context-menu-content {
-    position: fixed;
-    z-index: var(--z-modal);
-    min-width: 12rem;
-    overflow: hidden;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-    background-color: var(--popover);
-    padding: calc(0.25rem * var(--rnx-space-scale, 1));
-    color: var(--popover-foreground);
-    box-shadow: var(--shadow-lg);
-    outline: none;
-  }
-  .rnx-context-menu-content[data-state="open"] {
-    animation: rnx-dropdown-in 200ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
-  }
-  .rnx-context-menu-content[data-state="closed"] {
-    animation: rnx-dropdown-out 150ms ease-in forwards;
-  }
-
-  .rnx-modal-content--sm {
-    width: 100%;
-    max-width: 24rem;
-    border-radius: var(--radius);
-  }
-  .rnx-modal-content--md {
-    width: 100%;
-    max-width: 32rem;
-    border-radius: var(--radius);
-  }
-  .rnx-modal-content--lg {
-    width: 100%;
-    max-width: 42rem;
-    border-radius: var(--radius);
-  }
-  .rnx-modal-content--xl {
-    width: 100%;
-    max-width: 56rem;
-    border-radius: var(--radius);
-  }
-  .rnx-modal-content--full {
-    width: 100vw;
-    height: 100dvh;
-    max-width: 100vw;
-    border-radius: 0;
-    border: none;
-  }
-
-  .rnx-modal-close {
-    position: absolute;
-    right: calc(1rem * var(--rnx-space-scale, 1));
-    top: calc(1rem * var(--rnx-space-scale, 1));
-    /* radius-exception: fixed micro-radius for a 1rem icon button */
-    border-radius: 0.125rem;
-    opacity: 0.7;
-    transition: opacity 200ms;
-    background: transparent;
-    border: none;
-    color: inherit;
-    cursor: pointer;
-  }
-  .rnx-modal-close:hover {
-    opacity: 1;
-  }
-  .rnx-modal-close:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 2px var(--ring);
-  }
-
-  .rnx-modal-header {
-    display: flex;
-    flex-direction: column;
-    gap: calc(0.375rem * var(--rnx-space-scale, 1));
-    text-align: left;
-    padding: calc(1.25rem * var(--rnx-space-scale, 1))
-      calc(1.5rem * var(--rnx-space-scale, 1));
-    border-bottom: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
-  }
-  .rnx-modal-body {
-    padding: calc(1.5rem * var(--rnx-space-scale, 1));
-    overflow-y: auto;
-    max-height: 60vh;
-  }
-  .rnx-modal-footer {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    gap: calc(0.5rem * var(--rnx-space-scale, 1));
-    padding: calc(1rem * var(--rnx-space-scale, 1))
-      calc(1.5rem * var(--rnx-space-scale, 1));
-    background-color: color-mix(in srgb, var(--secondary) 30%, transparent);
-    border-top: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
-  }
-
-  @media (max-width: 767px) {
-    .rnx-modal-content--bottom-sheet {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      width: 100%;
-      max-width: 100%;
-      /* radius-exception: sheet shape with square bottom edge, independent of theme radius */
-      border-radius: 1rem 1rem 0 0;
-      margin: 0;
-      max-height: 90dvh;
-      overflow-y: auto;
-    }
-  }
-
-  @keyframes rnx-fade-in {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-  @keyframes rnx-fade-out {
-    from {
-      opacity: 1;
-    }
-    to {
-      opacity: 0;
-    }
-  }
-  @keyframes rnx-modal-in {
-    from {
-      opacity: 0;
-      transform: scale(0.95) translateY(10px);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1) translateY(0);
-    }
-  }
-  @keyframes rnx-modal-out {
-    from {
-      opacity: 1;
-      transform: scale(1) translateY(0);
-    }
-    to {
-      opacity: 0;
-      transform: scale(0.95) translateY(10px);
-    }
-  }
-  /* Skeleton */
-  .rnx-skeleton {
-    background-color: var(--muted);
-    animation: rnx-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-  .rnx-skeleton-text {
-    height: 1rem;
-    width: 100%;
-    border-radius: var(--radius);
-  }
-  .rnx-skeleton-circular {
-    border-radius: var(--radius-full);
-  }
-  .rnx-skeleton-rectangular {
-    border-radius: 0;
-  }
-  .rnx-skeleton-rounded {
-    border-radius: var(--radius-md);
-  }
-
-  @keyframes rnx-pulse {
-    0%,
-    100% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0.5;
-    }
   }
 
   /* Universal Shimmer Overlay for HOC */
@@ -1190,7 +650,7 @@
     animation-name: rnx-motion-reveal-left;
     animation-fill-mode: both;
     animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: clip-path;
+    /* will-change is intentionally omitted: reveal animations are short-lived and promoting layers permanently costs more than it saves. */
   }
 
   @keyframes rnx-motion-reveal-right {
@@ -1205,7 +665,7 @@
     animation-name: rnx-motion-reveal-right;
     animation-fill-mode: both;
     animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: clip-path;
+    /* will-change is intentionally omitted: reveal animations are short-lived and promoting layers permanently costs more than it saves. */
   }
 
   @keyframes rnx-motion-reveal-up {
@@ -1220,7 +680,7 @@
     animation-name: rnx-motion-reveal-up;
     animation-fill-mode: both;
     animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: clip-path;
+    /* will-change is intentionally omitted: reveal animations are short-lived and promoting layers permanently costs more than it saves. */
   }
 
   @keyframes rnx-motion-reveal-down {
@@ -1235,7 +695,7 @@
     animation-name: rnx-motion-reveal-down;
     animation-fill-mode: both;
     animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
-    will-change: clip-path;
+    /* will-change is intentionally omitted: reveal animations are short-lived and promoting layers permanently costs more than it saves. */
   }
 
   @keyframes rnx-motion-rotate-in {
@@ -1344,12 +804,17 @@
     --font-semibold: 600;
     --font-bold: 700;
 
-    /* Z-index layers */
-    --z-dropdown: 50;
+    /* Z-index layers — canonical scale (single source of truth) */
+    --z-base: 0;
+    --z-raised: 1;
+    --z-content: 2;
+    --z-component: 10;
     --z-sticky: 100;
-    --z-popover: 200;
+    --z-dropdown: 150;
     --z-overlay: 300;
+    --z-sidebar: 350;
     --z-modal: 400;
+    --z-popover: 450;
     --z-toast: 500;
     --z-tooltip: 600;
     /* Core variables */
@@ -1403,22 +868,6 @@
     --overlay: rgba(0, 0, 0, 0.6);
     --rnx-modal-overlay-bg: rgba(0, 0, 0, 0.6);
 
-    /* Legacy compatibility - explicitly mapped to theme variables so they flip in light mode */
-    --bg-base: var(--background);
-    --bg-card: var(--card);
-    --bg-modal: var(--popover);
-    --bg-surface: var(--card);
-    --input-bg: var(--input);
-    --border-color: var(--border);
-    --border-hover: var(--border);
-    --modal-border-color: var(--border);
-    --text-main: var(--foreground);
-    --text-muted: var(--muted-foreground);
-    --brand-glow: var(--primary);
-    --brand-alt: var(--secondary-foreground);
-    --brand-success: var(--success);
-    --brand-danger: var(--destructive);
-    --brand-warning: var(--warning);
     /* Glassmorphism tokens — single source of truth for all glass variants. */
     --glass-bg: color-mix(in srgb, var(--card) 60%, transparent);
     --glass-bg-overlay: color-mix(in srgb, var(--popover) 70%, transparent);
@@ -1465,12 +914,25 @@
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
     --spring: cubic-bezier(0.175, 0.885, 0.32, 1.15);
 
-    /* Shadows */
-    --shadow-sm: 0 1px 2px color-mix(in srgb, var(--foreground) 5%, transparent);
+    /* Shadows — alpha driven by --shadow-intensity (set via [data-shadow]) */
+    --shadow-sm: 0 1px 2px
+      color-mix(
+        in srgb,
+        var(--foreground) calc(5% * var(--shadow-intensity, 1)),
+        transparent
+      );
     --shadow-md: 0 4px 6px
-      color-mix(in srgb, var(--foreground) 10%, transparent);
+      color-mix(
+        in srgb,
+        var(--foreground) calc(10% * var(--shadow-intensity, 1)),
+        transparent
+      );
     --shadow-lg: 0 10px 15px
-      color-mix(in srgb, var(--foreground) 10%, transparent);
+      color-mix(
+        in srgb,
+        var(--foreground) calc(10% * var(--shadow-intensity, 1)),
+        transparent
+      );
   }
 
   [data-density="compact"] {
@@ -1509,7 +971,6 @@
     --glass-blur: 36px;
   }
 
-  .light,
   [data-theme="light"] {
     --background: #ffffff;
     --foreground: #09090b;
@@ -1566,7 +1027,7 @@
   /*
    * Named color themes — resolved via the data-color attribute that
    * ThemeProvider sets when primaryColor is a named color instead of a hex.
-   * Declared AFTER the .light/[data-theme] block so they win the cascade
+   * Declared AFTER the [data-theme] block so they win the cascade
    * when both attributes sit on the same element (documentElement).
    * Foregrounds follow the library's YIQ contrast rule
    * (see src/utils/contrast.ts).
@@ -1647,8 +1108,8 @@
   body {
     margin: 0;
     font-family: var(--font-sans);
-    background-color: var(--bg-base);
-    color: var(--text-main);
+    background-color: var(--background);
+    color: var(--foreground);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -1675,337 +1136,18 @@
   button {
     font-family: inherit;
   }
-
-  /* Checkbox */
-  .rnx-checkbox-wrapper {
-    display: inline-flex;
-    align-items: flex-start;
-    gap: calc(0.5rem * var(--rnx-space-scale, 1));
-  }
-  .rnx-checkbox-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-  }
-  .rnx-checkbox-input {
-    position: absolute;
-    opacity: 0;
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
-    margin: 0;
-    z-index: var(--z-component);
-  }
-  .rnx-checkbox-box {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    border-radius: calc(var(--radius) - 4px);
-    border: 2px solid var(--border);
-    background-color: transparent;
-    transition: all 150ms ease;
-    color: transparent;
-    pointer-events: none;
-  }
-  .rnx-checkbox-input:checked + .rnx-checkbox-box {
-    background-color: var(--primary);
-    border-color: var(--primary);
-    color: var(--primary-foreground);
-  }
-  .rnx-checkbox-input:focus-visible + .rnx-checkbox-box {
-    outline: none;
-    box-shadow:
-      0 0 0 2px var(--background),
-      0 0 0 4px var(--ring);
-  }
-  .rnx-checkbox-input:disabled {
-    cursor: not-allowed;
-  }
-  .rnx-checkbox-input:disabled + .rnx-checkbox-box {
-    opacity: 0.5;
-    border-color: var(--muted-foreground);
-  }
-  .rnx-checkbox-box--sm {
-    width: 1rem;
-    height: 1rem;
-  }
-  .rnx-checkbox-box--md {
-    width: 1.25rem;
-    height: 1.25rem;
-  }
-  .rnx-checkbox-box--lg {
-    width: 1.5rem;
-    height: 1.5rem;
-  }
-  .rnx-checkbox-box--error {
-    border-color: var(--destructive);
-  }
-  .rnx-checkbox-input:focus-visible + .rnx-checkbox-box--error {
-    box-shadow:
-      0 0 0 2px var(--background),
-      0 0 0 4px var(--destructive);
-  }
-  .rnx-checkbox-icon {
-    width: 75%;
-    height: 75%;
-    stroke-width: 3;
-    stroke: currentColor;
-    fill: none;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-  }
-  .rnx-checkbox-content {
-    display: flex;
-    flex-direction: column;
-  }
-  .rnx-checkbox-label {
-    font-size: 0.875rem;
-    font-weight: 500;
-    line-height: 1;
-    color: var(--foreground);
-    padding-top: 0.125rem;
-    cursor: pointer;
-  }
-  .rnx-checkbox-input:disabled ~ .rnx-checkbox-content .rnx-checkbox-label {
-    cursor: not-allowed;
-    opacity: 0.7;
-  }
-  .rnx-checkbox-error-text {
-    font-size: 0.75rem;
-    font-weight: 500;
-    color: var(--destructive);
-    margin-top: 0.25rem;
-  }
-
-  /* Switch */
-  .rnx-switch-wrapper {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-2);
-  }
-  .rnx-switch-container {
-    position: relative;
-    display: inline-flex;
-    flex-shrink: 0;
-    align-items: center;
-    cursor: pointer;
-    transition: background-color 150ms ease;
-    border-radius: var(--radius-full);
-    border: 2px solid transparent;
-    background-color: var(--input);
-  }
-  .rnx-switch-input {
-    position: absolute;
-    opacity: 0;
-    width: 100%;
-    height: 100%;
-    cursor: inherit;
-    margin: 0;
-    z-index: var(--z-component);
-  }
-  .rnx-switch-thumb {
-    display: block;
-    border-radius: 50%;
-    background-color: var(--background);
-    transition: transform 150ms ease;
-    box-shadow: var(--shadow-sm);
-  }
-
-  .rnx-switch-container--sm {
-    width: 1.75rem;
-    height: 1rem;
-  }
-  .rnx-switch-thumb--sm {
-    width: 0.75rem;
-    height: 0.75rem;
-    transform: translateX(0);
-  }
-  .rnx-switch-input:checked + .rnx-switch-thumb--sm {
-    transform: translateX(0.75rem);
-  }
-
-  .rnx-switch-container--md {
-    width: 2.25rem;
-    height: 1.25rem;
-  }
-  .rnx-switch-thumb--md {
-    width: 1rem;
-    height: 1rem;
-    transform: translateX(0);
-  }
-  .rnx-switch-input:checked + .rnx-switch-thumb--md {
-    transform: translateX(1rem);
-  }
-
-  .rnx-switch-container--lg {
-    width: 2.75rem;
-    height: 1.5rem;
-  }
-  .rnx-switch-thumb--lg {
-    width: 1.25rem;
-    height: 1.25rem;
-    transform: translateX(0);
-  }
-  .rnx-switch-input:checked + .rnx-switch-thumb--lg {
-    transform: translateX(1.25rem);
-  }
-
-  .rnx-switch-container:has(.rnx-switch-input:checked) {
-    background-color: var(--primary);
-  }
-  .rnx-switch-input:focus-visible + .rnx-switch-thumb {
-    box-shadow:
-      0 0 0 2px var(--background),
-      0 0 0 4px var(--ring);
-  }
-  .rnx-switch-container:has(.rnx-switch-input:disabled) {
-    cursor: not-allowed;
-    opacity: 0.5;
-  }
-  .rnx-switch-container:has(.rnx-switch-input:disabled:not(:checked)) {
-    background-color: var(--muted-foreground);
-  }
-  .rnx-switch-label {
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    color: var(--foreground);
-  }
-  .rnx-switch-container:has(.rnx-switch-input:disabled) ~ .rnx-switch-label {
-    cursor: not-allowed;
-    opacity: 0.7;
-  }
-
-  /* RadioGroup */
-  .rnx-radio-group {
-    display: flex;
-    flex-direction: column;
-    gap: var(--space-2);
-  }
-  .rnx-radio-group--horizontal {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-  .rnx-radio-wrapper {
-    display: inline-flex;
-    align-items: flex-start;
-    gap: var(--space-2);
-  }
-  .rnx-radio-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-  }
-  .rnx-radio-input {
-    position: absolute;
-    opacity: 0;
-    width: 100%;
-    height: 100%;
-    cursor: pointer;
-    margin: 0;
-    z-index: var(--z-component);
-  }
-  .rnx-radio-box {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    border-radius: 50%;
-    border: 2px solid var(--border);
-    background-color: transparent;
-    transition: all 150ms ease;
-    color: transparent;
-    pointer-events: none;
-  }
-  .rnx-radio-dot {
-    border-radius: 50%;
-    background-color: currentColor;
-    transition: transform 150ms ease;
-    transform: scale(0);
-  }
-  .rnx-radio-input:checked + .rnx-radio-box {
-    border-color: var(--primary);
-    color: var(--primary);
-  }
-  .rnx-radio-input:checked + .rnx-radio-box .rnx-radio-dot {
-    transform: scale(1);
-  }
-  .rnx-radio-input:focus-visible + .rnx-radio-box {
-    outline: none;
-    box-shadow:
-      0 0 0 2px var(--background),
-      0 0 0 4px var(--ring);
-  }
-  .rnx-radio-input:disabled {
-    cursor: not-allowed;
-  }
-  .rnx-radio-input:disabled + .rnx-radio-box {
-    opacity: 0.5;
-    border-color: var(--muted-foreground);
-  }
-  .rnx-radio-box--sm {
-    width: 1rem;
-    height: 1rem;
-  }
-  .rnx-radio-box--md {
-    width: 1.25rem;
-    height: 1.25rem;
-  }
-  .rnx-radio-box--lg {
-    width: 1.5rem;
-    height: 1.5rem;
-  }
-  .rnx-radio-dot--sm {
-    width: 0.5rem;
-    height: 0.5rem;
-  }
-  .rnx-radio-dot--md {
-    width: 0.625rem;
-    height: 0.625rem;
-  }
-  .rnx-radio-dot--lg {
-    width: 0.75rem;
-    height: 0.75rem;
-  }
-  .rnx-radio-box--error {
-    border-color: var(--destructive);
-  }
-  .rnx-radio-input:focus-visible + .rnx-radio-box--error {
-    box-shadow:
-      0 0 0 2px var(--background),
-      0 0 0 4px var(--destructive);
-  }
-  .rnx-radio-content {
-    display: flex;
-    flex-direction: column;
-  }
-  .rnx-radio-label {
-    font-size: 0.875rem;
-    font-weight: 500;
-    line-height: 1;
-    color: var(--foreground);
-    padding-top: 0.125rem;
-    cursor: pointer;
-  }
-  .rnx-radio-input:disabled ~ .rnx-radio-content .rnx-radio-label {
-    cursor: not-allowed;
-    opacity: 0.7;
-  }
 }
 
 @layer utilities {
-  .scrollbar-hide {
+  .rnx-scrollbar-hide {
     scrollbar-width: none;
     -ms-overflow-style: none;
   }
-  .scrollbar-hide::-webkit-scrollbar {
+  .rnx-scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
-  .spin-button-hide::-webkit-outer-spin-button,
-  .spin-button-hide::-webkit-inner-spin-button {
+  .rnx-spin-button-hide::-webkit-outer-spin-button,
+  .rnx-spin-button-hide::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
   }

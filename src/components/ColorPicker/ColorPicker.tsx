@@ -142,7 +142,7 @@ const ColorPickerBase = forwardRef<HTMLDivElement, ColorPickerProps>(
                 <Box
                   className={cn(
                     "rnx-color-picker-preview",
-                    `rnx-color-picker-preview--${size || "md"}`,
+                    `rnx-color-picker-preview--size-${size || "md"}`,
                   )}
                   style={{ backgroundColor: displayValue }}
                 />

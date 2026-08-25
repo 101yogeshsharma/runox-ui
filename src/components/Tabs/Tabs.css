@@ -138,15 +138,15 @@
   .rnx-tabs-trigger[data-state="inactive"]:hover {
     color: var(--foreground);
   }
-  .rnx-tabs-trigger--sm {
+  .rnx-tabs-trigger--size-sm {
     padding: var(--space-1-5) var(--space-3);
     font-size: var(--text-xs);
   }
-  .rnx-tabs-trigger--md {
+  .rnx-tabs-trigger--size-md {
     padding: var(--space-2) var(--space-5);
     font-size: var(--text-sm);
   }
-  .rnx-tabs-trigger--lg {
+  .rnx-tabs-trigger--size-lg {
     padding: var(--space-3) var(--space-7);
     font-size: var(--text-base);
   }

@@ -139,17 +139,17 @@
   }
 
   /* Sizes */
-  .rnx-slider--sm {
+  .rnx-slider--size-sm {
     height: var(--space-5);
     --thumb-size: var(--space-5);
   }
 
-  .rnx-slider--md {
+  .rnx-slider--size-md {
     height: var(--space-6);
     --thumb-size: var(--space-6);
   }
 
-  .rnx-slider--lg {
+  .rnx-slider--size-lg {
     height: var(--space-8);
     --thumb-size: var(--space-8);
   }

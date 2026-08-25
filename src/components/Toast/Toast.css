@@ -1,4 +1,4 @@
-﻿@layer components {
+@layer components {
   .rnx-toast-viewport {
     position: fixed;
     z-index: var(--z-toast);
@@ -98,36 +98,36 @@
   }
 
   /* Sizes */
-  .rnx-toast--sm {
+  .rnx-toast--size-sm {
     padding: var(--space-3);
     padding-right: var(--space-8);
   }
-  .rnx-toast--sm .rnx-toast-title {
+  .rnx-toast--size-sm .rnx-toast-title {
     font-size: var(--text-xs);
   }
-  .rnx-toast--sm .rnx-toast-description {
+  .rnx-toast--size-sm .rnx-toast-description {
     font-size: var(--text-xs);
   }
 
-  .rnx-toast--md {
+  .rnx-toast--size-md {
     padding: var(--space-4);
     padding-right: var(--space-10);
   }
-  .rnx-toast--md .rnx-toast-title {
+  .rnx-toast--size-md .rnx-toast-title {
     font-size: var(--text-sm);
   }
-  .rnx-toast--md .rnx-toast-description {
+  .rnx-toast--size-md .rnx-toast-description {
     font-size: var(--text-xs);
   }
 
-  .rnx-toast--lg {
+  .rnx-toast--size-lg {
     padding: var(--space-6);
     padding-right: var(--space-12);
   }
-  .rnx-toast--lg .rnx-toast-title {
+  .rnx-toast--size-lg .rnx-toast-title {
     font-size: var(--text-base);
   }
-  .rnx-toast--lg .rnx-toast-description {
+  .rnx-toast--size-lg .rnx-toast-description {
     font-size: var(--text-sm);
   }
 
@@ -137,25 +137,16 @@
     border-color: color-mix(in srgb, var(--info) 20%, var(--border));
     color: var(--info);
   }
-  :root.dark .rnx-toast--info {
-    color: var(--info);
-  }
 
   .rnx-toast--success {
     background-color: color-mix(in srgb, var(--success) 10%, var(--background));
     border-color: color-mix(in srgb, var(--success) 20%, var(--border));
     color: var(--success);
   }
-  :root.dark .rnx-toast--success {
-    color: var(--success);
-  }
 
   .rnx-toast--warning {
     background-color: color-mix(in srgb, var(--warning) 10%, var(--background));
     border-color: color-mix(in srgb, var(--warning) 20%, var(--border));
-    color: var(--warning);
-  }
-  :root.dark .rnx-toast--warning {
     color: var(--warning);
   }
 
@@ -166,9 +157,6 @@
       var(--background)
     );
     border-color: color-mix(in srgb, var(--destructive) 20%, var(--border));
-    color: var(--destructive);
-  }
-  :root.dark .rnx-toast--danger {
     color: var(--destructive);
   }
 

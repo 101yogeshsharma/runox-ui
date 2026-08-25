@@ -16,8 +16,6 @@ import type {
   ThemeConfig,
 } from "./ThemeProvider.interface";
 
-import "../../styles/globals.css";
-
 const defaultConfigState: ThemeConfig = {
   theme: "system",
   primaryColor: "blue",
@@ -159,9 +157,8 @@ export function ThemeProvider({
     const root = container || window.document.documentElement;
 
     const applyTheme = (resolvedTheme: "light" | "dark") => {
-      root.classList.remove("light", "dark");
-      root.removeAttribute("data-theme");
-      root.classList.add(resolvedTheme);
+      // Single mechanism: data-theme attribute only. (The legacy class-based
+      // mechanism was removed in Phase 2 API consolidation.)
       root.setAttribute("data-theme", resolvedTheme);
     };
 

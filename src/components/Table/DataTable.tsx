@@ -1,14 +1,7 @@
 "use client";
 import { Box } from "../../atoms/Box";
-import React from "react";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "./Table";
+import React, { useMemo } from "react";
+import { Table } from "./Table";
 import { DataTablePagination } from "./DataTablePagination";
 import { cn } from "../../utils/cn";
 import { useDataTable, ColumnDef } from "./useDataTable";
@@ -62,17 +55,24 @@ export function DataTable<TData>({
     enableFiltering,
   });
 
-  const densityClasses = {
-    compact: "py-1.5",
-    normal: "py-3",
-    comfortable: "py-5",
-  };
+  const densityClasses = useMemo(
+    () => ({
+      compact: "py-1.5",
+      normal: "py-3",
+      comfortable: "py-5",
+    }),
+    [],
+  );
 
-  const columnsById = new Map(
-    columns.map((column, index) => [
-      column.id || column.accessorKey || String(index),
-      column,
-    ]),
+  const columnsById = useMemo(
+    () =>
+      new Map(
+        columns.map((column, index) => [
+          column.id || column.accessorKey || String(index),
+          column,
+        ]),
+      ),
+    [columns],
   );
 
   const getCellContent = (row: TData, col: ColumnDef<TData>) => {
@@ -106,9 +106,9 @@ export function DataTable<TData>({
         </Box>
       )}
       <Table>
-        <TableHeader className="rnx-data-table__header">
+        <Table.Header className="rnx-data-table__header">
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow
+            <Table.Row
               key={headerGroup.id}
               className="rnx-data-table__header-row"
             >
@@ -116,23 +116,23 @@ export function DataTable<TData>({
                 const columnDef = columnsById.get(header.id);
                 if (!columnDef) return null;
                 return (
-                  <TableHead
+                  <Table.Head
                     key={header.id}
                     className={densityClasses[density]}
                   >
                     {header.isPlaceholder
                       ? null
                       : flexRender(columnDef.header, header.getContext())}
-                  </TableHead>
+                  </Table.Head>
                 );
               })}
-            </TableRow>
+            </Table.Row>
           ))}
-        </TableHeader>
-        <TableBody>
+        </Table.Header>
+        <Table.Body>
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
-              <TableRow
+              <Table.Row
                 key={row.id}
                 data-state={row.getIsSelected() && "selected"}
                 className="rnx-data-table__row"
@@ -142,27 +142,27 @@ export function DataTable<TData>({
                   // Skip cells for columns that can't be resolved (e.g. display-only columns)
                   if (!columnDef) return null;
                   return (
-                    <TableCell
+                    <Table.Cell
                       key={header.id}
                       className={densityClasses[density]}
                     >
                       {getCellContent(row.original, columnDef)}
-                    </TableCell>
+                    </Table.Cell>
                   );
                 })}
-              </TableRow>
+              </Table.Row>
             ))
           ) : (
-            <TableRow>
-              <TableCell
+            <Table.Row>
+              <Table.Cell
                 colSpan={columns.length}
                 className="rnx-data-table__empty-cell h-24 text-center"
               >
                 No results.
-              </TableCell>
-            </TableRow>
+              </Table.Cell>
+            </Table.Row>
           )}
-        </TableBody>
+        </Table.Body>
       </Table>
       {enablePagination && <DataTablePagination table={table} />}
     </Box>

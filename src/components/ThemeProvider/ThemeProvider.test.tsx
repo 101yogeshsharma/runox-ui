@@ -12,7 +12,9 @@ const TestComponent = () => {
       <span data-testid="primary-color">{config.primaryColor}</span>
       <span data-testid="radius">{config.radius}</span>
       <button onClick={() => setTheme("dark")}>Set Dark</button>
-      <button onClick={() => setConfig({ primaryColor: "#ff0000" })}>Set Color</button>
+      <button onClick={() => setConfig({ primaryColor: "#ff0000" })}>
+        Set Color
+      </button>
       <button onClick={() => setConfig({ radius: "xl" })}>Set Radius</button>
     </div>
   );
@@ -23,9 +25,9 @@ describe("ThemeProvider", () => {
 
   beforeEach(() => {
     window.localStorage.clear();
-    
+
     // Mock window.matchMedia
-    matchMediaMock = vi.fn().mockImplementation(query => ({
+    matchMediaMock = vi.fn().mockImplementation((query) => ({
       matches: false,
       media: query,
       onchange: null,
@@ -35,11 +37,11 @@ describe("ThemeProvider", () => {
       removeEventListener: vi.fn(),
       dispatchEvent: vi.fn(),
     }));
-    Object.defineProperty(window, 'matchMedia', {
+    Object.defineProperty(window, "matchMedia", {
       writable: true,
       value: matchMediaMock,
     });
-    
+
     document.documentElement.className = "";
     document.documentElement.removeAttribute("data-theme");
     document.documentElement.removeAttribute("data-color");
@@ -60,15 +62,15 @@ describe("ThemeProvider", () => {
     render(
       <ThemeProvider>
         <TestComponent />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
-    
+
     expect(screen.getByTestId("theme").textContent).toBe("system");
     expect(screen.getByTestId("primary-color").textContent).toBe("blue");
     expect(screen.getByTestId("radius").textContent).toBe("md");
-    
+
     // By default matchMedia resolves to false (light)
-    expect(document.documentElement.classList.contains("light")).toBe(true);
+    expect(document.documentElement.getAttribute("data-theme")).toBe("light");
     expect(document.documentElement.getAttribute("data-theme")).toBe("light");
     expect(document.documentElement.getAttribute("data-color")).toBe("blue");
   });
@@ -84,10 +86,10 @@ describe("ThemeProvider", () => {
     render(
       <ThemeProvider>
         <TestComponent />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
-    
-    expect(document.documentElement.classList.contains("dark")).toBe(true);
+
+    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
   });
 
   it("should allow changing the theme", async () => {
@@ -95,13 +97,13 @@ describe("ThemeProvider", () => {
     render(
       <ThemeProvider>
         <TestComponent />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
-    
+
     await user.click(screen.getByText("Set Dark"));
-    
+
     expect(screen.getByTestId("theme").textContent).toBe("dark");
-    expect(document.documentElement.classList.contains("dark")).toBe(true);
+    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
   });
 
   it("should save configuration to localStorage", async () => {
@@ -109,32 +111,36 @@ describe("ThemeProvider", () => {
     render(
       <ThemeProvider storageKey="test-theme-key">
         <TestComponent />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
-    
+
     await user.click(screen.getByText("Set Dark"));
-    
-    const stored = JSON.parse(window.localStorage.getItem("test-theme-key") || "{}");
+
+    const stored = JSON.parse(
+      window.localStorage.getItem("test-theme-key") || "{}",
+    );
     expect(stored.theme).toBe("dark");
   });
 
   it("should hydrate from localStorage", () => {
     window.localStorage.setItem(
       "runox-ui-theme",
-      JSON.stringify({ theme: "light", primaryColor: "blue", radius: "none" })
+      JSON.stringify({ theme: "light", primaryColor: "blue", radius: "none" }),
     );
-    
+
     render(
       <ThemeProvider>
         <TestComponent />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
-    
+
     expect(screen.getByTestId("theme").textContent).toBe("light");
     expect(screen.getByTestId("primary-color").textContent).toBe("blue");
     expect(screen.getByTestId("radius").textContent).toBe("none");
-    
-    expect(document.documentElement.style.getPropertyValue("--radius")).toBe("0px");
+
+    expect(document.documentElement.style.getPropertyValue("--radius")).toBe(
+      "0px",
+    );
   });
 
   it("should apply custom hex color", async () => {
@@ -142,24 +148,30 @@ describe("ThemeProvider", () => {
     render(
       <ThemeProvider>
         <TestComponent />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
-    
+
     await user.click(screen.getByText("Set Color"));
-    
-    expect(document.documentElement.style.getPropertyValue("--primary")).toBe("#ff0000");
+
+    expect(document.documentElement.style.getPropertyValue("--primary")).toBe(
+      "#ff0000",
+    );
     // #ff0000 is red, which has low/mid luminosity, so foreground should be calculated
-    expect(document.documentElement.style.getPropertyValue("--primary-foreground")).toBeTruthy();
+    expect(
+      document.documentElement.style.getPropertyValue("--primary-foreground"),
+    ).toBeTruthy();
   });
-  
+
   it("should handle 3-character hex colors", async () => {
     render(
       <ThemeProvider defaultConfig={{ primaryColor: "#f00" }}>
         <TestComponent />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
-    
-    expect(document.documentElement.style.getPropertyValue("--primary")).toBe("#f00");
+
+    expect(document.documentElement.style.getPropertyValue("--primary")).toBe(
+      "#f00",
+    );
   });
 
   it("should change radius CSS variable", async () => {
@@ -167,12 +179,14 @@ describe("ThemeProvider", () => {
     render(
       <ThemeProvider>
         <TestComponent />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
-    
+
     await user.click(screen.getByText("Set Radius"));
-    
-    expect(document.documentElement.style.getPropertyValue("--radius")).toBe("var(--radius-xl)");
+
+    expect(document.documentElement.style.getPropertyValue("--radius")).toBe(
+      "var(--radius-xl)",
+    );
   });
 
   it("should handle storage event / OS theme change listener", () => {
@@ -186,17 +200,20 @@ describe("ThemeProvider", () => {
     render(
       <ThemeProvider>
         <TestComponent />
-      </ThemeProvider>
+      </ThemeProvider>,
     );
-    
-    expect(addEventListener).toHaveBeenCalledWith("change", expect.any(Function));
-    
+
+    expect(addEventListener).toHaveBeenCalledWith(
+      "change",
+      expect.any(Function),
+    );
+
     // Simulate OS theme change to dark
     const listener = addEventListener.mock.calls[0][1];
     act(() => {
       listener({ matches: true });
     });
-    
-    expect(document.documentElement.classList.contains("dark")).toBe(true);
+
+    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
   });
 });

@@ -209,7 +209,7 @@ const RadioBase = forwardRef<HTMLInputElement, RadioProps>(
           <Box
             className={cn(
               "rnx-radio-box",
-              `rnx-radio-box--${size}`,
+              `rnx-radio-box--size-${size}`,
               `rnx-radio-box--${effectiveColor}`,
               error && "rnx-radio-box--error",
             )}

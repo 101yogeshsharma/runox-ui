@@ -25,11 +25,11 @@
     margin: 0;
   }
 
-  .rnx-number-input--sm {
+  .rnx-number-input--size-sm {
     padding-left: var(--space-8);
     padding-right: var(--space-8);
   }
-  .rnx-number-input--md {
+  .rnx-number-input--size-md {
     padding-left: var(--space-10);
     padding-right: var(--space-10);
   }
@@ -85,28 +85,28 @@
     align-items: center;
     justify-content: center;
   }
-  .rnx-number-input-btn--sm {
+  .rnx-number-input-btn--size-sm {
     height: var(--space-6);
     width: var(--space-6);
   }
-  .rnx-number-input-btn--md {
+  .rnx-number-input-btn--size-md {
     height: var(--space-8);
     width: var(--space-8);
   }
-  .rnx-number-input-btn--lg {
+  .rnx-number-input-btn--size-lg {
     height: var(--space-10);
     width: var(--space-10);
   }
 
-  .rnx-number-input-icon--sm {
+  .rnx-number-input-icon--size-sm {
     height: 0.75rem;
     width: 0.75rem;
   }
-  .rnx-number-input-icon--md {
+  .rnx-number-input-icon--size-md {
     height: 1rem;
     width: 1rem;
   }
-  .rnx-number-input-icon--lg {
+  .rnx-number-input-icon--size-lg {
     height: 1.25rem;
     width: 1.25rem;
   }

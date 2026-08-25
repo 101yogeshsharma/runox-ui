@@ -1,5 +1,5 @@
 import { Box } from "../../atoms/Box";
-import React from "react";
+import React, { forwardRef } from "react";
 import { ArrowDown, ArrowUp, ChevronsUpDown } from "lucide-react";
 import { Button } from "../Button";
 import { cn } from "../../utils/cn";
@@ -12,17 +12,19 @@ interface DataTableColumnHeaderProps<
   title: string;
 }
 
-export function DataTableColumnHeader<TData>({
-  column,
-  title,
-  className,
-}: DataTableColumnHeaderProps<TData>) {
+export const DataTableColumnHeader = forwardRef(function DataTableColumnHeader<
+  TData,
+>(
+  { column, title, className }: DataTableColumnHeaderProps<TData>,
+  ref: React.Ref<HTMLDivElement>,
+) {
   if (!column.getCanSort()) {
     return (
       <Box
+        ref={ref}
         className={cn(
           "text-foreground/50 text-xs font-semibold tracking-wider uppercase",
-          className
+          className,
         )}
       >
         {title}
@@ -32,9 +34,10 @@ export function DataTableColumnHeader<TData>({
 
   return (
     <Box
+      ref={ref}
       className={cn(
         "text-foreground/50 flex items-center gap-2 text-xs font-semibold tracking-wider uppercase",
-        className
+        className,
       )}
     >
       <Button
@@ -54,6 +57,6 @@ export function DataTableColumnHeader<TData>({
       </Button>
     </Box>
   );
-}
+});
 
 DataTableColumnHeader.displayName = "Table.DataTableColumnHeader";

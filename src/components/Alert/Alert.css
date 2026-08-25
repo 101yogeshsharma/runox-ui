@@ -4,7 +4,10 @@
     width: 100%;
     border-radius: var(--radius);
     border: 1px solid var(--border);
-    transition: all 150ms ease;
+    transition:
+      background-color 150ms ease,
+      border-color 150ms ease,
+      box-shadow 150ms ease;
   }
 
   /* Sizes */
@@ -117,15 +120,15 @@
     align-items: center;
     justify-content: center;
   }
-  .rnx-alert-icon--sm {
+  .rnx-alert-icon--size-sm {
     inset-inline-start: var(--space-3);
     top: var(--space-3);
   }
-  .rnx-alert-icon--md {
+  .rnx-alert-icon--size-md {
     inset-inline-start: var(--space-4);
     top: var(--space-4);
   }
-  .rnx-alert-icon--lg {
+  .rnx-alert-icon--size-lg {
     inset-inline-start: var(--space-5);
     top: var(--space-5);
   }

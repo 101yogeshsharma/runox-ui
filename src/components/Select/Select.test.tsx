@@ -1,26 +1,20 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./Select";
+import { Select } from "./Select";
 
 describe("Select", () => {
   it("connects the trigger to the popup and supports keyboard selection", async () => {
     const user = userEvent.setup();
     render(
       <Select defaultValue="one">
-        <SelectTrigger>
-          <SelectValue placeholder="Choose an option" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="one">One</SelectItem>
-          <SelectItem value="two">Two</SelectItem>
-        </SelectContent>
+        <Select.Trigger>
+          <Select.Value placeholder="Choose an option" />
+        </Select.Trigger>
+        <Select.Content>
+          <Select.Item value="one">One</Select.Item>
+          <Select.Item value="two">Two</Select.Item>
+        </Select.Content>
       </Select>,
     );
 
@@ -43,12 +37,12 @@ describe("Select", () => {
     const user = userEvent.setup();
     render(
       <Select>
-        <SelectTrigger>
-          <SelectValue placeholder="Choose an option" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="one">One</SelectItem>
-        </SelectContent>
+        <Select.Trigger>
+          <Select.Value placeholder="Choose an option" />
+        </Select.Trigger>
+        <Select.Content>
+          <Select.Item value="one">One</Select.Item>
+        </Select.Content>
       </Select>,
     );
 
@@ -63,15 +57,15 @@ describe("Select", () => {
     const user = userEvent.setup();
     render(
       <Select>
-        <SelectTrigger>
-          <SelectValue placeholder="Choose an option" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="disabled" disabled>
+        <Select.Trigger>
+          <Select.Value placeholder="Choose an option" />
+        </Select.Trigger>
+        <Select.Content>
+          <Select.Item value="disabled" disabled>
             Disabled
-          </SelectItem>
-          <SelectItem value="enabled">Enabled</SelectItem>
-        </SelectContent>
+          </Select.Item>
+          <Select.Item value="enabled">Enabled</Select.Item>
+        </Select.Content>
       </Select>,
     );
 

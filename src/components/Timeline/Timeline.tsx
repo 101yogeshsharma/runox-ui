@@ -54,7 +54,7 @@ export const TimelineItem = React.forwardRef<HTMLLIElement, TimelineItemProps>(
           orientation === "vertical"
             ? "rnx-timeline-item--vertical"
             : "rnx-timeline-item--horizontal",
-          status && `rnx-timeline-item--${status}`,
+          status && `rnx-timeline-item--status-${status}`,
           className,
         )}
         {...props}
@@ -91,7 +91,7 @@ export interface TimelineDotProps extends React.HTMLAttributes<HTMLDivElement> {
   variant?: "default" | "outline" | "ghost";
   status?: "completed" | "active" | "pending" | "error";
   color?:
-    "default" | "primary" | "secondary" | "destructive" | "success" | "warning";
+    "default" | "primary" | "secondary" | "danger" | "success" | "warning";
 }
 
 export const TimelineDot = React.forwardRef<HTMLDivElement, TimelineDotProps>(
@@ -106,7 +106,7 @@ export const TimelineDot = React.forwardRef<HTMLDivElement, TimelineDotProps>(
     } else if (status === "active") {
       mappedColor = "primary";
     } else if (status === "error") {
-      mappedColor = "destructive";
+      mappedColor = "danger";
     }
 
     return (
@@ -114,7 +114,7 @@ export const TimelineDot = React.forwardRef<HTMLDivElement, TimelineDotProps>(
         ref={ref}
         className={cn(
           "rnx-timeline-dot",
-          `rnx-timeline-dot--${variant}`,
+          `rnx-timeline-dot--variant-${variant}`,
           `rnx-timeline-dot--color-${mappedColor}`,
           orientation === "vertical"
             ? "rnx-timeline-dot--vertical"

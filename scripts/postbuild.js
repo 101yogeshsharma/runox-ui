@@ -57,3 +57,10 @@ if (fs.existsSync(cssFile)) {
   }
   console.log("Tailwind CSS processing complete.");
 }
+
+// Generate registry.json for the `runox add` CLI
+console.log("Generating component registry...");
+execSync(`node ${path.join(__dirname, "generate-registry.js")}`, {
+  cwd: path.join(__dirname, ".."),
+  stdio: "inherit",
+});

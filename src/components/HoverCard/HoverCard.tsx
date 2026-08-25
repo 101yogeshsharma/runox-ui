@@ -6,6 +6,7 @@ import { useFloatingPosition, useControllableState } from "../../hooks";
 import { Box } from "../../atoms/Box";
 import { Card } from "../Card";
 import { rnx } from "../../utils/rnx";
+import { warnDeprecatedProp } from "../../utils/warn";
 // Uses: Card
 
 import "./HoverCard.css";
@@ -20,12 +21,22 @@ export interface HoverCardProps {
   size?: "sm" | "md" | "lg";
   showArrow?: boolean;
   align?: "left" | "right" | "center";
-  isOpen?: boolean;
+  /**
+   * Controlled open state. Preferred over the deprecated `isOpen`.
+   */
+  open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  /** @deprecated Use `open` instead. */
+  isOpen?: boolean;
   className?: string;
   sideOffset?: number;
   openDelay?: number;
   closeDelay?: number;
+  /**
+   * Element to portal the hover card into. Defaults to `document.body`.
+   * Useful for tests or rendering inside a specific container.
+   */
+  container?: HTMLElement;
 }
 
 const HoverCardComponent: React.FC<HoverCardProps> = ({
@@ -35,15 +46,20 @@ const HoverCardComponent: React.FC<HoverCardProps> = ({
   size = "md",
   showArrow = false,
   align = "center",
-  isOpen: isOpenProp,
+  open: openProp,
   onOpenChange,
+  isOpen: legacyIsOpen,
   className,
   sideOffset = 4,
   openDelay = 200,
   closeDelay = 200,
+  container,
 }) => {
+  if (process.env.NODE_ENV !== "production" && legacyIsOpen !== undefined) {
+    warnDeprecatedProp("HoverCard", "isOpen", "open");
+  }
   const [isOpen, setIsOpen] = useControllableState({
-    prop: isOpenProp,
+    prop: openProp ?? legacyIsOpen,
     defaultProp: false,
     onChange: onOpenChange,
   });
@@ -172,7 +188,7 @@ const HoverCardComponent: React.FC<HoverCardProps> = ({
 
     return createPortal(
       <Card
-        {...rnx({ component: "HoverCard", state: "open" })}
+        {...rnx({ component: "HoverCard", state: "open", overlay: true })}
         id={contentId}
         ref={contentRef}
         role="dialog"
@@ -181,12 +197,11 @@ const HoverCardComponent: React.FC<HoverCardProps> = ({
         className={cn(
           "rnx-hover-card-content",
           `rnx-hover-card-content--variant-${variant}`,
-          `rnx-hover-card-content--${size}`,
+          `rnx-hover-card-content--size-${size}`,
           className,
         )}
         data-state={mounted ? "open" : "closed"}
         data-side={position?.placed ?? "bottom"}
-        data-rnx-overlay="true"
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         style={{
@@ -209,7 +224,7 @@ const HoverCardComponent: React.FC<HoverCardProps> = ({
         )}
         {children}
       </Card>,
-      document.body,
+      container ?? document.body,
     );
   };
 
@@ -222,12 +237,12 @@ const HoverCardComponent: React.FC<HoverCardProps> = ({
 };
 HoverCardComponent.displayName = "HoverCard";
 
-export const HoverCardTrigger: React.FC<{ children: React.ReactNode }> = ({
+const HoverCardTrigger: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => <>{children}</>;
 HoverCardTrigger.displayName = "HoverCard.Trigger";
 
-export const HoverCardContent: React.FC<{
+const HoverCardContent: React.FC<{
   children: React.ReactNode;
   className?: string;
 }> = ({ children, className }) => <span className={className}>{children}</span>;

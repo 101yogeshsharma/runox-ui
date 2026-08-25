@@ -13,7 +13,7 @@ describe("InputIcon", () => {
     const el = screen.getByTestId("input-icon");
     expect(el).toBeInTheDocument();
     expect(el).toHaveClass("rnx-input-icon");
-    expect(el).toHaveClass("rnx-input-icon--left");
+    expect(el).toHaveClass("rnx-input-icon--position-left");
   });
 
   it("renders correctly with position right", () => {
@@ -23,6 +23,6 @@ describe("InputIcon", () => {
       </InputIcon>,
     );
     const el = screen.getByTestId("input-icon-right");
-    expect(el).toHaveClass("rnx-input-icon--right");
+    expect(el).toHaveClass("rnx-input-icon--position-right");
   });
 });

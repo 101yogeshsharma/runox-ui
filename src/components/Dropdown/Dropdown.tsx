@@ -19,17 +19,11 @@ import {
 import { useMergeRefs } from "../../hooks/useMergeRefs";
 import { Box } from "../../atoms/Box";
 import { rnx } from "../../utils/rnx";
+import { warnInvalidProps } from "../../utils/warn";
+import { DROPDOWN_EXIT_DURATION_MS } from "../../internal/timings";
 import { Button } from "../Button";
 import { Badge } from "../Badge";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  CommandSeparator,
-} from "../Command/Command";
+import { Command } from "../Command/Command";
 import "./Dropdown.css";
 
 interface DropdownContextValue {
@@ -61,19 +55,54 @@ export function useDropdownContext() {
 /**
  * Props for the Dropdown component.
  */
-export interface DropdownProps {
+export interface DropdownProps extends Omit<
+  React.HTMLAttributes<HTMLDivElement>,
+  "onChange"
+> {
   children: React.ReactNode;
   value?: string | string[];
   onValueChange?: (value: string | string[]) => void;
   multiple?: boolean;
+  /** Controlled open state. */
+  open?: boolean;
+  /** Called when the open state should change. */
+  onOpenChange?: (open: boolean) => void;
+  /** Initial open state for uncontrolled usage. */
+  defaultOpen?: boolean;
 }
 
 const DropdownRoot = React.forwardRef<HTMLDivElement, DropdownProps>(
   (
-    { children, value: controlledValue, onValueChange, multiple = false },
+    {
+      children,
+      value: controlledValue,
+      onValueChange,
+      multiple = false,
+      open: openProp,
+      onOpenChange,
+      defaultOpen = false,
+      ...props
+    },
     ref,
   ) => {
-    const [isOpen, setIsOpen] = useState(false);
+    if (process.env.NODE_ENV !== "production") {
+      if (controlledValue !== undefined && !onValueChange) {
+        warnInvalidProps(
+          "Dropdown",
+          "`value` provided without `onValueChange` — the dropdown is controlled but selection changes will be lost. Pass `onValueChange` or use `defaultValue` instead.",
+        );
+      }
+    }
+    const [internalOpen, setInternalOpen] = useState(defaultOpen);
+    const isControlledOpen = openProp !== undefined;
+    const isOpen = isControlledOpen ? openProp : internalOpen;
+    const setIsOpen = React.useCallback(
+      (next: boolean) => {
+        if (!isControlledOpen) setInternalOpen(next);
+        onOpenChange?.(next);
+      },
+      [isControlledOpen, onOpenChange],
+    );
     const [searchQuery, setSearchQuery] = useState("");
     const triggerRef = useRef<HTMLButtonElement>(null);
     const rawId = React.useId();
@@ -112,7 +141,7 @@ const DropdownRoot = React.forwardRef<HTMLDivElement, DropdownProps>(
 
     return (
       <DropdownContext.Provider value={contextValue}>
-        <Box ref={ref} className={cn("rnx-dropdown")}>
+        <Box ref={ref} className={cn("rnx-dropdown")} {...props}>
           {children}
         </Box>
       </DropdownContext.Provider>
@@ -130,7 +159,7 @@ export interface DropdownTriggerProps extends Omit<
   size?: "sm" | "md" | "lg";
 }
 
-export const DropdownTrigger = React.forwardRef<
+const DropdownTrigger = React.forwardRef<
   HTMLButtonElement,
   DropdownTriggerProps
 >(({ placeholder, className, width, size = "md", ...props }, ref) => {
@@ -145,7 +174,10 @@ export const DropdownTrigger = React.forwardRef<
   } = useDropdownContext();
   const mergedRef = useMergeRefs(ref, triggerRef);
 
-  const removeTag = (e: React.MouseEvent, optionValue: string) => {
+  const removeTag = (
+    e: React.MouseEvent | React.KeyboardEvent,
+    optionValue: string,
+  ) => {
     e.stopPropagation();
     if (multiple) {
       const currentArray = Array.isArray(value) ? value : [];
@@ -182,7 +214,7 @@ export const DropdownTrigger = React.forwardRef<
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
                     e.preventDefault();
-                    removeTag(e as any, v);
+                    removeTag(e, v);
                   }
                 }}
               >
@@ -213,10 +245,9 @@ export const DropdownTrigger = React.forwardRef<
       ref={mergedRef}
       variant="outline"
       size={multiple ? undefined : size}
-      role="combobox"
+      aria-haspopup="menu"
       aria-expanded={isOpen}
-      aria-controls={contentId}
-      aria-haspopup="listbox"
+      aria-controls={isOpen ? contentId : undefined}
       onClick={() => setIsOpen(!isOpen)}
       className={cn(
         "rnx-dropdown-trigger justify-between",
@@ -244,12 +275,20 @@ export interface DropdownContentProps {
   searchable?: boolean;
   searchPlaceholder?: string;
   matchTriggerWidth?: boolean;
+  /**
+   * Element to portal the dropdown menu into. Defaults to `document.body`.
+   * Useful for tests or rendering inside a specific container.
+   */
+  container?: HTMLElement;
+  /**
+   * Skip the exit animation: the menu unmounts immediately on close.
+   * Recommended in tests to avoid fake-timer coupling.
+   * @default false
+   */
+  disableExitAnimation?: boolean;
 }
 
-export const DropdownContent = React.forwardRef<
-  HTMLDivElement,
-  DropdownContentProps
->(
+const DropdownContent = React.forwardRef<HTMLDivElement, DropdownContentProps>(
   (
     {
       children,
@@ -257,6 +296,8 @@ export const DropdownContent = React.forwardRef<
       searchable = false,
       searchPlaceholder = "Search...",
       matchTriggerWidth = true,
+      container,
+      disableExitAnimation = false,
       ...props
     },
     ref,
@@ -267,12 +308,28 @@ export const DropdownContent = React.forwardRef<
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
-      if (isOpen) setMounted(true);
-      else {
-        const timer = setTimeout(() => setMounted(false), 150);
+      if (isOpen) {
+        setMounted(true);
+        // Move focus into the menu so keyboard users can navigate items
+        // (cmdk's arrow-key handling requires focus inside its tree).
+        requestAnimationFrame(() => {
+          const listbox =
+            contentRef.current?.querySelector<HTMLElement>("[cmdk-list]");
+          const firstItem = contentRef.current?.querySelector<HTMLElement>(
+            "[cmdk-item]:not([data-disabled])",
+          );
+          (listbox ?? firstItem ?? contentRef.current)?.focus();
+        });
+      } else if (disableExitAnimation) {
+        setMounted(false);
+      } else {
+        const timer = setTimeout(
+          () => setMounted(false),
+          DROPDOWN_EXIT_DURATION_MS,
+        );
         return () => clearTimeout(timer);
       }
-    }, [isOpen]);
+    }, [isOpen, disableExitAnimation]);
 
     const position = useFloatingPosition(
       triggerRef,
@@ -291,10 +348,16 @@ export const DropdownContent = React.forwardRef<
 
     useEffect(() => {
       const handleKeyDown = (e: KeyboardEvent) => {
-        if (e.key === "Escape" && isOpen) {
-          setIsOpen(false);
-          triggerRef.current?.focus();
-        }
+        // Only this instance's open menu reacts — and only when focus is
+        // inside it (or on its trigger), preventing multi-instance
+        // interference when several Dropdowns are open at once.
+        if (e.key !== "Escape" || !isOpen) return;
+        const focusInside =
+          contentRef.current?.contains(document.activeElement) ||
+          triggerRef.current?.contains(document.activeElement);
+        if (!focusInside) return;
+        setIsOpen(false);
+        triggerRef.current?.focus();
       };
       document.addEventListener("keydown", handleKeyDown);
       return () => document.removeEventListener("keydown", handleKeyDown);
@@ -312,6 +375,7 @@ export const DropdownContent = React.forwardRef<
       <Box
         ref={mergedRef}
         role="menu"
+        tabIndex={-1}
         className={cn("rnx-dropdown-content z-50", className)}
         data-state={isOpen && position ? "open" : "closed"}
         data-side={position?.placed || "bottom"}
@@ -325,18 +389,18 @@ export const DropdownContent = React.forwardRef<
         {...props}
       >
         <Command>
-          {searchable && <CommandInput placeholder={searchPlaceholder} />}
-          <CommandList id={contentId}>{children}</CommandList>
+          {searchable && <Command.Input placeholder={searchPlaceholder} />}
+          <Command.List id={contentId}>{children}</Command.List>
         </Command>
       </Box>,
-      document.body,
+      container ?? document.body,
     );
   },
 );
 DropdownContent.displayName = "Dropdown.Content";
 
 export interface DropdownItemProps extends Omit<
-  React.ComponentPropsWithoutRef<typeof CommandItem>,
+  React.ComponentPropsWithoutRef<typeof Command.Item>,
   "value" | "onSelect"
 > {
   onSelect?: () => void;
@@ -345,7 +409,7 @@ export interface DropdownItemProps extends Omit<
   className?: string;
 }
 
-export const DropdownItem = React.forwardRef<HTMLDivElement, DropdownItemProps>(
+const DropdownItem = React.forwardRef<HTMLDivElement, DropdownItemProps>(
   (
     { children, value: itemValue, onSelect: onSelectProp, className, ...props },
     ref,
@@ -380,7 +444,7 @@ export const DropdownItem = React.forwardRef<HTMLDivElement, DropdownItemProps>(
     };
 
     return (
-      <CommandItem
+      <Command.Item
         ref={ref}
         role="menuitem"
         value={
@@ -415,7 +479,7 @@ export const DropdownItem = React.forwardRef<HTMLDivElement, DropdownItemProps>(
           </Flex>
         )}
         {children}
-      </CommandItem>
+      </Command.Item>
     );
   },
 );
@@ -426,16 +490,15 @@ export interface DropdownEmptyProps {
   className?: string;
 }
 
-export const DropdownEmpty = React.forwardRef<
-  HTMLDivElement,
-  DropdownEmptyProps
->(({ children, className, ...props }, ref) => {
-  return (
-    <CommandEmpty ref={ref} className={className} {...props}>
-      {children}
-    </CommandEmpty>
-  );
-});
+const DropdownEmpty = React.forwardRef<HTMLDivElement, DropdownEmptyProps>(
+  ({ children, className, ...props }, ref) => {
+    return (
+      <Command.Empty ref={ref} className={className} {...props}>
+        {children}
+      </Command.Empty>
+    );
+  },
+);
 DropdownEmpty.displayName = "Dropdown.Empty";
 
 export interface DropdownGroupProps {
@@ -444,16 +507,20 @@ export interface DropdownGroupProps {
   className?: string;
 }
 
-export const DropdownGroup = React.forwardRef<
-  HTMLDivElement,
-  DropdownGroupProps
->(({ children, heading, className, ...props }, ref) => {
-  return (
-    <CommandGroup ref={ref} heading={heading} className={className} {...props}>
-      {children}
-    </CommandGroup>
-  );
-});
+const DropdownGroup = React.forwardRef<HTMLDivElement, DropdownGroupProps>(
+  ({ children, heading, className, ...props }, ref) => {
+    return (
+      <Command.Group
+        ref={ref}
+        heading={heading}
+        className={className}
+        {...props}
+      >
+        {children}
+      </Command.Group>
+    );
+  },
+);
 DropdownGroup.displayName = "Dropdown.Group";
 
 export interface DropdownSearchProps {
@@ -461,31 +528,30 @@ export interface DropdownSearchProps {
   className?: string;
 }
 
-export const DropdownSearch = React.forwardRef<
-  HTMLInputElement,
-  DropdownSearchProps
->(({ placeholder = "Search...", className, ...props }, ref) => {
-  return (
-    <CommandInput
-      ref={ref}
-      placeholder={placeholder}
-      className={className}
-      {...props}
-    />
-  );
-});
+const DropdownSearch = React.forwardRef<HTMLInputElement, DropdownSearchProps>(
+  ({ placeholder = "Search...", className, ...props }, ref) => {
+    return (
+      <Command.Input
+        ref={ref}
+        placeholder={placeholder}
+        className={className}
+        {...props}
+      />
+    );
+  },
+);
 DropdownSearch.displayName = "Dropdown.Search";
 
 export interface DropdownDividerProps extends React.ComponentPropsWithoutRef<
-  typeof CommandSeparator
+  typeof Command.Separator
 > {}
 
-export const DropdownDivider = React.forwardRef<
-  React.ElementRef<typeof CommandSeparator>,
+const DropdownDivider = React.forwardRef<
+  React.ElementRef<typeof Command.Separator>,
   DropdownDividerProps
 >((props, ref) => {
   return (
-    <CommandSeparator
+    <Command.Separator
       ref={ref}
       {...props}
       className={cn("bg-border -mx-1 h-px", props.className)}

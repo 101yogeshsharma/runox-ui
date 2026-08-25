@@ -9,7 +9,7 @@ interface MigrateOptions {
 }
 
 export function runMigrate(options: MigrateOptions) {
-  const supportedLibraries = ["mui", "chakra", "shadcn"];
+  const supportedLibraries = ["mui", "chakra", "shadcn", "flat"];
   if (!supportedLibraries.includes(options.from)) {
     console.error(
       `Error: Unsupported library "${options.from}". Supported libraries: ${supportedLibraries.join(", ")}`,

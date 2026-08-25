@@ -8,7 +8,6 @@ import "./Avatar.css";
 import { withLoading } from "../../utils/withLoading";
 import { rnx } from "../../utils/rnx";
 
-
 /**
  * Displays a user's profile image with automatic fallback to initials or a placeholder.
  */
@@ -35,7 +34,7 @@ const AvatarBase = forwardRef<HTMLDivElement, AvatarProps>(
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [hasError, setHasError] = useState(false);
     const FallbackContent = fallback || alt.charAt(0).toUpperCase();
@@ -47,14 +46,14 @@ const AvatarBase = forwardRef<HTMLDivElement, AvatarProps>(
 
     return (
       <Box
-        {...rnx({ component: 'Avatar' })}
+        {...rnx({ component: "Avatar" })}
         ref={ref}
         className={cn(
           "rnx-avatar",
-          `rnx-avatar--${size}`,
-          `rnx-avatar--${shape}`,
+          `rnx-avatar--size-${size}`,
+          `rnx-avatar--shape-${shape}`,
           variant && variant !== "solid" && `rnx-avatar--variant-${variant}`,
-          className
+          className,
         )}
         {...props}
       >
@@ -66,23 +65,21 @@ const AvatarBase = forwardRef<HTMLDivElement, AvatarProps>(
             className="rnx-avatar-image"
           />
         ) : (
-          <Box className="rnx-avatar-fallback">
-            {FallbackContent}
-          </Box>
+          <Box className="rnx-avatar-fallback">{FallbackContent}</Box>
         )}
         {status && (
           <span
             className={cn(
               "rnx-avatar-status",
-              `rnx-avatar-status--${size}`,
-              `rnx-avatar-status--${status}`
+              `rnx-avatar-status--size-${size}`,
+              `rnx-avatar-status--status-${status}`,
             )}
             aria-label={`Status: ${status}`}
           />
         )}
       </Box>
     );
-  }
+  },
 );
 
 AvatarBase.displayName = "Avatar";

@@ -3,8 +3,14 @@ import { AlertDialog } from "./AlertDialog";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 describe("AlertDialog", () => {
-  const TestComponent = ({ onOpenChange }: { onOpenChange?: (open: boolean) => void }) => (
-    <AlertDialog onOpenChange={onOpenChange}>
+  const TestComponent = ({
+    onOpenChange,
+    dismissible,
+  }: {
+    onOpenChange?: (open: boolean) => void;
+    dismissible?: boolean;
+  }) => (
+    <AlertDialog onOpenChange={onOpenChange} dismissible={dismissible}>
       <AlertDialog.Trigger asChild>
         <button data-testid="trigger">Open</button>
       </AlertDialog.Trigger>
@@ -44,10 +50,12 @@ describe("AlertDialog", () => {
 
   it("opens content on trigger click", () => {
     const onOpenChange = vi.fn();
-    const { getByTestId } = render(<TestComponent onOpenChange={onOpenChange} />);
-    
+    const { getByTestId } = render(
+      <TestComponent onOpenChange={onOpenChange} />,
+    );
+
     fireEvent.click(getByTestId("trigger"));
-    
+
     act(() => {
       vi.runAllTimers();
     });
@@ -58,9 +66,9 @@ describe("AlertDialog", () => {
 
   it("closes on cancel click", () => {
     const { getByTestId, queryByTestId } = render(<TestComponent />);
-    
+
     fireEvent.click(getByTestId("trigger"));
-    
+
     act(() => {
       vi.runAllTimers();
     });
@@ -76,9 +84,9 @@ describe("AlertDialog", () => {
 
   it("closes on action click", () => {
     const { getByTestId, queryByTestId } = render(<TestComponent />);
-    
+
     fireEvent.click(getByTestId("trigger"));
-    
+
     act(() => {
       vi.runAllTimers();
     });
@@ -92,11 +100,32 @@ describe("AlertDialog", () => {
     expect(queryByTestId("content")).not.toBeInTheDocument();
   });
 
-  it("closes on Escape key down", () => {
+  it("does not close on Escape by default (WAI-ARIA alertdialog pattern)", () => {
     const { getByTestId, queryByTestId } = render(<TestComponent />);
-    
+
     fireEvent.click(getByTestId("trigger"));
-    
+
+    act(() => {
+      vi.runAllTimers();
+    });
+    expect(getByTestId("content")).toBeInTheDocument();
+
+    fireEvent.keyDown(document, { key: "Escape", code: "Escape" });
+
+    act(() => {
+      vi.runAllTimers();
+    });
+
+    expect(getByTestId("content")).toBeInTheDocument();
+  });
+
+  it("closes on Escape when dismissible is set", () => {
+    const { getByTestId, queryByTestId } = render(
+      <TestComponent dismissible />,
+    );
+
+    fireEvent.click(getByTestId("trigger"));
+
     act(() => {
       vi.runAllTimers();
     });
@@ -119,17 +148,21 @@ describe("AlertDialog", () => {
           <AlertDialog.Cancel>Close</AlertDialog.Cancel>
           <AlertDialog.Action>Confirm</AlertDialog.Action>
         </AlertDialog.Content>
-      </AlertDialog>
+      </AlertDialog>,
     );
 
     fireEvent.click(getByRole("button", { name: "Open Alert" }));
-    act(() => { vi.runAllTimers(); });
+    act(() => {
+      vi.runAllTimers();
+    });
 
     expect(getByRole("button", { name: "Close" })).toBeInTheDocument();
     expect(getByRole("button", { name: "Confirm" })).toBeInTheDocument();
 
     fireEvent.click(getByRole("button", { name: "Confirm" }));
-    act(() => { vi.runAllTimers(); });
+    act(() => {
+      vi.runAllTimers();
+    });
 
     expect(queryByRole("button", { name: "Close" })).not.toBeInTheDocument();
   });

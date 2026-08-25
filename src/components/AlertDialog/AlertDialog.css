@@ -36,15 +36,15 @@
   }
 
   /* Sizes */
-  .rnx-alert-dialog-content--sm {
+  .rnx-alert-dialog-content--size-sm {
     max-width: var(--modal-width-sm, 24rem);
     padding: var(--space-4);
   }
-  .rnx-alert-dialog-content--md {
+  .rnx-alert-dialog-content--size-md {
     max-width: var(--modal-width-lg, 32rem);
     padding: var(--space-6);
   }
-  .rnx-alert-dialog-content--lg {
+  .rnx-alert-dialog-content--size-lg {
     max-width: var(--modal-width-xl, 40rem);
     padding: var(--space-8);
   }

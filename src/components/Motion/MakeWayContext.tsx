@@ -55,7 +55,7 @@ export function MakeWayProvider({ children }: { children: React.ReactNode }) {
       registerModal,
       unregisterModal,
     }),
-    [isModalOpen, registerModal, unregisterModal]
+    [isModalOpen, registerModal, unregisterModal],
   );
 
   return (
@@ -74,3 +74,14 @@ export const useMakeWay = () => {
   }
   return context;
 };
+
+/**
+ * MakeWay access that tolerates a missing provider. Components that can
+ * function without the shift-aside behavior (e.g. standalone Modal usage in
+ * tests or apps that do not use RunoxProvider) should prefer this variant.
+ */
+export const useMakeWayOptional = (): MakeWayContextType => ({
+  isModalOpen: false,
+  registerModal: () => {},
+  unregisterModal: () => {},
+});

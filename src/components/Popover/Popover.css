@@ -10,17 +10,17 @@
   }
 
   /* Sizes */
-  .rnx-popover-content--sm {
+  .rnx-popover-content--size-sm {
     min-width: var(--overlay-width-sm, 14rem);
     padding: var(--space-3);
     font-size: var(--text-xs);
   }
-  .rnx-popover-content--md {
+  .rnx-popover-content--size-md {
     min-width: var(--overlay-width-md, 18rem);
     padding: var(--space-4);
     font-size: var(--text-sm);
   }
-  .rnx-popover-content--lg {
+  .rnx-popover-content--size-lg {
     min-width: var(--overlay-width-lg, 22rem);
     padding: var(--space-5);
     font-size: var(--text-base);

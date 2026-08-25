@@ -315,7 +315,7 @@ export function KanbanBoard<T extends { id?: UniqueIdentifier }>({
         gap="lg"
         justify="start"
         className={cn(
-          "scrollbar-hide h-full min-h-96 w-full overflow-x-auto py-12",
+          "rnx-scrollbar-hide h-full min-h-96 w-full overflow-x-auto py-12",
           className,
         )}
       >
