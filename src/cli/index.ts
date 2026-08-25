@@ -17,7 +17,8 @@ program
   .description("Runox UI CLI for installing components")
   .version(PKG_JSON.version);
 
-// The registry URL. Ideally, this points to unpkg or jsdelivr
+// The registry URL. Ideally, this points to unpkg or jsdelivr.
+// Overridable via --registry for local development / private mirrors.
 const REGISTRY_URL = `https://unpkg.com/@runox/ui@${PKG_JSON.version}/dist/registry.json`;
 const SOURCE_BASE_URL = `https://unpkg.com/@runox/ui@${PKG_JSON.version}/`;
 
@@ -61,13 +62,13 @@ function httpGet(url: string, maxRedirects = 5): Promise<string> {
   });
 }
 
-async function fetchRegistry(): Promise<Registry> {
-  const data = await httpGet(REGISTRY_URL);
+async function fetchRegistry(registryUrl?: string): Promise<Registry> {
+  const data = await httpGet(registryUrl ?? REGISTRY_URL);
   return JSON.parse(data);
 }
 
-async function fetchFile(filePath: string): Promise<string> {
-  return httpGet(`${SOURCE_BASE_URL}${filePath}`);
+async function fetchFile(filePath: string, baseUrl?: string): Promise<string> {
+  return httpGet(`${baseUrl ?? SOURCE_BASE_URL}${filePath}`);
 }
 
 // Function to resolve dependencies recursively
@@ -113,7 +114,7 @@ async function selectComponents(
 async function writeComponentFile(
   file: string,
   targetDir: string,
-  options: { dryRun?: boolean; yes?: boolean },
+  options: { dryRun?: boolean; yes?: boolean; registry?: string },
 ): Promise<void> {
   const relativeFilePath = file.replace(/^src\//, "");
   const finalPath = path.join(targetDir, relativeFilePath);
@@ -132,7 +133,7 @@ async function writeComponentFile(
   }
 
   console.log(`Fetching ${file}...`);
-  const content = await fetchFile(file);
+  const content = await fetchFile(file, options.registry);
 
   if (fs.existsSync(finalPath) && !options.yes) {
     const { overwrite } = await prompts({
@@ -162,11 +163,15 @@ program
     "Path to add components to",
     "src/components/runox",
   )
+  .option(
+    "-r, --registry <url>",
+    "Base URL of a custom registry (e.g. a local dist for development). Files are fetched from <url>/<file-path>.",
+  )
   .action(async (components: string[], options: any) => {
     console.log("Fetching registry...");
     let registry: Registry;
     try {
-      registry = await fetchRegistry();
+      registry = await fetchRegistry(options.registry);
     } catch (e: any) {
       console.error(
         "Failed to fetch registry. Are you offline or is the version unpublished?",
@@ -213,7 +218,7 @@ program
   .description("Migrate from another UI library to Runox UI")
   .requiredOption(
     "--from <library>",
-    "The library you are migrating from (e.g. mui, chakra, shadcn)",
+    "The library you are migrating from (mui, chakra, shadcn, or 'flat' for the dot-notation export migration)",
   )
   .option(
     "-p, --path <path>",

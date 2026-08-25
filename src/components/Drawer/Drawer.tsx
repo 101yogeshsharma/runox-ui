@@ -17,16 +17,30 @@ import { rnx } from "../../utils/rnx";
 import { useFocusTrap } from "../../hooks/useFocusTrap";
 import { useScrollLock } from "../../hooks/useScrollLock";
 import { useMergeRefs } from "../../hooks/useMergeRefs";
+import { warnDeprecatedProp } from "../../utils/warn";
 import "./Drawer.css";
 
-const DrawerTitleContext = createContext<string | undefined>(undefined);
+const DrawerTitleContext = createContext<{
+  titleId: string;
+  setHasTitle: (v: boolean) => void;
+}>({ titleId: "", setHasTitle: () => {} });
 
 /**
  * A panel that slides in from the edge of the screen.
  */
-export interface DrawerProps {
-  isOpen: boolean;
-  onClose: () => void;
+export interface DrawerProps extends React.HTMLAttributes<HTMLDivElement> {
+  /**
+   * Controlled open state. Preferred over the deprecated `isOpen`.
+   */
+  open?: boolean;
+  /**
+   * Called when the open state should change.
+   */
+  onOpenChange?: (open: boolean) => void;
+  /** @deprecated Use `open` instead. */
+  isOpen?: boolean;
+  /** @deprecated Use `onOpenChange` instead. */
+  onClose?: () => void;
   variant?: "solid" | "glass" | "blur";
   position?: "left" | "right" | "top" | "bottom";
   size?: "sm" | "md" | "lg" | "full";
@@ -37,13 +51,20 @@ export interface DrawerProps {
   activeSnapPoint?: number | string | null;
   setActiveSnapPoint?: (snap: number | string | null) => void;
   isDraggable?: boolean;
+  /**
+   * Element to portal the drawer into. Defaults to `document.body`.
+   * Useful for tests or rendering inside a specific container.
+   */
+  container?: HTMLElement;
 }
 
 const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
   (
     {
-      isOpen,
-      onClose,
+      open: openProp,
+      onOpenChange,
+      isOpen: legacyIsOpen,
+      onClose: legacyOnClose,
       variant = "glass",
       position = "right",
       size = "md",
@@ -54,12 +75,17 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
       activeSnapPoint,
       setActiveSnapPoint,
       isDraggable = true,
+      container,
+      ...props
     },
     ref,
   ) => {
     const [mounted, setMounted] = useState(false);
     const [renderState, setRenderState] = useState<"closed" | "open">("closed");
     const [shouldRender, setShouldRender] = useState(false);
+    // Set when a Drawer.Title mounts so aria-labelledby is only applied
+    // when the referenced title exists in the DOM.
+    const [hasTitle, setHasTitle] = useState(false);
     const drawerId = React.useId().replace(/:/g, "");
     const titleId = `rnx-drawer-title-${drawerId}`;
 
@@ -70,6 +96,20 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
     const currentOffset = useRef(0);
     const [dragging, setDragging] = useState(false);
     const [internalExpanded, setInternalExpanded] = useState(false);
+
+    if (process.env.NODE_ENV !== "production") {
+      if (legacyIsOpen !== undefined) {
+        warnDeprecatedProp("Drawer", "isOpen", "open");
+      }
+      if (legacyOnClose !== undefined) {
+        warnDeprecatedProp("Drawer", "onClose", "onOpenChange");
+      }
+    }
+    const isOpen = openProp ?? legacyIsOpen ?? false;
+    const handleClose = React.useCallback(() => {
+      if (onOpenChange) onOpenChange(false);
+      else legacyOnClose?.();
+    }, [onOpenChange, legacyOnClose]);
 
     useFocusTrap(contentRef, isOpen && shouldRender);
     useScrollLock(isOpen);
@@ -94,11 +134,11 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
 
     useEffect(() => {
       const handleEscape = (e: KeyboardEvent) => {
-        if (e.key === "Escape" && isOpen) onClose();
+        if (e.key === "Escape" && isOpen) handleClose();
       };
       document.addEventListener("keydown", handleEscape);
       return () => document.removeEventListener("keydown", handleEscape);
-    }, [isOpen, onClose]);
+    }, [isOpen, handleClose]);
 
     const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
       if (!isDraggable) return;
@@ -168,7 +208,7 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
           currentOffset.current * collapseDir > threshold &&
           idx === 0
         ) {
-          onClose(); // close if dragging past the lowest snap point
+          handleClose(); // close if dragging past the lowest snap point
         }
         if (contentRef.current) contentRef.current.style.transform = "";
         currentOffset.current = 0;
@@ -188,7 +228,7 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
 
       if (shouldClose) {
         if (contentRef.current) contentRef.current.style.transform = "";
-        onClose();
+        handleClose();
       } else {
         if (contentRef.current) contentRef.current.style.transform = "";
         currentOffset.current = 0;
@@ -263,10 +303,10 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
     }
 
     return createPortal(
-      <DrawerTitleContext.Provider value={titleId}>
+      <DrawerTitleContext.Provider value={{ titleId, setHasTitle }}>
         <Box className={"rnx-drawer-overlay"}>
           <Box
-            onClick={onClose}
+            onClick={handleClose}
             data-state={renderState}
             className={"rnx-drawer-backdrop"}
           />
@@ -276,10 +316,9 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
             tabIndex={-1}
             role="dialog"
             aria-modal="true"
-            aria-labelledby={titleId}
+            aria-labelledby={hasTitle ? titleId : undefined}
             data-state={renderState}
             data-dragging={dragging}
-            data-rnx-overlay="true"
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
@@ -288,14 +327,19 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
             className={cn(
               "rnx-drawer-content",
               `rnx-drawer-content--variant-${variant}`,
-              `rnx-drawer--${position}`,
-              `rnx-drawer--${position}-${size}`,
+              `rnx-drawer--position-${position}`,
+              `rnx-drawer--size-${size}`,
               internalExpanded
                 ? "!h-screen !w-screen !rounded-none border-none"
                 : "",
               className,
             )}
-            {...rnx({ component: "Drawer", state: isOpen ? "open" : "closed" })}
+            {...rnx({
+              component: "Drawer",
+              state: isOpen ? "open" : "closed",
+              overlay: true,
+            })}
+            {...props}
           >
             {collapseButtonNode}
             {!hideCloseButton && (
@@ -303,7 +347,7 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={onClose}
+                  onClick={handleClose}
                   className="rnx-drawer-close-icon-btn"
                 >
                   <X size={16} />
@@ -319,14 +363,14 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
           </Box>
         </Box>
       </DrawerTitleContext.Provider>,
-      document.body,
+      container ?? document.body,
     );
   },
 );
 
 DrawerComponent.displayName = "Drawer";
 
-export const DrawerHeader = React.forwardRef<
+const DrawerHeader = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
@@ -334,7 +378,7 @@ export const DrawerHeader = React.forwardRef<
 ));
 DrawerHeader.displayName = "DrawerHeader";
 
-export const DrawerFooter = React.forwardRef<
+const DrawerFooter = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => (
@@ -342,11 +386,16 @@ export const DrawerFooter = React.forwardRef<
 ));
 DrawerFooter.displayName = "DrawerFooter";
 
-export const DrawerTitle = React.forwardRef<
+const DrawerTitle = React.forwardRef<
   HTMLHeadingElement,
   Omit<Omit<React.HTMLAttributes<HTMLHeadingElement>, "color">, "color">
 >(({ className, id, ...props }, ref) => {
-  const titleId = useContext(DrawerTitleContext);
+  const { titleId, setHasTitle } = useContext(DrawerTitleContext);
+  // Register this title as the dialog's accessible label.
+  React.useEffect(() => {
+    setHasTitle(true);
+    return () => setHasTitle(false);
+  }, [setHasTitle]);
   return (
     <Text
       as="h3"
@@ -360,7 +409,7 @@ export const DrawerTitle = React.forwardRef<
 });
 DrawerTitle.displayName = "DrawerTitle";
 
-export const DrawerDescription = React.forwardRef<
+const DrawerDescription = React.forwardRef<
   HTMLParagraphElement,
   Omit<Omit<React.HTMLAttributes<HTMLParagraphElement>, "color">, "color">
 >(({ className, ...props }, ref) => (

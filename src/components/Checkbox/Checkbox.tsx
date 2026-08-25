@@ -127,7 +127,7 @@ const CheckboxBase = forwardRef<HTMLInputElement, CheckboxProps>(
           <Box
             className={cn(
               "rnx-checkbox-box",
-              `rnx-checkbox-box--${size}`,
+              `rnx-checkbox-box--size-${size}`,
               error && "rnx-checkbox-box--error",
             )}
           >

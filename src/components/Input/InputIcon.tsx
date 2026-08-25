@@ -5,7 +5,6 @@ import { mergeProps } from "../../utils/mergeProps";
 import "./Input.css";
 import { withLoading } from "../../utils/withLoading";
 
-
 /**
  * Props for the InputIcon component.
  */
@@ -21,15 +20,15 @@ const InputIconBase = forwardRef<HTMLDivElement, InputIconProps>(
         ref={ref}
         className={cn(
           "rnx-input-icon",
-          `rnx-input-icon--${position}`,
-          className
+          `rnx-input-icon--position-${position}`,
+          className,
         )}
         {...mergeProps({}, props)}
       >
         {children}
       </Box>
     );
-  }
+  },
 );
 
 InputIconBase.displayName = "InputIcon";

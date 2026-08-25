@@ -23,10 +23,10 @@ export * from "./atoms/Flex";
 export * from "./atoms/Container";
 
 // Layout
-export * from "./components/Card";
+export { Card } from "./components/Card";
 export * from "./components/Separator/Separator";
-export * from "./components/ScrollArea/ScrollArea";
-export * from "./components/Resizable/Resizable";
+export { ScrollArea } from "./components/ScrollArea/ScrollArea";
+export { Resizable } from "./components/Resizable/Resizable";
 export * from "./components/BentoGrid/BentoGrid";
 export * from "./components/MasonryGrid/MasonryGrid";
 
@@ -46,6 +46,7 @@ export * from "./components/PasswordInput/PasswordInput";
 export * from "./components/OtpInput";
 export * from "./components/Checkbox";
 export * from "./components/Radio";
+export { RadioGroup } from "./components/RadioGroup/RadioGroup";
 export * from "./components/Switch";
 export * from "./components/Slider";
 export * from "./components/Rating";
@@ -55,7 +56,17 @@ export * from "./components/Label/Label";
 export * from "./components/Form/Form";
 
 // Data Display
-export * from "./components/Table";
+export { Table, DataTable, useDataTable } from "./components/Table";
+export type {
+  ColumnSortState,
+  Column,
+  ColumnDef,
+  TableState,
+  DataTableInstance,
+} from "./components/Table";
+export { flexRender } from "./components/Table";
+export { DataTableColumnHeader } from "./components/Table";
+export { DataTablePagination } from "./components/Table";
 export * from "./components/Sidebar/Sidebar";
 export * from "./components/Chart/Chart";
 export * from "./components/AgentContext/AgentContextProvider";
@@ -66,43 +77,64 @@ export * from "./hooks/useAgentContext";
 
 export * from "./components/List";
 export * from "./components/TreeView/TreeView";
-// export * from "./components/KanbanBoard/KanbanBoard"; // Deprecated
-export * from "./components/Kanban/Kanban";
+export { Kanban } from "./components/Kanban/Kanban";
 export * from "./components/SortableList/SortableList";
 export * from "./components/VirtualList/VirtualList";
 export * from "./components/Timeline";
 export * from "./components/Progress";
 
 // Navigation
-export * from "./components/Tabs";
-export * from "./components/Breadcrumb";
-export * from "./components/Pagination";
+export { Tabs } from "./components/Tabs";
+export { Breadcrumb } from "./components/Breadcrumb";
+export { Pagination } from "./components/Pagination";
 export * from "./components/Stepper";
-export * from "./components/NavigationMenu/NavigationMenu";
+export {
+  NavigationMenu,
+  Menubar,
+} from "./components/NavigationMenu/NavigationMenu";
+export { navigationMenuTriggerStyle } from "./components/NavigationMenu/NavigationMenu";
 
 // Disclosure & Selection
-export * from "./components/Accordion";
-export * from "./components/Dropdown";
-export * from "./components/Select/Select";
+export { Accordion } from "./components/Accordion";
+export { Dropdown } from "./components/Dropdown";
+export type {
+  DropdownProps,
+  DropdownContentProps,
+} from "./components/Dropdown";
+export { Select } from "./components/Select/Select";
+export type {
+  SelectProps,
+  SelectContentProps,
+} from "./components/Select/Select";
 
-export * from "./components/Command/Command";
-export * from "./components/ContextMenu/ContextMenu";
+export { Command } from "./components/Command/Command";
+export { ContextMenu } from "./components/ContextMenu/ContextMenu";
+export type { ContextMenuProps } from "./components/ContextMenu/ContextMenu";
 export * from "./components/Calendar/Calendar";
 export * from "./components/Carousel/Carousel";
 
 // Overlays
-export * from "./components/Modal";
-export * from "./components/Drawer/Drawer";
-export * from "./components/Popover/Popover";
-export * from "./components/HoverCard/HoverCard";
-export * from "./components/Tooltip";
-export * from "./components/AlertDialog/AlertDialog";
+export { Modal } from "./components/Modal";
+export type { ModalProps } from "./components/Modal";
+export { Drawer } from "./components/Drawer/Drawer";
+export type { DrawerProps } from "./components/Drawer/Drawer";
+export { Popover } from "./components/Popover/Popover";
+export type { PopoverProps } from "./components/Popover/Popover";
+export { HoverCard } from "./components/HoverCard/HoverCard";
+export type { HoverCardProps } from "./components/HoverCard/HoverCard";
+export { Tooltip } from "./components/Tooltip";
+export type { TooltipProps } from "./components/Tooltip";
+export { AlertDialog } from "./components/AlertDialog/AlertDialog";
+export type { AlertDialogProps } from "./components/AlertDialog/AlertDialog";
 
 // Feedback
 export * from "./components/Alert";
-export * from "./components/Toast";
+export { Toast } from "./components/Toast";
+export type { ToastProviderProps } from "./components/Toast";
 
 // Specialized
+export { ErrorBoundary } from "./components/ErrorBoundary/ErrorBoundary";
+export type { ErrorBoundaryProps } from "./components/ErrorBoundary/ErrorBoundary";
 export * from "./components/FileUploader/FileUploader";
 export * from "./components/ImageCropper/ImageCropper";
 export * from "./components/SignaturePad/SignaturePad";
@@ -110,9 +142,10 @@ export * from "./components/SyntaxHighlighter/SyntaxHighlighter";
 export * from "./components/MarkdownViewer/MarkdownViewer";
 export * from "./components/GlassFilters/GlassFilters";
 // AI
-export * from "./components/AI";
+export { AI } from "./components/AI";
 
 // System
 export * from "./components/ThemeProvider";
-export * from "./components/Motion";
+export { Motion } from "./components/Motion";
+export { MakeWayProvider, useMakeWay } from "./components/Motion";
 export * from "./components/RunoxProvider";

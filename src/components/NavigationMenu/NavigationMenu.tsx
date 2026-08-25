@@ -13,6 +13,7 @@ import { createPortal } from "react-dom";
 import { Check, ChevronDown, Circle } from "lucide-react";
 import { cva } from "class-variance-authority";
 import { cn } from "../../utils/cn";
+import { NAVIGATION_MENU_EXIT_DURATION_MS } from "../../internal/timings";
 import { useFloatingPosition, useClickOutside } from "../../hooks";
 import { rnx } from "../../utils/rnx";
 
@@ -263,7 +264,10 @@ const NavigationMenuContent = React.forwardRef<
     if (isOpen) {
       setMounted(true);
     } else {
-      const timer = setTimeout(() => setMounted(false), 150);
+      const timer = setTimeout(
+        () => setMounted(false),
+        NAVIGATION_MENU_EXIT_DURATION_MS,
+      );
       return () => clearTimeout(timer);
     }
   }, [isOpen]);
@@ -292,7 +296,6 @@ const NavigationMenuContent = React.forwardRef<
       id={contentId}
       role="menu"
       data-state={isOpen ? "open" : "closed"}
-      data-rnx-overlay="true"
       className={cn("rnx-navigation-menu-content", className)}
       style={{
         top: position?.top ?? -9999,
@@ -594,23 +597,4 @@ export const Menubar = Object.assign(MenubarRoot, {
 export {
   navigationMenuTriggerStyle,
   NavigationMenuNamespace as NavigationMenu,
-  NavigationMenuList,
-  NavigationMenuItem,
-  NavigationMenuContent,
-  NavigationMenuTrigger,
-  NavigationMenuLink,
-  NavigationMenuIndicator,
-  NavigationMenuViewport,
-  NavigationMenuDropdownItem,
-  NavigationMenuCheckboxItem,
-  NavigationMenuRadioGroup,
-  NavigationMenuRadioItem,
-  NavigationMenuLabel,
-  NavigationMenuSeparator,
-  NavigationMenuShortcut,
-  NavigationMenuSub,
-  NavigationMenuSubTrigger,
-  NavigationMenuSubContent,
-  NavigationMenuGroup,
-  NavigationMenuPortal,
 };

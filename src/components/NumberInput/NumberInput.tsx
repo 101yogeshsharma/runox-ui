@@ -7,6 +7,7 @@ import React, {
   useCallback,
   useRef,
   useEffect,
+  useId,
 } from "react";
 import { Minus, Plus } from "lucide-react";
 import { cn } from "../../utils/cn";
@@ -77,6 +78,8 @@ const NumberInputBase = forwardRef<HTMLInputElement, NumberInputProps>(
     const [internalValue, setInternalValue] = useState<string>(
       String(value ?? defaultValue ?? 0),
     );
+    const generatedId = useId();
+    const id = props.id || generatedId;
     const intervalRef = useRef<NodeJS.Timeout | null>(null);
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
     const pointerUpRef = useRef<(() => void) | null>(null);
@@ -176,7 +179,7 @@ const NumberInputBase = forwardRef<HTMLInputElement, NumberInputProps>(
           state: disabled ? "disabled" : "active",
         })}
       >
-        {label && <Label>{label}</Label>}
+        {label && <Label htmlFor={id}>{label}</Label>}
         <Box className="rnx-number-input-wrapper">
           <Input
             ref={ref}
@@ -184,7 +187,7 @@ const NumberInputBase = forwardRef<HTMLInputElement, NumberInputProps>(
             {...mergeProps(
               {
                 type: "number",
-                value: value !== undefined ? internalValue : internalValue,
+                value: internalValue,
                 onChange: handleInputChange,
                 disabled,
                 min,
@@ -206,7 +209,7 @@ const NumberInputBase = forwardRef<HTMLInputElement, NumberInputProps>(
               size="icon"
               className={cn(
                 "rnx-number-input-btn",
-                `rnx-number-input-btn--${size || "md"}`,
+                `rnx-number-input-btn--size-${size || "md"}`,
               )}
               disabled={disabled || currentValue <= min}
               onMouseDown={() => startContinuous(handleDecrement)}
@@ -216,7 +219,9 @@ const NumberInputBase = forwardRef<HTMLInputElement, NumberInputProps>(
               onTouchEnd={stopContinuous}
               aria-label="Decrement"
             >
-              <Minus className={`rnx-number-input-icon--${size || "md"}`} />
+              <Minus
+                className={`rnx-number-input-icon--size-${size || "md"}`}
+              />
             </Button>
           </Box>
           <Box className="rnx-number-input-btn-wrapper rnx-number-input-btn-wrapper--end">
@@ -226,7 +231,7 @@ const NumberInputBase = forwardRef<HTMLInputElement, NumberInputProps>(
               size="icon"
               className={cn(
                 "rnx-number-input-btn",
-                `rnx-number-input-btn--${size || "md"}`,
+                `rnx-number-input-btn--size-${size || "md"}`,
               )}
               disabled={disabled || currentValue >= max}
               onMouseDown={() => startContinuous(handleIncrement)}
@@ -236,7 +241,7 @@ const NumberInputBase = forwardRef<HTMLInputElement, NumberInputProps>(
               onTouchEnd={stopContinuous}
               aria-label="Increment"
             >
-              <Plus className={`rnx-number-input-icon--${size || "md"}`} />
+              <Plus className={`rnx-number-input-icon--size-${size || "md"}`} />
             </Button>
           </Box>
         </Box>

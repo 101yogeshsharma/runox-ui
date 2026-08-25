@@ -10,6 +10,7 @@ import {
 import { useMergeRefs } from "../../hooks/useMergeRefs";
 import { Box } from "../../atoms/Box";
 import { rnx } from "../../utils/rnx";
+import { warnDeprecatedProp } from "../../utils/warn";
 import "./Popover.css";
 
 /**
@@ -22,12 +23,22 @@ export interface PopoverProps {
   size?: "sm" | "md" | "lg";
   showArrow?: boolean;
   align?: "start" | "center" | "end";
-  isOpen?: boolean;
+  /**
+   * Controlled open state. Preferred over the deprecated `isOpen`.
+   */
+  open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  /** @deprecated Use `open` instead. */
+  isOpen?: boolean;
   className?: string;
   sideOffset?: number;
   style?: React.CSSProperties;
   matchTriggerWidth?: boolean;
+  /**
+   * Element to portal the popover into. Defaults to `document.body`.
+   * Useful for tests or rendering inside a specific container.
+   */
+  container?: HTMLElement;
 }
 
 export const Popover = React.forwardRef<HTMLDivElement, PopoverProps>(
@@ -39,17 +50,22 @@ export const Popover = React.forwardRef<HTMLDivElement, PopoverProps>(
       size = "md",
       showArrow = false,
       align = "center",
-      isOpen: isOpenProp,
+      open: openProp,
       onOpenChange,
+      isOpen: legacyIsOpen,
       className,
       sideOffset = 4,
       style,
       matchTriggerWidth = false,
+      container,
     },
     ref,
   ) => {
+    if (process.env.NODE_ENV !== "production" && legacyIsOpen !== undefined) {
+      warnDeprecatedProp("Popover", "isOpen", "open");
+    }
     const [isOpen, setIsOpen] = useControllableState({
-      prop: isOpenProp,
+      prop: openProp ?? legacyIsOpen,
       defaultProp: false,
       onChange: onOpenChange,
     });
@@ -164,12 +180,11 @@ export const Popover = React.forwardRef<HTMLDivElement, PopoverProps>(
           className={cn(
             "rnx-popover-content",
             `rnx-popover-content--variant-${variant}`,
-            `rnx-popover-content--${size}`,
+            `rnx-popover-content--size-${size}`,
             className,
           )}
           data-state={mounted && position ? "open" : "closed"}
           data-side={position?.placed || "bottom"}
-          data-rnx-overlay="true"
           style={{
             ...style,
             top: position?.top || 0,
@@ -177,7 +192,11 @@ export const Popover = React.forwardRef<HTMLDivElement, PopoverProps>(
             visibility: position ? "visible" : "hidden",
             width: matchTriggerWidth ? matchedWidth : style?.width,
           }}
-          {...rnx({ component: "Popover", state: isOpen ? "open" : "closed" })}
+          {...rnx({
+            component: "Popover",
+            state: isOpen ? "open" : "closed",
+            overlay: true,
+          })}
         >
           {showArrow && (
             <span
@@ -192,7 +211,7 @@ export const Popover = React.forwardRef<HTMLDivElement, PopoverProps>(
           )}
           {children}
         </Box>,
-        document.body,
+        container ?? document.body,
       );
     };
 

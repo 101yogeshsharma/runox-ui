@@ -8,13 +8,14 @@ import { rnx } from "../../utils/rnx";
 import { warnInvalidProps } from "../../utils/warn";
 
 import type { PolymorphicComponentPropsWithRef } from "../../utils/types";
+import type { RnxColor } from "../../types";
 
 /**
  * The standard interactive button component. Use to trigger actions, submit forms, or handle click events.
  */
 export interface ButtonBaseProps {
   variant?: "solid" | "outline" | "ghost" | "glass" | "icon" | "fab";
-  color?: "default" | "primary" | "secondary" | "danger" | "success";
+  color?: RnxColor;
   size?: "sm" | "md" | "lg" | "icon" | "fab";
   fullWidth?: boolean;
   /** Whether the button displays a loading spinner */
@@ -100,8 +101,14 @@ const ButtonBase = forwardRef(
       let x = 0,
         y = 0,
         reqId: number;
+      // Cache the rect on enter — getBoundingClientRect on every mousemove
+      // forces layout; the rect only changes if the page layout does.
+      let rect: DOMRect | null = null;
+      const handleMouseEnter = () => {
+        rect = el.getBoundingClientRect();
+      };
       const handleMouseMove = (e: MouseEvent) => {
-        const rect = el.getBoundingClientRect();
+        if (!rect) rect = el.getBoundingClientRect();
         const hw = rect.width / 2;
         const hh = rect.height / 2;
         x = (e.clientX - rect.left - hw) * 0.2;
@@ -112,11 +119,14 @@ const ButtonBase = forwardRef(
       };
       const handleMouseLeave = () => {
         cancelAnimationFrame(reqId);
+        rect = null;
         el.style.transform = `translate(0px, 0px)`;
       };
+      el.addEventListener("mouseenter", handleMouseEnter);
       el.addEventListener("mousemove", handleMouseMove);
       el.addEventListener("mouseleave", handleMouseLeave);
       return () => {
+        el.removeEventListener("mouseenter", handleMouseEnter);
         el.removeEventListener("mousemove", handleMouseMove);
         el.removeEventListener("mouseleave", handleMouseLeave);
         cancelAnimationFrame(reqId);

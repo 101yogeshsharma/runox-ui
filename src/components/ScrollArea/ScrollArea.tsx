@@ -3,6 +3,7 @@ import { Box } from "../../atoms/Box";
 
 import * as React from "react";
 import { cn } from "../../utils/cn";
+import { rnx } from "../../utils/rnx";
 import "./ScrollArea.css";
 
 const ScrollArea = React.forwardRef<
@@ -11,9 +12,10 @@ const ScrollArea = React.forwardRef<
 >(({ className, children, ...props }, ref) => {
   return (
     <Box
+      {...rnx({ component: "ScrollArea" })}
       className={cn(
         "rnx-scroll-area-container relative overflow-hidden",
-        className
+        className,
       )}
     >
       <Box
@@ -28,8 +30,7 @@ const ScrollArea = React.forwardRef<
 });
 ScrollArea.displayName = "ScrollArea";
 
-export interface ScrollBarProps
-  extends React.HTMLAttributes<HTMLDivElement> {
+export interface ScrollBarProps extends React.HTMLAttributes<HTMLDivElement> {
   orientation?: "vertical" | "horizontal";
 }
 
@@ -46,14 +47,14 @@ const ScrollBar = React.forwardRef<HTMLDivElement, ScrollBarProps>(
             "h-full w-2.5 border-l border-l-transparent p-[1px]",
           orientation === "horizontal" &&
             "h-2.5 flex-col border-t border-t-transparent p-[1px]",
-          className
+          className,
         )}
         {...props}
       >
         <Box className="rnx-scrollbar-thumb relative flex-1 rounded-full bg-border" />
       </Box>
     );
-  }
+  },
 );
 ScrollBar.displayName = "ScrollArea.Bar";
 

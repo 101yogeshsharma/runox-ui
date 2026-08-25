@@ -3,7 +3,6 @@ import { Box } from "../../atoms/Box";
 import React, {
   useState,
   useRef,
-  useEffect,
   forwardRef,
   useImperativeHandle,
 } from "react";
@@ -83,15 +82,14 @@ const OtpInputBase = forwardRef<HTMLDivElement, OtpInputProps>(
 
     useImperativeHandle(ref, () => containerRef.current as HTMLDivElement);
 
-    useEffect(() => {
-      if (value !== undefined) {
-        setInternalValue(
-          Array(length)
+    // For controlled usage, derive the display array directly from the prop at
+    // render time so there is no async useEffect delay that can drop keystrokes.
+    const displayArr =
+      value !== undefined
+        ? Array(length)
             .fill("")
-            .map((_, i) => value?.[i] ?? ""),
-        );
-      }
-    }, [value, length]);
+            .map((_, i) => value[i] ?? "")
+        : internalValue;
 
     const handleChange = (
       e: React.ChangeEvent<HTMLInputElement>,
@@ -173,15 +171,6 @@ const OtpInputBase = forwardRef<HTMLDivElement, OtpInputProps>(
       const nextIndex = Math.min(startIndex + pastedData.length, length - 1);
       inputsRef.current[nextIndex]?.focus();
     };
-
-    // For controlled usage, derive the display array directly from the prop at render
-    // time so there is no async useEffect delay that can drop keystrokes.
-    const displayArr =
-      value !== undefined
-        ? Array(length)
-            .fill("")
-            .map((_, i) => value[i] ?? "")
-        : internalValue;
 
     return (
       <Box

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useRef, useState, useEffect } from "react";
-import { useThrottledEvent } from "../../hooks/use-throttled-event";
 import { cn } from "../../utils/cn";
 import "./VirtualList.css";
 
@@ -13,6 +12,11 @@ import { rnx } from "../../utils/rnx";
  */
 export interface VirtualListProps<T> {
   items: T[];
+  /**
+   * Renders a single row. IMPORTANT: pass a stable reference (module-level
+   * function or useCallback) — an inline arrow recreated each render defeats
+   * row memoization and re-renders every visible row.
+   */
   renderItem: (item: T, index: number) => React.ReactNode;
   height?: string | number;
   itemHeight?: number;
@@ -32,49 +36,67 @@ function useVirtualization(options: {
 }) {
   const { count, estimateSize, overscan = 5 } = options;
   const itemHeight = estimateSize();
-  const [scrollTop, setScrollTop] = useState(0);
+  // Only the *visible range* lives in state — not the raw scroll offset.
+  // Scrolling within the same range causes zero React re-renders; the browser
+  // scrolls natively and items are absolutely positioned so they move for free.
+  const [range, setRange] = useState({ start: 0, end: 0 });
   const [viewportHeight, setViewportHeight] = useState(0);
   const parentRef = useRef<HTMLDivElement>(null);
-
-  useThrottledEvent(
-    "scroll",
-    () => {
-      if (parentRef.current) {
-        setScrollTop(parentRef.current.scrollTop);
-      }
-    },
-    parentRef,
-    16,
-  );
+  const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
     const el = parentRef.current;
     if (!el) return;
 
-    const handleResize = () => setViewportHeight(el.clientHeight);
+    const updateRange = () => {
+      const scrollTop = el.scrollTop;
+      const vh = el.clientHeight || itemHeight;
+      const start = Math.max(0, Math.floor(scrollTop / itemHeight) - overscan);
+      const end = Math.min(
+        count - 1,
+        Math.ceil((scrollTop + vh) / itemHeight) + overscan,
+      );
+      setRange((prev) =>
+        prev.start === start && prev.end === end ? prev : { start, end },
+      );
+    };
+
+    // rAF-throttled scroll handling: coalesces multiple scroll events per frame.
+    const onScroll = () => {
+      if (rafRef.current !== null) return;
+      rafRef.current = requestAnimationFrame(() => {
+        rafRef.current = null;
+        updateRange();
+      });
+    };
+
+    const handleResize = () => {
+      setViewportHeight(el.clientHeight);
+      updateRange();
+    };
+
     handleResize();
+    el.addEventListener("scroll", onScroll, { passive: true });
 
     let resizeObserver: ResizeObserver | null = null;
     if (typeof ResizeObserver !== "undefined") {
-      resizeObserver = new ResizeObserver(() => handleResize());
+      resizeObserver = new ResizeObserver(handleResize);
       resizeObserver.observe(el);
     }
 
     return () => {
+      el.removeEventListener("scroll", onScroll);
       if (resizeObserver) resizeObserver.disconnect();
+      if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
     };
-  }, []);
+  }, [count, itemHeight, overscan]);
 
-  const startIndex = Math.max(0, Math.floor(scrollTop / itemHeight) - overscan);
-  const endIndex = Math.min(
-    count - 1,
-    Math.ceil((scrollTop + (viewportHeight || itemHeight)) / itemHeight) +
-      overscan,
-  );
+  const startIndex = Math.max(0, range.start);
+  const endIndex = Math.min(count - 1, range.end);
 
   const virtualItems: Array<{ index: number; start: number; size: number }> =
     [];
-  if (count > 0) {
+  if (count > 0 && endIndex >= startIndex) {
     for (let i = startIndex; i <= endIndex; i++) {
       virtualItems.push({
         index: i,
@@ -86,8 +108,8 @@ function useVirtualization(options: {
 
   return {
     parentRef,
-    getTotalSize: () => count * itemHeight,
-    getVirtualItems: () => virtualItems,
+    totalSize: count * itemHeight,
+    virtualItems,
   };
 }
 
@@ -160,10 +182,10 @@ export function VirtualList<T>({
       <Box
         className={VIRTUAL_LIST_INNER_CLASS}
         style={{
-          height: `${rowVirtualizer.getTotalSize()}px`,
+          height: `${rowVirtualizer.totalSize}px`,
         }}
       >
-        {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+        {rowVirtualizer.virtualItems.map((virtualRow) => {
           const item = items[virtualRow.index];
           return (
             <VirtualListItem

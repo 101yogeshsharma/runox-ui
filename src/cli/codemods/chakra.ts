@@ -1,7 +1,13 @@
 import { API, FileInfo, Options } from "jscodeshift";
 import mappingData from "./mapping.json";
+import {
+  setJsxName,
+  getJsxName,
+  rewriteImportSpecifiers,
+  reportUnmapped,
+} from "./shared";
 
-function transformChakraAttribute(
+function transformAttribute(
   j: any,
   attr: any,
   propsMapping: Record<string, any>,
@@ -49,58 +55,95 @@ export default function transformer(
   const mapping = mappingData.chakra as any;
   let hasModifications = false;
 
-  // 1. Rename imports
-  root.find(j.ImportDeclaration).forEach((path) => {
-    if (path.node.source.value === "@chakra-ui/react") {
-      path.node.source.value = mapping.imports["@chakra-ui/react"];
+  // 1. Rewrite imports to namespace roots
+  hasModifications =
+    rewriteImportSpecifiers(j, root, "@chakra-ui/react", mapping.components) ||
+    hasModifications;
 
-      if (path.node.specifiers) {
-        path.node.specifiers.forEach((specifier) => {
-          if (
-            j.ImportSpecifier.check(specifier) &&
-            j.Identifier.check(specifier.imported)
-          ) {
-            const importedName = specifier.imported.name;
-            if (mapping.components[importedName]) {
-              specifier.imported.name = mapping.components[importedName];
-              if (specifier.local && specifier.local.name === importedName) {
-                specifier.local.name = mapping.components[importedName];
-              }
-            }
-          }
-        });
-      }
-      hasModifications = true;
-    }
-  });
-
-  // 2. Rename components in JSX
-  root.find(j.JSXElement).forEach((path) => {
+  // 2. Rename components in JSX (supports dot-notation targets)
+  root.find(j.JSXElement).forEach((path: any) => {
     const openingElement = path.node.openingElement;
-    if (!j.JSXIdentifier.check(openingElement.name)) return;
+    const originalName = getJsxName(openingElement);
+    if (!originalName || originalName.includes(".")) return;
 
-    const originalName = openingElement.name.name;
     if (mapping.components[originalName]) {
-      const newName = mapping.components[originalName];
-      openingElement.name.name = newName;
-      if (
-        path.node.closingElement &&
-        j.JSXIdentifier.check(path.node.closingElement.name)
-      ) {
-        path.node.closingElement.name.name = newName;
-      }
+      setJsxName(j, path, mapping.components[originalName]);
       hasModifications = true;
     }
 
     const propsMapping = mapping.props[originalName];
-    if (propsMapping && openingElement.attributes) {
-      openingElement.attributes.forEach((attr) => {
-        if (transformChakraAttribute(j, attr, propsMapping)) {
+    if (openingElement.attributes) {
+      openingElement.attributes.forEach((attr: any) => {
+        if (propsMapping && transformAttribute(j, attr, propsMapping)) {
           hasModifications = true;
+          return;
+        }
+        // Loud reporting for ALL unmapped non-DOM props
+        if (
+          j.JSXAttribute.check(attr) &&
+          j.JSXIdentifier.check(attr.name) &&
+          !isLikelyDomProp(attr.name.name)
+        ) {
+          reportUnmapped(file.path, originalName, attr.name.name);
         }
       });
     }
   });
 
   return hasModifications ? root.toSource() : null;
+}
+
+const DOM_PROPS = new Set([
+  "className",
+  "id",
+  "style",
+  "children",
+  "key",
+  "ref",
+  "onClick",
+  "onChange",
+  "onSubmit",
+  "onFocus",
+  "onBlur",
+  "onKeyDown",
+  "onKeyUp",
+  "onMouseEnter",
+  "onMouseLeave",
+  "type",
+  "value",
+  "defaultValue",
+  "placeholder",
+  "disabled",
+  "required",
+  "name",
+  "href",
+  "src",
+  "alt",
+  "title",
+  "role",
+  "tabIndex",
+  "as",
+  "maxW",
+  "w",
+  "h",
+  "p",
+  "px",
+  "py",
+  "m",
+  "mx",
+  "my",
+  "mt",
+  "mb",
+  "ml",
+  "mr",
+  "pt",
+  "pb",
+  "color",
+  "bg",
+]);
+
+function isLikelyDomProp(name: string): boolean {
+  return (
+    DOM_PROPS.has(name) || name.startsWith("aria-") || name.startsWith("data-")
+  );
 }

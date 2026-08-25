@@ -1,5 +1,39 @@
 # @runox/ui
 
+## 0.4.0
+
+### Minor Changes
+
+- **Portal Container Props**: All 12 portal-based components (`Modal`, `AlertDialog`, `Drawer`, `Dropdown.Content`, `Select.Content`, `Popover`, `HoverCard`, `Tooltip`, `ContextMenu`, `Sidebar`, `ToastProvider`) now accept a `container?: HTMLElement` prop to render into a custom element instead of `document.body`. Useful for tests, shadow DOM, and scoped rendering.
+
+- **Deterministic Testing Support**:
+  - New `@runox/ui/test` subpath export with `setupRunoxTests()` — an idempotent helper that installs every browser shim the components rely on in jsdom/happy-dom environments (`matchMedia`, `ResizeObserver`, `PointerEvent` polyfill, `scrollIntoView`, pointer-capture mocks) plus optional Testing Library cleanup. Each shim can be skipped individually via options.
+  - Centralized all animation timings in an internal module; new `disableExitAnimation` prop on `Modal`, `Select.Content`, and `Dropdown.Content` unmounts content synchronously on close — no fake-timer coupling required.
+  - `ToastProvider` accepts `exitDurationMs` to shorten/eliminate exit-animation waits in tests.
+
+- **New ErrorBoundary Component**: Catches render-time errors in its subtree and renders a fallback instead of crashing the app. Supports a custom `fallback` render prop (receives `{ error, reset }`) and an `onError` callback for error reporting. Exported from the root and `./errorboundary` subpath.
+
+- **TypeScript Ergonomics**:
+  - `Select` is now generic: `Select<TValue extends string = string>` types `value`/`onValueChange` while preserving existing behavior for string usage.
+  - `DataTable`'s `accessorKey` is typed as `keyof TData & string`, catching typos at compile time.
+  - Prop interfaces (`ModalProps`, `SelectProps`, `TooltipProps`, `DrawerProps`, `PopoverProps`, `AlertDialogProps`, `DropdownProps`, `DropdownContentProps`, `SelectContentProps`, `ContextMenuProps`, `SidebarProps`, `ToastProviderProps`) are now exported from the package root.
+
+- **Determinism & Motion**:
+  - Toast IDs switched from `Math.random()` to a monotonic counter (`toast-1`, `toast-2`, …) for snapshot-test stability.
+  - New `useReducedMotion` hook subscribes to `prefers-reduced-motion`; pair it with `disableExitAnimation` to respect user motion preferences.
+
+- **Developer Experience**:
+  - CLI: new `runox migrate --from flat` codemod converts flat imports (`ModalHeader`) to dot-notation namespaces (`Modal.Header`) for upgrading across the breaking release; `runox add` gains a `--registry <url>` flag for local development and private mirrors.
+  - Codemods for MUI/Chakra/shadcn now emit dot-notation members (`CardHeader` → `Card.Header`), merge imports into namespace roots, map Chakra `Stack` props (`spacing` → `gap`), and print a loud summary of all unmapped components/props.
+  - Standardized deprecation warnings via `warnDeprecatedProp` with consistent format and migration hints.
+  - New dev warning when a controlled `value` is provided without `onValueChange` on Select/Dropdown.
+
+### Fixes
+
+- Performance: full memoization across Kanban drag paths, VirtualList range-only rendering with rAF-throttled scroll, Calendar hover handlers, and DataTable keystroke handling.
+- Accessibility: roving tabindex on Tabs/Accordion/Select, focus-on-open for menus, scoped Escape handling (only closes when focus is inside), automatic `aria-labelledby` wiring on Modal/AlertDialog, and keyboard-operable Sidebar backdrop.
+- CSS: deduplicated ~700 lines between `globals.css` and component stylesheets; unified z-index scale; removed legacy theme aliases.
+
 ## 0.3.0
 
 ### Minor Changes

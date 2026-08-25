@@ -40,19 +40,19 @@
     pointer-events: none;
   }
 
-  .rnx-tag-input-wrapper--sm {
+  .rnx-tag-input-wrapper--size-sm {
     min-height: var(--space-8);
     padding: var(--space-1) var(--space-2);
     font-size: var(--text-xs);
   }
 
-  .rnx-tag-input-wrapper--md {
+  .rnx-tag-input-wrapper--size-md {
     min-height: var(--space-10);
     padding: var(--space-1-5) var(--space-3);
     font-size: var(--text-sm);
   }
 
-  .rnx-tag-input-wrapper--lg {
+  .rnx-tag-input-wrapper--size-lg {
     min-height: var(--space-12);
     padding: var(--space-2) var(--space-4);
     font-size: var(--text-base);
@@ -175,17 +175,17 @@
     color: var(--info);
   }
 
-  .rnx-tag-item--sm {
+  .rnx-tag-item--size-sm {
     padding: var(--space-0-5) var(--space-2);
     font-size: var(--text-xs);
   }
 
-  .rnx-tag-item--md {
+  .rnx-tag-item--size-md {
     padding: var(--space-0-5) var(--space-2-5);
     font-size: var(--text-xs);
   }
 
-  .rnx-tag-item--lg {
+  .rnx-tag-item--size-lg {
     padding: var(--space-1) var(--space-3);
     font-size: var(--text-sm);
   }

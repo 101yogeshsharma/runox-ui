@@ -1,7 +1,15 @@
 "use client";
 
-import React, { useState, createContext, useContext } from "react";
+import React, {
+  useState,
+  createContext,
+  useContext,
+  useCallback,
+  useMemo,
+  useRef,
+} from "react";
 import { cn } from "../../utils/cn";
+import { rnx } from "../../utils/rnx";
 import { Flex } from "../../atoms/Flex";
 import { Box } from "../../atoms/Box";
 import { Text } from "../../atoms/Text";
@@ -96,140 +104,213 @@ const KanbanRoot = React.forwardRef<HTMLDivElement, KanbanProps>(
       null,
     );
 
-    const resetDragState = () => {
+    // Ref mirror of drag state so handlers can be stable (useCallback with [])
+    // without going stale during rapid dragover events.
+    const dragStateRef = useRef({
+      draggedItemId: null as UniqueIdentifier | null,
+      dragOverItemId: null as UniqueIdentifier | null,
+      dragOverColumnId: null as UniqueIdentifier | null,
+      dropPosition: null as "before" | "after" | null,
+      onCardMove,
+    });
+    dragStateRef.current.onCardMove = onCardMove;
+
+    const resetDragState = useCallback(() => {
+      dragStateRef.current.draggedItemId = null;
+      dragStateRef.current.dragOverItemId = null;
+      dragStateRef.current.dragOverColumnId = null;
+      dragStateRef.current.dropPosition = null;
       setDraggedItemId(null);
       setDragOverItemId(null);
       setDragOverColumnId(null);
       setDropPosition(null);
-    };
+    }, []);
 
-    const handleDragStart = (
-      e: React.DragEvent<HTMLElement>,
-      itemId: UniqueIdentifier,
-    ) => {
-      setDraggedItemId(itemId);
-      e.dataTransfer.effectAllowed = "move";
-      e.dataTransfer.setData("text/plain", itemId.toString());
-    };
+    const handleDragStart = useCallback(
+      (e: React.DragEvent<HTMLElement>, itemId: UniqueIdentifier) => {
+        dragStateRef.current.draggedItemId = itemId;
+        setDraggedItemId(itemId);
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", itemId.toString());
+      },
+      [],
+    );
 
-    const handleDragOverItem = (
-      e: React.DragEvent<HTMLElement>,
-      itemId: UniqueIdentifier,
-      colId: UniqueIdentifier,
-    ) => {
-      e.preventDefault();
-      e.stopPropagation();
-      e.dataTransfer.dropEffect = "move";
+    const handleDragOverItem = useCallback(
+      (
+        e: React.DragEvent<HTMLElement>,
+        itemId: UniqueIdentifier,
+        colId: UniqueIdentifier,
+      ) => {
+        e.preventDefault();
+        e.stopPropagation();
+        e.dataTransfer.dropEffect = "move";
 
-      if (draggedItemId === itemId) return;
+        const state = dragStateRef.current;
+        if (state.draggedItemId === itemId) return;
 
-      setDragOverItemId(itemId);
-      setDragOverColumnId(colId);
+        if (
+          state.dragOverItemId !== itemId ||
+          state.dragOverColumnId !== colId
+        ) {
+          state.dragOverItemId = itemId;
+          state.dragOverColumnId = colId;
+          setDragOverItemId(itemId);
+          setDragOverColumnId(colId);
+        }
 
-      const rect = e.currentTarget.getBoundingClientRect();
-      const midY = rect.top + rect.height / 2;
-      setDropPosition(e.clientY < midY ? "before" : "after");
-    };
+        const rect = e.currentTarget.getBoundingClientRect();
+        const midY = rect.top + rect.height / 2;
+        const nextPos: "before" | "after" =
+          e.clientY < midY ? "before" : "after";
+        if (state.dropPosition !== nextPos) {
+          state.dropPosition = nextPos;
+          setDropPosition(nextPos);
+        }
+      },
+      [],
+    );
 
-    const handleDragLeaveItem = (
-      e: React.DragEvent<HTMLElement>,
-      itemId: UniqueIdentifier,
-    ) => {
-      if (dragOverItemId === itemId) {
-        setDragOverItemId(null);
-        setDropPosition(null);
-      }
-    };
+    const handleDragLeaveItem = useCallback(
+      (e: React.DragEvent<HTMLElement>, itemId: UniqueIdentifier) => {
+        const state = dragStateRef.current;
+        if (state.dragOverItemId === itemId) {
+          state.dragOverItemId = null;
+          state.dropPosition = null;
+          setDragOverItemId(null);
+          setDropPosition(null);
+        }
+      },
+      [],
+    );
 
-    const handleDragOverColumn = (
-      e: React.DragEvent<HTMLElement>,
-      colId: UniqueIdentifier,
-    ) => {
-      e.preventDefault();
-      e.dataTransfer.dropEffect = "move";
+    const handleDragOverColumn = useCallback(
+      (e: React.DragEvent<HTMLElement>, colId: UniqueIdentifier) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = "move";
 
-      if (!dragOverItemId) {
-        setDragOverColumnId(colId);
-      }
-    };
+        const state = dragStateRef.current;
+        if (!state.dragOverItemId && state.dragOverColumnId !== colId) {
+          state.dragOverColumnId = colId;
+          setDragOverColumnId(colId);
+        }
+      },
+      [],
+    );
 
-    const handleDragLeaveColumn = (
-      e: React.DragEvent<HTMLElement>,
-      colId: UniqueIdentifier,
-    ) => {
-      if (dragOverColumnId === colId && !dragOverItemId) {
-        setDragOverColumnId(null);
-      }
-    };
+    const handleDragLeaveColumn = useCallback(
+      (e: React.DragEvent<HTMLElement>, colId: UniqueIdentifier) => {
+        const state = dragStateRef.current;
+        if (state.dragOverColumnId === colId && !state.dragOverItemId) {
+          state.dragOverColumnId = null;
+          setDragOverColumnId(null);
+        }
+      },
+      [],
+    );
 
-    const handleDropItem = (
-      e: React.DragEvent<HTMLElement>,
-      targetItemId: UniqueIdentifier,
-    ) => {
-      e.preventDefault();
-      e.stopPropagation();
+    const handleDropItem = useCallback(
+      (e: React.DragEvent<HTMLElement>, targetItemId: UniqueIdentifier) => {
+        e.preventDefault();
+        e.stopPropagation();
 
-      if (!draggedItemId || draggedItemId === targetItemId) {
+        const {
+          draggedItemId,
+          dropPosition,
+          onCardMove: move,
+        } = dragStateRef.current;
+        if (!draggedItemId || draggedItemId === targetItemId) {
+          resetDragState();
+          return;
+        }
+
+        move(draggedItemId, targetItemId, null, dropPosition);
         resetDragState();
-        return;
-      }
+      },
+      [resetDragState],
+    );
 
-      onCardMove(draggedItemId, targetItemId, null, dropPosition);
-      resetDragState();
-    };
+    const handleDropColumn = useCallback(
+      (e: React.DragEvent<HTMLElement>, targetColId: UniqueIdentifier) => {
+        e.preventDefault();
 
-    const handleDropColumn = (
-      e: React.DragEvent<HTMLElement>,
-      targetColId: UniqueIdentifier,
-    ) => {
-      e.preventDefault();
+        const { draggedItemId, onCardMove: move } = dragStateRef.current;
+        if (!draggedItemId) {
+          resetDragState();
+          return;
+        }
 
-      if (!draggedItemId) {
+        move(draggedItemId, null, targetColId, "after");
         resetDragState();
-        return;
-      }
+      },
+      [resetDragState],
+    );
 
-      onCardMove(draggedItemId, null, targetColId, "after");
+    const handleDragEnd = useCallback(() => {
       resetDragState();
-    };
+    }, [resetDragState]);
 
-    const handleDragEnd = () => {
-      resetDragState();
-    };
-
-    const contextValue: KanbanContextValue = {
-      draggedItemId,
-      dragOverItemId,
-      dragOverColumnId,
-      dropPosition,
-      handleDragStart,
-      handleDragOverItem,
-      handleDragLeaveItem,
-      handleDragOverColumn,
-      handleDragLeaveColumn,
-      handleDropItem,
-      handleDropColumn,
-      handleDragEnd,
-    };
+    const contextValue: KanbanContextValue = useMemo(
+      () => ({
+        draggedItemId,
+        dragOverItemId,
+        dragOverColumnId,
+        dropPosition,
+        handleDragStart,
+        handleDragOverItem,
+        handleDragLeaveItem,
+        handleDragOverColumn,
+        handleDragLeaveColumn,
+        handleDropItem,
+        handleDropColumn,
+        handleDragEnd,
+      }),
+      [
+        draggedItemId,
+        dragOverItemId,
+        dragOverColumnId,
+        dropPosition,
+        handleDragStart,
+        handleDragOverItem,
+        handleDragLeaveItem,
+        handleDragOverColumn,
+        handleDragLeaveColumn,
+        handleDropItem,
+        handleDropColumn,
+        handleDragEnd,
+      ],
+    );
 
     const scrollContainerRef = React.useRef<HTMLDivElement>(null);
     const [canScrollLeft, setCanScrollLeft] = useState(false);
     const [canScrollRight, setCanScrollRight] = useState(false);
 
-    const checkScroll = () => {
-      if (scrollContainerRef.current) {
-        const { scrollLeft, scrollWidth, clientWidth } =
-          scrollContainerRef.current;
-        setCanScrollLeft(scrollLeft > 0);
-        setCanScrollRight(Math.ceil(scrollLeft + clientWidth) < scrollWidth);
-      }
-    };
+    // rAF-throttled so rapid scroll events coalesce into one state update/frame.
+    const rafRef = useRef<number | null>(null);
+    const checkScroll = useCallback(() => {
+      if (rafRef.current !== null) return;
+      rafRef.current = requestAnimationFrame(() => {
+        rafRef.current = null;
+        const el = scrollContainerRef.current;
+        if (el) {
+          const { scrollLeft, scrollWidth, clientWidth } = el;
+          const nextLeft = scrollLeft > 0;
+          const nextRight = Math.ceil(scrollLeft + clientWidth) < scrollWidth;
+          // Only commit when values actually changed — avoids re-render churn.
+          setCanScrollLeft((prev) => (prev === nextLeft ? prev : nextLeft));
+          setCanScrollRight((prev) => (prev === nextRight ? prev : nextRight));
+        }
+      });
+    }, []);
 
     React.useEffect(() => {
       checkScroll();
       window.addEventListener("resize", checkScroll);
-      return () => window.removeEventListener("resize", checkScroll);
-    }, [children]);
+      return () => {
+        window.removeEventListener("resize", checkScroll);
+        if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+      };
+    }, [checkScroll]);
 
     const scroll = (direction: "left" | "right") => {
       if (scrollContainerRef.current) {
@@ -245,6 +326,7 @@ const KanbanRoot = React.forwardRef<HTMLDivElement, KanbanProps>(
       <KanbanContext.Provider value={contextValue}>
         <Box
           ref={ref}
+          {...rnx({ component: "Kanban" })}
           className={cn("rnx-kanban group relative h-full w-full", className)}
           {...props}
         >
@@ -283,7 +365,7 @@ const KanbanRoot = React.forwardRef<HTMLDivElement, KanbanProps>(
             onScroll={checkScroll}
             gap="lg"
             justify="start"
-            className="scrollbar-hide h-full min-h-96 w-full overflow-x-auto py-12"
+            className="rnx-scrollbar-hide h-full min-h-96 w-full overflow-x-auto py-12"
           >
             <Box className="w-8 shrink-0" />
             {children}
@@ -303,7 +385,7 @@ export interface KanbanColumnProps extends Omit<
   id: UniqueIdentifier;
 }
 
-export const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
+const KanbanColumn = React.forwardRef<HTMLDivElement, KanbanColumnProps>(
   ({ id, children, className, ...props }, ref) => {
     const {
       dragOverColumnId,
@@ -349,7 +431,7 @@ export interface KanbanColumnHeaderProps extends React.HTMLAttributes<HTMLDivEle
   count?: number;
 }
 
-export const KanbanColumnHeader = React.forwardRef<
+const KanbanColumnHeader = React.forwardRef<
   HTMLDivElement,
   KanbanColumnHeaderProps
 >(({ children, count, className, ...props }, ref) => {
@@ -381,7 +463,7 @@ export interface KanbanCardProps extends Omit<
   id: UniqueIdentifier;
 }
 
-export const KanbanCard = React.forwardRef<HTMLDivElement, KanbanCardProps>(
+const KanbanCard = React.forwardRef<HTMLDivElement, KanbanCardProps>(
   ({ id, children, className, ...props }, ref) => {
     const {
       draggedItemId,
@@ -438,8 +520,14 @@ KanbanColumn.displayName = "Kanban.Column";
 KanbanColumnHeader.displayName = "Kanban.ColumnHeader";
 KanbanCard.displayName = "Kanban.Card";
 
+// Memoized exports: drag state changes should only re-render the affected
+// cards/columns, not every subscriber of the context.
+const MemoizedKanbanColumn = React.memo(KanbanColumn);
+const MemoizedKanbanColumnHeader = React.memo(KanbanColumnHeader);
+const MemoizedKanbanCard = React.memo(KanbanCard);
+
 export const Kanban = Object.assign(KanbanRoot, {
-  Column: KanbanColumn,
-  ColumnHeader: KanbanColumnHeader,
-  Card: KanbanCard,
+  Column: MemoizedKanbanColumn,
+  ColumnHeader: MemoizedKanbanColumnHeader,
+  Card: MemoizedKanbanCard,
 });

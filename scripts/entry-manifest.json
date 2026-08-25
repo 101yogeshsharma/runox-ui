@@ -68,6 +68,8 @@
   "themeprovider": "src/components/ThemeProvider/index.ts",
   "timeline": "src/components/Timeline/index.ts",
   "toast": "src/components/Toast/index.ts",
+  "errorboundary": "src/components/ErrorBoundary/ErrorBoundary.tsx",
+  "test": "src/test/setup.ts",
   "tooltip": "src/components/Tooltip/index.ts",
   "treeview": "src/components/TreeView/index.ts",
   "virtuallist": "src/components/VirtualList/index.ts"

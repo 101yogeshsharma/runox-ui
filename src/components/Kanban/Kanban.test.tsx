@@ -1,15 +1,15 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { Kanban, KanbanColumn, KanbanCard } from "./Kanban";
+import { Kanban } from "./Kanban";
 
 function renderBoard(onCardMove: ReturnType<typeof vi.fn>) {
   return render(
     <Kanban onCardMove={onCardMove}>
-      <KanbanColumn id="col-1">
-        <KanbanCard id="card-1">First</KanbanCard>
-        <KanbanCard id="card-2">Second</KanbanCard>
-      </KanbanColumn>
-      <KanbanColumn id="col-2" />
+      <Kanban.Column id="col-1">
+        <Kanban.Card id="card-1">First</Kanban.Card>
+        <Kanban.Card id="card-2">Second</Kanban.Card>
+      </Kanban.Column>
+      <Kanban.Column id="col-2" />
     </Kanban>,
   );
 }
@@ -18,7 +18,7 @@ describe("Kanban", () => {
   it("renders the scroll container with a single vertical padding utility", () => {
     const { container } = renderBoard(vi.fn());
 
-    const scrollContainer = container.querySelector(".scrollbar-hide")!;
+    const scrollContainer = container.querySelector(".rnx-scrollbar-hide")!;
     const classes = scrollContainer.className.split(/\s+/);
 
     expect(classes).toContain("py-12");
@@ -26,7 +26,7 @@ describe("Kanban", () => {
   });
 
   it("throws when components are used outside their providers", () => {
-    expect(() => render(<KanbanCard id="orphan">X</KanbanCard>)).toThrow(
+    expect(() => render(<Kanban.Card id="orphan">X</Kanban.Card>)).toThrow(
       "Kanban components must be used within a Kanban",
     );
   });

@@ -5,6 +5,11 @@
     gap: var(--space-2);
   }
 
+  .rnx-radio-group--horizontal {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
   .rnx-radio-wrapper {
     display: inline-flex;
     align-items: center;
@@ -39,7 +44,10 @@
     border-radius: 50%;
     border: 1px solid var(--border);
     background-color: var(--background);
-    transition: all 0.2s ease;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
     z-index: var(--z-raised);
   }
 
@@ -48,7 +56,9 @@
     background-color: currentColor;
     opacity: 0;
     transform: scale(0);
-    transition: all 0.2s ease;
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease;
   }
 
   /* Checked State */
@@ -98,29 +108,29 @@
   }
 
   /* Sizes */
-  .rnx-radio-box--sm {
+  .rnx-radio-box--size-sm {
     width: var(--space-3-5);
     height: var(--space-3-5);
   }
-  .rnx-radio-box--sm .rnx-radio-indicator {
+  .rnx-radio-box--size-sm .rnx-radio-indicator {
     width: var(--space-2);
     height: var(--space-2);
   }
 
-  .rnx-radio-box--md {
+  .rnx-radio-box--size-md {
     width: var(--space-4);
     height: var(--space-4);
   }
-  .rnx-radio-box--md .rnx-radio-indicator {
+  .rnx-radio-box--size-md .rnx-radio-indicator {
     width: var(--space-2-5);
     height: var(--space-2-5);
   }
 
-  .rnx-radio-box--lg {
+  .rnx-radio-box--size-lg {
     width: var(--space-5);
     height: var(--space-5);
   }
-  .rnx-radio-box--lg .rnx-radio-indicator {
+  .rnx-radio-box--size-lg .rnx-radio-indicator {
     width: var(--space-3);
     height: var(--space-3);
   }

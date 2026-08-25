@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { forwardRef } from "react";
 import { cn } from "../../utils/cn";
 
 /**
@@ -12,34 +12,41 @@ export interface RevealProps extends React.HTMLAttributes<HTMLDivElement> {
   as?: React.ElementType;
 }
 
-export const Reveal: React.FC<RevealProps> = ({
-  children,
-  duration = 0.5,
-  delay = 0,
-  direction = "left",
-  className,
-  as: Tag = "div",
-  style,
-  ...props
-}) => {
-  const directionClass = {
-    up: "rnx-motion-reveal-up",
-    down: "rnx-motion-reveal-down",
-    left: "rnx-motion-reveal-left",
-    right: "rnx-motion-reveal-right",
-  }[direction];
+export const Reveal = forwardRef<HTMLElement, RevealProps>(
+  (
+    {
+      children,
+      duration = 0.5,
+      delay = 0,
+      direction = "left",
+      className,
+      as: Tag = "div",
+      style,
+      ...props
+    },
+    ref,
+  ) => {
+    const directionClass = {
+      up: "rnx-motion-reveal-up",
+      down: "rnx-motion-reveal-down",
+      left: "rnx-motion-reveal-left",
+      right: "rnx-motion-reveal-right",
+    }[direction];
 
-  return (
-    <Tag
-      className={cn(directionClass, className)}
-      style={{
-        animationDuration: `${duration}s`,
-        animationDelay: `${delay}s`,
-        ...style,
-      }}
-      {...props}
-    >
-      {children}
-    </Tag>
-  );
-};
+    return (
+      <Tag
+        ref={ref}
+        className={cn(directionClass, className)}
+        style={{
+          animationDuration: `${duration}s`,
+          animationDelay: `${delay}s`,
+          ...style,
+        }}
+        {...props}
+      >
+        {children}
+      </Tag>
+    );
+  },
+);
+Reveal.displayName = "Motion.Reveal";

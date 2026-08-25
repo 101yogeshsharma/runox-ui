@@ -38,13 +38,13 @@
     gap: var(--space-1);
   }
 
-  .rnx-list--sm {
+  .rnx-list--size-sm {
     font-size: var(--text-sm);
   }
-  .rnx-list--md {
+  .rnx-list--size-md {
     font-size: var(--text-base);
   }
-  .rnx-list--lg {
+  .rnx-list--size-lg {
     font-size: var(--text-lg);
   }
 
@@ -68,7 +68,11 @@
     border: 1px solid var(--border);
     background-color: var(--card);
     box-shadow: var(--shadow-sm);
-    transition: all 200ms ease;
+    transition:
+      margin-top 200ms ease,
+      margin-bottom 200ms ease,
+      box-shadow 200ms ease,
+      border-color 200ms ease;
   }
 
   .rnx-list-item-collapsible-btn {

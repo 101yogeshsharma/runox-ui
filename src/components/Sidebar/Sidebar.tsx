@@ -38,6 +38,11 @@ export interface SidebarProps
     VariantProps<typeof sidebarVariants> {
   mobileOpen?: boolean;
   onMobileClose?: () => void;
+  /**
+   * Element to portal the mobile backdrop into. Defaults to `document.body`.
+   * Useful for tests or rendering inside a specific container.
+   */
+  container?: HTMLElement;
 }
 
 const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
@@ -48,6 +53,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
       collapsed,
       mobileOpen,
       onMobileClose,
+      container,
       ...props
     },
     ref,
@@ -90,7 +96,7 @@ const Sidebar = React.forwardRef<HTMLDivElement, SidebarProps>(
                   }
                 }}
               />,
-              document.body,
+              container ?? document.body,
             )
           : null}
         {sidebar}

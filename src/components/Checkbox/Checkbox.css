@@ -33,7 +33,12 @@
     border-radius: calc(var(--radius) - 4px);
     border: 2px solid var(--border);
     background-color: transparent;
-    transition: all 150ms ease;
+    transition:
+      background-color 150ms ease,
+      border-color 150ms ease,
+      color 150ms ease,
+      opacity 150ms ease,
+      box-shadow 150ms ease;
     color: transparent;
     pointer-events: none;
   }
@@ -66,15 +71,15 @@
     cursor: wait;
     pointer-events: none;
   }
-  .rnx-checkbox-box--sm {
+  .rnx-checkbox-box--size-sm {
     width: var(--space-4);
     height: var(--space-4);
   }
-  .rnx-checkbox-box--md {
+  .rnx-checkbox-box--size-md {
     width: var(--space-5);
     height: var(--space-5);
   }
-  .rnx-checkbox-box--lg {
+  .rnx-checkbox-box--size-lg {
     width: var(--space-6);
     height: var(--space-6);
   }
@@ -185,5 +190,12 @@
     font-size: var(--text-xs);
     color: var(--muted-foreground);
     margin-top: var(--space-0-5);
+  }
+
+  .rnx-checkbox-error-text {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--destructive);
+    margin-top: 0.25rem;
   }
 }

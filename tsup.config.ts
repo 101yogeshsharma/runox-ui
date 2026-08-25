@@ -21,6 +21,10 @@ export default defineConfig({
     "react-hook-form",
     "recharts",
     "zod",
+    // CLI-only heavy deps stay external so they are not bundled into client
+    // entries; the CLI is expected to run inside the repo's dev install.
+    "@modelcontextprotocol/sdk",
+    "jscodeshift",
   ],
   minify: true,
   injectStyle: false,

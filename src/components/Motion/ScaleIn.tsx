@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { forwardRef } from "react";
 import { cn } from "../../utils/cn";
 
 /**
@@ -11,26 +11,32 @@ export interface ScaleInProps extends React.HTMLAttributes<HTMLDivElement> {
   as?: React.ElementType;
 }
 
-export const ScaleIn: React.FC<ScaleInProps> = ({
-  children,
-  duration = 0.3,
-  delay = 0,
-  className,
-  as: Tag = "div",
-  style,
-  ...props
-}) => {
-  return (
-    <Tag
-      className={cn("rnx-motion-scale-in", className)}
-      style={{
-        animationDuration: `${duration}s`,
-        animationDelay: `${delay}s`,
-        ...style,
-      }}
-      {...props}
-    >
-      {children}
-    </Tag>
-  );
-};
+export const ScaleIn = forwardRef<HTMLElement, ScaleInProps>(
+  (
+    {
+      children,
+      duration = 0.3,
+      delay = 0,
+      className,
+      as: Tag = "div",
+      style,
+      ...props
+    },
+    ref,
+  ) => {
+    return (
+      <Tag
+        className={cn("rnx-motion-scale-in", className)}
+        style={{
+          animationDuration: `${duration}s`,
+          animationDelay: `${delay}s`,
+          ...style,
+        }}
+        {...props}
+      >
+        {children}
+      </Tag>
+    );
+  },
+);
+ScaleIn.displayName = "Motion.ScaleIn";

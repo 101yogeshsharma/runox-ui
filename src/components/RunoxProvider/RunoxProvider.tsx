@@ -4,8 +4,8 @@ import {
   ThemeProvider,
   type ThemeConfig,
 } from "../ThemeProvider/ThemeProvider";
-import { MakeWayProvider } from "../Motion/MakeWayContext";
-import { ToastProvider, type ToastPosition } from "../Toast/Toast";
+import { Motion } from "../Motion";
+import { Toast, type ToastPosition } from "../Toast";
 
 /**
  * Props for the RunoxProvider component.
@@ -29,9 +29,9 @@ export function RunoxProvider({
 }: RunoxProviderProps) {
   return (
     <ThemeProvider {...themeProps}>
-      <MakeWayProvider>
-        <ToastProvider position={toastPosition}>{children}</ToastProvider>
-      </MakeWayProvider>
+      <Motion.MakeWayProvider>
+        <Toast.Provider position={toastPosition}>{children}</Toast.Provider>
+      </Motion.MakeWayProvider>
     </ThemeProvider>
   );
 }

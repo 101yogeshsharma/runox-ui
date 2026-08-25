@@ -20,24 +20,38 @@ export interface TooltipProps {
   delay?: number;
   className?: string;
   position?: "top" | "right" | "bottom" | "left";
+  /**
+   * Controlled open state. When provided, hover/focus toggles are routed
+   * through `onOpenChange` instead of internal state.
+   */
+  open?: boolean;
+  /** Called when the open state should change (controlled mode). */
+  onOpenChange?: (open: boolean) => void;
+  /** Initial open state for uncontrolled usage. */
+  defaultOpen?: boolean;
+  /**
+   * Element to portal the tooltip into. Defaults to `document.body`.
+   * Useful for tests or rendering inside a specific container.
+   */
+  container?: HTMLElement;
 }
 
-export const TooltipProvider: React.FC<{ children: React.ReactNode }> = ({
+const TooltipProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => <>{children}</>;
 TooltipProvider.displayName = "Tooltip.Provider";
 
-export const TooltipRoot: React.FC<{ children: React.ReactNode }> = ({
-  children,
-}) => <>{children}</>;
+const TooltipRoot: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <>{children}</>
+);
 TooltipRoot.displayName = "Tooltip.Root";
 
-export const TooltipTrigger: React.FC<{ children: React.ReactNode }> = ({
+const TooltipTrigger: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => <>{children}</>;
 TooltipTrigger.displayName = "Tooltip.Trigger";
 
-export const TooltipContent: React.FC<{ children: React.ReactNode }> = ({
+const TooltipContent: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => <>{children}</>;
 TooltipContent.displayName = "Tooltip.Content";
@@ -53,11 +67,24 @@ const TooltipBase = forwardRef<HTMLDivElement, TooltipProps>(
       delay = 200,
       className,
       position = "top",
+      open: openProp,
+      onOpenChange,
+      defaultOpen = false,
+      container,
       ...props
     },
-    ref
+    ref,
   ) => {
-    const [isOpen, setIsOpen] = useState(false);
+    const [internalOpen, setInternalOpen] = useState(defaultOpen);
+    const isControlled = openProp !== undefined;
+    const isOpen = isControlled ? openProp : internalOpen;
+    const setIsOpen = React.useCallback(
+      (next: boolean) => {
+        if (!isControlled) setInternalOpen(next);
+        onOpenChange?.(next);
+      },
+      [isControlled, onOpenChange],
+    );
     const [mounted, setMounted] = useState(false);
     const [shouldRender, setShouldRender] = useState(false);
     const tooltipId = useId();
@@ -74,7 +101,7 @@ const TooltipBase = forwardRef<HTMLDivElement, TooltipProps>(
       4,
       shouldRender,
       position,
-      "center"
+      "center",
     );
 
     const handleMouseEnter = () => {
@@ -184,18 +211,21 @@ const TooltipBase = forwardRef<HTMLDivElement, TooltipProps>(
           className={cn(
             "rnx-tooltip-content",
             `rnx-tooltip-content--variant-${variant}`,
-            `rnx-tooltip-content--${size}`,
-            className
+            `rnx-tooltip-content--size-${size}`,
+            className,
           )}
           data-state={mounted ? "open" : "closed"}
           data-side={floatingPos?.placed ?? "bottom"}
-          data-rnx-overlay="true"
           style={{
             top: floatingPos?.top ?? -9999,
             left: floatingPos?.left ?? -9999,
             visibility: floatingPos ? "visible" : "hidden",
           }}
-          {...rnx({ component: "Tooltip", state: isOpen ? "open" : "closed" })}
+          {...rnx({
+            component: "Tooltip",
+            state: isOpen ? "open" : "closed",
+            overlay: true,
+          })}
           {...props}
         >
           {showArrow && (
@@ -211,7 +241,7 @@ const TooltipBase = forwardRef<HTMLDivElement, TooltipProps>(
           )}
           {content}
         </Box>,
-        document.body
+        container ?? document.body,
       );
     };
 
@@ -221,7 +251,7 @@ const TooltipBase = forwardRef<HTMLDivElement, TooltipProps>(
         {renderContent()}
       </>
     );
-  }
+  },
 );
 TooltipBase.displayName = "Tooltip";
 const TooltipWithLoading = withLoading(TooltipBase);

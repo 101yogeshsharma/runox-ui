@@ -34,13 +34,13 @@
   }
 
   /* Sizes */
-  .rnx-progress--sm {
+  .rnx-progress--size-sm {
     height: var(--space-1);
   }
-  .rnx-progress--md {
+  .rnx-progress--size-md {
     height: var(--space-1-5);
   }
-  .rnx-progress--lg {
+  .rnx-progress--size-lg {
     height: var(--space-2);
   }
 

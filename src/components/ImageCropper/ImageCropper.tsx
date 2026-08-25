@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useState, useCallback, useEffect, useRef } from "react";
+import React, {
+  useState,
+  useCallback,
+  useEffect,
+  useRef,
+  forwardRef,
+} from "react";
 import Cropper, { Point, Area } from "react-easy-crop";
 import { Slider } from "../Slider";
 import { Button } from "../Button";
@@ -24,108 +30,120 @@ export interface ImageCropperProps {
   className?: string;
 }
 
-export function ImageCropper({
-  image,
-  onCropComplete,
-  onCancel,
-  aspect = 1,
-  cropShape = "round",
-  className,
-}: ImageCropperProps) {
-  const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(1);
-  const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(null);
-  const [isCropping, setIsCropping] = useState(false);
-  const isMounted = useRef(true);
-  const cropOperation = useRef(0);
+export const ImageCropper = forwardRef<HTMLDivElement, ImageCropperProps>(
+  function ImageCropper(
+    {
+      image,
+      onCropComplete,
+      onCancel,
+      aspect = 1,
+      cropShape = "round",
+      className,
+    }: ImageCropperProps,
+    ref,
+  ) {
+    const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
+    const [zoom, setZoom] = useState(1);
+    const [croppedAreaPixels, setCroppedAreaPixels] = useState<Area | null>(
+      null,
+    );
+    const [isCropping, setIsCropping] = useState(false);
+    const isMounted = useRef(true);
+    const cropOperation = useRef(0);
 
-  useEffect(() => {
-    isMounted.current = true;
-    return () => {
-      isMounted.current = false;
-    };
-  }, []);
+    useEffect(() => {
+      isMounted.current = true;
+      return () => {
+        isMounted.current = false;
+      };
+    }, []);
 
-  const handleCropComplete = useCallback(
-    (croppedArea: Area, croppedAreaPixels: Area) => {
-      setCroppedAreaPixels(croppedAreaPixels);
-    },
-    [],
-  );
+    const handleCropComplete = useCallback(
+      (croppedArea: Area, croppedAreaPixels: Area) => {
+        setCroppedAreaPixels(croppedAreaPixels);
+      },
+      [],
+    );
 
-  const handleSave = useCallback(async () => {
-    if (!croppedAreaPixels) return;
-    const operation = ++cropOperation.current;
-    setIsCropping(true);
-    try {
-      const croppedImage = await getCroppedImg(image, croppedAreaPixels);
-      if (isMounted.current && cropOperation.current === operation) {
-        onCropComplete(croppedImage);
+    const handleSave = useCallback(async () => {
+      if (!croppedAreaPixels) return;
+      const operation = ++cropOperation.current;
+      setIsCropping(true);
+      try {
+        const croppedImage = await getCroppedImg(image, croppedAreaPixels);
+        if (isMounted.current && cropOperation.current === operation) {
+          onCropComplete(croppedImage);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        if (isMounted.current && cropOperation.current === operation) {
+          setIsCropping(false);
+        }
       }
-    } catch (e) {
-      console.error(e);
-    } finally {
-      if (isMounted.current && cropOperation.current === operation) {
-        setIsCropping(false);
-      }
-    }
-  }, [croppedAreaPixels, image, onCropComplete]);
+    }, [croppedAreaPixels, image, onCropComplete]);
 
-  const handleCancel = useCallback(() => {
-    cropOperation.current += 1;
-    onCancel?.();
-  }, [onCancel]);
+    const handleCancel = useCallback(() => {
+      cropOperation.current += 1;
+      onCancel?.();
+    }, [onCancel]);
 
-  return (
-    <Flex
-      {...rnx({ component: "ImageCropper" })}
-      direction="col"
-      gap="md"
-      className={cn("rnx-image-cropper w-full", className)}
-    >
-      <Box
-        role="region"
-        aria-label="Image crop area"
-        className="rnx-image-cropper-canvas relative h-80 w-full overflow-hidden sm:h-96"
+    return (
+      <Flex
+        {...rnx({ component: "ImageCropper" })}
+        direction="col"
+        gap="md"
+        className={cn("rnx-image-cropper w-full", className)}
       >
-        <Cropper
-          image={image}
-          crop={crop}
-          zoom={zoom}
-          aspect={aspect}
-          cropShape={cropShape}
-          onCropChange={setCrop}
-          onCropComplete={handleCropComplete}
-          onZoomChange={setZoom}
-        />
-      </Box>
-      <Flex align="center" gap="md" className="rnx-image-cropper-controls px-2">
-        <Text variant="body-sm" color="secondary" className="w-12">
-          Zoom
-        </Text>
-        <Slider
-          value={zoom}
-          min={1}
-          max={3}
-          step={0.1}
-          aria-label="Zoom level"
-          onValueChange={(val) => setZoom(val)}
-          className="flex-1"
-        />
-      </Flex>
-      <Flex justify="end" gap="sm" className="rnx-image-cropper-actions mt-2">
-        {onCancel && (
-          <Button variant="outline" onClick={handleCancel}>
-            Cancel
+        <Box
+          role="region"
+          aria-label="Image crop area"
+          className="rnx-image-cropper-canvas relative h-80 w-full overflow-hidden sm:h-96"
+        >
+          <Cropper
+            image={image}
+            crop={crop}
+            zoom={zoom}
+            aspect={aspect}
+            cropShape={cropShape}
+            onCropChange={setCrop}
+            onCropComplete={handleCropComplete}
+            onZoomChange={setZoom}
+          />
+        </Box>
+        <Flex
+          align="center"
+          gap="md"
+          className="rnx-image-cropper-controls px-2"
+        >
+          <Text variant="body-sm" color="secondary" className="w-12">
+            Zoom
+          </Text>
+          <Slider
+            value={zoom}
+            min={1}
+            max={3}
+            step={0.1}
+            aria-label="Zoom level"
+            onValueChange={(val) => setZoom(val)}
+            className="flex-1"
+          />
+        </Flex>
+        <Flex justify="end" gap="sm" className="rnx-image-cropper-actions mt-2">
+          {onCancel && (
+            <Button variant="outline" onClick={handleCancel}>
+              Cancel
+            </Button>
+          )}
+          <Button onClick={handleSave} isLoading={isCropping}>
+            Crop Image
           </Button>
-        )}
-        <Button onClick={handleSave} isLoading={isCropping}>
-          Crop Image
-        </Button>
+        </Flex>
       </Flex>
-    </Flex>
-  );
-}
+    );
+  },
+);
+ImageCropper.displayName = "ImageCropper";
 
 // Utility to extract the image
 const createImage = (url: string): Promise<HTMLImageElement> =>

@@ -67,13 +67,10 @@ export const SyntaxHighlighter = React.forwardRef<
       if (typeof window === "undefined") return;
       const checkTheme = () => {
         const root = document.documentElement;
-        const hasDarkClass = root.classList.contains("dark");
-        const hasDarkTheme = root.dataset.theme === "dark";
-        const hasLightClass = root.classList.contains("light");
-        const hasLightTheme = root.dataset.theme === "light";
-        if (hasDarkClass || hasDarkTheme) {
+        const theme = root.dataset.theme;
+        if (theme === "dark") {
           setIsDark(true);
-        } else if (hasLightClass || hasLightTheme) {
+        } else if (theme === "light") {
           setIsDark(false);
         } else {
           setIsDark(window.matchMedia("(prefers-color-scheme: dark)").matches);
@@ -83,7 +80,7 @@ export const SyntaxHighlighter = React.forwardRef<
       const observer = new MutationObserver(checkTheme);
       observer.observe(document.documentElement, {
         attributes: true,
-        attributeFilter: ["class", "data-theme"],
+        attributeFilter: ["data-theme"],
       });
       return () => observer.disconnect();
     }, []);

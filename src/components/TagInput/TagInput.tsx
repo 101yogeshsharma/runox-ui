@@ -1,6 +1,6 @@
 "use client";
 import { Box } from "../../atoms/Box";
-import React, { useState, forwardRef, useId } from "react";
+import React, { useState, forwardRef, useId, useRef } from "react";
 import { X } from "lucide-react";
 import { cn } from "../../utils/cn";
 
@@ -76,7 +76,32 @@ const TagInputBase = forwardRef<HTMLInputElement, TagInputProps>(
     const [internalTags, setInternalTags] = useState<string[]>(defaultValue);
     const [inputValue, setInputValue] = useState("");
 
+    // Stable identity per tag value. Keys must not be array indices because
+    // removing a middle tag would shift keys and mis-associate DOM state.
+    // Duplicate tag values are disallowed on add, so value === identity.
+    const keySeq = useRef(0);
+    const tagKeys = useRef(new Map<string, string>());
+    const keyFor = (tag: string) => {
+      let k = tagKeys.current.get(tag);
+      if (!k) {
+        k = `tag-${keySeq.current++}`;
+        tagKeys.current.set(tag, k);
+      }
+      return k;
+    };
+    const dropKey = (tag: string) => tagKeys.current.delete(tag);
+
     const tags = value !== undefined ? value : internalTags;
+
+    // Resync key registry when the controlled value changes externally so
+    // removed tags don't leave stale entries behind.
+    React.useEffect(() => {
+      if (value !== undefined) {
+        for (const known of [...tagKeys.current.keys()]) {
+          if (!value.includes(known)) tagKeys.current.delete(known);
+        }
+      }
+    }, [value]);
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === "Enter" || e.key === ",") {
@@ -132,13 +157,13 @@ const TagInputBase = forwardRef<HTMLInputElement, TagInputProps>(
             inputContainerClassName,
           )}
         >
-          {tags.map((tag, index) => (
+          {tags.map((tag) => (
             <Box
               as="span"
-              key={index}
+              key={keyFor(tag)}
               className={cn(
                 "rnx-tag-item",
-                `rnx-tag-item--${size || "md"}`,
+                `rnx-tag-item--size-${size || "md"}`,
                 `rnx-tag-item--tag-${tagVariant}`,
                 color && `rnx-tag-item--color-${color}`,
               )}
@@ -146,7 +171,10 @@ const TagInputBase = forwardRef<HTMLInputElement, TagInputProps>(
               {tag}
               <button
                 type="button"
-                onClick={() => removeTag(index)}
+                onClick={() => {
+                  removeTag(tags.indexOf(tag));
+                  dropKey(tag);
+                }}
                 disabled={disabled}
                 className="rnx-tag-item-remove"
                 aria-label={`Remove ${tag}`}

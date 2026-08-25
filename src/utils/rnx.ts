@@ -13,6 +13,11 @@ export interface RnxAttributesOptions {
     | "inactive"
     | (string & {});
   action?: "submit" | "open" | "close" | "navigate" | "toggle" | (string & {});
+  /**
+   * Marks the element as an overlay surface (modal, drawer, popover, …).
+   * Emits `data-rnx-overlay="true"` so agents can identify portal layers.
+   */
+  overlay?: boolean;
 }
 
 /**
@@ -32,6 +37,9 @@ export function rnx(options: RnxAttributesOptions) {
   }
   if (options.action) {
     attrs["data-rnx-action"] = options.action;
+  }
+  if (options.overlay) {
+    attrs["data-rnx-overlay"] = "true";
   }
 
   return attrs;

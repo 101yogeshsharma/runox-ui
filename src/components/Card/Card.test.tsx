@@ -1,16 +1,16 @@
 "use client";
 import React from "react";
 import { render } from "@testing-library/react";
-import { Card, CardHeader, CardBody, CardFooter } from "./Card";
+import { Card } from "./Card";
 
 describe("Card", () => {
   it("renders all sections correctly", () => {
     const { getByText } = render(
       <Card>
-        <CardHeader>Header</CardHeader>
-        <CardBody>Body</CardBody>
-        <CardFooter>Footer</CardFooter>
-      </Card>
+        <Card.Header>Header</Card.Header>
+        <Card.Body>Body</Card.Body>
+        <Card.Footer>Footer</Card.Footer>
+      </Card>,
     );
 
     expect(getByText("Header")).toBeInTheDocument();

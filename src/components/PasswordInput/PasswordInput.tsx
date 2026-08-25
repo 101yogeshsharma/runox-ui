@@ -15,24 +15,20 @@ import { rnx } from "../../utils/rnx";
 import { cva, type VariantProps } from "class-variance-authority";
 import { withLoading } from "../../utils/withLoading";
 
-
 import "./PasswordInput.css";
 
-export const passwordInputVariants = cva(
-  "rnx-password-input",
-  {
-    variants: {
-      size: {
-        sm: "rnx-password-input--sm",
-        md: "rnx-password-input--md",
-        lg: "rnx-password-input--lg",
-      },
+export const passwordInputVariants = cva("rnx-password-input", {
+  variants: {
+    size: {
+      sm: "rnx-password-input--sm",
+      md: "rnx-password-input--md",
+      lg: "rnx-password-input--lg",
     },
-    defaultVariants: {
-      size: "md",
-    },
-  }
-);
+  },
+  defaultVariants: {
+    size: "md",
+  },
+});
 
 /**
  * Props for the PasswordInput component.
@@ -67,7 +63,7 @@ const PasswordInputBase = forwardRef<HTMLInputElement, PasswordInputProps>(
       onChange,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [showPassword, setShowPassword] = useState(false);
     const [capsLockActive, setCapsLockActive] = useState(false);
@@ -122,10 +118,7 @@ const PasswordInputBase = forwardRef<HTMLInputElement, PasswordInputProps>(
 
     return (
       <Box
-        className={cn(
-          "rnx-password-input-container",
-          className
-        )}
+        className={cn("rnx-password-input-container", className)}
         {...rnx({
           component: "PasswordInput",
           state: disabled ? "disabled" : "active",
@@ -149,10 +142,10 @@ const PasswordInputBase = forwardRef<HTMLInputElement, PasswordInputProps>(
                 size: size ?? "md",
                 className: cn(
                   passwordInputVariants({ size }),
-                  displayError && "rnx-password-input--error"
+                  displayError && "rnx-password-input--error",
                 ),
               },
-              props
+              props,
             )}
           />
           <Box className="rnx-password-input-actions">
@@ -161,10 +154,12 @@ const PasswordInputBase = forwardRef<HTMLInputElement, PasswordInputProps>(
                 <Box
                   className={cn(
                     "rnx-password-capslock-indicator",
-                    `rnx-password-capslock-indicator--${size || "md"}`
+                    `rnx-password-capslock-indicator--size-${size || "md"}`,
                   )}
                 >
-                  <Keyboard className={`rnx-password-input-icon--${size || "md"}`} />
+                  <Keyboard
+                    className={`rnx-password-input-icon--size-${size || "md"}`}
+                  />
                 </Box>
               </Tooltip>
             )}
@@ -175,15 +170,19 @@ const PasswordInputBase = forwardRef<HTMLInputElement, PasswordInputProps>(
               aria-label={showPassword ? "Hide password" : "Show password"}
               className={cn(
                 "rnx-password-input-btn",
-                `rnx-password-input-btn--${size || "md"}`
+                `rnx-password-input-btn--size-${size || "md"}`,
               )}
               disabled={disabled}
               onClick={togglePassword}
             >
               {showPassword ? (
-                <EyeOff className={`rnx-password-input-icon--${size || "md"}`} />
+                <EyeOff
+                  className={`rnx-password-input-icon--size-${size || "md"}`}
+                />
               ) : (
-                <Eye className={`rnx-password-input-icon--${size || "md"}`} />
+                <Eye
+                  className={`rnx-password-input-icon--size-${size || "md"}`}
+                />
               )}
             </Button>
           </Box>
@@ -195,7 +194,7 @@ const PasswordInputBase = forwardRef<HTMLInputElement, PasswordInputProps>(
         )}
       </Box>
     );
-  }
+  },
 );
 PasswordInputBase.displayName = "PasswordInput";
 export const PasswordInput = withLoading(PasswordInputBase);

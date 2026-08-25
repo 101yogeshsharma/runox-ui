@@ -37,29 +37,29 @@
     box-shadow: var(--shadow-sm);
   }
 
-  .rnx-switch-container--sm {
+  .rnx-switch-container--size-sm {
     width: var(--space-7);
     height: var(--space-4);
   }
-  .rnx-switch-thumb--sm {
+  .rnx-switch-thumb--size-sm {
     width: var(--space-3);
     height: var(--space-3);
     transform: translateX(0);
   }
-  .rnx-switch-input:checked + .rnx-switch-thumb--sm {
+  .rnx-switch-input:checked + .rnx-switch-thumb--size-sm {
     transform: translateX(var(--space-3));
   }
 
-  .rnx-switch-container--md {
+  .rnx-switch-container--size-md {
     width: var(--space-9);
     height: var(--space-5);
   }
-  .rnx-switch-thumb--md {
+  .rnx-switch-thumb--size-md {
     width: var(--space-4);
     height: var(--space-4);
     transform: translateX(0);
   }
-  .rnx-switch-input:checked + .rnx-switch-thumb--md {
+  .rnx-switch-input:checked + .rnx-switch-thumb--size-md {
     transform: translateX(var(--space-4));
   }
 
@@ -67,16 +67,16 @@
     opacity: 0.9;
   }
 
-  .rnx-switch-container--lg {
+  .rnx-switch-container--size-lg {
     width: var(--space-12);
     height: var(--space-6);
   }
-  .rnx-switch-thumb--lg {
+  .rnx-switch-thumb--size-lg {
     width: var(--space-5);
     height: var(--space-5);
     transform: translateX(0);
   }
-  .rnx-switch-input:checked + .rnx-switch-thumb--lg {
+  .rnx-switch-input:checked + .rnx-switch-thumb--size-lg {
     transform: translateX(var(--space-5));
   }
 

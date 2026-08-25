@@ -109,7 +109,7 @@ const SliderBase = forwardRef<HTMLInputElement, SliderProps>(
         <Box
           className={cn(
             "rnx-slider-wrapper",
-            `rnx-slider--${size}`,
+            `rnx-slider--size-${size}`,
             `rnx-slider--color-${color}`,
             variant && variant !== "solid" && `rnx-slider--variant-${variant}`,
             error && "rnx-slider--error",
