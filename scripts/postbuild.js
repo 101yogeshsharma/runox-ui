@@ -64,3 +64,10 @@ execSync(`node ${path.join(__dirname, "generate-registry.js")}`, {
   cwd: path.join(__dirname, ".."),
   stdio: "inherit",
 });
+
+// Generate mcp-registry.json for the MCP server
+console.log("Generating MCP component registry...");
+execSync(`node ${path.join(__dirname, "generate-mcp-registry.js")}`, {
+  cwd: path.join(__dirname, ".."),
+  stdio: "inherit",
+});

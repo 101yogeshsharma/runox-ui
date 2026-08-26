@@ -1,5 +1,18 @@
 # @runox/ui
 
+## 0.4.1
+
+### Patch Changes
+
+- **MCP Server Fixes & AI Component Metadata**:
+  - **Registry Path Resolution**: Fixed runtime `__dirname` bundle path in `src/cli/mcp/data.ts` to correctly resolve `dist/registry.json` and `dist/mcp-registry.json`.
+  - **Enriched AI Component Metadata**: Added `scripts/generate-mcp-registry.js` to build pipeline, generating `dist/mcp-registry.json` containing complete descriptions, props tables, sub-components, and JSX examples for all 71 components.
+  - **Compound Dot-Notation Import Generation**: Fixed `check_import` MCP tool to return root namespace imports (`import { Table }` for `Table.Header`, `import { AI }` for `AI.StreamingText`).
+  - **Categorized Component Listing**: Structured `list_all_components` output into grouped JSON categories (_Primitives, Forms, Data Display, Feedback, Overlays, Navigation, AI, Layout, System_).
+  - **Code Example Property Fix**: Fixed `get_component_example` to read variant `title` rather than `name`.
+  - **Resource Documentation Updates**: Updated `runox://theming` to match the canonical `RunoxTheme` token interface and added `@import "@runox/ui/styles.css"` to `runox://getting-started`.
+  - **Dynamic Server Version**: MCP server reports current package version dynamically.
+
 ## 0.4.0
 
 ### Minor Changes

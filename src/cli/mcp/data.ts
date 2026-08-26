@@ -1,11 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 
-// In production (when installed globally or locally via npm), the registry.json
-// will be at dist/registry.json. We can resolve it relative to __dirname.
+// When bundled as dist/cli.js, __dirname is the 'dist/' folder.
+// Both registry.json and mcp-registry.json live at dist/ alongside cli.js.
+
+/** Loads the basic CLI registry (used by `runox add`). */
 export function getRegistryData() {
   try {
-    const registryPath = path.resolve(__dirname, "../../registry.json");
+    const registryPath = path.resolve(__dirname, "registry.json");
     if (!fs.existsSync(registryPath)) {
       return null;
     }
@@ -17,8 +19,24 @@ export function getRegistryData() {
   }
 }
 
+/** Loads the AI-enriched MCP registry (props, variants, descriptions, examples). */
+export function getMcpRegistryData() {
+  try {
+    const mcpRegistryPath = path.resolve(__dirname, "mcp-registry.json");
+    if (!fs.existsSync(mcpRegistryPath)) {
+      // Graceful degradation: fall back to basic registry
+      return getRegistryData();
+    }
+    const data = fs.readFileSync(mcpRegistryPath, "utf-8");
+    return JSON.parse(data);
+  } catch (error) {
+    console.error("Error reading MCP registry data:", error);
+    return getRegistryData();
+  }
+}
+
 export function searchComponents(query: string) {
-  const data = getRegistryData();
+  const data = getMcpRegistryData();
   if (!data) return [];
 
   const results = [];
@@ -31,7 +49,7 @@ export function searchComponents(query: string) {
 }
 
 export function getComponent(name: string) {
-  const data = getRegistryData();
+  const data = getMcpRegistryData();
   if (!data) return null;
   return data[name] || null;
 }
