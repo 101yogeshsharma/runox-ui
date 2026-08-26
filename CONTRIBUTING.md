@@ -75,3 +75,14 @@ Select the packages you modified (typically `@runox/ui`), choose the version bum
 ## Pull Request
 
 When you're ready, open a Pull Request. We will review it and merge it. Make sure you have included tests for your changes, and that all CI checks pass.
+
+## Release Checklist (version bumps)
+
+On every version bump, in addition to the changeset:
+
+1. **Regenerate the component inventory**: `node scripts/generate-components-md.js` — then update any component-count claims (README, package.json description) to match the generated count.
+2. **Sync the docs changelog**: the changelog page in `runox-docs` (`src/app/(docs)/docs/changelog/page.tsx`) is hand-maintained — mirror your CHANGELOG.md entries there.
+3. **Repack the docs tarball**: `npm pack` and move the `.tgz` into `runox-docs/`, update its `package.json` reference, and `npm install` there.
+4. **Update `runox-docs/src/lib/version.ts`** (`LIB_VERSION`) so version badges stay accurate.
+5. **Run the docs registry validator**: in `runox-docs`, `npm run test:registry` — catches documented values that no longer exist in the library (colors, variants, units).
+6. **Grep for stale API**: `isOpen=`, `onClose=` (except Alert's legit `onClose`), `destructive` as a color, `LazyMotionProvider`, framer-motion claims.

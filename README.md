@@ -9,11 +9,11 @@
 [![License](https://img.shields.io/npm/l/@runox/ui.svg?style=flat-square)](https://github.com/101yogeshsharma/runox-ui/blob/main/LICENSE)
 [![Bundle Size](https://img.shields.io/bundlephobia/minzip/@runox/ui.svg?style=flat-square)](https://bundlephobia.com/package/@runox/ui)
 
-The AI-native React component library and design system — 70+ accessible, glassmorphic components with dot-notation APIs, built-in testing utilities, and machine-readable agent instrumentation.
+The AI-native React component library and design system — 68 accessible, glassmorphic components with dot-notation APIs, built-in testing utilities, and machine-readable agent instrumentation.
 
 ## Features
 
-- **70+ Components**: From primitives (`Box`, `Flex`, `Grid`) to complex interactive components (Kanban, DataTable, VirtualList, AI Chat) — all fully typed.
+- **68 Components**: From primitives (`Box`, `Flex`, `Grid`) to complex interactive components (Kanban, DataTable, VirtualList, AI Chat) — all fully typed.
 - **Dot-Notation APIs**: Composed components use clean namespaces — `Modal.Header`, `Card.Title`, `Accordion.Item` — with codemods for migrating from other libraries (`npx @runox/ui migrate --from mui|chakra|shadcn|flat`).
 - **Glassmorphism**: Components natively support translucent layers, blurred backgrounds, and subtle glow borders.
 - **Dark-First Theming**: Comprehensive design tokens (colors, typography, shadows, motion) with light mode and system preference support via `RunoxProvider`.

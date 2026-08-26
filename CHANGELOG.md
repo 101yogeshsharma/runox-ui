@@ -33,6 +33,8 @@
 - Performance: full memoization across Kanban drag paths, VirtualList range-only rendering with rAF-throttled scroll, Calendar hover handlers, and DataTable keystroke handling.
 - Accessibility: roving tabindex on Tabs/Accordion/Select, focus-on-open for menus, scoped Escape handling (only closes when focus is inside), automatic `aria-labelledby` wiring on Modal/AlertDialog, and keyboard-operable Sidebar backdrop.
 - CSS: deduplicated ~700 lines between `globals.css` and component stylesheets; unified z-index scale; removed legacy theme aliases.
+- MakeWay: `useMakeWayOptional` returned a static no-op object, silently disabling the shift-aside animation for all Modals — even in apps correctly wrapped in `RunoxProvider`. It now returns the live context when a provider exists and falls back to a no-op only when there is none.
+- Select: clearing a selection now forwards `undefined` (not `""`) to `onValueChange`, keeping controlled `Select<TValue>` state valid; the closed trigger keeps showing the selected item's label after the listbox unmounts instead of reverting to the raw value.
 
 ## 0.3.0
 
