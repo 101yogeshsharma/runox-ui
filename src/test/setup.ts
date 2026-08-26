@@ -136,17 +136,13 @@ function isVitestMock(fn: unknown): boolean {
   );
 }
 
-let resizeObserverInstalled = false;
-
 function installResizeObserverStub(): void {
-  if (resizeObserverInstalled) return;
   if (typeof globalThis.ResizeObserver === "undefined") {
     globalThis.ResizeObserver = class ResizeObserverStub {
       observe(): void {}
       unobserve(): void {}
       disconnect(): void {}
     } as unknown as typeof ResizeObserver;
-    resizeObserverInstalled = true;
   }
 }
 
