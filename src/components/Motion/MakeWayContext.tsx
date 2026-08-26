@@ -76,12 +76,18 @@ export const useMakeWay = () => {
 };
 
 /**
- * MakeWay access that tolerates a missing provider. Components that can
- * function without the shift-aside behavior (e.g. standalone Modal usage in
- * tests or apps that do not use RunoxProvider) should prefer this variant.
+ * MakeWay access that tolerates a missing provider. Returns the live context
+ * when a MakeWayProvider is present (so the shift-aside behavior works), and
+ * falls back to a no-op implementation only when there is no provider —
+ * e.g. standalone Modal usage in tests or apps that do not use RunoxProvider.
  */
-export const useMakeWayOptional = (): MakeWayContextType => ({
-  isModalOpen: false,
-  registerModal: () => {},
-  unregisterModal: () => {},
-});
+export const useMakeWayOptional = (): MakeWayContextType => {
+  const context = useContext(MakeWayContext);
+  return (
+    context ?? {
+      isModalOpen: false,
+      registerModal: () => {},
+      unregisterModal: () => {},
+    }
+  );
+};

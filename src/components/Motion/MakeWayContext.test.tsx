@@ -111,9 +111,43 @@ describe("MakeWayContext", () => {
   });
 
   it("useMakeWayOptional returns a no-op fallback without a provider", () => {
-    const optional = useMakeWayOptional();
-    expect(optional.isModalOpen).toBe(false);
-    expect(() => optional.registerModal("x")).not.toThrow();
-    expect(() => optional.unregisterModal("x")).not.toThrow();
+    function Probe() {
+      const ctx = useMakeWayOptional();
+      return (
+        <div>
+          <span data-testid="open">{String(ctx.isModalOpen)}</span>
+          <button onClick={() => ctx.registerModal("x")} data-testid="reg" />
+        </div>
+      );
+    }
+    const { getByTestId } = render(<Probe />);
+    // No provider: fallback keeps state closed and no-ops safely.
+    expect(getByTestId("open").textContent).toBe("false");
+    expect(() => fireEvent.click(getByTestId("reg"))).not.toThrow();
+    expect(getByTestId("open").textContent).toBe("false");
+    expect(document.body.classList.contains("modal-open-makeway")).toBe(false);
+  });
+
+  it("useMakeWayOptional returns LIVE context when a provider is present", () => {
+    function Probe() {
+      const ctx = useMakeWayOptional();
+      return (
+        <div>
+          <span data-testid="open">{String(ctx.isModalOpen)}</span>
+          <button onClick={() => ctx.registerModal("live")} data-testid="reg" />
+        </div>
+      );
+    }
+    const { getByTestId } = render(
+      <MakeWayProvider>
+        <Probe />
+      </MakeWayProvider>,
+    );
+
+    // Must reflect provider state, not the static no-op fallback.
+    expect(getByTestId("open").textContent).toBe("false");
+    fireEvent.click(getByTestId("reg"));
+    expect(getByTestId("open").textContent).toBe("true");
+    expect(document.body.classList.contains("modal-open-makeway")).toBe(true);
   });
 });
