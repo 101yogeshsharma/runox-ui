@@ -24,7 +24,7 @@ export const RotateIn = forwardRef<HTMLElement, RotateInProps>(
       style,
       ...props
     },
-    ref,
+    _ref,
   ) => {
     return (
       <Tag

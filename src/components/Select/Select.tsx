@@ -129,7 +129,9 @@ const SelectRoot = React.forwardRef<HTMLDivElement, SelectProps<any>>(
       defaultProp: defaultValue,
       onChange: (val) => {
         if (onValueChange) {
-          onValueChange((val ?? "") as any);
+          // Forward as-is: a cleared selection is `undefined`, not "".
+          // Coercing would hand consumers an invalid TValue.
+          onValueChange(val as any);
         }
       },
     });
@@ -489,9 +491,12 @@ const SelectItem = React.forwardRef<HTMLDivElement, SelectItemProps>(
       if (isSelected && itemLabel !== undefined) {
         setSelectedLabel(itemLabel);
       }
-      return () => {
-        if (isSelected) setSelectedLabel(undefined);
-      };
+      // Deliberately no cleanup that clears selectedLabel on unmount: items
+      // unmount when the listbox closes (after the exit animation), but the
+      // selected value persists — the trigger must keep showing its label.
+      // Stale labels are harmless: if the value changes, the newly selected
+      // item overwrites the label; if the item is removed entirely, the
+      // trigger falls back to the raw value.
     }, [isSelected, itemLabel, setSelectedLabel]);
 
     return (

@@ -130,6 +130,8 @@ const TooltipBase = forwardRef<HTMLDivElement, TooltipProps>(
       };
       document.addEventListener("keydown", handleKeyDown);
       return () => document.removeEventListener("keydown", handleKeyDown);
+      // setIsOpen is a stable state setter; adding it to deps adds no value.
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isOpen]);
 
     useEffect(() => {

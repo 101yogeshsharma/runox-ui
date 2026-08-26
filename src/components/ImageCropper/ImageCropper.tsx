@@ -40,7 +40,7 @@ export const ImageCropper = forwardRef<HTMLDivElement, ImageCropperProps>(
       cropShape = "round",
       className,
     }: ImageCropperProps,
-    ref,
+    _ref,
   ) {
     const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);

@@ -24,7 +24,7 @@ export const FlipIn = forwardRef<HTMLElement, FlipInProps>(
       style,
       ...props
     },
-    ref,
+    _ref,
   ) => {
     const flipClass = axis === "x" ? "rnx-motion-flip-x" : "rnx-motion-flip-y";
 

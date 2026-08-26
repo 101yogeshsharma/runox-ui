@@ -22,7 +22,7 @@ export const ScaleIn = forwardRef<HTMLElement, ScaleInProps>(
       style,
       ...props
     },
-    ref,
+    _ref,
   ) => {
     return (
       <Tag
