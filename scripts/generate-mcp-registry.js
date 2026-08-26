@@ -2618,6 +2618,31 @@ const registry = {
       },
     ],
   },
+  kanbanboard: {
+    name: "Kanban (formerly KanbanBoard)",
+    description:
+      "Drag-and-drop Kanban board with sortable columns and cards. Note: KanbanBoard is deprecated in favor of Kanban.",
+    import: `import { Kanban } from "@runox/ui";`,
+    propsTable: [
+      {
+        name: "onCardMove",
+        type: "(activeId, overId, overColId, position) => void",
+        default: "required",
+        description: "Called when a card is dropped into a new position",
+      },
+    ],
+    subComponents: [
+      "Kanban.Column (id: string | number)",
+      "Kanban.ColumnHeader (count?: number)",
+      "Kanban.Card (id: string | number)",
+    ],
+    variants: [
+      {
+        title: "Kanban Board",
+        code: '<Kanban onCardMove={handleMove}>\n  <Kanban.Column id="todo">\n    <Kanban.ColumnHeader count={2}>To Do</Kanban.ColumnHeader>\n    <Kanban.Card id="1">Task 1</Kanban.Card>\n  </Kanban.Column>\n</Kanban>',
+      },
+    ],
+  },
 };
 
 const outPath = path.join(root, "dist", "mcp-registry.json");

@@ -39,10 +39,15 @@ export function searchComponents(query: string) {
   const data = getMcpRegistryData();
   if (!data) return [];
 
+  const cleanQuery = query.toLowerCase().trim();
   const results = [];
-  for (const [name, info] of Object.entries(data)) {
-    if (name.toLowerCase().includes(query.toLowerCase())) {
-      results.push(info);
+  for (const [key, info] of Object.entries(data)) {
+    const comp = info as any;
+    const nameMatch = key.toLowerCase().includes(cleanQuery);
+    const titleMatch = comp.name?.toLowerCase().includes(cleanQuery);
+    const descMatch = comp.description?.toLowerCase().includes(cleanQuery);
+    if (nameMatch || titleMatch || descMatch) {
+      results.push(comp);
     }
   }
   return results;
@@ -51,5 +56,10 @@ export function searchComponents(query: string) {
 export function getComponent(name: string) {
   const data = getMcpRegistryData();
   if (!data) return null;
-  return data[name] || null;
+
+  const raw = name.trim();
+  const normalized = raw.toLowerCase().replace(/[-_\s]/g, "");
+  const lower = raw.toLowerCase();
+
+  return data[normalized] || data[lower] || data[raw] || null;
 }

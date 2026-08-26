@@ -85,9 +85,8 @@ const ContextMenuTrigger = forwardRef<
       ref={mergedRef}
       onContextMenu={handleContextMenu}
       {...rnx({
-        component: "ContextMenu",
+        component: "ContextMenuTrigger",
         state: context?.isOpen ? "open" : "closed",
-        overlay: true,
       })}
       {...props}
     >
@@ -147,6 +146,11 @@ const ContextMenuPortal = ({
   return createPortal(
     <Box
       ref={contentRef}
+      {...rnx({
+        component: "ContextMenu",
+        state: mounted ? "open" : "closed",
+        overlay: true,
+      })}
       className="rnx-context-menu-content"
       data-state={mounted ? "open" : "closed"}
       style={{

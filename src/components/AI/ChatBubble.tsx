@@ -1,5 +1,6 @@
 "use client";
 import { Box } from "../../atoms/Box";
+import { rnx } from "../../utils/rnx";
 
 import React, { forwardRef } from "react";
 import { cn } from "../../utils/cn";
@@ -54,6 +55,11 @@ const ChatBubbleBase = forwardRef<HTMLDivElement, ChatBubbleProps>(
       <Box
         ref={ref}
         data-speaker={effectiveSpeaker}
+        {...rnx({
+          component: "ChatBubble",
+          variant,
+          state: effectiveSpeaker,
+        })}
         className={cn(
           "rnx-chat-bubble",
           `rnx-chat-bubble--${effectiveSpeaker}`,

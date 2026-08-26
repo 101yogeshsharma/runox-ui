@@ -4,7 +4,6 @@ import { Command } from "commander";
 import prompts from "prompts";
 import fs from "node:fs";
 import path from "node:path";
-import https from "node:https";
 import { runMigrate } from "./migrate";
 import { runMcpServer } from "./mcp";
 
@@ -31,35 +30,14 @@ interface RegistryItem {
 
 type Registry = Record<string, RegistryItem>;
 
-function httpGet(url: string, maxRedirects = 5): Promise<string> {
-  return new Promise((resolve, reject) => {
-    if (maxRedirects < 0) {
-      return reject(new Error(`Too many redirects when requesting ${url}`));
-    }
-    https
-      .get(url, (res) => {
-        const status = res.statusCode ?? 0;
-        if (status >= 300 && status < 400 && res.headers.location) {
-          res.resume();
-          return resolve(
-            httpGet(
-              new URL(res.headers.location, url).toString(),
-              maxRedirects - 1,
-            ),
-          );
-        }
-        if (status < 200 || status >= 300) {
-          res.resume();
-          return reject(
-            new Error(`Request to ${url} failed with status ${status}`),
-          );
-        }
-        let data = "";
-        res.on("data", (chunk) => (data += chunk));
-        res.on("end", () => resolve(data));
-      })
-      .on("error", reject);
-  });
+async function httpGet(url: string): Promise<string> {
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(
+      `Request to ${url} failed with status ${res.status} ${res.statusText}`,
+    );
+  }
+  return res.text();
 }
 
 async function fetchRegistry(registryUrl?: string): Promise<Registry> {
@@ -67,8 +45,20 @@ async function fetchRegistry(registryUrl?: string): Promise<Registry> {
   return JSON.parse(data);
 }
 
-async function fetchFile(filePath: string, baseUrl?: string): Promise<string> {
-  return httpGet(`${baseUrl ?? SOURCE_BASE_URL}${filePath}`);
+function getSourceBaseUrl(registryUrl?: string): string {
+  if (!registryUrl) return SOURCE_BASE_URL;
+  return (
+    registryUrl
+      .replace(/\/dist\/registry\.json$|\/registry\.json$/, "")
+      .replace(/\/$/, "") + "/"
+  );
+}
+
+async function fetchFile(
+  filePath: string,
+  sourceBaseUrl?: string,
+): Promise<string> {
+  return httpGet(`${sourceBaseUrl ?? SOURCE_BASE_URL}${filePath}`);
 }
 
 // Function to resolve dependencies recursively
@@ -114,9 +104,11 @@ async function selectComponents(
 async function writeComponentFile(
   file: string,
   targetDir: string,
-  options: { dryRun?: boolean; yes?: boolean; registry?: string },
+  options: { dryRun?: boolean; yes?: boolean; sourceBaseUrl?: string },
 ): Promise<void> {
-  const relativeFilePath = file.replace(/^src\//, "");
+  const relativeFilePath = file
+    .replace(/^src\/components\//, "")
+    .replace(/^src\//, "");
   const finalPath = path.join(targetDir, relativeFilePath);
   const resolved = path.resolve(finalPath);
   const resolvedTarget = path.resolve(targetDir);
@@ -133,7 +125,7 @@ async function writeComponentFile(
   }
 
   console.log(`Fetching ${file}...`);
-  const content = await fetchFile(file, options.registry);
+  const content = await fetchFile(file, options.sourceBaseUrl);
 
   if (fs.existsSync(finalPath) && !options.yes) {
     const { overwrite } = await prompts({
@@ -200,13 +192,15 @@ program
     }
 
     const targetDir = path.resolve(process.cwd(), options.path);
+    const sourceBaseUrl = getSourceBaseUrl(options.registry);
+    const writeOptions = { ...options, sourceBaseUrl };
 
     for (const compName of resolvedDeps) {
       const comp = registry[compName];
       if (!comp) continue;
 
       for (const file of comp.files) {
-        await writeComponentFile(file, targetDir, options);
+        await writeComponentFile(file, targetDir, writeOptions);
       }
     }
 

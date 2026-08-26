@@ -364,7 +364,6 @@ const DropdownContent = React.forwardRef<HTMLDivElement, DropdownContentProps>(
     }, [isOpen, setIsOpen, triggerRef]);
 
     if (!mounted || typeof document === "undefined") return null;
-
     let matchedWidth: number | undefined;
     if (position && triggerRef.current && contentRef.current) {
       const anchorRect = triggerRef.current.getBoundingClientRect();
@@ -376,6 +375,11 @@ const DropdownContent = React.forwardRef<HTMLDivElement, DropdownContentProps>(
         ref={mergedRef}
         role="menu"
         tabIndex={-1}
+        {...rnx({
+          component: "Dropdown",
+          state: isOpen && position ? "open" : "closed",
+          overlay: true,
+        })}
         className={cn("rnx-dropdown-content z-50", className)}
         data-state={isOpen && position ? "open" : "closed"}
         data-side={position?.placed || "bottom"}
@@ -403,39 +407,40 @@ export interface DropdownItemProps extends Omit<
   React.ComponentPropsWithoutRef<typeof Command.Item>,
   "value" | "onSelect"
 > {
-  onSelect?: () => void;
   value?: string;
-  children: React.ReactNode;
-  className?: string;
+  disabled?: boolean;
+  onSelect?: () => void;
 }
 
-const DropdownItem = React.forwardRef<HTMLDivElement, DropdownItemProps>(
+const DropdownItem = React.forwardRef<
+  React.ElementRef<typeof Command.Item>,
+  DropdownItemProps
+>(
   (
     { children, value: itemValue, onSelect: onSelectProp, className, ...props },
     ref,
   ) => {
     const { value, onValueChange, multiple, setIsOpen } = useDropdownContext();
-
-    const isSelectable = itemValue !== undefined;
-    const isSelected =
-      isSelectable &&
-      (multiple
-        ? Array.isArray(value) && value.includes(itemValue)
-        : value === itemValue);
+    const isSelectable = value !== undefined;
+    const isSelected = isSelectable
+      ? multiple && Array.isArray(value)
+        ? value.includes(itemValue || "")
+        : value === itemValue
+      : false;
 
     const handleSelect = () => {
+      if (props.disabled) return;
       if (onSelectProp) onSelectProp();
 
-      if (isSelectable) {
+      if (itemValue !== undefined) {
         if (multiple) {
           const currentArray = Array.isArray(value) ? value : [];
-          if (currentArray.includes(itemValue)) {
-            onValueChange(currentArray.filter((v) => v !== itemValue));
-          } else {
-            onValueChange([...currentArray, itemValue]);
-          }
+          const next = isSelected
+            ? currentArray.filter((v) => v !== itemValue)
+            : [...currentArray, itemValue];
+          onValueChange(next);
         } else {
-          onValueChange(itemValue === value ? "" : itemValue);
+          onValueChange(itemValue);
           setIsOpen(false);
         }
       } else {
@@ -462,7 +467,7 @@ const DropdownItem = React.forwardRef<HTMLDivElement, DropdownItemProps>(
         )}
         {...rnx({
           component: "DropdownItem",
-          state: isSelected ? "selected" : "unselected",
+          state: isSelected ? "active" : "inactive",
         })}
         {...props}
       >

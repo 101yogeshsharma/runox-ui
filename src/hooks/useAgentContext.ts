@@ -3,12 +3,13 @@ import { useEffect, useState, useCallback } from "react";
 /**
  * Represents a snapshot of a single UI component's state and bounds.
  *
- * @property id - Unique identifier for the component.
+ * @property id - Unique identifier for the component (persisted across snapshots).
  * @property component - The type or name of the component.
  * @property variant - The variant of the component.
  * @property state - The current state of the component.
  * @property action - The action associated with the component.
- * @property textContent - Truncated text content of the component.
+ * @property overlay - Whether the component is an overlay / portal layer.
+ * @property textContent - Truncated text content or input value of the component.
  * @property bounds - Bounding rectangle of the component.
  */
 export interface AgentComponentSnapshot {
@@ -17,6 +18,7 @@ export interface AgentComponentSnapshot {
   variant?: string;
   state?: string;
   action?: string;
+  overlay?: boolean;
   textContent: string;
   bounds: {
     x: number;
@@ -51,7 +53,7 @@ let snapshotCounter = 0;
 
 export function useAgentContext() {
   const [snapshot, setSnapshot] = useState<AgentSnapshot>({
-    timestamp: Date.now(),
+    timestamp: 0,
     components: [],
   });
 
@@ -63,14 +65,34 @@ export function useAgentContext() {
       (el) => {
         const htmlEl = el as HTMLElement;
         const rect = el.getBoundingClientRect();
-        snapshotCounter = (snapshotCounter + 1) % 1000000;
-        const fallbackId = `rnx-${Date.now()}-${snapshotCounter}`;
-        const id =
-          el.id ||
-          (typeof crypto !== "undefined" &&
-          typeof crypto.randomUUID === "function"
-            ? crypto.randomUUID()
-            : fallbackId);
+
+        // Ensure stable ID across snapshot cycles for elements without explicit id prop
+        let id = el.id || htmlEl.dataset.rnxGeneratedId;
+        if (!id) {
+          snapshotCounter = (snapshotCounter + 1) % 1000000;
+          id =
+            typeof crypto !== "undefined" &&
+            typeof crypto.randomUUID === "function"
+              ? crypto.randomUUID()
+              : `rnx-${Date.now()}-${snapshotCounter}`;
+          htmlEl.dataset.rnxGeneratedId = id;
+        }
+
+        // Extract text content or input/textarea value (protecting passwords)
+        let rawText = (el.textContent || "").trim();
+        if (
+          !rawText &&
+          typeof HTMLInputElement !== "undefined" &&
+          (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement)
+        ) {
+          const isPassword =
+            (el as HTMLInputElement).type === "password" ||
+            htmlEl.dataset.rnxComponent === "PasswordInput" ||
+            Boolean(el.closest?.('[data-rnx-component="PasswordInput"]'));
+          if (!isPassword) {
+            rawText = (el.value || el.placeholder || "").trim();
+          }
+        }
 
         return {
           id,
@@ -78,7 +100,8 @@ export function useAgentContext() {
           variant: htmlEl.dataset.rnxVariant || undefined,
           state: htmlEl.dataset.rnxState || undefined,
           action: htmlEl.dataset.rnxAction || undefined,
-          textContent: (el.textContent || "").slice(0, 100).trim(), // truncate to keep payload small
+          overlay: htmlEl.dataset.rnxOverlay === "true" ? true : undefined,
+          textContent: rawText.slice(0, 100), // truncate to keep payload small
           bounds: {
             x: rect.x,
             y: rect.y,
@@ -132,6 +155,7 @@ export function useAgentContext() {
         "data-rnx-variant",
         "data-rnx-state",
         "data-rnx-action",
+        "data-rnx-overlay",
       ],
     });
 
