@@ -111,10 +111,7 @@ const ModalComponent = React.forwardRef<HTMLDivElement, ModalProps>(
       },
       [onOpenChange, legacyOnClose],
     );
-    const { registerModal, unregisterModal } = React.useMemo(
-      useMakeWayOptional,
-      [],
-    );
+    const { registerModal, unregisterModal } = useMakeWayOptional();
     const rawId = React.useId();
     const modalId = `modal-${rawId.replace(/:/g, "")}`;
     const titleId = `${modalId}-title`;
