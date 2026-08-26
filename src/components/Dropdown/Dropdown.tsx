@@ -421,7 +421,7 @@ const DropdownItem = React.forwardRef<
     ref,
   ) => {
     const { value, onValueChange, multiple, setIsOpen } = useDropdownContext();
-    const isSelectable = value !== undefined;
+    const isSelectable = itemValue !== undefined;
     const isSelected = isSelectable
       ? multiple && Array.isArray(value)
         ? value.includes(itemValue || "")
@@ -440,7 +440,7 @@ const DropdownItem = React.forwardRef<
             : [...currentArray, itemValue];
           onValueChange(next);
         } else {
-          onValueChange(itemValue);
+          onValueChange(itemValue === value ? "" : itemValue);
           setIsOpen(false);
         }
       } else {
