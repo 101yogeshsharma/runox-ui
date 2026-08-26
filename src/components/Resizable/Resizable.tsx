@@ -1,5 +1,6 @@
 "use client";
 import { Box } from "../../atoms/Box";
+import { rnx } from "../../utils/rnx";
 
 import { GripVertical } from "lucide-react";
 import { cn } from "../../utils/cn";
@@ -25,6 +26,10 @@ const ResizablePanelGroup = React.forwardRef<
     <ResizableContext.Provider value={{ direction }}>
       <Box
         ref={ref}
+        {...rnx({
+          component: "Resizable",
+          variant: direction,
+        })}
         className={cn(
           "flex h-full w-full",
           direction === "vertical" ? "flex-col" : "flex-row",

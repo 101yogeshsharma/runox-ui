@@ -58,14 +58,13 @@ export function runMigrate(options: MigrateOptions) {
 
   const isWindows = process.platform === "win32";
   const binName = isWindows ? "jscodeshift.cmd" : "jscodeshift";
-  const jscodeshiftBin = path.resolve(
-    __dirname,
-    "../../node_modules/.bin",
-    binName,
-  );
-  const binPath = fs.existsSync(jscodeshiftBin)
-    ? jscodeshiftBin
-    : path.resolve(process.cwd(), "node_modules/.bin", binName);
+  const candidatePaths = [
+    path.resolve(__dirname, "../node_modules/.bin", binName),
+    path.resolve(process.cwd(), "node_modules/.bin", binName),
+    path.resolve(__dirname, "../../.bin", binName),
+    path.resolve(__dirname, "../../node_modules/.bin", binName),
+  ];
+  const binPath = candidatePaths.find((p) => fs.existsSync(p)) || binName;
 
   const child = spawn(binPath, args, {
     stdio: "inherit",

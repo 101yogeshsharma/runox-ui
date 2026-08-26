@@ -2,6 +2,7 @@
 import React from "react";
 import { Box } from "../../atoms/Box";
 import { Button } from "../Button";
+import { rnx } from "../../utils/rnx";
 
 export interface ErrorBoundaryProps {
   children: React.ReactNode;
@@ -60,6 +61,11 @@ class ErrorBoundaryComponent extends React.Component<
       return (
         <Box
           role="alert"
+          {...rnx({
+            component: "ErrorBoundary",
+            state: "error",
+            action: "retry",
+          })}
           className="rnx-error-boundary"
           style={{
             display: "flex",

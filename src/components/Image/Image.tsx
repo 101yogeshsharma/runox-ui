@@ -71,7 +71,12 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
       <Box
         {...rnx({
           component: "Image",
-          state: status === "loaded" ? "active" : "loading",
+          state:
+            status === "loaded"
+              ? "active"
+              : status === "error"
+                ? "error"
+                : "loading",
         })}
         className={cn(
           "rnx-image-container",

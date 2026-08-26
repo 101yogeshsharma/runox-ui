@@ -438,6 +438,11 @@ const SelectContent = React.forwardRef<HTMLDivElement, SelectContentProps>(
           if (!contentRef.current?.contains(document.activeElement)) return;
           navigationRef.current?.(e);
         }}
+        {...rnx({
+          component: "Select",
+          state: isOpen && position ? "open" : "closed",
+          overlay: true,
+        })}
         className={cn("rnx-select-content z-50", className)}
         data-state={isOpen && position ? "open" : "closed"}
         data-side={position?.placed || "bottom"}

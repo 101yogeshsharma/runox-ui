@@ -1,5 +1,24 @@
 # @runox/ui
 
+## 0.4.2
+
+### Patch Changes
+
+- **Agent Context & Attributes Engine**:
+  - **Password Leak Prevention**: Strengthened password security in `useAgentContext` to check `el.closest('[data-rnx-component="PasswordInput"]')`, preventing secret exposure when the "Show Password" button toggles input type to `"text"`.
+  - **Accurate State Tracking**: Fixed `Image` load error state emission (`state: "error"` on image failure instead of remaining `"loading"`).
+  - **Overlay Attribute Alignment**: Added `data-rnx-overlay="true"` to `DropdownContent`, `ContextMenu`, and `SelectContent` portaled surfaces.
+  - **Vocabulary Harmonization**: Aligned `DropdownItem` state vocabulary from `"selected" | "unselected"` to standard `"active" | "inactive"`.
+  - **Component Instrumentation**: Added `data-rnx-*` attributes to `AI.Input`, `AI.ChatBubble`, `Form.Item`, `Form.Message`, `Resizable`, `ErrorBoundary`, and `Tabs`.
+  - **Snapshot Stability**: Elements without explicit `id` attributes retain persistent stable IDs across snapshot updates via `dataset.rnxGeneratedId`.
+
+- **CLI & Migration Engine (`src/cli/`)**:
+  - **Missing Codemod Build Target**: Added `codemods/flat` to `entry-manifest.json` ensuring `dist/codemods/flat.js` is generated during build.
+  - **Binary Resolution**: Enhanced `jscodeshift` path resolution with multi-directory candidate search across local and hoisted environments on Windows, macOS, and Linux.
+  - **Identifier Initializer Transformations**: Refined AST Identifier visitor in `flat` codemod so variable references (`const _Header = ModalHeader;`) are correctly rewritten to dot-notation (`const _Header = Modal.Header;`).
+  - **Path Normalization in `runox add`**: Normalized component target directories by stripping `src/components/` prefix, preventing duplicate nested folder generation.
+  - **Modern Protocol & Custom Registry Support**: Replaced `node:https` with native Node `fetch()` for seamless `http:` and `https:` protocol handling, and normalized `--registry` URL parsing for private mirrors.
+
 ## 0.4.1
 
 ### Patch Changes
