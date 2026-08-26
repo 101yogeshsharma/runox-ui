@@ -2,12 +2,7 @@ import "./DataTablePagination.css";
 import { Flex } from "../../atoms/Flex";
 import { Box } from "../../atoms/Box";
 import React from "react";
-import {
-  Dropdown,
-  DropdownTrigger,
-  DropdownContent,
-  DropdownItem,
-} from "../Dropdown/Dropdown";
+import { Dropdown } from "../Dropdown/Dropdown";
 import { DataTableInstance } from "./useDataTable";
 import { Text } from "../../atoms/Text";
 import { Pagination } from "../Pagination";
@@ -53,17 +48,17 @@ export function DataTablePagination<TData>({
             value={`${table.getState().pagination.pageSize}`}
             onValueChange={(value) => table.setPageSize(Number(value))}
           >
-            <DropdownTrigger className="rnx-pagination__select-trigger h-8" />
-            <DropdownContent
+            <Dropdown.Trigger className="rnx-pagination__select-trigger h-8" />
+            <Dropdown.Content
               matchTriggerWidth={false}
               className="rnx-pagination__select-content"
             >
               {[10, 20, 30, 40, 50].map((pageSize) => (
-                <DropdownItem key={pageSize} value={`${pageSize}`}>
+                <Dropdown.Item key={pageSize} value={`${pageSize}`}>
                   {pageSize}
-                </DropdownItem>
+                </Dropdown.Item>
               ))}
-            </DropdownContent>
+            </Dropdown.Content>
           </Dropdown>
         </Flex>
 

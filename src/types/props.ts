@@ -2,7 +2,6 @@
   | "default"
   | "primary"
   | "secondary"
-  | "destructive"
   | "danger"
   | "success"
   | "warning"

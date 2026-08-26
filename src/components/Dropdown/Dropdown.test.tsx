@@ -2,17 +2,17 @@
 import React from "react";
 import { render, fireEvent, waitFor } from "@testing-library/react";
 import { vi, describe, it, expect } from "vitest";
-import { Dropdown, DropdownItem, DropdownTrigger, DropdownContent, DropdownSearch, DropdownEmpty, DropdownGroup, DropdownDivider } from "./Dropdown";
+import { Dropdown } from "./Dropdown";
 
 describe("Dropdown", () => {
   it("renders trigger but not menu initially", () => {
     const { getByText, queryByText } = render(
       <Dropdown>
-        <DropdownTrigger>Open</DropdownTrigger>
-        <DropdownContent>
-          <DropdownItem>Item 1</DropdownItem>
-        </DropdownContent>
-      </Dropdown>
+        <Dropdown.Trigger>Open</Dropdown.Trigger>
+        <Dropdown.Content>
+          <Dropdown.Item>Item 1</Dropdown.Item>
+        </Dropdown.Content>
+      </Dropdown>,
     );
     expect(getByText("Open")).toBeInTheDocument();
     expect(queryByText("Item 1")).toBeNull();
@@ -21,14 +21,14 @@ describe("Dropdown", () => {
   it("opens menu when trigger is clicked", async () => {
     const { getByText } = render(
       <Dropdown>
-        <DropdownTrigger>Open</DropdownTrigger>
-        <DropdownContent>
-          <DropdownItem>Item 1</DropdownItem>
-        </DropdownContent>
-      </Dropdown>
+        <Dropdown.Trigger>Open</Dropdown.Trigger>
+        <Dropdown.Content>
+          <Dropdown.Item>Item 1</Dropdown.Item>
+        </Dropdown.Content>
+      </Dropdown>,
     );
     fireEvent.click(getByText("Open"));
-    
+
     await waitFor(() => {
       expect(getByText("Item 1")).toBeInTheDocument();
     });
@@ -37,14 +37,14 @@ describe("Dropdown", () => {
   it("closes when an item is clicked", async () => {
     const { getByText, queryByText } = render(
       <Dropdown>
-        <DropdownTrigger>Open</DropdownTrigger>
-        <DropdownContent>
-          <DropdownItem>Item 1</DropdownItem>
-        </DropdownContent>
-      </Dropdown>
+        <Dropdown.Trigger>Open</Dropdown.Trigger>
+        <Dropdown.Content>
+          <Dropdown.Item>Item 1</Dropdown.Item>
+        </Dropdown.Content>
+      </Dropdown>,
     );
     fireEvent.click(getByText("Open"));
-    
+
     await waitFor(() => {
       expect(getByText("Item 1")).toBeInTheDocument();
     });
@@ -57,19 +57,21 @@ describe("Dropdown", () => {
     });
   });
 
-
-
   it("handles multiple selection and removal", async () => {
     const TestComponent = () => {
       const [val, setVal] = React.useState<string[]>(["item1", "item2"]);
       return (
-        <Dropdown multiple value={val} onValueChange={(v) => setVal(v as string[])}>
-          <DropdownTrigger placeholder="Select items" />
-          <DropdownContent>
-            <DropdownItem value="item1">Item 1</DropdownItem>
-            <DropdownItem value="item2">Item 2</DropdownItem>
-            <DropdownItem value="item3">Item 3</DropdownItem>
-          </DropdownContent>
+        <Dropdown
+          multiple
+          value={val}
+          onValueChange={(v) => setVal(v as string[])}
+        >
+          <Dropdown.Trigger placeholder="Select items" />
+          <Dropdown.Content>
+            <Dropdown.Item value="item1">Item 1</Dropdown.Item>
+            <Dropdown.Item value="item2">Item 2</Dropdown.Item>
+            <Dropdown.Item value="item3">Item 3</Dropdown.Item>
+          </Dropdown.Content>
         </Dropdown>
       );
     };
@@ -80,7 +82,9 @@ describe("Dropdown", () => {
     expect(getByText("item1")).toBeInTheDocument();
     expect(getByText("item2")).toBeInTheDocument();
 
-    const removeBtns = container.querySelectorAll(".rnx-dropdown-badge-remove-btn");
+    const removeBtns = container.querySelectorAll(
+      ".rnx-dropdown-badge-remove-btn",
+    );
     expect(removeBtns.length).toBe(2);
 
     // Click remove button for item1
@@ -102,20 +106,20 @@ describe("Dropdown", () => {
   it("renders auxiliary components correctly", async () => {
     const { getByText, getByPlaceholderText } = render(
       <Dropdown>
-        <DropdownTrigger>Open</DropdownTrigger>
-        <DropdownContent searchable searchPlaceholder="Search test">
-          <DropdownSearch placeholder="Custom search" />
-          <DropdownEmpty>No results</DropdownEmpty>
-          <DropdownGroup heading="Group 1">
-            <DropdownItem>Item 1</DropdownItem>
-          </DropdownGroup>
-          <DropdownDivider />
-        </DropdownContent>
-      </Dropdown>
+        <Dropdown.Trigger>Open</Dropdown.Trigger>
+        <Dropdown.Content searchable searchPlaceholder="Search test">
+          <Dropdown.Search placeholder="Custom search" />
+          <Dropdown.Empty>No results</Dropdown.Empty>
+          <Dropdown.Group heading="Group 1">
+            <Dropdown.Item>Item 1</Dropdown.Item>
+          </Dropdown.Group>
+          <Dropdown.Divider />
+        </Dropdown.Content>
+      </Dropdown>,
     );
 
     fireEvent.click(getByText("Open"));
-    
+
     await waitFor(() => {
       expect(getByPlaceholderText("Custom search")).toBeInTheDocument();
       expect(getByText("Group 1")).toBeInTheDocument();
@@ -125,12 +129,12 @@ describe("Dropdown", () => {
   it("handles selecting in multiple mode", async () => {
     const { getByText, queryByText } = render(
       <Dropdown multiple>
-        <DropdownTrigger>Open</DropdownTrigger>
-        <DropdownContent>
-          <DropdownItem value="item1">Item 1</DropdownItem>
-          <DropdownItem value="item2">Item 2</DropdownItem>
-        </DropdownContent>
-      </Dropdown>
+        <Dropdown.Trigger>Open</Dropdown.Trigger>
+        <Dropdown.Content>
+          <Dropdown.Item value="item1">Item 1</Dropdown.Item>
+          <Dropdown.Item value="item2">Item 2</Dropdown.Item>
+        </Dropdown.Content>
+      </Dropdown>,
     );
 
     fireEvent.click(getByText("Open"));
@@ -152,15 +156,17 @@ describe("Dropdown", () => {
     const onSelect = vi.fn();
     const { getByText, queryByText } = render(
       <Dropdown>
-        <DropdownTrigger>Open</DropdownTrigger>
-        <DropdownContent>
-          <DropdownItem onSelect={onSelect}>Non Selectable</DropdownItem>
-        </DropdownContent>
-      </Dropdown>
+        <Dropdown.Trigger>Open</Dropdown.Trigger>
+        <Dropdown.Content>
+          <Dropdown.Item onSelect={onSelect}>Non Selectable</Dropdown.Item>
+        </Dropdown.Content>
+      </Dropdown>,
     );
 
     fireEvent.click(getByText("Open"));
-    await waitFor(() => expect(getByText("Non Selectable")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(getByText("Non Selectable")).toBeInTheDocument(),
+    );
 
     fireEvent.click(getByText("Non Selectable"));
     expect(onSelect).toHaveBeenCalled();

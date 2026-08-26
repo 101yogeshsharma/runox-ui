@@ -63,7 +63,9 @@
 
   .rnx-treeview-collapse {
     display: grid;
-    transition: all 200ms ease-in-out;
+    transition:
+      transform 200ms ease-in-out,
+      opacity 200ms ease-in-out;
   }
   .rnx-treeview-collapse--expanded {
     grid-template-rows: 1fr;

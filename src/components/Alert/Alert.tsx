@@ -5,10 +5,7 @@ import { Info, CheckCircle, AlertTriangle, XCircle, X } from "lucide-react";
 
 import { RnxColor } from "../../types";
 
-const defaultIcons: Record<
-  string,
-  React.ReactNode
-> = {
+const defaultIcons: Record<string, React.ReactNode> = {
   info: <Info className="h-5 w-5" />,
   success: <CheckCircle className="h-5 w-5" />,
   warning: <AlertTriangle className="h-5 w-5" />,
@@ -88,33 +85,50 @@ const AlertBase = forwardRef<HTMLDivElement, AlertProps>(
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     // If user passed legacy variant as "danger" | "success" | "warning" | "info", map it
-    const legacyVariantMatch = ["info", "success", "warning", "danger"].includes(variant as string);
-    const effectiveColor: RnxColor = color || (legacyVariantMatch ? (variant as any) : (status || "info"));
+    const legacyVariantMatch = [
+      "info",
+      "success",
+      "warning",
+      "danger",
+    ].includes(variant as string);
+    const effectiveColor: RnxColor =
+      color || (legacyVariantMatch ? (variant as any) : status || "info");
     const effectiveVariant = legacyVariantMatch ? "subtle" : variant;
 
     return (
       <Box
-        {...rnx({ component: 'Alert', variant: effectiveColor })}
+        {...rnx({ component: "Alert", variant: effectiveColor })}
         ref={ref}
         role="alert"
         aria-live={
-          effectiveColor === "danger" || effectiveColor === "destructive" || effectiveColor === "warning" ? "assertive" : "polite"
+          effectiveColor === "danger" || effectiveColor === "warning"
+            ? "assertive"
+            : "polite"
         }
-        className={cn(alertVariants({ color: effectiveColor as any, variant: effectiveVariant, size }), className)}
+        className={cn(
+          alertVariants({
+            color: effectiveColor as any,
+            variant: effectiveVariant,
+            size,
+          }),
+          className,
+        )}
         {...props}
       >
-        <Box className={cn("rnx-alert-icon", `rnx-alert-icon--${size || "md"}`)}>
+        <Box
+          className={cn(
+            "rnx-alert-icon",
+            `rnx-alert-icon--size-${size || "md"}`,
+          )}
+        >
           {icon || defaultIcons[effectiveColor] || defaultIcons.info}
         </Box>
         <Box className="rnx-alert-content">
           {title && (
-            <Text
-              as="h5"
-              className="rnx-alert-title"
-            >
+            <Text as="h5" className="rnx-alert-title">
               {title}
             </Text>
           )}
@@ -132,7 +146,7 @@ const AlertBase = forwardRef<HTMLDivElement, AlertProps>(
         )}
       </Box>
     );
-  }
+  },
 );
 
 AlertBase.displayName = "Alert";

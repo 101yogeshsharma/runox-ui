@@ -13,15 +13,15 @@
   }
 
   /* Sizes */
-  .rnx-breadcrumb-list--sm {
+  .rnx-breadcrumb-list--size-sm {
     font-size: var(--text-xs);
     gap: var(--space-1);
   }
-  .rnx-breadcrumb-list--md {
+  .rnx-breadcrumb-list--size-md {
     font-size: var(--text-sm);
     gap: var(--space-1-5);
   }
-  .rnx-breadcrumb-list--lg {
+  .rnx-breadcrumb-list--size-lg {
     font-size: var(--text-base);
     gap: var(--space-2);
   }
@@ -46,8 +46,8 @@
   }
 
   @media (min-width: 640px) {
-    .rnx-breadcrumb-list:not(.rnx-breadcrumb-list--sm):not(
-        .rnx-breadcrumb-list--lg
+    .rnx-breadcrumb-list:not(.rnx-breadcrumb-list--size-sm):not(
+        .rnx-breadcrumb-list--size-lg
       ) {
       gap: var(--space-2-5);
     }

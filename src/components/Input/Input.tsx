@@ -1,6 +1,6 @@
 "use client";
 import { Box } from "../../atoms/Box";
-import React, { forwardRef, useId } from "react";
+import React, { forwardRef, useId, useState } from "react";
 import { cn } from "../../utils/cn";
 import { mergeProps } from "../../utils/mergeProps";
 import { Label } from "../Label/Label";
@@ -50,6 +50,25 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>(
     const generatedId = useId();
     const id = customId || generatedId;
 
+    // Track uncontrolled value so `clearable` works without a controlled prop.
+    const isControlled = value !== undefined;
+    const [internalValue, setInternalValue] = useState("");
+    const currentValue = isControlled ? value : internalValue;
+    const handleChange = React.useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (!isControlled) setInternalValue(e.target.value);
+        onChange?.(e);
+      },
+      [isControlled, onChange],
+    );
+    const handleClear = () => {
+      if (!isControlled) setInternalValue("");
+      // Notify controlled consumers too.
+      onChange?.({
+        target: { value: "" },
+      } as React.ChangeEvent<HTMLInputElement>);
+    };
+
     if (process.env.NODE_ENV !== "production") {
       if (!label && !props["aria-label"] && !props["aria-labelledby"]) {
         warnInvalidProps(
@@ -65,13 +84,13 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>(
         : props["aria-label"];
 
     const showClear =
-      clearable && !disabled && value !== undefined && String(value).length > 0;
+      clearable && !disabled && String(currentValue ?? "").length > 0;
 
     const inputNode = (
       <input
         ref={ref}
-        value={value}
-        onChange={onChange}
+        value={currentValue}
+        onChange={handleChange}
         {...rnx({
           component: "Input",
           state: error ? "error" : disabled ? "disabled" : undefined,
@@ -106,6 +125,7 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>(
           aria-label="Clear input"
           onClick={(e) => {
             e.preventDefault();
+            handleClear();
             onClear?.();
           }}
           className="rnx-input-clear-btn"

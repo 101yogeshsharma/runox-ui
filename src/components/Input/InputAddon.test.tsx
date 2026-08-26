@@ -13,7 +13,7 @@ describe("InputAddon", () => {
     const el = screen.getByTestId("input-addon");
     expect(el).toBeInTheDocument();
     expect(el).toHaveClass("rnx-input-addon");
-    expect(el).toHaveClass("rnx-input-addon--before");
+    expect(el).toHaveClass("rnx-input-addon--position-before");
   });
 
   it("renders correctly with position after", () => {
@@ -23,6 +23,6 @@ describe("InputAddon", () => {
       </InputAddon>,
     );
     const el = screen.getByTestId("input-addon-after");
-    expect(el).toHaveClass("rnx-input-addon--after");
+    expect(el).toHaveClass("rnx-input-addon--position-after");
   });
 });

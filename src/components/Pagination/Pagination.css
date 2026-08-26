@@ -11,36 +11,36 @@
     padding: 0;
   }
 
-  .rnx-pagination-icon--sm {
+  .rnx-pagination-icon--size-sm {
     width: var(--space-8);
     height: var(--space-8);
     padding: 0;
   }
 
-  .rnx-pagination-icon--md {
+  .rnx-pagination-icon--size-md {
     width: var(--space-10);
     height: var(--space-10);
     padding: 0;
   }
 
-  .rnx-pagination-icon--lg {
+  .rnx-pagination-icon--size-lg {
     width: var(--space-12);
     height: var(--space-12);
     padding: 0;
     font-size: var(--text-lg);
   }
 
-  .rnx-pagination-ellipsis--sm {
+  .rnx-pagination-ellipsis--size-sm {
     height: var(--space-8);
     width: var(--space-8);
   }
 
-  .rnx-pagination-ellipsis--md {
+  .rnx-pagination-ellipsis--size-md {
     height: var(--space-10);
     width: var(--space-10);
   }
 
-  .rnx-pagination-ellipsis--lg {
+  .rnx-pagination-ellipsis--size-lg {
     height: var(--space-12);
     width: var(--space-12);
   }

@@ -2,6 +2,7 @@
 
 import React, { createContext, useContext, useState } from "react";
 import { cn } from "../../utils/cn";
+import { rnx } from "../../utils/rnx";
 import { ChevronRight } from "lucide-react";
 import { Box } from "../../atoms/Box";
 import { Flex } from "../../atoms/Flex";
@@ -40,25 +41,26 @@ const ListComponent = React.forwardRef<
 >(
   (
     { className, as, variant = "none", size = "md", icon, children, ...props },
-    ref
+    ref,
   ) => {
     // If variant is number, default to ol, else ul
     const Component = as || (variant === "number" ? "ol" : "ul");
 
     const contextValue = React.useMemo(
       () => ({ variant, size, icon }),
-      [variant, size, icon]
+      [variant, size, icon],
     );
 
     return (
       <ListContext.Provider value={contextValue}>
         <Component
           ref={ref as React.Ref<HTMLOListElement & HTMLUListElement>}
+          {...rnx({ component: "List", variant })}
           className={cn(
             "rnx-list",
             `rnx-list--${variant}`,
-            `rnx-list--${size}`,
-            className
+            `rnx-list--size-${size}`,
+            className,
           )}
           {...props}
         >
@@ -66,7 +68,7 @@ const ListComponent = React.forwardRef<
         </Component>
       </ListContext.Provider>
     );
-  }
+  },
 );
 ListComponent.displayName = "List";
 
@@ -93,7 +95,7 @@ export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
       isDragging,
       ...props
     },
-    ref
+    ref,
   ) => {
     const context = useContext(ListContext);
     const [isExpanded, setIsExpanded] = useState(defaultExpanded);
@@ -112,7 +114,7 @@ export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
           className={cn(
             "rnx-list-item-collapsible",
             isDragging && "rnx-list-item-collapsible--dragging",
-            className
+            className,
           )}
           {...props}
         >
@@ -123,16 +125,13 @@ export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
             aria-controls={contentId}
             onClick={() => setIsExpanded(!isExpanded)}
           >
-            <Text
-              as="div"
-              className="rnx-list-item-collapsible-title"
-            >
+            <Text as="div" className="rnx-list-item-collapsible-title">
               {title}
             </Text>
             <ChevronRight
               className={cn(
                 "rnx-list-item-collapsible-icon",
-                isExpanded && "rotate-90"
+                isExpanded && "rotate-90",
               )}
             />
           </button>
@@ -140,11 +139,15 @@ export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
             id={contentId}
             className={cn(
               "grid transition-all duration-200 ease-in-out",
-              isExpanded ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
+              isExpanded
+                ? "grid-rows-[1fr] opacity-100"
+                : "grid-rows-[0fr] opacity-0",
             )}
           >
             <div className="overflow-hidden">
-              <Box className="rnx-list-item-collapsible-content">{children}</Box>
+              <Box className="rnx-list-item-collapsible-content">
+                {children}
+              </Box>
             </div>
           </div>
         </Box>
@@ -160,7 +163,7 @@ export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
           context.variant === "number" && "rnx-list-item-number",
           context.variant === "bullet" && "rnx-list-item-bullet",
           isDragging && "rnx-list-item--dragging",
-          className
+          className,
         )}
         {...props}
       >
@@ -181,7 +184,7 @@ export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
         )}
       </Box>
     );
-  }
+  },
 );
 ListItem.displayName = "ListItem";
 
@@ -199,7 +202,7 @@ export const ListIcon = React.forwardRef<HTMLSpanElement, ListIconProps>(
     >
       {children}
     </Flex>
-  )
+  ),
 );
 ListIcon.displayName = "ListIcon";
 

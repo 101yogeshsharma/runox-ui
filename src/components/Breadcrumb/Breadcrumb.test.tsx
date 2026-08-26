@@ -1,15 +1,7 @@
 import React from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
-import {
-  Breadcrumb,
-  BreadcrumbRoot,
-  BreadcrumbList,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "./Breadcrumb";
+import { Breadcrumb } from "./Breadcrumb";
 
 describe("Breadcrumb Components", () => {
   it("renders the unified Breadcrumb component", () => {
@@ -18,7 +10,7 @@ describe("Breadcrumb Components", () => {
         <a href="/">Home</a>
         <a href="/products">Products</a>
         <span>Current</span>
-      </Breadcrumb>
+      </Breadcrumb>,
     );
 
     const breadcrumb = screen.getByTestId("breadcrumb");
@@ -32,24 +24,24 @@ describe("Breadcrumb Components", () => {
 
   it("renders individual Breadcrumb parts", () => {
     render(
-      <BreadcrumbRoot data-testid="root">
-        <BreadcrumbList data-testid="list">
-          <BreadcrumbItem data-testid="item-1">
-            <BreadcrumbLink href="/" data-testid="link">
+      <Breadcrumb.Root data-testid="root">
+        <Breadcrumb.List data-testid="list">
+          <Breadcrumb.Item data-testid="item-1">
+            <Breadcrumb.Link href="/" data-testid="link">
               Home
-            </BreadcrumbLink>
-          </BreadcrumbItem>
-          <BreadcrumbSeparator data-testid="sep" />
-          <BreadcrumbItem data-testid="item-2">
-            <BreadcrumbPage data-testid="page">Current Page</BreadcrumbPage>
-          </BreadcrumbItem>
-        </BreadcrumbList>
-      </BreadcrumbRoot>
+            </Breadcrumb.Link>
+          </Breadcrumb.Item>
+          <Breadcrumb.Separator data-testid="sep" />
+          <Breadcrumb.Item data-testid="item-2">
+            <Breadcrumb.Page data-testid="page">Current Page</Breadcrumb.Page>
+          </Breadcrumb.Item>
+        </Breadcrumb.List>
+      </Breadcrumb.Root>,
     );
 
     expect(screen.getByTestId("root")).toHaveAttribute(
       "aria-label",
-      "breadcrumb"
+      "breadcrumb",
     );
     expect(screen.getByTestId("list").tagName).toBe("OL");
     expect(screen.getByTestId("item-1").tagName).toBe("LI");

@@ -55,11 +55,12 @@ If this is something you think you can fix, then fork Runox UI and create a bran
 
 ## Local Setup
 
-1. Install Node.js >= 18
+1. Install Node.js >= 22 (required by `engines` in `package.json`)
 2. Clone your fork and run `npm install`
-3. Start the testbench app using `npm run dev -w runox-testbench`
-4. Make your changes in `packages/ui`
-5. Ensure linting and tests pass: `npm run lint` and `npm run test`
+3. Start the library in watch mode using `npm run dev` (tsup watch)
+4. Make your changes in `src/` (components live in `src/components/`, atoms in `src/atoms/`)
+5. To try components in a real app, use the sibling `runox-ui-test/` workspace or pack the library with `npm pack` and install the tarball
+6. Ensure linting and tests pass: `npm run lint` and `npm run test`
 
 ## Changeset
 

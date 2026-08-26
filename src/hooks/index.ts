@@ -12,6 +12,7 @@ export { useLocalStorage } from "./useLocalStorage";
 export { useDebounce } from "./useDebounce";
 export { useIntersectionObserver } from "./useIntersectionObserver";
 export { useScrollLock } from "./useScrollLock";
+export { useReducedMotion } from "./useReducedMotion";
 export { useMergeRefs } from "./useMergeRefs";
 export { useThrottledEvent } from "./use-throttled-event";
 export * from "./useThrottle";

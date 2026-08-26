@@ -7,7 +7,6 @@ import "./Progress.css";
 import { withLoading } from "../../utils/withLoading";
 import { rnx } from "../../utils/rnx";
 
-
 /**
  * An animated bar showing the completion status of a task or process.
  */
@@ -39,18 +38,21 @@ const ProgressBase = forwardRef<HTMLDivElement, ProgressProps>(
       indicatorClassName,
       ...props
     },
-    ref
+    ref,
   ) => {
     const safeMax = max > 0 ? max : 100;
     const percentage = Math.min(100, Math.max(0, (value / safeMax) * 100));
 
     return (
       <Box
-        {...rnx({ component: 'Progress', state: value !== undefined && value >= 100 ? 'active' : 'inactive' })}
+        {...rnx({
+          component: "Progress",
+          state: value !== undefined && value >= 100 ? "active" : "inactive",
+        })}
         className={cn(
           "rnx-progress-container",
-          `rnx-progress--${size}`,
-          className
+          `rnx-progress--size-${size}`,
+          className,
         )}
       >
         <Box
@@ -58,11 +60,15 @@ const ProgressBase = forwardRef<HTMLDivElement, ProgressProps>(
           role="progressbar"
           aria-valuemin={0}
           aria-valuemax={max}
-          aria-valuenow={variant === "indeterminate" ? undefined : Math.round(value)}
+          aria-valuenow={
+            variant === "indeterminate" ? undefined : Math.round(value)
+          }
           className={cn(
             "rnx-progress",
             `rnx-progress--${color}`,
-            variant && variant !== "solid" && `rnx-progress--variant-${variant}`
+            variant &&
+              variant !== "solid" &&
+              `rnx-progress--variant-${variant}`,
           )}
           {...props}
         >
@@ -84,7 +90,7 @@ const ProgressBase = forwardRef<HTMLDivElement, ProgressProps>(
         )}
       </Box>
     );
-  }
+  },
 );
 
 ProgressBase.displayName = "Progress";

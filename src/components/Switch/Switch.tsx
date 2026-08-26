@@ -73,7 +73,7 @@ const SwitchBase = forwardRef<HTMLInputElement, SwitchProps>(
         <Box
           className={cn(
             "rnx-switch-container",
-            `rnx-switch-container--${size}`,
+            `rnx-switch-container--size-${size}`,
             `rnx-switch-container--variant-${variant}`,
             color !== "primary" && `rnx-switch-container--color-${color}`,
           )}
@@ -101,7 +101,7 @@ const SwitchBase = forwardRef<HTMLInputElement, SwitchProps>(
           />
           <Box
             as="span"
-            className={cn("rnx-switch-thumb", `rnx-switch-thumb--${size}`)}
+            className={cn("rnx-switch-thumb", `rnx-switch-thumb--size-${size}`)}
           >
             {isChecked ? thumbIconOn : thumbIconOff}
           </Box>

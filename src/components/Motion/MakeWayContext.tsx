@@ -55,7 +55,7 @@ export function MakeWayProvider({ children }: { children: React.ReactNode }) {
       registerModal,
       unregisterModal,
     }),
-    [isModalOpen, registerModal, unregisterModal]
+    [isModalOpen, registerModal, unregisterModal],
   );
 
   return (
@@ -73,4 +73,21 @@ export const useMakeWay = () => {
     throw new Error("useMakeWay must be used within a MakeWayProvider");
   }
   return context;
+};
+
+/**
+ * MakeWay access that tolerates a missing provider. Returns the live context
+ * when a MakeWayProvider is present (so the shift-aside behavior works), and
+ * falls back to a no-op implementation only when there is no provider —
+ * e.g. standalone Modal usage in tests or apps that do not use RunoxProvider.
+ */
+export const useMakeWayOptional = (): MakeWayContextType => {
+  const context = useContext(MakeWayContext);
+  return (
+    context ?? {
+      isModalOpen: false,
+      registerModal: () => {},
+      unregisterModal: () => {},
+    }
+  );
 };

@@ -11,7 +11,11 @@ export interface Column<_TData> {
 }
 
 export interface ColumnDef<TData> {
-  accessorKey?: string;
+  /**
+   * Row property to read the cell value from. Typed as a key of `TData`
+   * so typos are caught at compile time. Use `id` for computed columns.
+   */
+  accessorKey?: keyof TData & string;
   id?: string;
   header: string | ((props: { column: Column<TData> }) => React.ReactNode);
   cell?: (props: { row: TData; getValue: () => unknown }) => React.ReactNode;

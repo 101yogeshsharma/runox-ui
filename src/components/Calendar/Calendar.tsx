@@ -2,10 +2,11 @@
 import { Box } from "../../atoms/Box";
 import { useControllableState } from "../../hooks/useControllableState";
 
-import React, { useState } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import { cn } from "../../utils/cn";
-import { Input, InputGroup, InputIcon } from "../Input";
+import { rnx } from "../../utils/rnx";
+import { Input } from "../Input";
 import "./Calendar.css";
 
 export type CalendarProps = Omit<
@@ -108,11 +109,47 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
     const year = currentMonth.getFullYear();
     const month = currentMonth.getMonth();
 
-    const daysInMonth = getDaysInMonth(year, month);
-    const firstDay = getFirstDayOfMonth(year, month);
+    // Follow externally-controlled value jumps to a different month so the
+    // visible month reflects programmatic selection changes. Only reacts to
+    // `value` identity changes — manual prev/next navigation is unaffected.
+    const prevValueRef = useRef(value);
+    useEffect(() => {
+      const prevValue = prevValueRef.current;
+      prevValueRef.current = value;
+      if (prevValue === value) return;
 
-    const prevMonthDays = getDaysInMonth(year, month - 1);
-    const nextMonthDays = 42 - (daysInMonth + firstDay); // 6 rows of 7 days
+      const getAnchor = (v: unknown): Date | undefined => {
+        if ((mode === "single" || mode === "time") && v instanceof Date)
+          return v;
+        if (mode === "range") return (v as { from?: Date })?.from;
+        if (mode === "multiple" && Array.isArray(v)) return v[0];
+        return undefined;
+      };
+
+      const anchor = getAnchor(value);
+      const prevAnchor = getAnchor(prevValue);
+      if (
+        anchor instanceof Date &&
+        !isSameDay(anchor, prevAnchor ?? new Date(NaN)) &&
+        prevAnchor !== undefined
+      ) {
+        setCurrentMonth(new Date(anchor.getFullYear(), anchor.getMonth(), 1));
+      }
+    }, [value, mode]);
+
+    const { daysInMonth, firstDay, prevMonthDays, nextMonthDays } =
+      useMemo(() => {
+        const dim = getDaysInMonth(year, month);
+        const fd = getFirstDayOfMonth(year, month);
+        const pmd = getDaysInMonth(year, month - 1);
+        const nmd = 42 - (dim + fd); // 6 rows of 7 days
+        return {
+          daysInMonth: dim,
+          firstDay: fd,
+          prevMonthDays: pmd,
+          nextMonthDays: nmd,
+        };
+      }, [year, month]);
 
     const handlePrevMonth = () => {
       setCurrentMonth(new Date(year, month - 1, 1));
@@ -122,75 +159,81 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
       setCurrentMonth(new Date(year, month + 1, 1));
     };
 
-    const handleDayKeyDown = (event: React.KeyboardEvent, date: Date) => {
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-        handleDateClick(date);
-        return;
-      }
-
-      const offset = {
-        ArrowLeft: -1,
-        ArrowRight: 1,
-        ArrowUp: -7,
-        ArrowDown: 7,
-      }[event.key as "ArrowLeft" | "ArrowRight" | "ArrowUp" | "ArrowDown"];
-      if (offset === undefined) return;
-
-      event.preventDefault();
-      const nextDate = new Date(date);
-      nextDate.setDate(nextDate.getDate() + offset);
-      if (nextDate.getMonth() !== month || nextDate.getFullYear() !== year) {
-        setCurrentMonth(
-          new Date(nextDate.getFullYear(), nextDate.getMonth(), 1),
-        );
-      }
-
-      requestAnimationFrame(() => {
-        const key = `${nextDate.getFullYear()}-${nextDate.getMonth()}-${nextDate.getDate()}`;
-        document
-          .querySelector<HTMLButtonElement>(`[data-date-key="${key}"]`)
-          ?.focus();
-      });
-    };
-
-    const handleDateClick = (date: Date) => {
-      if (mode === "single") {
-        if (showTimePicker && value instanceof Date) {
-          const newDate = new Date(date);
-          newDate.setHours(value.getHours());
-          newDate.setMinutes(value.getMinutes());
-          setValue(newDate);
-        } else {
-          setValue(date);
-        }
-      } else if (mode === "multiple") {
-        const selectedDates = Array.isArray(value) ? [...value] : [];
-        const existingIndex = selectedDates.findIndex((d) =>
-          isSameDay(d, date),
-        );
-        if (existingIndex >= 0) {
-          selectedDates.splice(existingIndex, 1);
-        } else {
-          selectedDates.push(date);
-        }
-        setValue(selectedDates);
-      } else if (mode === "range") {
-        const currentRange = (value as { from?: Date; to?: Date }) || {
-          from: undefined,
-          to: undefined,
-        };
-        if (!currentRange.from || (currentRange.from && currentRange.to)) {
-          setValue({ from: date, to: undefined });
-        } else {
-          if (date < currentRange.from) {
-            setValue({ from: date, to: currentRange.from });
+    const handleDateClick = React.useCallback(
+      (date: Date) => {
+        if (mode === "single") {
+          if (showTimePicker && value instanceof Date) {
+            const newDate = new Date(date);
+            newDate.setHours(value.getHours());
+            newDate.setMinutes(value.getMinutes());
+            setValue(newDate);
           } else {
-            setValue({ from: currentRange.from, to: date });
+            setValue(date);
+          }
+        } else if (mode === "multiple") {
+          const selectedDates = Array.isArray(value) ? [...value] : [];
+          const existingIndex = selectedDates.findIndex((d) =>
+            isSameDay(d, date),
+          );
+          if (existingIndex >= 0) {
+            selectedDates.splice(existingIndex, 1);
+          } else {
+            selectedDates.push(date);
+          }
+          setValue(selectedDates);
+        } else if (mode === "range") {
+          const currentRange = (value as { from?: Date; to?: Date }) || {
+            from: undefined,
+            to: undefined,
+          };
+          if (!currentRange.from || (currentRange.from && currentRange.to)) {
+            setValue({ from: date, to: undefined });
+          } else {
+            if (date < currentRange.from) {
+              setValue({ from: date, to: currentRange.from });
+            } else {
+              setValue({ from: currentRange.from, to: date });
+            }
           }
         }
-      }
-    };
+      },
+      [mode, showTimePicker, value, setValue],
+    );
+
+    const handleDayKeyDown = React.useCallback(
+      (event: React.KeyboardEvent, date: Date) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          handleDateClick(date);
+          return;
+        }
+
+        const offset = {
+          ArrowLeft: -1,
+          ArrowRight: 1,
+          ArrowUp: -7,
+          ArrowDown: 7,
+        }[event.key as "ArrowLeft" | "ArrowRight" | "ArrowUp" | "ArrowDown"];
+        if (offset === undefined) return;
+
+        event.preventDefault();
+        const nextDate = new Date(date);
+        nextDate.setDate(nextDate.getDate() + offset);
+        if (nextDate.getMonth() !== month || nextDate.getFullYear() !== year) {
+          setCurrentMonth(
+            new Date(nextDate.getFullYear(), nextDate.getMonth(), 1),
+          );
+        }
+
+        requestAnimationFrame(() => {
+          const key = `${nextDate.getFullYear()}-${nextDate.getMonth()}-${nextDate.getDate()}`;
+          document
+            .querySelector<HTMLButtonElement>(`[data-date-key="${key}"]`)
+            ?.focus();
+        });
+      },
+      [handleDateClick, month, year],
+    );
 
     const handleTimeChange = (timeValue: string) => {
       if (mode !== "single" && mode !== "time") return;
@@ -214,40 +257,6 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
     const handleMouseLeave = React.useCallback(() => {
       if (mode === "range") setHoverDate(null);
     }, [mode]);
-
-    const renderDays = () => {
-      const days = [];
-
-      // Outside days (prev month)
-      for (let i = 0; i < firstDay; i++) {
-        const dayNum = prevMonthDays - firstDay + i + 1;
-        const date = new Date(year, month - 1, dayNum);
-        days.push(renderDayCell(date, true));
-      }
-
-      // Current month days
-      for (let i = 1; i <= daysInMonth; i++) {
-        const date = new Date(year, month, i);
-        days.push(renderDayCell(date, false));
-      }
-
-      // Outside days (next month)
-      for (let i = 1; i <= nextMonthDays; i++) {
-        const date = new Date(year, month + 1, i);
-        days.push(renderDayCell(date, true));
-      }
-
-      const weeks = [];
-      for (let i = 0; i < days.length; i += 7) {
-        weeks.push(
-          <tr key={i} className={"mt-2 flex w-full"}>
-            {days.slice(i, i + 7)}
-          </tr>,
-        );
-      }
-
-      return weeks;
-    };
 
     const renderDayCell = (date: Date, isOutside: boolean) => {
       let isSelected = false;
@@ -296,9 +305,58 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
       );
     };
 
+    // Memoized day grid — rebuilt only when the month layout or selection
+    // state changes, not on every render (previously allocated 42+ Date
+    // objects per render).
+    const weeks = useMemo(() => {
+      const days: React.ReactNode[] = [];
+
+      // Outside days (prev month)
+      for (let i = 0; i < firstDay; i++) {
+        const dayNum = prevMonthDays - firstDay + i + 1;
+        days.push(renderDayCell(new Date(year, month - 1, dayNum), true));
+      }
+
+      // Current month days
+      for (let i = 1; i <= daysInMonth; i++) {
+        days.push(renderDayCell(new Date(year, month, i), false));
+      }
+
+      // Outside days (next month)
+      for (let i = 1; i <= nextMonthDays; i++) {
+        days.push(renderDayCell(new Date(year, month + 1, i), true));
+      }
+
+      const rows: React.ReactNode[] = [];
+      for (let i = 0; i < days.length; i += 7) {
+        rows.push(
+          <tr key={i} className={"mt-2 flex w-full"}>
+            {days.slice(i, i + 7)}
+          </tr>,
+        );
+      }
+      return rows;
+      // eslint-disable-next-line react-hooks/exhaustive-deps -- renderDayCell closes over the full selection/hover state
+    }, [
+      year,
+      month,
+      firstDay,
+      prevMonthDays,
+      nextMonthDays,
+      value,
+      hoverDate,
+      mode,
+      showOutsideDays,
+      handleDateClick,
+      handleDayKeyDown,
+      handleMouseEnter,
+      handleMouseLeave,
+    ]);
+
     return (
       <Box
         ref={ref}
+        {...rnx({ component: "Calendar", variant: mode })}
         className={cn(
           "rnx-calendar",
           mode !== "time" && "w-fit p-3",
@@ -357,7 +415,7 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
                     ))}
                   </tr>
                 </thead>
-                <tbody>{renderDays()}</tbody>
+                <tbody>{weeks}</tbody>
               </table>
             </>
           )}
@@ -372,13 +430,13 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
               {mode !== "time" && (
                 <Clock className="rnx-calendar__clock_icon h-4 w-4" />
               )}
-              <InputGroup
+              <Input.Group
                 className={cn("w-full", mode === "time" ? "h-10 w-72" : "")}
               >
                 {mode === "time" && (
-                  <InputIcon position="left">
+                  <Input.Icon position="left">
                     <Clock size={16} className="text-muted-foreground" />
-                  </InputIcon>
+                  </Input.Icon>
                 )}
                 <Input
                   type="time"
@@ -396,7 +454,7 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
                   }
                   onChange={(e) => handleTimeChange(e.target.value)}
                 />
-              </InputGroup>
+              </Input.Group>
             </Box>
           )}
         </Box>

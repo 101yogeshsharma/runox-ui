@@ -2,9 +2,9 @@
 
 import React, { forwardRef } from "react";
 import { cn } from "../../utils/cn";
+import { rnx } from "../../utils/rnx";
 import "./Label.css";
 import { withLoading } from "../../utils/withLoading";
-
 
 /**
  * Props for the Label component.
@@ -29,26 +29,33 @@ const LabelBase = forwardRef<HTMLLabelElement, LabelProps>(
       children,
       ...props
     },
-    ref
+    ref,
   ) => (
     <label
       ref={ref}
+      {...rnx({ component: "Label" })}
       className={cn(
         "rnx-label",
         `rnx-label--size-${size}`,
         disabled && "rnx-label--disabled",
-        className
+        className,
       )}
       {...props}
     >
       <span>
         {children}
-        {requiredIndicator && <span className="rnx-label-required" aria-hidden="true">*</span>}
-        {optionalText && <span className="rnx-label-optional">({optionalText})</span>}
+        {requiredIndicator && (
+          <span className="rnx-label-required" aria-hidden="true">
+            *
+          </span>
+        )}
+        {optionalText && (
+          <span className="rnx-label-optional">({optionalText})</span>
+        )}
         {subLabel && <span className="rnx-label-subtext">{subLabel}</span>}
       </span>
     </label>
-  )
+  ),
 );
 LabelBase.displayName = "Label";
 export const Label = withLoading(LabelBase);

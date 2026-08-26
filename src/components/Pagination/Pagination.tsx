@@ -9,7 +9,6 @@ import { Text } from "../../atoms/Text";
 import { withLoading } from "../../utils/withLoading";
 import { rnx } from "../../utils/rnx";
 
-
 import "./Pagination.css";
 
 /**
@@ -43,7 +42,7 @@ const PaginationBase = forwardRef<HTMLElement, PaginationProps>(
       className,
       ...props
     },
-    ref
+    ref,
   ) => {
     const getPages = () => {
       const range = (start: number, end: number) => {
@@ -57,7 +56,7 @@ const PaginationBase = forwardRef<HTMLElement, PaginationProps>(
       const leftSiblingIndex = Math.max(currentPage - siblingCount, 1);
       const rightSiblingIndex = Math.min(
         currentPage + siblingCount,
-        totalPages
+        totalPages,
       );
 
       const shouldShowLeftDots = leftSiblingIndex > 3;
@@ -90,13 +89,21 @@ const PaginationBase = forwardRef<HTMLElement, PaginationProps>(
         aria-label="pagination"
         className={cn(
           "rnx-pagination flex justify-center",
-          variant && variant !== "default" && `rnx-pagination--variant-${variant}`,
-          className
+          variant &&
+            variant !== "default" &&
+            `rnx-pagination--variant-${variant}`,
+          className,
         )}
-        {...rnx({ component: 'Pagination' })}
+        {...rnx({ component: "Pagination" })}
         {...props}
       >
-        <Flex as="ul" direction="row" align="center" gap="xs" className="rnx-pagination-list">
+        <Flex
+          as="ul"
+          direction="row"
+          align="center"
+          gap="xs"
+          className="rnx-pagination-list"
+        >
           <Box as="li">
             <PaginationPrevious
               onClick={() => onPageChange(currentPage - 1)}
@@ -125,7 +132,7 @@ const PaginationBase = forwardRef<HTMLElement, PaginationProps>(
                   isIcon
                   className={cn(
                     itemClassName,
-                    isCurrent && activeItemClassName
+                    isCurrent && activeItemClassName,
                   )}
                 >
                   {page}
@@ -145,7 +152,7 @@ const PaginationBase = forwardRef<HTMLElement, PaginationProps>(
         </Flex>
       </Box>
     );
-  }
+  },
 );
 
 PaginationBase.displayName = "Pagination";
@@ -157,34 +164,28 @@ type PaginationLinkProps = {
   isIcon?: boolean;
 } & Omit<React.ComponentPropsWithoutRef<"button">, "color" | "size">;
 
-const PaginationLink = ({
-  className,
-  isActive,
-  size = "md",
-  isIcon = false,
-  ...props
-}: PaginationLinkProps) => {
-  return (
-    <Button
-      aria-current={isActive ? "page" : undefined}
-      variant={isActive ? "outline" : "ghost"}
-      size={size}
-      className={cn(
-        className,
-        isIcon && `rnx-pagination-icon--${size}`
-      )}
-      {...props}
-    />
-  );
-};
+const PaginationLink = React.forwardRef<HTMLButtonElement, PaginationLinkProps>(
+  ({ className, isActive, size = "md", isIcon = false, ...props }, ref) => {
+    return (
+      <Button
+        ref={ref}
+        aria-current={isActive ? "page" : undefined}
+        variant={isActive ? "outline" : "ghost"}
+        size={size}
+        className={cn(className, isIcon && `rnx-pagination-icon--size-${size}`)}
+        {...props}
+      />
+    );
+  },
+);
 PaginationLink.displayName = "Pagination.Link";
 
-const PaginationPrevious = ({
-  className,
-  size = "md",
-  ...props
-}: React.ComponentPropsWithoutRef<typeof PaginationLink>) => (
+const PaginationPrevious = React.forwardRef<
+  HTMLButtonElement,
+  React.ComponentPropsWithoutRef<typeof PaginationLink>
+>(({ className, size = "md", ...props }, ref) => (
   <PaginationLink
+    ref={ref}
     aria-label="Go to previous page"
     size={size}
     className={cn("gap-1 ps-2.5", className)}
@@ -195,15 +196,15 @@ const PaginationPrevious = ({
       Previous
     </Text>
   </PaginationLink>
-);
+));
 PaginationPrevious.displayName = "Pagination.Previous";
 
-const PaginationNext = ({
-  className,
-  size = "md",
-  ...props
-}: React.ComponentPropsWithoutRef<typeof PaginationLink>) => (
+const PaginationNext = React.forwardRef<
+  HTMLButtonElement,
+  React.ComponentPropsWithoutRef<typeof PaginationLink>
+>(({ className, size = "md", ...props }, ref) => (
   <PaginationLink
+    ref={ref}
     aria-label="Go to next page"
     size={size}
     className={cn("gap-1 pe-2.5", className)}
@@ -214,22 +215,22 @@ const PaginationNext = ({
     </Text>
     <ChevronRight className={cn("h-4 w-4", size === "lg" && "h-5 w-5")} />
   </PaginationLink>
-);
+));
 PaginationNext.displayName = "Pagination.Next";
 
-const PaginationEllipsis = ({
-  className,
-  size = "md",
-  ...props
-}: React.ComponentPropsWithoutRef<"span"> & { size?: "sm" | "md" | "lg" }) => {
+const PaginationEllipsis = React.forwardRef<
+  HTMLSpanElement,
+  React.ComponentPropsWithoutRef<"span"> & { size?: "sm" | "md" | "lg" }
+>(({ className, size = "md", ...props }, ref) => {
   return (
     <Box
       as="span"
+      ref={ref}
       aria-hidden
       className={cn(
         "flex items-center justify-center",
-        `rnx-pagination-ellipsis--${size}`,
-        className
+        `rnx-pagination-ellipsis--size-${size}`,
+        className,
       )}
       {...props}
     >
@@ -239,7 +240,7 @@ const PaginationEllipsis = ({
       </Text>
     </Box>
   );
-};
+});
 PaginationEllipsis.displayName = "Pagination.Ellipsis";
 
 export const Pagination = Object.assign(PaginationWithLoading, {

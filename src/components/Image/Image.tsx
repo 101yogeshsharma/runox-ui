@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Box } from "../../atoms/Box";
 import { cn } from "../../utils/cn";
+import { rnx } from "../../utils/rnx";
 
 import "./Image.css";
 
@@ -32,10 +33,10 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
       onError,
       ...props
     },
-    ref
+    ref,
   ) => {
     const [status, setStatus] = useState<"loading" | "loaded" | "error">(
-      "loading"
+      "loading",
     );
 
     const [currentSrc, setCurrentSrc] = useState<string | undefined>(src);
@@ -68,10 +69,14 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
 
     return (
       <Box
+        {...rnx({
+          component: "Image",
+          state: status === "loaded" ? "active" : "loading",
+        })}
         className={cn(
           "rnx-image-container",
           zoom && "rnx-image-container--zoom",
-          className
+          className,
         )}
       >
         {/* Blur placeholder */}
@@ -109,14 +114,14 @@ export const Image = React.forwardRef<HTMLImageElement, ImageProps>(
             onError={handleError}
             className={cn(
               "rnx-image",
-              status === "loaded" ? "opacity-100" : "opacity-0"
+              status === "loaded" ? "opacity-100" : "opacity-0",
             )}
             {...props}
           />
         )}
       </Box>
     );
-  }
+  },
 );
 
 Image.displayName = "Image";

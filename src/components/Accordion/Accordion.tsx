@@ -82,14 +82,17 @@ const AccordionComponent = forwardRef<HTMLDivElement, AccordionProps>(
       [type, value, collapsible, setValue],
     );
 
+    const accordionContextValue = React.useMemo(
+      () => ({
+        value: value ?? (type === "multiple" ? [] : ""),
+        onValueChange: handleValueChange,
+        accordionId,
+      }),
+      [value, type, handleValueChange, accordionId],
+    );
+
     return (
-      <AccordionContext.Provider
-        value={{
-          value: value ?? (type === "multiple" ? [] : ""),
-          onValueChange: handleValueChange,
-          accordionId,
-        }}
-      >
+      <AccordionContext.Provider value={accordionContextValue}>
         <Box
           {...rnx({ component: "Accordion" })}
           ref={ref}
@@ -108,21 +111,26 @@ const AccordionComponent = forwardRef<HTMLDivElement, AccordionProps>(
 );
 AccordionComponent.displayName = "Accordion";
 
-export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
-  ({ className, value, ...props }, ref) => (
-    <AccordionItemContext.Provider value={{ value }}>
-      <Box
-        ref={ref}
-        className={cn("rnx-accordion-item", className)}
-        {...rnx({ component: "AccordionItem" })}
-        {...props}
-      />
-    </AccordionItemContext.Provider>
-  ),
+const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
+  ({ className, value, ...props }, ref) => {
+    // Stable per-item context — a new object per render would re-render every
+    // consumer below this item even when nothing changed.
+    const itemContextValue = React.useMemo(() => ({ value }), [value]);
+    return (
+      <AccordionItemContext.Provider value={itemContextValue}>
+        <Box
+          ref={ref}
+          className={cn("rnx-accordion-item", className)}
+          {...rnx({ component: "AccordionItem" })}
+          {...props}
+        />
+      </AccordionItemContext.Provider>
+    );
+  },
 );
 AccordionItem.displayName = "Accordion.Item";
 
-export const AccordionTrigger = forwardRef<
+const AccordionTrigger = forwardRef<
   HTMLButtonElement,
   React.ButtonHTMLAttributes<HTMLButtonElement>
 >(({ className, children, ...props }, ref) => {
@@ -184,7 +192,7 @@ export const AccordionTrigger = forwardRef<
 });
 AccordionTrigger.displayName = "Accordion.Trigger";
 
-export const AccordionContent = forwardRef<
+const AccordionContent = forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, children, ...props }, ref) => {
@@ -218,6 +226,23 @@ export const AccordionContent = forwardRef<
 });
 AccordionContent.displayName = "Accordion.Content";
 
+/**
+ * Accordion component for collapsible content sections.
+ *
+ * Compose via dot-notation members: `Accordion.Item`, `Accordion.Trigger`,
+ * `Accordion.Content`. Fully keyboard accessible (Arrow keys, Home/End) with
+ * roving tabindex across triggers.
+ *
+ * @example
+ * ```tsx
+ * <Accordion type="single" collapsible>
+ *   <Accordion.Item value="a">
+ *     <Accordion.Trigger>Section A</Accordion.Trigger>
+ *     <Accordion.Content>Content here</Accordion.Content>
+ *   </Accordion.Item>
+ * </Accordion>
+ * ```
+ */
 export const Accordion = Object.assign(AccordionComponent, {
   Item: AccordionItem,
   Trigger: AccordionTrigger,

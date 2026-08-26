@@ -52,22 +52,22 @@
   }
 
   /* Sizes */
-  .rnx-modal-content--sm {
+  .rnx-modal-content--size-sm {
     width: 100%;
     max-width: 24rem;
     border-radius: var(--radius);
   }
-  .rnx-modal-content--md {
+  .rnx-modal-content--size-md {
     width: 100%;
     max-width: 32rem;
     border-radius: var(--radius);
   }
-  .rnx-modal-content--lg {
+  .rnx-modal-content--size-lg {
     width: 100%;
     max-width: 42rem;
     border-radius: var(--radius);
   }
-  .rnx-modal-content--xl {
+  .rnx-modal-content--size-xl {
     width: 100%;
     max-width: 56rem;
     border-radius: var(--radius);
@@ -140,6 +140,44 @@
       border-bottom-right-radius: 0;
       border-top-left-radius: var(--radius);
       border-top-right-radius: var(--radius);
+    }
+  }
+
+  /* Shared fade keyframes (also used by other overlay components) */
+  @keyframes rnx-fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  @keyframes rnx-fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes rnx-modal-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95) translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+  @keyframes rnx-modal-out {
+    from {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+    to {
+      opacity: 0;
+      transform: scale(0.95) translateY(10px);
     }
   }
 }

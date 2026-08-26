@@ -10,17 +10,7 @@ import { Reveal } from "./Reveal";
 import { StaggerContainer, StaggerItem } from "./Stagger";
 import { MakeWayProvider, useMakeWay } from "./MakeWayContext";
 
-export * from "./FadeIn";
-export * from "./ScaleIn";
-export * from "./SlideIn";
-export * from "./Stagger";
-export * from "./MakeWayContext";
-export * from "./ZoomIn";
-export * from "./FlipIn";
-export * from "./BounceIn";
-export * from "./Shake";
-export * from "./Reveal";
-export * from "./RotateIn";
+export { MakeWayProvider, useMakeWay };
 
 export const Motion = {
   FadeIn,

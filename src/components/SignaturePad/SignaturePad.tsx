@@ -99,6 +99,7 @@ const SignaturePadBase = forwardRef<SignaturePadRef, SignaturePadProps>(
 
     useEffect(() => {
       if (!containerRef.current) return;
+      if (typeof ResizeObserver === "undefined") return;
       const resizeObserver = new ResizeObserver((entries) => {
         for (const entry of entries) {
           const newWidth = entry.contentRect.width;

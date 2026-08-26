@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { forwardRef } from "react";
 import { cn } from "../../utils/cn";
 
 /**
@@ -12,28 +12,36 @@ export interface RotateInProps extends React.HTMLAttributes<HTMLDivElement> {
   as?: React.ElementType;
 }
 
-export const RotateIn: React.FC<RotateInProps> = ({
-  children,
-  duration = 0.5,
-  delay = 0,
-  from = -90,
-  className,
-  as: Tag = "div",
-  style,
-  ...props
-}) => {
-  return (
-    <Tag
-      className={cn("rnx-motion-rotate-in", className)}
-      style={{
-        animationDuration: `${duration}s`,
-        animationDelay: `${delay}s`,
-        "--rnx-rotate-from": `${from}deg`,
-        ...style,
-      } as React.CSSProperties}
-      {...props}
-    >
-      {children}
-    </Tag>
-  );
-};
+export const RotateIn = forwardRef<HTMLElement, RotateInProps>(
+  (
+    {
+      children,
+      duration = 0.5,
+      delay = 0,
+      from = -90,
+      className,
+      as: Tag = "div",
+      style,
+      ...props
+    },
+    _ref,
+  ) => {
+    return (
+      <Tag
+        className={cn("rnx-motion-rotate-in", className)}
+        style={
+          {
+            animationDuration: `${duration}s`,
+            animationDelay: `${delay}s`,
+            "--rnx-rotate-from": `${from}deg`,
+            ...style,
+          } as React.CSSProperties
+        }
+        {...props}
+      >
+        {children}
+      </Tag>
+    );
+  },
+);
+RotateIn.displayName = "Motion.RotateIn";

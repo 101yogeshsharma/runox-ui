@@ -1,10 +1,10 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import { ToastProvider, useToast } from "./Toast";
+import { Toast } from "./Toast";
 
 function ToastTrigger() {
-  const { toast } = useToast();
+  const { toast } = Toast.useToast();
   return (
     <button
       onClick={() =>
@@ -16,13 +16,13 @@ function ToastTrigger() {
   );
 }
 
-describe("ToastProvider", () => {
+describe("Toast", () => {
   it("removes a toast once after repeated dismissal", async () => {
     const user = userEvent.setup();
     render(
-      <ToastProvider>
+      <Toast.Provider>
         <ToastTrigger />
-      </ToastProvider>,
+      </Toast.Provider>,
     );
 
     await user.click(screen.getByRole("button", { name: "Notify" }));

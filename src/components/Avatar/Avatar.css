@@ -31,22 +31,22 @@
   }
 
   /* Sizes */
-  .rnx-avatar--sm {
+  .rnx-avatar--size-sm {
     height: var(--space-8);
     width: var(--space-8);
     font-size: var(--text-xs);
   }
-  .rnx-avatar--md {
+  .rnx-avatar--size-md {
     height: var(--space-10);
     width: var(--space-10);
     font-size: var(--text-sm);
   }
-  .rnx-avatar--lg {
+  .rnx-avatar--size-lg {
     height: var(--space-14);
     width: var(--space-14);
     font-size: var(--text-lg);
   }
-  .rnx-avatar--xl {
+  .rnx-avatar--size-xl {
     height: var(--space-20, 5rem);
     width: var(--space-20, 5rem);
     font-size: var(--text-2xl);
@@ -85,16 +85,16 @@
     border: 2px solid var(--background);
     z-index: var(--z-component);
   }
-  .rnx-avatar-status--sm {
+  .rnx-avatar-status--size-sm {
     width: var(--space-2-5);
     height: var(--space-2-5);
   }
-  .rnx-avatar-status--md {
+  .rnx-avatar-status--size-md {
     width: var(--space-3);
     height: var(--space-3);
   }
-  .rnx-avatar-status--lg,
-  .rnx-avatar-status--xl {
+  .rnx-avatar-status--size-lg,
+  .rnx-avatar-status--size-xl {
     width: var(--space-3-5);
     height: var(--space-3-5);
   }

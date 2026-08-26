@@ -50,7 +50,7 @@ const TabsRoot = forwardRef<HTMLDivElement, TabsProps>(
       size = "md",
       ...props
     },
-    ref
+    ref,
   ) => {
     const [activeValue, setActiveValue] = useControllableState({
       prop: value,
@@ -61,31 +61,30 @@ const TabsRoot = forwardRef<HTMLDivElement, TabsProps>(
 
     const handleSetActiveValue = useCallback(
       (v: string) => setActiveValue(v),
-      [setActiveValue]
+      [setActiveValue],
     );
 
-    const contextValue = React.useMemo(() => ({
-      activeValue,
-      setActiveValue: handleSetActiveValue,
-      variant,
-      id: uniqueId,
-      size,
-    }), [activeValue, handleSetActiveValue, variant, uniqueId, size]);
+    const contextValue = React.useMemo(
+      () => ({
+        activeValue,
+        setActiveValue: handleSetActiveValue,
+        variant,
+        id: uniqueId,
+        size,
+      }),
+      [activeValue, handleSetActiveValue, variant, uniqueId, size],
+    );
 
     return (
       <TabsContext.Provider value={contextValue}>
-        <Box
-          ref={ref}
-          className={cn("rnx-tabs", className)}
-          {...props}
-        />
+        <Box ref={ref} className={cn("rnx-tabs", className)} {...props} />
       </TabsContext.Provider>
     );
-  }
+  },
 );
 TabsRoot.displayName = "Tabs";
 
-export const TabsList = forwardRef<
+const TabsList = forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, children, ...props }, ref) => {
@@ -109,7 +108,7 @@ export const TabsList = forwardRef<
       else if (ref)
         (ref as React.MutableRefObject<HTMLDivElement>).current = node;
     },
-    [ref]
+    [ref],
   );
 
   useEffect(() => {
@@ -118,7 +117,7 @@ export const TabsList = forwardRef<
 
     const updateIndicator = () => {
       const activeTab = list.querySelector(
-        `[data-state="active"]`
+        `[data-state="active"]`,
       ) as HTMLElement;
       if (activeTab) {
         setIndicatorStyle({
@@ -133,6 +132,7 @@ export const TabsList = forwardRef<
 
     updateIndicator();
     // ResizeObserver catches element visibility changes, font loading layout shifts, and regular resizes better than window.resize
+    if (typeof ResizeObserver === "undefined") return;
     const observer = new ResizeObserver(updateIndicator);
     observer.observe(list);
 
@@ -152,14 +152,14 @@ export const TabsList = forwardRef<
       className={cn(
         "rnx-tabs-list",
         variant && variant !== "default" && `rnx-tabs-list--variant-${variant}`,
-        className
+        className,
       )}
       {...props}
     >
       <Box
         className={cn(
           "rnx-tabs-indicator",
-          `rnx-tabs-indicator--${variant || "default"}`
+          `rnx-tabs-indicator--${variant || "default"}`,
         )}
         style={{
           width: indicatorStyle.width,
@@ -178,7 +178,7 @@ export interface TabsTriggerProps extends React.ButtonHTMLAttributes<HTMLButtonE
   value: string;
 }
 
-export const TabsTrigger = forwardRef<HTMLButtonElement, TabsTriggerProps>(
+const TabsTrigger = forwardRef<HTMLButtonElement, TabsTriggerProps>(
   ({ className, children, value, disabled, ...props }, ref) => {
     const {
       activeValue,
@@ -194,21 +194,24 @@ export const TabsTrigger = forwardRef<HTMLButtonElement, TabsTriggerProps>(
         e.preventDefault();
         if (!disabled) setActiveValue(value);
       }
-      if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+      const arrowKeys = ["ArrowLeft", "ArrowRight", "Home", "End"];
+      if (arrowKeys.includes(e.key)) {
         e.preventDefault();
         // Find all tab buttons in the nearest tablist
         const tablist = (e.currentTarget as HTMLElement).closest(
-          "[role='tablist']"
+          "[role='tablist']",
         );
         if (!tablist) return;
         const tabs = Array.from(
-          tablist.querySelectorAll<HTMLElement>("[role='tab']:not([disabled])")
+          tablist.querySelectorAll<HTMLElement>("[role='tab']:not([disabled])"),
         );
         const currentIndex = tabs.indexOf(e.currentTarget as HTMLElement);
-        const nextIndex =
-          e.key === "ArrowRight"
-            ? (currentIndex + 1) % tabs.length
-            : (currentIndex - 1 + tabs.length) % tabs.length;
+        let nextIndex: number;
+        if (e.key === "Home") nextIndex = 0;
+        else if (e.key === "End") nextIndex = tabs.length - 1;
+        else if (e.key === "ArrowRight")
+          nextIndex = (currentIndex + 1) % tabs.length;
+        else nextIndex = (currentIndex - 1 + tabs.length) % tabs.length;
         tabs[nextIndex]?.focus();
         tabs[nextIndex]?.click();
       }
@@ -225,16 +228,22 @@ export const TabsTrigger = forwardRef<HTMLButtonElement, TabsTriggerProps>(
         aria-controls={`rnx-tabs-content-${id}-${value}`}
         data-state={isActive ? "active" : "inactive"}
         disabled={disabled}
+        // Roving tabindex: one stop per tablist — arrows move focus+selection,
+        // Tab jumps from the active tab to its panel, per WAI-ARIA tabs pattern.
+        tabIndex={isActive ? 0 : -1}
         onClick={() => {
           if (!disabled) setActiveValue(value);
         }}
         onKeyDown={handleKeyDown}
         className={cn(
           "rnx-tabs-trigger",
-          `rnx-tabs-trigger--${size}`,
-          className
+          `rnx-tabs-trigger--size-${size}`,
+          className,
         )}
-        {...rnx({ component: "TabTrigger", state: isActive ? "active" : "inactive" })}
+        {...rnx({
+          component: "TabsTrigger",
+          state: isActive ? "active" : "inactive",
+        })}
         {...props}
       >
         <Box as="span" className="relative z-20">
@@ -242,7 +251,7 @@ export const TabsTrigger = forwardRef<HTMLButtonElement, TabsTriggerProps>(
         </Box>
       </Box>
     );
-  }
+  },
 );
 TabsTrigger.displayName = "Tabs.Trigger";
 
@@ -250,7 +259,7 @@ export interface TabsContentProps extends React.HTMLAttributes<HTMLDivElement> {
   value: string;
 }
 
-export const TabsContent = forwardRef<HTMLDivElement, TabsContentProps>(
+const TabsContent = forwardRef<HTMLDivElement, TabsContentProps>(
   ({ className, value, children, ...props }, ref) => {
     const { activeValue, id } = useContext(TabsContext);
     const isActive = activeValue === value;
@@ -270,7 +279,7 @@ export const TabsContent = forwardRef<HTMLDivElement, TabsContentProps>(
         {children}
       </Box>
     );
-  }
+  },
 );
 TabsContent.displayName = "Tabs.Content";
 

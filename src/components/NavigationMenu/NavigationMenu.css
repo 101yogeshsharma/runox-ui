@@ -19,7 +19,9 @@
     padding: var(--space-1-5) var(--space-2);
     box-shadow: var(--shadow-sm);
     backdrop-filter: blur(24px);
-    transition: all 300ms ease;
+    transition:
+      box-shadow 300ms ease,
+      border-color 300ms ease;
     gap: var(--space-1);
   }
 

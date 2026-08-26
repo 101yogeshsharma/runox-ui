@@ -1,19 +1,19 @@
 "use client";
 import React from "react";
 import { render, fireEvent, waitFor } from "@testing-library/react";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "./Tabs";
+import { Tabs } from "./Tabs";
 
 describe("Tabs", () => {
   it("renders with default value correctly", () => {
     const { getByText } = render(
       <Tabs defaultValue="tab1">
-        <TabsList>
-          <TabsTrigger value="tab1">Tab 1</TabsTrigger>
-          <TabsTrigger value="tab2">Tab 2</TabsTrigger>
-        </TabsList>
-        <TabsContent value="tab1">Content 1</TabsContent>
-        <TabsContent value="tab2">Content 2</TabsContent>
-      </Tabs>
+        <Tabs.List>
+          <Tabs.Trigger value="tab1">Tab 1</Tabs.Trigger>
+          <Tabs.Trigger value="tab2">Tab 2</Tabs.Trigger>
+        </Tabs.List>
+        <Tabs.Content value="tab1">Content 1</Tabs.Content>
+        <Tabs.Content value="tab2">Content 2</Tabs.Content>
+      </Tabs>,
     );
 
     expect(getByText("Content 1")).toBeVisible();
@@ -23,19 +23,19 @@ describe("Tabs", () => {
   it("handles keyboard navigation (ArrowRight and ArrowLeft)", () => {
     const { getAllByRole } = render(
       <Tabs defaultValue="tab1">
-        <TabsList>
-          <TabsTrigger value="tab1">Tab 1</TabsTrigger>
-          <TabsTrigger value="tab2">Tab 2</TabsTrigger>
-          <TabsTrigger value="tab3">Tab 3</TabsTrigger>
-        </TabsList>
-      </Tabs>
+        <Tabs.List>
+          <Tabs.Trigger value="tab1">Tab 1</Tabs.Trigger>
+          <Tabs.Trigger value="tab2">Tab 2</Tabs.Trigger>
+          <Tabs.Trigger value="tab3">Tab 3</Tabs.Trigger>
+        </Tabs.List>
+      </Tabs>,
     );
 
     const tabs = getAllByRole("tab");
-    
+
     // Focus first tab
     tabs[0].focus();
-    
+
     // Arrow right -> should activate tab 2
     fireEvent.keyDown(tabs[0], { key: "ArrowRight", code: "ArrowRight" });
     expect(tabs[1]).toHaveAttribute("aria-selected", "true");
@@ -55,11 +55,11 @@ describe("Tabs", () => {
   });
 
   it("ignores keyboard navigation if no tablist is found", () => {
-    // This is an edge case test where TabsTrigger is used outside TabsList
+    // This is an edge case test where Tabs.Trigger is used outside Tabs.List
     const { getByRole } = render(
       <Tabs defaultValue="tab1">
-        <TabsTrigger value="tab1">Tab 1</TabsTrigger>
-      </Tabs>
+        <Tabs.Trigger value="tab1">Tab 1</Tabs.Trigger>
+      </Tabs>,
     );
     const tab = getByRole("tab");
     tab.focus();
@@ -70,15 +70,15 @@ describe("Tabs", () => {
   it("activates tab with Enter or Space key", () => {
     const { getAllByRole } = render(
       <Tabs defaultValue="tab1">
-        <TabsList>
-          <TabsTrigger value="tab1">Tab 1</TabsTrigger>
-          <TabsTrigger value="tab2">Tab 2</TabsTrigger>
-        </TabsList>
-      </Tabs>
+        <Tabs.List>
+          <Tabs.Trigger value="tab1">Tab 1</Tabs.Trigger>
+          <Tabs.Trigger value="tab2">Tab 2</Tabs.Trigger>
+        </Tabs.List>
+      </Tabs>,
     );
 
     const tabs = getAllByRole("tab");
-    
+
     fireEvent.keyDown(tabs[1], { key: "Enter", code: "Enter" });
     expect(tabs[1]).toHaveAttribute("aria-selected", "true");
 
@@ -89,11 +89,13 @@ describe("Tabs", () => {
   it("does not activate disabled tabs with keyboard", () => {
     const { getAllByRole } = render(
       <Tabs defaultValue="tab1">
-        <TabsList>
-          <TabsTrigger value="tab1">Tab 1</TabsTrigger>
-          <TabsTrigger value="tab2" disabled>Tab 2</TabsTrigger>
-        </TabsList>
-      </Tabs>
+        <Tabs.List>
+          <Tabs.Trigger value="tab1">Tab 1</Tabs.Trigger>
+          <Tabs.Trigger value="tab2" disabled>
+            Tab 2
+          </Tabs.Trigger>
+        </Tabs.List>
+      </Tabs>,
     );
 
     const tabs = getAllByRole("tab");
@@ -107,13 +109,13 @@ describe("Tabs", () => {
   it("switches tabs on click", async () => {
     const { getByText } = render(
       <Tabs defaultValue="tab1">
-        <TabsList>
-          <TabsTrigger value="tab1">Tab 1</TabsTrigger>
-          <TabsTrigger value="tab2">Tab 2</TabsTrigger>
-        </TabsList>
-        <TabsContent value="tab1">Content 1</TabsContent>
-        <TabsContent value="tab2">Content 2</TabsContent>
-      </Tabs>
+        <Tabs.List>
+          <Tabs.Trigger value="tab1">Tab 1</Tabs.Trigger>
+          <Tabs.Trigger value="tab2">Tab 2</Tabs.Trigger>
+        </Tabs.List>
+        <Tabs.Content value="tab1">Content 1</Tabs.Content>
+        <Tabs.Content value="tab2">Content 2</Tabs.Content>
+      </Tabs>,
     );
 
     fireEvent.click(getByText("Tab 2"));
@@ -128,13 +130,13 @@ describe("Tabs", () => {
     const onValueChange = vi.fn();
     const { getByText } = render(
       <Tabs defaultValue="tab1" onValueChange={onValueChange}>
-        <TabsList>
-          <TabsTrigger value="tab1">Tab 1</TabsTrigger>
-          <TabsTrigger value="tab2">Tab 2</TabsTrigger>
-        </TabsList>
-        <TabsContent value="tab1">Content 1</TabsContent>
-        <TabsContent value="tab2">Content 2</TabsContent>
-      </Tabs>
+        <Tabs.List>
+          <Tabs.Trigger value="tab1">Tab 1</Tabs.Trigger>
+          <Tabs.Trigger value="tab2">Tab 2</Tabs.Trigger>
+        </Tabs.List>
+        <Tabs.Content value="tab1">Content 1</Tabs.Content>
+        <Tabs.Content value="tab2">Content 2</Tabs.Content>
+      </Tabs>,
     );
 
     fireEvent.click(getByText("Tab 2"));

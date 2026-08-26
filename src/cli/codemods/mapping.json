@@ -40,6 +40,7 @@
     "components": {
       "VStack": "Flex",
       "HStack": "Flex",
+      "Stack": "Flex",
       "Heading": "Text"
     },
     "props": {
@@ -50,6 +51,27 @@
           "outline": "outline",
           "ghost": "ghost"
         }
+      },
+      "VStack": {
+        "spacing": "gap",
+        "alignItems": "align",
+        "align": "align",
+        "justifyContent": "justify",
+        "justify": "justify"
+      },
+      "HStack": {
+        "spacing": "gap",
+        "alignItems": "align",
+        "align": "align",
+        "justifyContent": "justify",
+        "justify": "justify"
+      },
+      "Stack": {
+        "spacing": "gap",
+        "alignItems": "align",
+        "align": "align",
+        "justifyContent": "justify",
+        "justify": "justify"
       }
     }
   },
@@ -61,11 +83,11 @@
       "@/components/ui/card": "@runox/ui"
     },
     "components": {
-      "CardHeader": "Flex",
-      "CardContent": "Box",
-      "CardFooter": "Flex",
-      "CardTitle": "Text",
-      "CardDescription": "Text"
+      "CardHeader": "Card.Header",
+      "CardContent": "Card.Body",
+      "CardFooter": "Card.Footer",
+      "CardTitle": "Card.Title",
+      "CardDescription": "Card.Description"
     },
     "props": {
       "Button": {

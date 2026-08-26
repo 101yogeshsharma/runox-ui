@@ -18,7 +18,7 @@ const BreadcrumbContext = React.createContext<{
   size?: "sm" | "md" | "lg";
 }>({});
 
-export const BreadcrumbRoot = forwardRef<HTMLElement, BreadcrumbProps>(
+const BreadcrumbRoot = forwardRef<HTMLElement, BreadcrumbProps>(
   ({ variant = "default", size = "md", children, ...props }, ref) => {
     const contextValue = React.useMemo(
       () => ({ variant, size }),
@@ -41,7 +41,7 @@ export const BreadcrumbRoot = forwardRef<HTMLElement, BreadcrumbProps>(
 );
 BreadcrumbRoot.displayName = "Breadcrumb.Root";
 
-export const BreadcrumbList = forwardRef<
+const BreadcrumbList = forwardRef<
   HTMLOListElement,
   React.ComponentPropsWithoutRef<"ol">
 >(({ className, ...props }, ref) => {
@@ -52,7 +52,7 @@ export const BreadcrumbList = forwardRef<
       ref={ref}
       className={cn(
         "rnx-breadcrumb-list",
-        size && `rnx-breadcrumb-list--${size}`,
+        size && `rnx-breadcrumb-list--size-${size}`,
         variant &&
           variant !== "default" &&
           `rnx-breadcrumb-list--variant-${variant}`,
@@ -64,7 +64,7 @@ export const BreadcrumbList = forwardRef<
 });
 BreadcrumbList.displayName = "Breadcrumb.List";
 
-export const BreadcrumbItem = forwardRef<
+const BreadcrumbItem = forwardRef<
   HTMLLIElement,
   React.ComponentPropsWithoutRef<"li">
 >(({ className, ...props }, ref) => (
@@ -77,7 +77,7 @@ export const BreadcrumbItem = forwardRef<
 ));
 BreadcrumbItem.displayName = "Breadcrumb.Item";
 
-export const BreadcrumbLink = forwardRef<
+const BreadcrumbLink = forwardRef<
   HTMLAnchorElement,
   React.ComponentPropsWithoutRef<"a"> & { active?: boolean }
 >(({ className, active, ...props }, ref) => (
@@ -94,7 +94,7 @@ export const BreadcrumbLink = forwardRef<
 ));
 BreadcrumbLink.displayName = "Breadcrumb.Link";
 
-export const BreadcrumbPage = forwardRef<
+const BreadcrumbPage = forwardRef<
   HTMLSpanElement,
   React.ComponentPropsWithoutRef<"span">
 >(({ className, ...props }, ref) => (
@@ -110,7 +110,7 @@ export const BreadcrumbPage = forwardRef<
 ));
 BreadcrumbPage.displayName = "Breadcrumb.Page";
 
-export const BreadcrumbSeparator = ({
+const BreadcrumbSeparator = ({
   children,
   className,
   ...props

@@ -1,7 +1,13 @@
 import { API, FileInfo, Options } from "jscodeshift";
 import mappingData from "./mapping.json";
+import {
+  setJsxName,
+  getJsxName,
+  rewriteImportSpecifiers,
+  reportUnmapped,
+} from "./shared";
 
-function transformJsxAttribute(
+function transformAttribute(
   j: any,
   attr: any,
   propsMapping: Record<string, any>,
@@ -43,68 +49,92 @@ export default function transformer(
   const mapping = mappingData.shadcn as any;
   let hasModifications = false;
 
-  // 1. Rename imports
-  // Shadcn UI uses specific component paths like "@/components/ui/button"
-  root.find(j.ImportDeclaration).forEach((path) => {
-    if (
-      j.Literal.check(path.node.source) &&
-      typeof path.node.source.value === "string"
-    ) {
-      const sourceStr = path.node.source.value;
-      if (mapping.imports[sourceStr]) {
-        path.node.source.value = mapping.imports[sourceStr];
+  // 1. Rewrite imports — shadcn uses per-component paths like
+  // "@/components/ui/button"; each maps to the @runox/ui namespace root.
+  for (const sourceStr of Object.keys(mapping.imports)) {
+    hasModifications =
+      rewriteImportSpecifiers(j, root, sourceStr, mapping.components) ||
+      hasModifications;
+  }
+
+  // Also rewrite specifiers in imports already pointing at @runox/ui
+  // (idempotency when run twice).
+  root.find(j.ImportDeclaration).forEach((p: any) => {
+    if (p.node.source.value !== "@runox/ui") return;
+    for (const spec of p.node.specifiers ?? []) {
+      if (
+        j.ImportSpecifier.check(spec) &&
+        j.Identifier.check(spec.imported) &&
+        mapping.components[spec.imported.name]
+      ) {
         hasModifications = true;
       }
     }
+  });
 
-    if (path.node.specifiers) {
-      path.node.specifiers.forEach((specifier) => {
+  // 2. Rename components in JSX (supports dot-notation targets)
+  root.find(j.JSXElement).forEach((path: any) => {
+    const openingElement = path.node.openingElement;
+    const originalName = getJsxName(openingElement);
+    if (!originalName || originalName.includes(".")) return;
+
+    if (mapping.components[originalName]) {
+      setJsxName(j, path, mapping.components[originalName]);
+      hasModifications = true;
+    }
+
+    const propsMapping = mapping.props[originalName];
+    if (openingElement.attributes) {
+      openingElement.attributes.forEach((attr: any) => {
+        if (propsMapping && transformAttribute(j, attr, propsMapping)) {
+          hasModifications = true;
+          return;
+        }
         if (
-          j.ImportSpecifier.check(specifier) &&
-          j.Identifier.check(specifier.imported)
+          j.JSXAttribute.check(attr) &&
+          j.JSXIdentifier.check(attr.name) &&
+          !isLikelyDomProp(attr.name.name)
         ) {
-          const importedName = specifier.imported.name;
-          if (mapping.components[importedName]) {
-            specifier.imported.name = mapping.components[importedName];
-            if (specifier.local && specifier.local.name === importedName) {
-              specifier.local.name = mapping.components[importedName];
-            }
-            hasModifications = true;
-          }
+          reportUnmapped(file.path, originalName, attr.name.name);
         }
       });
     }
   });
 
-  // 2. Rename components in JSX
-  root.find(j.JSXElement).forEach((path) => {
-    const openingElement = path.node.openingElement;
-    if (j.JSXIdentifier.check(openingElement.name)) {
-      const originalName = openingElement.name.name;
-
-      let newName = originalName;
-      if (mapping.components[originalName]) {
-        newName = mapping.components[originalName];
-        openingElement.name.name = newName;
-        if (
-          path.node.closingElement &&
-          j.JSXIdentifier.check(path.node.closingElement.name)
-        ) {
-          path.node.closingElement.name.name = newName;
-        }
-        hasModifications = true;
-      }
-
-      const propsMapping = mapping.props[originalName];
-      if (propsMapping && openingElement.attributes) {
-        openingElement.attributes.forEach((attr) => {
-          if (transformJsxAttribute(j, attr, propsMapping)) {
-            hasModifications = true;
-          }
-        });
-      }
-    }
-  });
-
   return hasModifications ? root.toSource() : null;
+}
+
+const DOM_PROPS = new Set([
+  "className",
+  "id",
+  "style",
+  "children",
+  "key",
+  "ref",
+  "onClick",
+  "onChange",
+  "onSubmit",
+  "onFocus",
+  "onBlur",
+  "onKeyDown",
+  "onKeyUp",
+  "type",
+  "value",
+  "defaultValue",
+  "placeholder",
+  "disabled",
+  "required",
+  "name",
+  "href",
+  "src",
+  "alt",
+  "title",
+  "role",
+  "tabIndex",
+]);
+
+function isLikelyDomProp(name: string): boolean {
+  return (
+    DOM_PROPS.has(name) || name.startsWith("aria-") || name.startsWith("data-")
+  );
 }

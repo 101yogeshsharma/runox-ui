@@ -687,7 +687,7 @@ const CarouselContent = React.forwardRef<
     <Box
       ref={carouselRef}
       className={cn(
-        "scrollbar-hide h-full overflow-auto scroll-smooth",
+        "rnx-scrollbar-hide h-full overflow-auto scroll-smooth",
         orientation === "horizontal"
           ? "overflow-y-hidden"
           : "overflow-x-hidden",

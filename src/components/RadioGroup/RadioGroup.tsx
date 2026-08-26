@@ -7,7 +7,6 @@ import { Label } from "../Label/Label";
 import { withLoading } from "../../utils/withLoading";
 import { rnx } from "../../utils/rnx";
 
-
 const RadioGroupContext = createContext<{
   name: string;
   value?: string;
@@ -48,7 +47,7 @@ const RadioGroupBase = forwardRef<HTMLDivElement, RadioGroupProps>(
       size = "md",
       ...props
     },
-    ref
+    ref,
   ) => {
     const generatedName = useId();
     const groupName = name || generatedName;
@@ -70,19 +69,19 @@ const RadioGroupBase = forwardRef<HTMLDivElement, RadioGroupProps>(
         }}
       >
         <Box
-          {...rnx({ component: 'RadioGroup' })}
+          {...rnx({ component: "RadioGroup" })}
           ref={ref}
           role="radiogroup"
           className={cn(
             "rnx-radio-group",
             orientation === "horizontal" && "rnx-radio-group--horizontal",
-            className
+            className,
           )}
           {...props}
         />
       </RadioGroupContext.Provider>
     );
-  }
+  },
 );
 RadioGroupBase.displayName = "RadioGroup";
 const RadioGroupWithLoading = withLoading(RadioGroupBase);
@@ -95,7 +94,7 @@ export interface RadioGroupItemProps extends Omit<
   label?: string;
 }
 
-export const RadioGroupItem = forwardRef<HTMLInputElement, RadioGroupItemProps>(
+const RadioGroupItem = forwardRef<HTMLInputElement, RadioGroupItemProps>(
   ({ className, value, label, id: customId, disabled, ...props }, ref) => {
     const context = useContext(RadioGroupContext);
     const generatedId = useId();
@@ -123,10 +122,16 @@ export const RadioGroupItem = forwardRef<HTMLInputElement, RadioGroupItemProps>(
             {...props}
           />
           <Box
-            className={cn("rnx-radio-box", `rnx-radio-box--${context.size}`)}
+            className={cn(
+              "rnx-radio-box",
+              `rnx-radio-box--size-${context.size}`,
+            )}
           >
             <Box
-              className={cn("rnx-radio-indicator", `rnx-radio-indicator--${context.size}`)}
+              className={cn(
+                "rnx-radio-indicator",
+                `rnx-radio-indicator--size-${context.size}`,
+              )}
             />
           </Box>
         </Box>
@@ -139,7 +144,7 @@ export const RadioGroupItem = forwardRef<HTMLInputElement, RadioGroupItemProps>(
         )}
       </Box>
     );
-  }
+  },
 );
 RadioGroupItem.displayName = "RadioGroup.Item";
 

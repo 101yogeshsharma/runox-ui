@@ -5,7 +5,6 @@ import { mergeProps } from "../../utils/mergeProps";
 import "./Input.css";
 import { withLoading } from "../../utils/withLoading";
 
-
 /**
  * Props for the InputAddon component.
  */
@@ -21,15 +20,15 @@ const InputAddonBase = forwardRef<HTMLDivElement, InputAddonProps>(
         ref={ref}
         className={cn(
           "rnx-input-addon",
-          `rnx-input-addon--${position}`,
-          className
+          `rnx-input-addon--position-${position}`,
+          className,
         )}
         {...mergeProps({}, props)}
       >
         {children}
       </Box>
     );
-  }
+  },
 );
 
 InputAddonBase.displayName = "InputAddon";

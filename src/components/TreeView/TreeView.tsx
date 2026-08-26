@@ -39,6 +39,11 @@ export const useTreeContext = () => {
 export interface TreeProps extends React.HTMLAttributes<HTMLDivElement> {
   selectedId?: string | null;
   defaultSelectedId?: string;
+  /**
+   * Called when the selected node changes. Canonical value callback.
+   */
+  onValueChange?: (id: string) => void;
+  /** @deprecated Use `onValueChange` instead. */
   onSelectChange?: (id: string) => void;
   expandedIds?: string[];
   defaultExpandedIds?: string[];
@@ -52,6 +57,7 @@ const TreeRoot = React.forwardRef<HTMLDivElement, TreeProps>(
       className,
       selectedId,
       defaultSelectedId,
+      onValueChange,
       onSelectChange,
       expandedIds,
       defaultExpandedIds = [],
@@ -89,9 +95,10 @@ const TreeRoot = React.forwardRef<HTMLDivElement, TreeProps>(
         if (selectedId === undefined) {
           setInternalSelectedId(id);
         }
+        onValueChange?.(id);
         onSelectChange?.(id);
       },
-      [selectedId, onSelectChange],
+      [selectedId, onValueChange, onSelectChange],
     );
 
     const toggleExpanded = useCallback(
@@ -178,7 +185,7 @@ const TreeRoot = React.forwardRef<HTMLDivElement, TreeProps>(
                 }
               }
             }
-            props.onKeyDown?.(e as any);
+            props.onKeyDown?.(e as React.KeyboardEvent<HTMLDivElement>);
           }}
           {...props}
         >
