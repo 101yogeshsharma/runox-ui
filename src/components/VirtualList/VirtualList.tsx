@@ -40,7 +40,7 @@ function useVirtualization(options: {
   // Scrolling within the same range causes zero React re-renders; the browser
   // scrolls natively and items are absolutely positioned so they move for free.
   const [range, setRange] = useState({ start: 0, end: 0 });
-  const [viewportHeight, setViewportHeight] = useState(0);
+  const [, setViewportHeight] = useState(0);
   const parentRef = useRef<HTMLDivElement>(null);
   const rafRef = useRef<number | null>(null);
 

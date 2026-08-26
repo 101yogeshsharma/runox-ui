@@ -101,7 +101,7 @@ describe("AlertDialog", () => {
   });
 
   it("does not close on Escape by default (WAI-ARIA alertdialog pattern)", () => {
-    const { getByTestId, queryByTestId } = render(<TestComponent />);
+    const { getByTestId } = render(<TestComponent />);
 
     fireEvent.click(getByTestId("trigger"));
 

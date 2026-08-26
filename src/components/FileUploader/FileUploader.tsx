@@ -46,7 +46,7 @@ export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps>(
       disabled,
       ...props
     }: FileUploaderProps,
-    ref,
+    _ref,
   ) {
     const [files, setFiles] = useState<File[]>([]);
     const [isDragActive, setIsDragActive] = useState(false);

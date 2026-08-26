@@ -26,7 +26,7 @@ export const SlideIn = forwardRef<HTMLElement, SlideInProps>(
       style,
       ...props
     },
-    ref,
+    _ref,
   ) => {
     const directionClass = {
       up: "rnx-motion-slide-up",

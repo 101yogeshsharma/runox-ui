@@ -26,7 +26,7 @@ export const BounceIn = forwardRef<HTMLElement, BounceInProps>(
       style,
       ...props
     },
-    ref,
+    _ref,
   ) => {
     const directionClass = {
       up: "rnx-motion-bounce-up",

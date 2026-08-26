@@ -24,7 +24,7 @@ export const ZoomIn = forwardRef<HTMLElement, ZoomInProps>(
       style,
       ...props
     },
-    ref,
+    _ref,
   ) => {
     return (
       <Tag

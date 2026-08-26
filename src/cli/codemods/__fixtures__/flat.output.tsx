@@ -2,7 +2,7 @@ import React from "react";
 import { Modal, Button } from "@runox/ui";
 
 export function Example() {
-  const Header = ModalHeader;
+  const _Header = ModalHeader;
   return (
     <Modal open>
       <Modal.Header>Title</Modal.Header>
