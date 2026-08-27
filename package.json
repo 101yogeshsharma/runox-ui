@@ -30,6 +30,10 @@
   "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
+  "style": "dist/index.css",
+  "publishConfig": {
+    "access": "public"
+  },
   "bin": {
     "runox": "dist/cli.js"
   },

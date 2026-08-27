@@ -62,3 +62,19 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Purge and Pre-warm CDN Edges (unpkg & jsDelivr)
+        if: steps.changesets.outputs.published == 'true'
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          echo "Published version: $VERSION"
+          
+          echo "Pre-warming unpkg CDN..."
+          curl -s -o /dev/null -w "unpkg index.css status: %{http_code}\n" "https://unpkg.com/@runox/ui@${VERSION}/dist/index.css" || true
+          curl -s -o /dev/null -w "unpkg registry.json status: %{http_code}\n" "https://unpkg.com/@runox/ui@${VERSION}/dist/registry.json" || true
+          
+          echo "Purging and pre-warming jsDelivr CDN..."
+          curl -s -o /dev/null -w "jsDelivr purge status: %{http_code}\n" "https://purge.jsdelivr.net/npm/@runox/ui/dist/index.css" || true
+          curl -s -o /dev/null -w "jsDelivr index.css status: %{http_code}\n" "https://cdn.jsdelivr.net/npm/@runox/ui@${VERSION}/dist/index.css" || true
+          
+          echo "CDN deployment and edge cache warming completed."
