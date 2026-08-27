@@ -190,6 +190,26 @@ describe("useAgentContext", () => {
         />
         <input
           data-rnx-component="Input"
+          type="email"
+          defaultValue="user@example.com"
+        />
+        <input
+          data-rnx-component="Input"
+          type="tel"
+          defaultValue="+1234567890"
+        />
+        <input
+          data-rnx-component="Input"
+          autoComplete="street-address"
+          defaultValue="123 Main St"
+        />
+        <input
+          data-rnx-component="Input"
+          name="full_name"
+          defaultValue="Jane Doe"
+        />
+        <input
+          data-rnx-component="Input"
           data-rnx-sensitive="true"
           defaultValue="my-secret-api-key"
         />

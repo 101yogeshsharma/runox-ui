@@ -47,11 +47,7 @@ async function fetchRegistry(registryUrl?: string): Promise<Registry> {
 
 function getSourceBaseUrl(registryUrl?: string): string {
   if (!registryUrl) return SOURCE_BASE_URL;
-  return (
-    registryUrl
-      .replace(/\/dist\/registry\.json$|\/registry\.json$/, "")
-      .replace(/\/$/, "") + "/"
-  );
+  return registryUrl.replace(/[^/]*\.json$/, "").replace(/\/?$/, "/");
 }
 
 async function fetchFile(
