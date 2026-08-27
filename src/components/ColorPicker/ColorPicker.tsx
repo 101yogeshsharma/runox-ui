@@ -122,10 +122,10 @@ const ColorPickerBase = forwardRef<HTMLDivElement, ColorPickerProps>(
         {label && <Label>{label}</Label>}
 
         <Popover
-          isOpen={isOpen}
+          open={isOpen}
           onOpenChange={setIsOpen}
           align="start"
-          className="w-64 p-3"
+          className="rnx-color-picker-popover w-64 p-3"
           trigger={
             <button
               type="button"
@@ -162,9 +162,9 @@ const ColorPickerBase = forwardRef<HTMLDivElement, ColorPickerProps>(
             </button>
           }
         >
-          <Box className="flex flex-col gap-3">
+          <Box className="rnx-color-picker-content flex flex-col gap-3">
             <Box
-              className="grid grid-cols-7 gap-2"
+              className="rnx-color-picker-swatches grid grid-cols-7 gap-2"
               role="group"
               aria-label="Color swatches"
             >
@@ -201,9 +201,9 @@ const ColorPickerBase = forwardRef<HTMLDivElement, ColorPickerProps>(
               ))}
             </Box>
 
-            <Box className="border-border flex items-center gap-2 border-t pt-2">
+            <Box className="rnx-color-picker-input-group border-border flex items-center gap-2 border-t pt-2">
               <Box
-                className="h-8 w-8 shrink-0 rounded-md border shadow-sm"
+                className="rnx-color-picker-current-box h-8 w-8 shrink-0 rounded-md border shadow-sm"
                 style={{ backgroundColor: displayValue }}
               />
               <Input

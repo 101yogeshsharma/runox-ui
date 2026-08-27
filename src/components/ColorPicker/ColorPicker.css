@@ -120,12 +120,38 @@
     width: 1.25rem;
   }
 
+  .rnx-color-picker-popover {
+    width: 16rem;
+    padding: var(--space-3);
+  }
+
+  .rnx-color-picker-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .rnx-color-picker-swatches {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: var(--space-2);
+    width: 100%;
+    align-items: center;
+    justify-items: center;
+  }
+
   .rnx-color-picker-swatch {
     height: 1.5rem;
     width: 1.5rem;
+    min-width: 1.5rem;
+    max-width: 1.5rem;
     border-radius: calc(var(--radius) - 4px);
     border: 1px solid color-mix(in srgb, var(--border) 50%, transparent);
     padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
     transition: transform 150ms ease;
   }
 
@@ -138,6 +164,23 @@
     box-shadow:
       0 0 0 2px var(--background),
       0 0 0 4px var(--ring);
+  }
+
+  .rnx-color-picker-input-group {
+    border-top: 1px solid var(--border);
+    padding-top: var(--space-2);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .rnx-color-picker-current-box {
+    height: 2rem;
+    width: 2rem;
+    flex-shrink: 0;
+    border-radius: var(--radius-sm, 6px);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm);
   }
 
   .rnx-color-picker-error-msg {
