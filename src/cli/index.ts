@@ -30,8 +30,8 @@ interface RegistryItem {
 
 type Registry = Record<string, RegistryItem>;
 
-async function httpGet(url: string): Promise<string> {
-  const res = await fetch(url);
+async function httpGet(url: string, timeoutMs = 30_000): Promise<string> {
+  const res = await fetch(url, { signal: AbortSignal.timeout(timeoutMs) });
   if (!res.ok) {
     throw new Error(
       `Request to ${url} failed with status ${res.status} ${res.statusText}`,
