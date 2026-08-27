@@ -78,19 +78,32 @@ export function useAgentContext() {
           htmlEl.dataset.rnxGeneratedId = id;
         }
 
-        // Extract text content or input/textarea value (protecting passwords)
+        // Extract text content or input/textarea value (protecting sensitive/password/PII fields)
         let rawText = (el.textContent || "").trim();
         if (
           !rawText &&
           typeof HTMLInputElement !== "undefined" &&
           (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement)
         ) {
-          const isPassword =
-            (el as HTMLInputElement).type === "password" ||
+          const inputEl = el as HTMLInputElement;
+          const SENSITIVE_AUTOCOMPLETE =
+            /(cc-|credit|new-password|current-password|one-time-code|email|tel|name|street-address|postal-code|address)/i;
+          const isSensitive =
+            inputEl.type === "password" ||
+            inputEl.type === "email" ||
+            inputEl.type === "tel" ||
             htmlEl.dataset.rnxComponent === "PasswordInput" ||
-            Boolean(el.closest?.('[data-rnx-component="PasswordInput"]'));
-          if (!isPassword) {
-            rawText = (el.value || el.placeholder || "").trim();
+            htmlEl.dataset.rnxComponent === "OtpInput" ||
+            htmlEl.dataset.rnxSensitive === "true" ||
+            SENSITIVE_AUTOCOMPLETE.test(inputEl.autocomplete || "") ||
+            SENSITIVE_AUTOCOMPLETE.test(inputEl.name || "") ||
+            Boolean(
+              el.closest?.(
+                '[data-rnx-component="PasswordInput"],[data-rnx-component="OtpInput"],[data-rnx-sensitive="true"]',
+              ),
+            );
+          if (!isSensitive) {
+            rawText = (inputEl.value || inputEl.placeholder || "").trim();
           }
         }
 

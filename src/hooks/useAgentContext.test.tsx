@@ -179,6 +179,57 @@ describe("useAgentContext", () => {
     expect(innerInput.textContent).toBe("");
   });
 
+  it("masks OTP inputs, credit card autocomplete, and data-rnx-sensitive inputs", () => {
+    render(
+      <div>
+        <input data-rnx-component="OtpInput" defaultValue="123456" />
+        <input
+          data-rnx-component="Input"
+          autoComplete="cc-number"
+          defaultValue="4111222233334444"
+        />
+        <input
+          data-rnx-component="Input"
+          type="email"
+          defaultValue="user@example.com"
+        />
+        <input
+          data-rnx-component="Input"
+          type="tel"
+          defaultValue="+1234567890"
+        />
+        <input
+          data-rnx-component="Input"
+          autoComplete="street-address"
+          defaultValue="123 Main St"
+        />
+        <input
+          data-rnx-component="Input"
+          name="full_name"
+          defaultValue="Jane Doe"
+        />
+        <input
+          data-rnx-component="Input"
+          data-rnx-sensitive="true"
+          defaultValue="my-secret-api-key"
+        />
+        <div data-rnx-sensitive="true">
+          <input
+            data-rnx-component="Input"
+            defaultValue="nested-confidential-data"
+          />
+        </div>
+      </div>,
+    );
+    render(<Harness />);
+    const ctx = (window as any).__rnx_agent_context__;
+    const otp = ctx.components.find((c: any) => c.component === "OtpInput");
+    const inputs = ctx.components.filter((c: any) => c.component === "Input");
+
+    expect(otp.textContent).toBe("");
+    expect(inputs.every((i: any) => i.textContent === "")).toBe(true);
+  });
+
   it("accurately reflects error and overlay states across components", () => {
     render(
       <div>
