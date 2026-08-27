@@ -111,4 +111,175 @@ describe("useAgentContext", () => {
       globalThis.crypto = originalCrypto;
     }
   });
+
+  it("maintains stable element IDs across multiple snapshot refreshes", () => {
+    render(<button data-rnx-component="Button">Click Me</button>);
+    render(<Harness />);
+    const firstCtx = (window as any).__rnx_agent_context__;
+    const firstId = firstCtx.components[0].id;
+    expect(firstId).toBeTruthy();
+
+    fireEvent.click(screen.getByTestId("refresh"));
+    const secondCtx = (window as any).__rnx_agent_context__;
+    const secondId = secondCtx.components[0].id;
+    expect(secondId).toBe(firstId);
+  });
+
+  it("captures overlay attribute when data-rnx-overlay is present", () => {
+    render(
+      <div data-rnx-component="Modal" data-rnx-overlay="true">
+        Modal Content
+      </div>,
+    );
+    render(<Harness />);
+    const ctx = (window as any).__rnx_agent_context__;
+    const comp = ctx.components.find((c: any) => c.component === "Modal");
+    expect(comp.overlay).toBe(true);
+  });
+
+  it("captures input values and placeholders while masking passwords", () => {
+    render(
+      <div>
+        <input
+          data-rnx-component="Input"
+          placeholder="Enter name"
+          defaultValue="John Doe"
+        />
+        <input
+          type="password"
+          data-rnx-component="PasswordInput"
+          defaultValue="secret_password123"
+        />
+      </div>,
+    );
+    render(<Harness />);
+    const ctx = (window as any).__rnx_agent_context__;
+    const textInput = ctx.components.find((c: any) => c.component === "Input");
+    const passwordInput = ctx.components.find(
+      (c: any) => c.component === "PasswordInput",
+    );
+
+    expect(textInput.textContent).toBe("John Doe");
+    expect(passwordInput.textContent).toBe("");
+  });
+
+  it("never leaks passwords even when password reveal toggles type to text", () => {
+    render(
+      <div data-rnx-component="PasswordInput">
+        <input
+          data-rnx-component="Input"
+          type="text"
+          defaultValue="my_super_secret_pw"
+        />
+      </div>,
+    );
+    render(<Harness />);
+    const ctx = (window as any).__rnx_agent_context__;
+    const innerInput = ctx.components.find((c: any) => c.component === "Input");
+    expect(innerInput.textContent).toBe("");
+  });
+
+  it("accurately reflects error and overlay states across components", () => {
+    render(
+      <div>
+        <div data-rnx-component="Image" data-rnx-state="error">
+          Broken img
+        </div>
+        <div
+          data-rnx-component="Dropdown"
+          data-rnx-overlay="true"
+          data-rnx-state="open"
+        >
+          Menu
+        </div>
+        <div
+          data-rnx-component="ContextMenu"
+          data-rnx-overlay="true"
+          data-rnx-state="open"
+        >
+          Context Menu
+        </div>
+        <div
+          data-rnx-component="Select"
+          data-rnx-overlay="true"
+          data-rnx-state="open"
+        >
+          Select Listbox
+        </div>
+        <div
+          data-rnx-component="AIInput"
+          data-rnx-variant="glass"
+          data-rnx-action="submit"
+        >
+          AI Prompt
+        </div>
+        <div data-rnx-component="ChatBubble" data-rnx-state="assistant">
+          Hello
+        </div>
+        <div data-rnx-component="FormMessage" data-rnx-state="error">
+          Required
+        </div>
+        <div data-rnx-component="Resizable" data-rnx-variant="horizontal">
+          Panels
+        </div>
+        <div
+          data-rnx-component="ErrorBoundary"
+          data-rnx-state="error"
+          data-rnx-action="retry"
+        >
+          Error
+        </div>
+        <div data-rnx-component="Tabs" data-rnx-variant="pills">
+          Tabs
+        </div>
+      </div>,
+    );
+    render(<Harness />);
+    const ctx = (window as any).__rnx_agent_context__;
+
+    const img = ctx.components.find((c: any) => c.component === "Image");
+    expect(img.state).toBe("error");
+
+    const dropdown = ctx.components.find(
+      (c: any) => c.component === "Dropdown",
+    );
+    expect(dropdown.overlay).toBe(true);
+    expect(dropdown.state).toBe("open");
+
+    const contextMenu = ctx.components.find(
+      (c: any) => c.component === "ContextMenu",
+    );
+    expect(contextMenu.overlay).toBe(true);
+    expect(contextMenu.state).toBe("open");
+
+    const select = ctx.components.find((c: any) => c.component === "Select");
+    expect(select.overlay).toBe(true);
+    expect(select.state).toBe("open");
+
+    const aiInput = ctx.components.find((c: any) => c.component === "AIInput");
+    expect(aiInput.action).toBe("submit");
+    expect(aiInput.variant).toBe("glass");
+
+    const chat = ctx.components.find((c: any) => c.component === "ChatBubble");
+    expect(chat.state).toBe("assistant");
+
+    const formMsg = ctx.components.find(
+      (c: any) => c.component === "FormMessage",
+    );
+    expect(formMsg.state).toBe("error");
+
+    const resizable = ctx.components.find(
+      (c: any) => c.component === "Resizable",
+    );
+    expect(resizable.variant).toBe("horizontal");
+
+    const errorBoundary = ctx.components.find(
+      (c: any) => c.component === "ErrorBoundary",
+    );
+    expect(errorBoundary.state).toBe("error");
+    expect(errorBoundary.action).toBe("retry");
+
+    const tabs = ctx.components.find((c: any) => c.component === "Tabs");
+    expect(tabs.variant).toBe("pills");
+  });
 });

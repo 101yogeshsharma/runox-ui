@@ -140,9 +140,11 @@ export default function transformer(
     if (
       parent.type === "ImportSpecifier" ||
       parent.type === "ImportDefaultSpecifier" ||
-      parent.type === "FunctionDeclaration" ||
-      parent.type === "VariableDeclarator" ||
-      parent.type === "Property"
+      (parent.type === "FunctionDeclaration" && parent.id === path.node) ||
+      (parent.type === "VariableDeclarator" && parent.id === path.node) ||
+      (parent.type === "Property" &&
+        parent.key === path.node &&
+        !parent.computed)
     ) {
       return;
     }

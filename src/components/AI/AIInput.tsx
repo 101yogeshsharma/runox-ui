@@ -1,12 +1,12 @@
 "use client";
 import "./AIInput.css";
 import { Box } from "../../atoms/Box";
+import { rnx } from "../../utils/rnx";
 
 import React, { forwardRef, useRef } from "react";
 import { cn } from "../../utils/cn";
 import { CornerDownLeft, Paperclip, Mic } from "lucide-react";
 import { withLoading } from "../../utils/withLoading";
-
 
 /**
  * Props for the AIInput component.
@@ -33,7 +33,7 @@ const AIInputBase = forwardRef<HTMLTextAreaElement, AIInputProps>(
       placeholder = "Ask me anything...",
       ...props
     },
-    ref
+    ref,
   ) => {
     const internalRef = useRef<HTMLTextAreaElement | null>(null);
     const getValue = () =>
@@ -74,10 +74,15 @@ const AIInputBase = forwardRef<HTMLTextAreaElement, AIInputProps>(
 
     return (
       <Box
+        {...rnx({
+          component: "AIInput",
+          variant,
+          action: "submit",
+        })}
         className={cn(
           "rnx-ai-input",
           variant && variant !== "solid" && `rnx-ai-input--variant-${variant}`,
-          className
+          className,
         )}
       >
         <textarea
@@ -139,7 +144,7 @@ const AIInputBase = forwardRef<HTMLTextAreaElement, AIInputProps>(
         </Box>
       </Box>
     );
-  }
+  },
 );
 AIInputBase.displayName = "AIInput";
 export const AIInput = withLoading(AIInputBase);

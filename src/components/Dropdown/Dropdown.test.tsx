@@ -174,4 +174,48 @@ describe("Dropdown", () => {
     // Menu should close
     await waitFor(() => expect(queryByText("Non Selectable")).toBeNull());
   });
+
+  it("only adds pl-8 indicator padding to items with values", async () => {
+    const { getByText, getByRole } = render(
+      <Dropdown defaultValue="opt1">
+        <Dropdown.Trigger />
+        <Dropdown.Content>
+          <Dropdown.Item value="opt1">Selectable Option</Dropdown.Item>
+          <Dropdown.Item>Action Without Value</Dropdown.Item>
+        </Dropdown.Content>
+      </Dropdown>,
+    );
+
+    fireEvent.click(getByRole("button"));
+    await waitFor(() => {
+      expect(getByText("Selectable Option")).toBeInTheDocument();
+      expect(getByText("Action Without Value")).toBeInTheDocument();
+    });
+
+    const selectable = getByText("Selectable Option");
+    const action = getByText("Action Without Value");
+
+    expect(selectable.className).toContain("pl-8");
+    expect(action.className).not.toContain("pl-8");
+  });
+
+  it("toggles off selection when an already-selected single-select item is clicked", async () => {
+    const onValueChange = vi.fn();
+    const { getByText, getByRole } = render(
+      <Dropdown value="item1" onValueChange={onValueChange}>
+        <Dropdown.Trigger />
+        <Dropdown.Content>
+          <Dropdown.Item value="item1">Item 1</Dropdown.Item>
+          <Dropdown.Item value="item2">Item 2</Dropdown.Item>
+        </Dropdown.Content>
+      </Dropdown>,
+    );
+
+    fireEvent.click(getByRole("button"));
+    await waitFor(() => expect(getByText("Item 1")).toBeInTheDocument());
+
+    // Clicking already-selected item1 should deselect (emit "")
+    fireEvent.click(getByText("Item 1"));
+    expect(onValueChange).toHaveBeenCalledWith("");
+  });
 });

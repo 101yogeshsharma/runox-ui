@@ -93,6 +93,7 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>(
         onChange={handleChange}
         {...rnx({
           component: "Input",
+          variant: variant,
           state: error ? "error" : disabled ? "disabled" : undefined,
         })}
         {...mergeProps(

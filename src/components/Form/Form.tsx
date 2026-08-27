@@ -1,5 +1,6 @@
 "use client";
 import { Box } from "../../atoms/Box";
+import { rnx } from "../../utils/rnx";
 
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
@@ -114,7 +115,12 @@ const FormItem = React.forwardRef<
 
   return (
     <FormItemContext.Provider value={contextValue}>
-      <Box ref={ref} className={cn("rnx-form-item", className)} {...props} />
+      <Box
+        ref={ref}
+        {...rnx({ component: "FormItem" })}
+        className={cn("rnx-form-item", className)}
+        {...props}
+      />
     </FormItemContext.Provider>
   );
 });
@@ -217,6 +223,10 @@ const FormMessage = React.forwardRef<
       ref={ref}
       id={formMessageId}
       aria-live={error ? "polite" : undefined}
+      {...rnx({
+        component: "FormMessage",
+        state: error ? "error" : undefined,
+      })}
       className={cn("rnx-form-message", className)}
       {...props}
     >

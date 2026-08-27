@@ -4,6 +4,7 @@
   "codemods/mui": "src/cli/codemods/mui.ts",
   "codemods/chakra": "src/cli/codemods/chakra.ts",
   "codemods/shadcn": "src/cli/codemods/shadcn.ts",
+  "codemods/flat": "src/cli/codemods/flat.ts",
   "accordion": "src/components/Accordion/index.ts",
   "ai": "src/components/AI/index.ts",
   "alert": "src/components/Alert/index.ts",

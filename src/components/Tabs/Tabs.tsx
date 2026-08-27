@@ -77,7 +77,15 @@ const TabsRoot = forwardRef<HTMLDivElement, TabsProps>(
 
     return (
       <TabsContext.Provider value={contextValue}>
-        <Box ref={ref} className={cn("rnx-tabs", className)} {...props} />
+        <Box
+          ref={ref}
+          {...rnx({
+            component: "Tabs",
+            variant,
+          })}
+          className={cn("rnx-tabs", className)}
+          {...props}
+        />
       </TabsContext.Provider>
     );
   },
