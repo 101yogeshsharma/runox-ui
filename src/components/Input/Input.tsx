@@ -42,6 +42,7 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>(
       disabled,
       id: customId,
       value,
+      defaultValue,
       onChange,
       ...props
     },
@@ -52,7 +53,7 @@ const InputComponent = forwardRef<HTMLInputElement, InputProps>(
 
     // Track uncontrolled value so `clearable` works without a controlled prop.
     const isControlled = value !== undefined;
-    const [internalValue, setInternalValue] = useState("");
+    const [internalValue, setInternalValue] = useState(defaultValue ?? "");
     const currentValue = isControlled ? value : internalValue;
     const handleChange = React.useCallback(
       (e: React.ChangeEvent<HTMLInputElement>) => {

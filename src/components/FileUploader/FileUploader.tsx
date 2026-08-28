@@ -46,7 +46,7 @@ export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps>(
       disabled,
       ...props
     }: FileUploaderProps,
-    _ref,
+    ref,
   ) {
     const [files, setFiles] = useState<File[]>([]);
     const [isDragActive, setIsDragActive] = useState(false);
@@ -201,6 +201,7 @@ export const FileUploader = forwardRef<HTMLDivElement, FileUploaderProps>(
 
     return (
       <Box
+        ref={ref}
         {...rnx({
           component: "FileUploader",
           state: disabled ? "disabled" : "active",

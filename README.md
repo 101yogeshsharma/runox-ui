@@ -14,7 +14,7 @@ The AI-native React component library and design system — 68 accessible, glass
 ## Features
 
 - **68 Components**: From primitives (`Box`, `Flex`, `Grid`) to complex interactive components (Kanban, DataTable, VirtualList, AI Chat) — all fully typed.
-- **Dot-Notation APIs**: Composed components use clean namespaces — `Modal.Header`, `Card.Title`, `Accordion.Item` — with codemods for migrating from other libraries (`npx @runox/ui migrate --from mui|chakra|shadcn|flat`).
+- **Dot-Notation APIs**: Composed components use clean namespaces — `Modal.Header`, `Card.Title`, `Accordion.Item`.
 - **Glassmorphism**: Components natively support translucent layers, blurred backgrounds, and subtle glow borders.
 - **Dark-First Theming**: Comprehensive design tokens (colors, typography, shadows, motion) with light mode and system preference support via `RunoxProvider`.
 - **Accessible by Default**: WAI-ARIA patterns, roving tabindex, focus management, scoped Escape handling, and `useReducedMotion` support built in.
@@ -155,7 +155,7 @@ See [CHANGELOG.md](./CHANGELOG.md) for release notes. Highlights of **v0.4.0**:
 - Deterministic testing: `@runox/ui/test` setup helper + `disableExitAnimation`
 - New `ErrorBoundary` component
 - Generic `Select<TValue>`, typed DataTable `accessorKey`, exported prop types
-- `useReducedMotion` hook; CLI `migrate --from flat` codemod
+- `useReducedMotion` hook; complete dot-notation component namespaces
 
 ## Deprecation Policy
 

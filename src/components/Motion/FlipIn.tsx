@@ -24,12 +24,13 @@ export const FlipIn = forwardRef<HTMLElement, FlipInProps>(
       style,
       ...props
     },
-    _ref,
+    ref,
   ) => {
     const flipClass = axis === "x" ? "rnx-motion-flip-x" : "rnx-motion-flip-y";
 
     return (
       <Tag
+        ref={ref}
         className={cn(flipClass, className)}
         style={{
           animationDuration: `${duration}s`,

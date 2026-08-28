@@ -252,7 +252,7 @@ const ModalHeader = React.forwardRef<
     />
   );
 });
-ModalHeader.displayName = "ModalHeader";
+ModalHeader.displayName = "Modal.Header";
 
 const ModalBody = React.forwardRef<
   HTMLDivElement,
@@ -260,7 +260,7 @@ const ModalBody = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <Box ref={ref} className={cn("rnx-modal-body", className)} {...props} />
 ));
-ModalBody.displayName = "ModalBody";
+ModalBody.displayName = "Modal.Body";
 
 const ModalFooter = React.forwardRef<
   HTMLDivElement,
@@ -268,7 +268,7 @@ const ModalFooter = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <Box ref={ref} className={cn("rnx-modal-footer", className)} {...props} />
 ));
-ModalFooter.displayName = "ModalFooter";
+ModalFooter.displayName = "Modal.Footer";
 
 export const Modal = Object.assign(ModalComponent, {
   Header: ModalHeader,

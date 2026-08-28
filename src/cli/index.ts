@@ -4,8 +4,6 @@ import { Command } from "commander";
 import prompts from "prompts";
 import fs from "node:fs";
 import path from "node:path";
-import { runMigrate } from "./migrate";
-import { runMcpServer } from "./mcp";
 
 // Basic CLI Setup
 const program = new Command();
@@ -30,8 +28,8 @@ interface RegistryItem {
 
 type Registry = Record<string, RegistryItem>;
 
-async function httpGet(url: string): Promise<string> {
-  const res = await fetch(url);
+async function httpGet(url: string, timeoutMs = 30_000): Promise<string> {
+  const res = await fetch(url, { signal: AbortSignal.timeout(timeoutMs) });
   if (!res.ok) {
     throw new Error(
       `Request to ${url} failed with status ${res.status} ${res.statusText}`,
@@ -47,11 +45,15 @@ async function fetchRegistry(registryUrl?: string): Promise<Registry> {
 
 function getSourceBaseUrl(registryUrl?: string): string {
   if (!registryUrl) return SOURCE_BASE_URL;
-  return (
-    registryUrl
-      .replace(/\/dist\/registry\.json$|\/registry\.json$/, "")
-      .replace(/\/$/, "") + "/"
-  );
+  try {
+    const u = new URL(registryUrl);
+    u.search = "";
+    u.hash = "";
+    u.pathname = u.pathname.replace(/[^/]*$/, "");
+    return u.toString();
+  } catch {
+    return registryUrl.replace(/[^/]*\.json$/, "").replace(/\/?$/, "/");
+  }
 }
 
 async function fetchFile(
@@ -208,33 +210,13 @@ program
   });
 
 program
-  .command("migrate")
-  .description("Migrate from another UI library to Runox UI")
-  .requiredOption(
-    "--from <library>",
-    "The library you are migrating from (mui, chakra, shadcn, or 'flat' for the dot-notation export migration)",
-  )
-  .option(
-    "-p, --path <path>",
-    "Path to the directory containing files to migrate",
-    "src",
-  )
-  .option(
-    "-d, --dry",
-    "Run without modifying files (jscodeshift dry run)",
-    false,
-  )
-  .action((options: any) => {
-    runMigrate(options);
-  });
-
-program
   .command("mcp")
   .description(
     "Start the Runox UI Model Context Protocol (MCP) server for AI assistants",
   )
-  .action(() => {
-    runMcpServer();
+  .action(async () => {
+    const { runMcpServer } = await import("./mcp");
+    await runMcpServer();
   });
 
 program.parse(process.argv);

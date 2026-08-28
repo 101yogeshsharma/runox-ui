@@ -24,7 +24,6 @@
     "dist",
     "**/*.stories.tsx",
     "**/*.test.tsx",
-    "**/*.test.ts",
-    "src/cli/codemods/__fixtures__/**"
+    "**/*.test.ts"
   ]
 }
