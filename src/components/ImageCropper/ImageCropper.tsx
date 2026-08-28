@@ -40,7 +40,7 @@ export const ImageCropper = forwardRef<HTMLDivElement, ImageCropperProps>(
       cropShape = "round",
       className,
     }: ImageCropperProps,
-    _ref,
+    ref,
   ) {
     const [crop, setCrop] = useState<Point>({ x: 0, y: 0 });
     const [zoom, setZoom] = useState(1);
@@ -90,6 +90,7 @@ export const ImageCropper = forwardRef<HTMLDivElement, ImageCropperProps>(
 
     return (
       <Flex
+        ref={ref}
         {...rnx({ component: "ImageCropper" })}
         direction="col"
         gap="md"

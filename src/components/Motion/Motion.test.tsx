@@ -90,4 +90,66 @@ describe("Motion Components", () => {
     expect(getByText("Child 1")).toBeInTheDocument();
     expect(getByText("Child 2")).toBeInTheDocument();
   });
+  it("forwards ref to underlying DOM elements on animation primitives", () => {
+    let bounceRef: HTMLElement | null = null;
+    let flipRef: HTMLElement | null = null;
+    let rotateRef: HTMLElement | null = null;
+    let scaleRef: HTMLElement | null = null;
+    let slideRef: HTMLElement | null = null;
+    let zoomRef: HTMLElement | null = null;
+
+    render(
+      <>
+        <Motion.BounceIn
+          ref={(el) => {
+            bounceRef = el;
+          }}
+        >
+          Bounce
+        </Motion.BounceIn>
+        <Motion.FlipIn
+          ref={(el) => {
+            flipRef = el;
+          }}
+        >
+          Flip
+        </Motion.FlipIn>
+        <Motion.RotateIn
+          ref={(el) => {
+            rotateRef = el;
+          }}
+        >
+          Rotate
+        </Motion.RotateIn>
+        <Motion.ScaleIn
+          ref={(el) => {
+            scaleRef = el;
+          }}
+        >
+          Scale
+        </Motion.ScaleIn>
+        <Motion.SlideIn
+          ref={(el) => {
+            slideRef = el;
+          }}
+        >
+          Slide
+        </Motion.SlideIn>
+        <Motion.ZoomIn
+          ref={(el) => {
+            zoomRef = el;
+          }}
+        >
+          Zoom
+        </Motion.ZoomIn>
+      </>,
+    );
+
+    expect(bounceRef).toBeInstanceOf(HTMLElement);
+    expect(flipRef).toBeInstanceOf(HTMLElement);
+    expect(rotateRef).toBeInstanceOf(HTMLElement);
+    expect(scaleRef).toBeInstanceOf(HTMLElement);
+    expect(slideRef).toBeInstanceOf(HTMLElement);
+    expect(zoomRef).toBeInstanceOf(HTMLElement);
+  });
 });

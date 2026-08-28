@@ -21,4 +21,16 @@ describe("FileUploader", () => {
 
     expect(onFilesChange).not.toHaveBeenCalled();
   });
+
+  it("forwards ref to the root element", () => {
+    let elementRef: HTMLDivElement | null = null;
+    render(
+      <FileUploader
+        ref={(node) => {
+          elementRef = node;
+        }}
+      />,
+    );
+    expect(elementRef).toBeInstanceOf(HTMLDivElement);
+  });
 });

@@ -24,10 +24,11 @@ export const RotateIn = forwardRef<HTMLElement, RotateInProps>(
       style,
       ...props
     },
-    _ref,
+    ref,
   ) => {
     return (
       <Tag
+        ref={ref}
         className={cn("rnx-motion-rotate-in", className)}
         style={
           {

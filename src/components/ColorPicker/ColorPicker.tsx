@@ -130,6 +130,7 @@ const ColorPickerBase = forwardRef<HTMLDivElement, ColorPickerProps>(
             <button
               type="button"
               disabled={disabled}
+              aria-label={label || "Choose color"}
               className={cn(
                 "rnx-color-picker-trigger",
                 colorPickerVariants({ variant, size }),
@@ -211,6 +212,7 @@ const ColorPickerBase = forwardRef<HTMLDivElement, ColorPickerProps>(
                 onChange={(e) => handleChange(e.target.value)}
                 className="h-8 flex-1 font-mono text-xs uppercase"
                 placeholder="#000000"
+                aria-label="Hex color value"
               />
             </Box>
           </Box>

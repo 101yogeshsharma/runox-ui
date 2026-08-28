@@ -32,7 +32,7 @@ export function useControllableState<T>({
   onChange,
 }: UseControllableStateParams<T>) {
   const [uncontrolledProp, setUncontrolledProp] = useState<T | undefined>(
-    defaultProp
+    defaultProp,
   );
   const isControlled = prop !== undefined;
   const value = isControlled ? prop : uncontrolledProp;
@@ -64,25 +64,25 @@ export function useControllableState<T>({
         handleChange(newValue);
       }
     },
-    [isControlled, prop, handleChange]
+    [isControlled, prop, handleChange],
   );
 
   return [value, setValue] as const;
 }
 
 function useCallbackRef<T extends (...args: any[]) => any>(
-  callback: T | undefined
+  callback: T | undefined,
 ): T {
   const callbackRef = useRef(callback);
 
   useEffect(() => {
     callbackRef.current = callback;
-  });
+  }, [callback]);
 
   return useCallback(
     ((...args: any[]) => {
       return callbackRef.current?.(...args);
     }) as T,
-    []
+    [],
   );
 }

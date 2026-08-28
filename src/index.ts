@@ -4,7 +4,7 @@
 import "./styles/globals.css";
 
 // Tokens & Utils
-export * from "./types";
+export * from "./types/props";
 export * from "./tokens";
 export * from "./hooks";
 export * from "./utils/cn";
@@ -78,6 +78,7 @@ export * from "./hooks/useAgentContext";
 export * from "./components/List";
 export * from "./components/TreeView/TreeView";
 export { Kanban } from "./components/Kanban/Kanban";
+export * from "./components/KanbanBoard/KanbanBoard";
 export * from "./components/SortableList/SortableList";
 export * from "./components/VirtualList/VirtualList";
 export * from "./components/Timeline";
