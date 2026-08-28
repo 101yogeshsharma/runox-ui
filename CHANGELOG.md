@@ -1,5 +1,13 @@
 # @runox/ui
 
+## 0.5.2
+
+### Patch Changes
+
+- **Core Dependencies Auto-Resolution**:
+  - Moved `recharts`, `react-hook-form`, `react-easy-crop`, and `prism-react-renderer` to direct `dependencies` in `@runox/ui`'s `package.json`.
+  - Resolves Webpack/Vite `Module not found` errors when consuming `@runox/ui` without requiring manual consumer peer dependency installation.
+
 ## 0.5.1
 
 ### Minor Changes
