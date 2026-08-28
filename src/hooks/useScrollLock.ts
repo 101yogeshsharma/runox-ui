@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 
 let lockCount = 0;
 let originalOverflow: string | null = null;
+let originalPaddingRight: string | null = null;
 
 /**
  * Locks body scroll while a modal or overlay is open. Compensates for scrollbar width to prevent layout shift.
@@ -18,7 +19,9 @@ export function useScrollLock(active: boolean) {
     if (active && !isLocked.current) {
       if (lockCount === 0) {
         originalOverflow = document.body.style.overflow;
-        const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+        originalPaddingRight = document.body.style.paddingRight;
+        const scrollbarWidth =
+          window.innerWidth - document.documentElement.clientWidth;
         document.body.style.paddingRight = scrollbarWidth + "px";
         document.body.style.overflow = "hidden";
       }
@@ -29,8 +32,9 @@ export function useScrollLock(active: boolean) {
       isLocked.current = false;
       if (lockCount === 0 && originalOverflow !== null) {
         document.body.style.overflow = originalOverflow;
-        document.body.style.paddingRight = "";
+        document.body.style.paddingRight = originalPaddingRight ?? "";
         originalOverflow = null;
+        originalPaddingRight = null;
       }
     }
 
@@ -40,8 +44,9 @@ export function useScrollLock(active: boolean) {
         isLocked.current = false;
         if (lockCount === 0 && originalOverflow !== null) {
           document.body.style.overflow = originalOverflow;
-          document.body.style.paddingRight = "";
+          document.body.style.paddingRight = originalPaddingRight ?? "";
           originalOverflow = null;
+          originalPaddingRight = null;
         }
       }
     };

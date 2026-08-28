@@ -121,7 +121,8 @@ const DrawerComponent = React.forwardRef<HTMLDivElement, DrawerProps>(
     useEffect(() => {
       if (isOpen) {
         setShouldRender(true);
-        requestAnimationFrame(() => setRenderState("open"));
+        const rafId = requestAnimationFrame(() => setRenderState("open"));
+        return () => cancelAnimationFrame(rafId);
       } else {
         setRenderState("closed");
         setInternalExpanded(false);

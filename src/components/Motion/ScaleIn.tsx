@@ -22,10 +22,11 @@ export const ScaleIn = forwardRef<HTMLElement, ScaleInProps>(
       style,
       ...props
     },
-    _ref,
+    ref,
   ) => {
     return (
       <Tag
+        ref={ref}
         className={cn("rnx-motion-scale-in", className)}
         style={{
           animationDuration: `${duration}s`,

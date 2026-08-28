@@ -1,6 +1,7 @@
 "use client";
 import { Box } from "../../atoms/Box";
 import { useControllableState } from "../../hooks/useControllableState";
+import { useMergeRefs } from "../../hooks/useMergeRefs";
 
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
@@ -86,6 +87,9 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
     },
     ref,
   ) => {
+    const internalContainerRef = useRef<HTMLDivElement>(null);
+    const mergedRef = useMergeRefs(internalContainerRef, ref);
+
     const [value, setValue] = useControllableState<
       Date | Date[] | { from?: Date; to?: Date } | undefined
     >({
@@ -227,7 +231,8 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
 
         requestAnimationFrame(() => {
           const key = `${nextDate.getFullYear()}-${nextDate.getMonth()}-${nextDate.getDate()}`;
-          document
+          const root = internalContainerRef.current ?? document;
+          root
             .querySelector<HTMLButtonElement>(`[data-date-key="${key}"]`)
             ?.focus();
         });
@@ -355,7 +360,7 @@ const Calendar = React.forwardRef<HTMLDivElement, CalendarProps>(
 
     return (
       <Box
-        ref={ref}
+        ref={mergedRef}
         {...rnx({ component: "Calendar", variant: mode })}
         className={cn(
           "rnx-calendar",

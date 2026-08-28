@@ -1,5 +1,25 @@
 # @runox/ui
 
+## 0.5.0
+
+### Minor Changes
+
+- **Dedicated `@runox/ui/types` Module**:
+  - Added dedicated pure types subpath export `@runox/ui/types` aggregating all 178 TypeScript interfaces across components, atoms, hooks, utilities, and theme tokens with zero runtime JavaScript or CSS bundle overhead.
+  - Added full TypeScript and type definitions guide across `runox-docs`.
+
+- **Ref Forwarding & Accessibility Improvements**:
+  - Attached forwarded `ref` to root DOM nodes across `FileUploader`, `ImageCropper`, and all 6 `Motion` entrance animation primitives (`BounceIn`, `FlipIn`, `RotateIn`, `ScaleIn`, `SlideIn`, `ZoomIn`).
+  - Added accessible `aria-label` to `ColorPicker` trigger button and inner hex color text input.
+  - Preserved pre-existing `body` `paddingRight` upon unlocking in `useScrollLock`.
+
+- **Lifecycle & State Bug Fixes**:
+  - **`StreamingText`**: Stabilized `onComplete` callback execution via `onCompleteRef` to prevent streaming restarts on parent re-renders.
+  - **`Calendar`**: Merged forwarded container ref and scoped keyboard arrow day navigation focus queries to `internalContainerRef.current` rather than global `document.querySelector`.
+  - **`Drawer`**: Added `cancelAnimationFrame` cleanup to prevent state updates on unmounted or rapidly toggled drawers.
+  - **`Input`**: Properly initialized `useState(defaultValue ?? "")` and eliminated React's conflicting controlled/uncontrolled prop warning.
+  - **Compound DisplayNames**: Standardized compound displayNames across `Modal` (`Modal.Header`, `Modal.Body`, `Modal.Footer`).
+
 ## 0.4.2
 
 ### Patch Changes

@@ -4,8 +4,6 @@ import { Command } from "commander";
 import prompts from "prompts";
 import fs from "node:fs";
 import path from "node:path";
-import { runMigrate } from "./migrate";
-import { runMcpServer } from "./mcp";
 
 // Basic CLI Setup
 const program = new Command();
@@ -204,33 +202,13 @@ program
   });
 
 program
-  .command("migrate")
-  .description("Migrate from another UI library to Runox UI")
-  .requiredOption(
-    "--from <library>",
-    "The library you are migrating from (mui, chakra, shadcn, or 'flat' for the dot-notation export migration)",
-  )
-  .option(
-    "-p, --path <path>",
-    "Path to the directory containing files to migrate",
-    "src",
-  )
-  .option(
-    "-d, --dry",
-    "Run without modifying files (jscodeshift dry run)",
-    false,
-  )
-  .action((options: any) => {
-    runMigrate(options);
-  });
-
-program
   .command("mcp")
   .description(
     "Start the Runox UI Model Context Protocol (MCP) server for AI assistants",
   )
-  .action(() => {
-    runMcpServer();
+  .action(async () => {
+    const { runMcpServer } = await import("./mcp");
+    await runMcpServer();
   });
 
 program.parse(process.argv);

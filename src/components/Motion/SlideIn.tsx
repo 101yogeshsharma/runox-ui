@@ -26,7 +26,7 @@ export const SlideIn = forwardRef<HTMLElement, SlideInProps>(
       style,
       ...props
     },
-    _ref,
+    ref,
   ) => {
     const directionClass = {
       up: "rnx-motion-slide-up",
@@ -37,6 +37,7 @@ export const SlideIn = forwardRef<HTMLElement, SlideInProps>(
 
     return (
       <Tag
+        ref={ref}
         className={cn(directionClass, className)}
         style={
           {

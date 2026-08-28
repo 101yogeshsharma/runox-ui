@@ -34,6 +34,11 @@ export const StreamingText = forwardRef<HTMLSpanElement, StreamingTextProps>(
     const [displayedText, setDisplayedText] = useState("");
     const [isFinished, setIsFinished] = useState(false);
 
+    const onCompleteRef = React.useRef(onComplete);
+    useEffect(() => {
+      onCompleteRef.current = onComplete;
+    }, [onComplete]);
+
     useEffect(() => {
       let i = 0;
       setDisplayedText("");
@@ -56,7 +61,7 @@ export const StreamingText = forwardRef<HTMLSpanElement, StreamingTextProps>(
           lastTick = now;
           if (i >= text.length) {
             setIsFinished(true);
-            onComplete?.();
+            onCompleteRef.current?.();
             return;
           }
         }
@@ -66,7 +71,7 @@ export const StreamingText = forwardRef<HTMLSpanElement, StreamingTextProps>(
       raf = requestAnimationFrame(tick);
 
       return () => cancelAnimationFrame(raf);
-    }, [text, speed, onComplete]);
+    }, [text, speed]);
 
     return (
       <Box

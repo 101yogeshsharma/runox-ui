@@ -24,10 +24,11 @@ export const ZoomIn = forwardRef<HTMLElement, ZoomInProps>(
       style,
       ...props
     },
-    _ref,
+    ref,
   ) => {
     return (
       <Tag
+        ref={ref}
         className={cn("rnx-motion-zoom-in", className)}
         style={
           {
