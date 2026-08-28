@@ -86,8 +86,80 @@ export function useAgentContext() {
           (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement)
         ) {
           const inputEl = el as HTMLInputElement;
-          const SENSITIVE_AUTOCOMPLETE =
-            /(cc-|credit|new-password|current-password|one-time-code|email|tel|name|street-address|postal-code|address)/i;
+          const autocompleteTokens = (inputEl.autocomplete || "")
+            .toLowerCase()
+            .split(/\s+/)
+            .filter(Boolean);
+          const SENSITIVE_AUTOCOMPLETE_SET = new Set([
+            "cc-number",
+            "cc-exp",
+            "cc-exp-month",
+            "cc-exp-year",
+            "cc-csc",
+            "cc-type",
+            "new-password",
+            "current-password",
+            "one-time-code",
+            "email",
+            "tel",
+            "tel-country-code",
+            "tel-national",
+            "tel-area-code",
+            "tel-local",
+            "tel-extension",
+            "name",
+            "given-name",
+            "additional-name",
+            "family-name",
+            "street-address",
+            "address-line1",
+            "address-line2",
+            "address-line3",
+            "postal-code",
+          ]);
+          const hasSensitiveAutocomplete = autocompleteTokens.some(
+            (t) =>
+              SENSITIVE_AUTOCOMPLETE_SET.has(t) ||
+              t.startsWith("cc-") ||
+              t.startsWith("address-") ||
+              t.startsWith("tel-"),
+          );
+
+          const nameTokens = (inputEl.name || "")
+            .replace(/([a-z])([A-Z])/g, "$1 $2")
+            .toLowerCase()
+            .split(/[^a-z0-9]+/)
+            .filter(Boolean);
+          const SENSITIVE_NAME_WORDS = new Set([
+            "password",
+            "secret",
+            "token",
+            "ssn",
+            "credit",
+            "card",
+            "cvv",
+            "cvc",
+            "pin",
+            "otp",
+            "auth",
+            "email",
+            "phone",
+            "tel",
+            "mobile",
+            "address",
+            "zip",
+            "postal",
+            "name",
+          ]);
+          const hasSensitiveName = nameTokens.some(
+            (t) =>
+              SENSITIVE_NAME_WORDS.has(t) &&
+              t !== "username" &&
+              t !== "filename" &&
+              t !== "hotel" &&
+              t !== "telemetry",
+          );
+
           const isSensitive =
             inputEl.type === "password" ||
             inputEl.type === "email" ||
@@ -95,8 +167,8 @@ export function useAgentContext() {
             htmlEl.dataset.rnxComponent === "PasswordInput" ||
             htmlEl.dataset.rnxComponent === "OtpInput" ||
             htmlEl.dataset.rnxSensitive === "true" ||
-            SENSITIVE_AUTOCOMPLETE.test(inputEl.autocomplete || "") ||
-            SENSITIVE_AUTOCOMPLETE.test(inputEl.name || "") ||
+            hasSensitiveAutocomplete ||
+            hasSensitiveName ||
             Boolean(
               el.closest?.(
                 '[data-rnx-component="PasswordInput"],[data-rnx-component="OtpInput"],[data-rnx-sensitive="true"]',

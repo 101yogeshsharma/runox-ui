@@ -230,6 +230,48 @@ describe("useAgentContext", () => {
     expect(inputs.every((i: any) => i.textContent === "")).toBe(true);
   });
 
+  it("does not over-mask legitimately non-sensitive fields such as username or filename", () => {
+    render(
+      <div>
+        <input
+          data-rnx-component="Input"
+          id="in-username"
+          name="username"
+          defaultValue="johndoe42"
+        />
+        <input
+          data-rnx-component="Input"
+          id="in-filename"
+          name="filename"
+          defaultValue="document.pdf"
+        />
+        <input
+          data-rnx-component="Input"
+          id="in-hotel"
+          name="hotel"
+          defaultValue="Grand Plaza"
+        />
+        <input
+          data-rnx-component="Input"
+          id="in-telemetry"
+          name="telemetry"
+          defaultValue="event_log"
+        />
+      </div>,
+    );
+    render(<Harness />);
+    const ctx = (window as any).__rnx_agent_context__;
+    const u = ctx.components.find((c: any) => c.id === "in-username");
+    const f = ctx.components.find((c: any) => c.id === "in-filename");
+    const h = ctx.components.find((c: any) => c.id === "in-hotel");
+    const t = ctx.components.find((c: any) => c.id === "in-telemetry");
+
+    expect(u.textContent).toBe("johndoe42");
+    expect(f.textContent).toBe("document.pdf");
+    expect(h.textContent).toBe("Grand Plaza");
+    expect(t.textContent).toBe("event_log");
+  });
+
   it("accurately reflects error and overlay states across components", () => {
     render(
       <div>
