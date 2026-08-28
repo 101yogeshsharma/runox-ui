@@ -1,5 +1,19 @@
 # @runox/ui
 
+## 0.5.3
+
+### Patch Changes
+
+- **Explicit Radius Scale Tokens**:
+  - Defined explicit CSS variables `--radius-none: 0px;`, `--radius-sm: 6px;`, `--radius-md: 12px;`, `--radius-lg: 16px;`, `--radius-xl: 24px;`, and `--radius-full: 9999px;` on `:root` inside `@layer base` in `globals.css`.
+  - Added safe inline pixel fallbacks in `applyRadius` (`var(--radius-${radius}, ${fallback})`) so components never drop to `0px` border-radius when configured with `"lg"` or `"xl"` radii.
+
+- **`AlertDialog.Action` Default Styling**:
+  - Set default `variant="solid"` and `color="primary"` on `<AlertDialog.Action>` in direct non-`asChild` mode to ensure primary confirmation buttons inherit brand primary colors.
+
+- **`AlertDialog` Developer Warnings**:
+  - Added dev-time warning when `<AlertDialog.Header>`, `<AlertDialog.Footer>`, `<AlertDialog.Title>`, `<AlertDialog.Description>`, `<AlertDialog.Action>`, or `<AlertDialog.Cancel>` are rendered outside `<AlertDialog.Content>`.
+
 ## 0.5.2
 
 ### Patch Changes

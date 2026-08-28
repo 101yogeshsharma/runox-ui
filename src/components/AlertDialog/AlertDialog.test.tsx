@@ -157,13 +157,35 @@ describe("AlertDialog", () => {
     });
 
     expect(getByRole("button", { name: "Close" })).toBeInTheDocument();
-    expect(getByRole("button", { name: "Confirm" })).toBeInTheDocument();
+    const confirmBtn = getByRole("button", { name: "Confirm" });
+    expect(confirmBtn).toBeInTheDocument();
+    expect(confirmBtn).toHaveClass("rnx-button--solid-primary");
 
-    fireEvent.click(getByRole("button", { name: "Confirm" }));
+    fireEvent.click(confirmBtn);
     act(() => {
       vi.runAllTimers();
     });
 
     expect(queryByRole("button", { name: "Close" })).not.toBeInTheDocument();
+  });
+
+  it("warns when subcomponents are rendered outside AlertDialog.Content", () => {
+    const consoleWarnSpy = vi
+      .spyOn(console, "warn")
+      .mockImplementation(() => {});
+    render(
+      <AlertDialog>
+        <AlertDialog.Footer>
+          <AlertDialog.Cancel>Cancel</AlertDialog.Cancel>
+        </AlertDialog.Footer>
+      </AlertDialog>,
+    );
+
+    expect(consoleWarnSpy).toHaveBeenCalledWith(
+      expect.stringContaining(
+        "AlertDialog.Footer should be rendered inside <AlertDialog.Content>",
+      ),
+    );
+    consoleWarnSpy.mockRestore();
   });
 });

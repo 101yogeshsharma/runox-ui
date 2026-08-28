@@ -17,7 +17,11 @@ import { useFocusTrap, useControllableState } from "../../hooks";
 import { useScrollLock } from "../../hooks/useScrollLock";
 import { Text } from "../../atoms/Text";
 import { Box } from "../../atoms/Box";
+import { warnInvalidProps } from "../../utils/warn";
+import type { RnxColor } from "../../types";
 import "./AlertDialog.css";
+
+const AlertDialogContentContext = createContext<boolean>(false);
 
 const AlertDialogContext = createContext<{
   isOpen: boolean;
@@ -243,7 +247,9 @@ const AlertDialogContent = forwardRef<HTMLDivElement, AlertDialogContentProps>(
           data-state={mounted ? "open" : "closed"}
           {...props}
         >
-          {children}
+          <AlertDialogContentContext.Provider value={true}>
+            {children}
+          </AlertDialogContentContext.Provider>
         </Box>
       </Box>,
       container ?? document.body,
@@ -255,17 +261,35 @@ AlertDialogContent.displayName = "AlertDialog.Content";
 const AlertDialogHeader = ({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <Box className={cn("rnx-alert-dialog-header", className)} {...props} />
-);
+}: React.HTMLAttributes<HTMLDivElement>) => {
+  const isInContent = useContext(AlertDialogContentContext);
+  if (!isInContent) {
+    warnInvalidProps(
+      "AlertDialog",
+      "AlertDialog.Header should be rendered inside <AlertDialog.Content>.",
+    );
+  }
+  return (
+    <Box className={cn("rnx-alert-dialog-header", className)} {...props} />
+  );
+};
 AlertDialogHeader.displayName = "AlertDialog.Header";
 
 const AlertDialogFooter = ({
   className,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
-  <Box className={cn("rnx-alert-dialog-footer", className)} {...props} />
-);
+}: React.HTMLAttributes<HTMLDivElement>) => {
+  const isInContent = useContext(AlertDialogContentContext);
+  if (!isInContent) {
+    warnInvalidProps(
+      "AlertDialog",
+      "AlertDialog.Footer should be rendered inside <AlertDialog.Content>.",
+    );
+  }
+  return (
+    <Box className={cn("rnx-alert-dialog-footer", className)} {...props} />
+  );
+};
 AlertDialogFooter.displayName = "AlertDialog.Footer";
 
 const AlertDialogTitle = forwardRef<
@@ -273,6 +297,13 @@ const AlertDialogTitle = forwardRef<
   Omit<React.HTMLAttributes<HTMLHeadingElement>, "color">
 >(({ className, ...props }, ref) => {
   const { titleId } = useContext(AlertDialogContext);
+  const isInContent = useContext(AlertDialogContentContext);
+  if (!isInContent) {
+    warnInvalidProps(
+      "AlertDialog",
+      "AlertDialog.Title should be rendered inside <AlertDialog.Content>.",
+    );
+  }
   return (
     <Text
       as="h2"
@@ -291,6 +322,13 @@ const AlertDialogDescription = forwardRef<
   Omit<React.HTMLAttributes<HTMLParagraphElement>, "color">
 >(({ className, ...props }, ref) => {
   const { descriptionId } = useContext(AlertDialogContext);
+  const isInContent = useContext(AlertDialogContentContext);
+  if (!isInContent) {
+    warnInvalidProps(
+      "AlertDialog",
+      "AlertDialog.Description should be rendered inside <AlertDialog.Content>.",
+    );
+  }
   return (
     <Text
       as="p"
@@ -309,11 +347,31 @@ export interface AlertDialogActionProps extends Omit<
   "color"
 > {
   asChild?: boolean;
+  variant?: "solid" | "outline" | "ghost" | "glass" | "icon" | "fab";
+  color?: RnxColor;
 }
 
 const AlertDialogAction = forwardRef<HTMLButtonElement, AlertDialogActionProps>(
-  ({ className, onClick, asChild, children, ...props }, ref) => {
+  (
+    {
+      className,
+      onClick,
+      asChild,
+      variant = "solid",
+      color = "primary",
+      children,
+      ...props
+    },
+    ref,
+  ) => {
     const { setIsOpen } = useContext(AlertDialogContext);
+    const isInContent = useContext(AlertDialogContentContext);
+    if (!isInContent) {
+      warnInvalidProps(
+        "AlertDialog",
+        "AlertDialog.Action should be rendered inside <AlertDialog.Content>.",
+      );
+    }
 
     const handleClick = (e: React.MouseEvent<HTMLElement>) => {
       setIsOpen(false);
@@ -334,7 +392,7 @@ const AlertDialogAction = forwardRef<HTMLButtonElement, AlertDialogActionProps>(
       return React.cloneElement(child, {
         ...props,
         className: cn(
-          buttonVariants({ variant: "solid", color: "primary" }),
+          buttonVariants({ variant, color }),
           "rnx-alert-dialog-action",
           className,
           child.props.className,
@@ -358,6 +416,8 @@ const AlertDialogAction = forwardRef<HTMLButtonElement, AlertDialogActionProps>(
     return (
       <Button
         ref={ref}
+        variant={variant}
+        color={color}
         onClick={handleClick as React.MouseEventHandler<HTMLButtonElement>}
         className={cn("rnx-alert-dialog-action", className)}
         {...props}
@@ -374,11 +434,31 @@ export interface AlertDialogCancelProps extends Omit<
   "color"
 > {
   asChild?: boolean;
+  variant?: "solid" | "outline" | "ghost" | "glass" | "icon" | "fab";
+  color?: RnxColor;
 }
 
 const AlertDialogCancel = forwardRef<HTMLButtonElement, AlertDialogCancelProps>(
-  ({ className, onClick, asChild, children, ...props }, ref) => {
+  (
+    {
+      className,
+      onClick,
+      asChild,
+      variant = "outline",
+      color = "default",
+      children,
+      ...props
+    },
+    ref,
+  ) => {
     const { setIsOpen } = useContext(AlertDialogContext);
+    const isInContent = useContext(AlertDialogContentContext);
+    if (!isInContent) {
+      warnInvalidProps(
+        "AlertDialog",
+        "AlertDialog.Cancel should be rendered inside <AlertDialog.Content>.",
+      );
+    }
 
     const handleClick = (e: React.MouseEvent<HTMLElement>) => {
       setIsOpen(false);
@@ -399,7 +479,7 @@ const AlertDialogCancel = forwardRef<HTMLButtonElement, AlertDialogCancelProps>(
       return React.cloneElement(child, {
         ...props,
         className: cn(
-          buttonVariants({ variant: "outline", color: "default" }),
+          buttonVariants({ variant, color }),
           "rnx-alert-dialog-cancel",
           className,
           child.props.className,
@@ -424,7 +504,8 @@ const AlertDialogCancel = forwardRef<HTMLButtonElement, AlertDialogCancelProps>(
       <Button
         ref={ref}
         onClick={handleClick as React.MouseEventHandler<HTMLButtonElement>}
-        variant="outline"
+        variant={variant}
+        color={color}
         className={cn("rnx-alert-dialog-cancel", className)}
         {...props}
       >
